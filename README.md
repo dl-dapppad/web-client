@@ -36,3 +36,8 @@ yarn rsc %release-version%
 ```dockerfile
  docker build --no-cache --progress=plain --build-arg BUILD_VERSION=1.0.0-rc.0 -t vue-template .
 ```
+
+### Generate types for interacting with contracts
+```
+yarn generate-ether-types
+```
