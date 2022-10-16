@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { AppButton, Loader, ErrorMessage } from '@/common'
+import { AppButton, Loader, ErrorMessage, Erc20 } from '@/common'
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 import { useProvider } from '@/composables'
 import { ErrorHandler } from '@/helpers'
@@ -81,6 +81,10 @@ const isLoadFailed = ref(false)
 const web3Store = useWeb3ProvidersStore()
 
 const providers: UseProvider[] = []
+
+const metamaskProvider = computed(() =>
+  providers.find(el => el.selectedProvider.value === PROVIDERS.metamask),
+)
 
 const init = async () => {
   try {
@@ -227,6 +231,9 @@ init()
             </template>
           </div>
         </div>
+        <div class="web3-page__erc20">
+          <erc20 :provider="metamaskProvider" />
+        </div>
       </template>
     </template>
     <template v-else>
@@ -236,10 +243,15 @@ init()
 </template>
 
 <style lang="scss" scoped>
+.web3-page {
+  padding-bottom: toRem(100);
+}
+
 .web3-page__list {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: toRem(24);
+  margin-bottom: toRem(24);
 }
 
 .web3-page__card {
