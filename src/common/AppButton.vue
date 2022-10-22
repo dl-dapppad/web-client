@@ -12,6 +12,7 @@ type MODIFICATIONS = 'border-circle' | 'border-rounded' | 'default'
 type COLORS =
   | 'primary'
   | 'secondary'
+  | 'tertiary'
   | 'success'
   | 'error'
   | 'warning'
@@ -124,7 +125,6 @@ const buttonClasses = computed(() =>
   --button-transition-duration: 0.2s;
 
   outline: 0;
-  font-family: var(--app-font-family);
   margin: 0;
   cursor: pointer;
   user-select: none;
@@ -166,13 +166,18 @@ const buttonClasses = computed(() =>
     border: var(--app-button-border-active);
   }
 
+  /* schemes */
   &--filled {
     --app-button-filled-bg: var(--primary-main);
-    --app-button-filled-bg-hover: var(--primary-dark);
-    --app-button-filled-bg-active: var(--primary-dark);
+    --app-button-filled-bg-hover: var(--primary-main);
+    --app-button-filled-bg-active: var(--primary-main);
 
     --app-button-filled-text: var(--text-primary-invert-main);
     --app-button-filled-text-hover: var(--text-primary-invert-main);
+
+    --app-button-filled-border: #{toRem(2)} solid var(--primary-main);
+    --app-button-filled-border-hover: #{toRem(2)} solid var(--secondary-main);
+    --app-button-filled-border-active: #{toRem(2)} solid var(--secondary-main);
 
     --app-button-bg: var(--app-button-filled-bg);
     --app-button-bg-hover: var(--app-button-filled-bg-hover);
@@ -181,9 +186,9 @@ const buttonClasses = computed(() =>
     --app-button-text: var(--app-button-filled-text);
     --app-button-text-hover: var(--app-button-filled-text-hover);
 
-    --app-button-border: 0;
-    --app-button-border-hover: 0;
-    --app-button-border-active: 0;
+    --app-button-border: var(--app-button-filled-border);
+    --app-button-border-hover: var(--app-button-filled-border-hover);
+    --app-button-border-active: var(--app-button-filled-border-active);
   }
 
   &--flat {
@@ -204,6 +209,33 @@ const buttonClasses = computed(() =>
     --app-button-border: var(--app-button-flat-border);
     --app-button-border-hover: var(--app-button-flat-border-hover);
     --app-button-border-active: var(--app-button-flat-border-active);
+  }
+
+  /* colors */
+  &--secondary {
+    --app-button-flat-text: var(--secondary-main);
+    --app-button-flat-text-hover: var(--secondary-main);
+    --app-button-flat-border: #{toRem(2)} solid var(--secondary-main);
+    --app-button-flat-border-hover: #{toRem(2)} solid var(--secondary-main);
+    --app-button-flat-border-active: #{toRem(2)} solid var(--secondary-main);
+
+    --app-button-filled-bg: var(--secondary-main);
+    --app-button-filled-bg-hover: var(--secondary-main);
+    --app-button-filled-bg-active: var(--secondary-main);
+  }
+
+  &--tertiary {
+    --app-button-flat-text: var(--text-primary-main);
+    --app-button-flat-text-hover: var(--text-primary-main);
+    --app-button-flat-border: #{toRem(2)} solid var(--background-secondary);
+    --app-button-flat-border-hover: #{toRem(2)} solid var(--background-secondary);
+    --app-button-flat-border-active: #{toRem(2)} solid var(--background-secondary);
+
+    --app-button-filled-bg: var(--background-secondary);
+    --app-button-filled-bg-hover: var(--background-secondary);
+    --app-button-filled-bg-active: var(--background-secondary);
+    --app-button-filled-text: var(--primary-main);
+    --app-button-filled-text-hover: var(--primary-main);
   }
 
   &--success {
@@ -254,6 +286,7 @@ const buttonClasses = computed(() =>
     --app-button-filled-bg-active: var(--info-dark);
   }
 
+  /* modifications */
   &--border-circle {
     border-radius: toRem(50);
   }
@@ -262,13 +295,14 @@ const buttonClasses = computed(() =>
     border-radius: toRem(10);
   }
 
+  /* sizes */
   &--large {
     padding: toRem(24) toRem(50);
     grid-gap: toRem(16);
   }
 
   &--medium {
-    padding: toRem(16) toRem(30);
+    padding: toRem(16) toRem(32);
     font-size: toRem(16);
     line-height: 1.4;
     font-weight: 600;
@@ -277,15 +311,20 @@ const buttonClasses = computed(() =>
   }
 
   &--small {
-    padding: toRem(8) toRem(15);
+    font-size: toRem(16);
+    line-height: 1;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    padding: toRem(12) toRem(24);
     grid-gap: toRem(8);
   }
-}
 
-.app-button__icon-left,
-.app-button__icon-right {
-  height: 1.2em;
-  width: 1.2em;
+  .app-button__icon-left,
+  .app-button__icon-right {
+    color: inherit;
+    height: 1.2em;
+    width: 1.2em;
+  }
 }
 
 .app-button__text {
