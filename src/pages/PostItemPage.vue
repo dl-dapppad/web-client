@@ -1,11 +1,19 @@
 <script lang="ts" setup>
 import { AppBlock, AppButton } from '@/common'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
+import postsData from '@/assets/posts.json'
+import { Post } from '@/types'
 
 const route = useRoute()
 
+const posts = postsData as unknown as Post[]
+
+const router = useRouter()
+
 const postId = computed(() => route.params.id)
+
+const post = computed(() => posts.find(el => el.id === postId.value))
 </script>
 
 <template>
@@ -13,70 +21,47 @@ const postId = computed(() => route.params.id)
     <app-block class="post-item-page__banner-wrp">
       <div
         class="post-item-page__banner"
-        style="
-          background-image: url('https://images.unsplash.com/photo-1666433723497-38d1d053185b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
-        "
+        :style="{ backgroundImage: `url(${post.bannerUrl})` }"
       >
         <div class="post-item-page__banner-title-wrp">
           <h1 class="post-item-page__banner-title">
-            {{ 'Tokens' }}
+            {{ post.title }}
           </h1>
           <app-button
             class="post-item-page__back-btn"
             :icon-left="$icons.arrowLeft"
             modification="border-circle"
             color="tertiary"
+            @click="router.go(-1)"
           />
         </div>
       </div>
     </app-block>
     <app-block class="post-item-page__content-wrp">
-      <div class="post-item-page__content">
-        <h4 class="post-item-page__title">Title 1</h4>
-        <p>
-          DESCRIPTION Lorem Ipsum is simply dummy text of the printing and
-          typesetting industry. Lorem Ipsum has been the industry's standard
-          dummy text ever since the 1500s, when an unknown printer took a galley
-          of type and scrambled it to make a type specimen book.
-        </p>
-        <p>
-          It has survived not only five centuries, but also the leap into
-          electronic typesetting, remaining essentially unchanged. It was
-          popularised in the 1960s with the release of Letraset sheets
-          containing Lorem Ipsum passages, and more recently with desktop
-          publishing software like Aldus PageMaker including versions of Lorem
-          Ipsum.
-        </p>
-        <h4 class="post-item-page__title">Title 2</h4>
-        <img
-          class="post-item-page__img"
-          src="https://images.unsplash.com/photo-1666433723497-38d1d053185b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-          alt=""
-        />
-        <p>
-          It has survived not only five centuries, but also the leap into
-          electronic typesetting, remaining essentially unchanged. It was
-          popularised in the 1960s with the release of Letraset sheets
-          containing Lorem Ipsum passages, and more recently with desktop
-          publishing software like Aldus PageMaker including versions of Lorem
-          Ipsum.
-        </p>
-        <p>
-          It has survived not only five centuries, but also the leap into
-          electronic typesetting, remaining essentially unchanged. It was
-          popularised in the 1960s with the release of Letraset sheets
-          containing Lorem Ipsum passages, and more recently with desktop
-          publishing software like Aldus PageMaker including versions of Lorem
-          Ipsum.
-        </p>
-        <h4 class="post-item-page__title post-item-page__title--accent">
-          Title 2
-        </h4>
-        <img
-          class="post-item-page__img"
-          src="https://images.unsplash.com/photo-1666433723497-38d1d053185b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-          alt=""
-        />
+      <div v-if="post" class="post-item-page__content">
+        <template v-for="([key, value], idx) in post.content">
+          <template v-if="key === 'title'">
+            <h4 class="post-item-page__title" :key="idx">
+              {{ value }}
+            </h4>
+          </template>
+          <template v-if="key === 'title-accent'">
+            <h4
+              class="post-item-page__title post-item-page__title--accent"
+              :key="idx"
+            >
+              {{ value }}
+            </h4>
+          </template>
+          <template v-if="key === 'paragraph'">
+            <p :key="idx">
+              {{ value }}
+            </p>
+          </template>
+          <template v-if="key === 'image'">
+            <img :key="idx" class="post-item-page__img" :src="value" alt="" />
+          </template>
+        </template>
       </div>
     </app-block>
   </div>
@@ -89,9 +74,6 @@ $page-padding-right: toRem(165);
 .post-item-page {
   display: flex;
   flex-direction: column;
-}
-
-.post-item-page__banner-wrp {
 }
 
 .post-item-page__banner {

@@ -1,33 +1,12 @@
 <script lang="ts" setup>
 import { AppBlock, AppButton, PostCard } from '@/common'
 import { Post } from '@/types'
+import postsData from '@/assets/posts.json'
+import { useRouter } from 'vue-router'
 
-const bannerInfo = {
-  title: 'Tokens',
-  description:
-    'SHORT DESCRIPTION Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-  imageUrl:
-    'https://images.unsplash.com/photo-1666433723497-38d1d053185b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
-}
+const posts = postsData as Post[]
 
-const posts: Post[] = [
-  {
-    id: '1',
-    title: 'ERC20',
-    description:
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-    imgUrl:
-      'https://images.unsplash.com/photo-1666433723497-38d1d053185b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
-  },
-  {
-    id: '2',
-    title: 'ERC721',
-    description:
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-    imgUrl:
-      'https://images.unsplash.com/photo-1666433723497-38d1d053185b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
-  },
-]
+const router = useRouter()
 </script>
 
 <template>
@@ -36,17 +15,18 @@ const posts: Post[] = [
       <div class="posts-page__banner">
         <div class="posts-page__banner-title-wrp">
           <h2 class="posts-page__banner-title">
-            {{ bannerInfo.title }}
+            {{ posts[0].title }}
           </h2>
           <app-button
             class="posts-page__back-btn"
             :icon-right="$icons.arrowLeft"
             modification="border-circle"
             color="tertiary"
+            @click="router.go(-1)"
           />
         </div>
         <p class="posts-page__banner-desc">
-          {{ bannerInfo.description }}
+          {{ posts[0].description }}
         </p>
         <app-button
           class="posts-page__banner-show-more-btn"
@@ -56,12 +36,16 @@ const posts: Post[] = [
         />
         <img
           class="posts-page__banner-img"
-          :src="bannerInfo.imageUrl"
-          :alt="bannerInfo.title"
+          :src="posts[0].imageUrl"
+          :alt="posts[0].title"
         />
       </div>
     </app-block>
-    <app-block v-for="post in posts" :key="post.id" class="posts-page__card">
+    <app-block
+      v-for="post in posts.slice(1)"
+      :key="post.id"
+      class="posts-page__card"
+    >
       <post-card :post="post" />
     </app-block>
   </div>
