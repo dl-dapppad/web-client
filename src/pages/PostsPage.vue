@@ -42,6 +42,7 @@ const posts: Post[] = [
             class="posts-page__back-btn"
             :icon-right="$icons.arrowLeft"
             modification="border-circle"
+            color="tertiary"
           />
         </div>
         <p class="posts-page__banner-desc">
@@ -49,6 +50,8 @@ const posts: Post[] = [
         </p>
         <app-button
           class="posts-page__banner-show-more-btn"
+          color="tertiary"
+          size="small"
           :text="$t('posts-page.show-more-btn')"
         />
         <img
@@ -115,6 +118,7 @@ const posts: Post[] = [
 }
 
 .posts-page__banner-show-more-btn {
+  align-self: center;
   grid-column: 1 / 2;
 }
 

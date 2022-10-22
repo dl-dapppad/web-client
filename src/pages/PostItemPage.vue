@@ -1,5 +1,11 @@
 <script lang="ts" setup>
 import { AppBlock, AppButton } from '@/common'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+
+const route = useRoute()
+
+const postId = computed(() => route.params.id)
 </script>
 
 <template>
@@ -19,6 +25,7 @@ import { AppBlock, AppButton } from '@/common'
             class="post-item-page__back-btn"
             :icon-left="$icons.arrowLeft"
             modification="border-circle"
+            color="tertiary"
           />
         </div>
       </div>
