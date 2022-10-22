@@ -44,7 +44,8 @@
     "terms-link": "terms of use and privacy policy"
   },
   "posts-page": {
-    "show-more-btn": "Show More"
+    "show-more-btn": "Show More",
+    "show-less-btn": "Show Less"
   },
   "login-form": {
     "login-lbl": "Login",

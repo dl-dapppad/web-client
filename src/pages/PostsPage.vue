@@ -1,12 +1,41 @@
 <script lang="ts" setup>
 import { AppBlock, AppButton, PostCard } from '@/common'
-import { Post } from '@/types'
 import postsData from '@/assets/posts.json'
 import { useRouter } from 'vue-router'
+import { Post } from '@/types'
+import { onMounted, ref } from 'vue'
+import { animate } from 'motion'
+
+const bannerDescription = ref<HTMLParagraphElement | null>(null)
+const defaultBannerDescriptionHeight = ref(0)
+
+const isBannerDescShown = ref(false)
 
 const posts = postsData as Post[]
 
 const router = useRouter()
+
+onMounted(() => {
+  if (!bannerDescription.value) return
+
+  defaultBannerDescriptionHeight.value = bannerDescription.value.clientHeight
+
+  animate(bannerDescription.value, {
+    height: '120px',
+  })
+})
+
+const handleShowMore = () => {
+  if (!bannerDescription.value) return
+
+  animate(bannerDescription.value, {
+    height: isBannerDescShown.value
+      ? '120px'
+      : `${defaultBannerDescriptionHeight.value}px`,
+  })
+
+  isBannerDescShown.value = !isBannerDescShown.value
+}
 </script>
 
 <template>
@@ -25,20 +54,27 @@ const router = useRouter()
             @click="router.go(-1)"
           />
         </div>
-        <p class="posts-page__banner-desc">
+        <p ref="bannerDescription" class="posts-page__banner-desc">
           {{ posts[0].description }}
         </p>
         <app-button
           class="posts-page__banner-show-more-btn"
           color="tertiary"
           size="small"
-          :text="$t('posts-page.show-more-btn')"
+          :text="
+            isBannerDescShown
+              ? $t('posts-page.show-less-btn')
+              : $t('posts-page.show-more-btn')
+          "
+          @click="handleShowMore"
         />
-        <img
-          class="posts-page__banner-img"
-          :src="posts[0].imageUrl"
-          :alt="posts[0].title"
-        />
+        <div class="posts-page__banner-img-wrp">
+          <img
+            class="posts-page__banner-img"
+            :src="posts[0].imageUrl"
+            :alt="posts[0].title"
+          />
+        </div>
       </div>
     </app-block>
     <app-block
@@ -69,6 +105,8 @@ const router = useRouter()
   grid-template-rows: repeat(3, max-content);
   grid-column-gap: toRem(56);
   padding: toRem(50) toRem(56) toRem(56) toRem(165);
+  width: 100%;
+  height: 100%;
 }
 
 .posts-page__banner-title-wrp {
@@ -94,11 +132,13 @@ const router = useRouter()
 }
 
 .posts-page__banner-desc {
+  overflow: hidden;
   grid-column: 1 / 2;
   margin: toRem(30) 0 toRem(20);
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
+  transition: height 0.35s ease-in-out;
 }
 
 .posts-page__banner-show-more-btn {
@@ -106,13 +146,22 @@ const router = useRouter()
   grid-column: 1 / 2;
 }
 
+.posts-page__banner-img-wrp {
+  position: relative;
+  grid-column: 2 / 3;
+  grid-row: 1 / -1;
+}
+
 .posts-page__banner-img {
   object-fit: cover;
   object-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-height: toRem(450);
   grid-column: 2 / 3;
   grid-row: 1 / -1;
-  width: 100%;
-  height: auto;
-  max-height: 100%;
 }
 </style>
