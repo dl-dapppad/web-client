@@ -227,9 +227,13 @@ const buttonClasses = computed(() =>
   &--tertiary {
     --app-button-flat-text: var(--text-primary-main);
     --app-button-flat-text-hover: var(--text-primary-main);
-    --app-button-flat-border: #{toRem(2)} solid var(--background-secondary);
-    --app-button-flat-border-hover: #{toRem(2)} solid var(--background-secondary);
-    --app-button-flat-border-active: #{toRem(2)} solid var(--background-secondary);
+
+    $tertiary-border: #{toRem(2)} solid var(--background-secondary);
+
+    --app-button-flat-border: $tertiary-border;
+
+    --app-button-flat-border-hover: $tertiary-border;
+    --app-button-flat-border-active: $tertiary-border;
 
     --app-button-filled-bg: var(--background-secondary);
     --app-button-filled-bg-hover: var(--background-secondary);

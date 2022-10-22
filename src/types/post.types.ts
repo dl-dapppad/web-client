@@ -2,5 +2,7 @@ export type Post = {
   id: string
   title: string
   description: string
-  imgUrl: string
+  imageUrl: string
+  bannerUrl: string
+  content: [string, string][]
 }

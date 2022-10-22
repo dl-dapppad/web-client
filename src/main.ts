@@ -5,6 +5,7 @@ import App from '@/App.vue'
 import log from 'loglevel'
 
 import VueToastificationPlugin from 'vue-toastification'
+import { MotionPlugin } from '@vueuse/motion'
 import { ICON_NAMES, ROUTE_NAMES } from '@/enums'
 import { createApp, getCurrentInstance, h } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -29,7 +30,12 @@ const app = createApp({
 
 log.setDefaultLevel(config.LOG_LEVEL)
 
-app.use(router).use(store).use(i18n).use(VueToastificationPlugin)
+app
+  .use(router)
+  .use(store)
+  .use(i18n)
+  .use(VueToastificationPlugin)
+  .use(MotionPlugin)
 
 app.config.globalProperties.$routes = ROUTE_NAMES
 app.config.globalProperties.$config = config
