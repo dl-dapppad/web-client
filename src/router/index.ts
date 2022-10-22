@@ -11,17 +11,17 @@ import { ROUTE_NAMES } from '@/enums'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/:catchAll(.*)',
-    redirect: { name: ROUTE_NAMES.uiKit },
+    redirect: { name: ROUTE_NAMES.posts },
   },
   {
-    path: '/ui-kit',
-    name: ROUTE_NAMES.uiKit,
-    component: () => import('@/pages/UiKitPage.vue'),
+    path: '/categories',
+    name: ROUTE_NAMES.posts,
+    component: () => import('@/pages/PostsPage.vue'),
   },
   {
-    path: '/web3',
-    name: ROUTE_NAMES.web3,
-    component: () => import('@/pages/Web3Page.vue'),
+    path: '/category/:id',
+    name: ROUTE_NAMES.postItem,
+    component: () => import('@/pages/PostItemPage.vue'),
   },
 ]
 
