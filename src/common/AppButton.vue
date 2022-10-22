@@ -35,7 +35,7 @@ const props = withDefaults(
   {
     text: '',
     scheme: 'filled',
-    modification: 'border-rounded',
+    modification: 'default',
     color: 'primary',
     size: 'medium',
     route: undefined,

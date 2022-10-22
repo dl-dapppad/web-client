@@ -1,4 +1,4 @@
-@import '../../static/branding/app-colors';
+@import 'app-colors';
 
 :root,
 :before,
@@ -7,6 +7,10 @@
   --white-rgb: #{$white-rgb};
   --black: #{$black};
   --black-rgb: #{$black-rgb};
+
+  --background-primary: #{$background-primary};
+  --background-secondary: #{$background-secondary};
+  --background-tertiary: #{$background-tertiary};
 
   /* status colors */
   --success-light: #{$success-light};
@@ -34,10 +38,6 @@
   --secondary-main: #{$secondary-main};
   --secondary-dark: #{$secondary-dark};
 
-  --tertiary-light: #{$tertiary-light};
-  --tertiary-main: #{$tertiary-main};
-  --tertiary-dark: #{$tertiary-dark};
-
   /* typography colors */
   --text-primary-light: #{$text-primary-light};
   --text-primary-main: #{$text-primary-main};
@@ -51,21 +51,20 @@
   --text-primary-invert-main: #{$text-primary-invert-main};
   --text-primary-invert-dark: #{$text-primary-invert-dark};
 
-  --text-secondary-invert-light: #{$text-secondary-invert-light};
-  --text-secondary-invert-main: #{$text-secondary-invert-main};
-  --text-secondary-invert-dark: #{$text-secondary-invert-dark};
-
   /* border colors */
   --border-primary-light: #{$border-primary-light};
   --border-primary-main: #{$border-primary-main};
   --border-primary-dark: #{$border-primary-dark};
 
+  --border-secondary-light: #{$border-secondary-light};
+  --border-secondary-main: #{$border-secondary-main};
+  --border-secondary-dark: #{$border-secondary-dark};
+
   /* App variables */
-  --app-bg: #{$app-bg};
   --app-txt: #{$text-primary-main};
   --app-font-family: 'Roboto', 'Arial', sans-serif;
-  --app-padding-right: #{toRem(120)};
-  --app-padding-left: #{toRem(120)};
+  --app-padding-right: #{toRem(60)};
+  --app-padding-left: #{toRem(60)};
 
   @include respond-to(small) {
     --app-padding-right: #{toRem(24)};
@@ -77,7 +76,7 @@
   /* Field variables */
 
   /* --------------------------------------- */
-  --field-bg: var(--app-bg);
+  --field-bg: var(--background-primary);
 
   /* label */
   --field-label: var(--text-primary-main);

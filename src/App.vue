@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppNavbar } from '@/common'
+import { AppNavbar, AppFooter } from '@/common'
 
 import { ErrorHandler } from '@/helpers/error-handler'
 import { ref } from 'vue'
@@ -44,6 +44,7 @@ init()
         <component class="app__main" :is="Component" />
       </transition>
     </router-view>
+    <app-footer class="app__footer" />
   </div>
 </template>
 
@@ -51,12 +52,8 @@ init()
 .app__container {
   overflow: hidden;
   display: grid;
-  grid-template-rows: toRem(85) 1fr max-content;
+  grid-template-rows: max-content 1fr max-content;
   flex: 1;
-
-  @include respond-to(small) {
-    grid-template-rows: max-content 1fr max-content;
-  }
 }
 
 .app__main {
