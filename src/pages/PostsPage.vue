@@ -34,14 +34,16 @@ const posts: Post[] = [
   <div class="posts-page">
     <app-block class="posts-page__banner-wrp">
       <div class="posts-page__banner">
-        <h2 class="posts-page__banner-title">
+        <div class="posts-page__banner-title-wrp">
+          <h2 class="posts-page__banner-title">
+            {{ bannerInfo.title }}
+          </h2>
           <app-button
             class="posts-page__back-btn"
             :icon-right="$icons.arrowLeft"
             modification="border-circle"
           />
-          {{ bannerInfo.title }}
-        </h2>
+        </div>
         <p class="posts-page__banner-desc">
           {{ bannerInfo.description }}
         </p>
@@ -82,8 +84,11 @@ const posts: Post[] = [
   padding: toRem(50) toRem(56) toRem(56) toRem(165);
 }
 
-.posts-page__banner-title {
+.posts-page__banner-title-wrp {
   position: relative;
+}
+
+.posts-page__banner-title {
   grid-column: 1 / 2;
   font-weight: 900;
   font-size: toRem(70);

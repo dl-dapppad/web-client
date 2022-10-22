@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/PostsPage.vue'),
   },
   {
-    path: '/category/:id',
+    path: '/categories/:id',
     name: ROUTE_NAMES.postItem,
     component: () => import('@/pages/PostItemPage.vue'),
   },
