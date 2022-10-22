@@ -43,6 +43,9 @@
     "copyright": "All rights reserved",
     "terms-link": "terms of use and privacy policy"
   },
+  "posts-page": {
+    "show-more-btn": "Show More"
+  },
   "login-form": {
     "login-lbl": "Login",
     "password-lbl": "Password",
