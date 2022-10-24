@@ -175,7 +175,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
   line-height: 1.3;
   letter-spacing: 0.1em;
   font-weight: 700;
-  background-color: var(--background-primary);
+  background-color: var(--field-bg);
   transform: translateY(-50%);
 
   @include field-label;
