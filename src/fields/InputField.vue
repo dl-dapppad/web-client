@@ -63,7 +63,7 @@ const listeners = computed(() => ({
 const inputClasses = computed(() =>
   [
     ...(slots.nodeLeft ? ['input-field--node-left'] : []),
-    ...(slots.nodeRight || isPasswordType.value
+    ...(slots.nodeRight || isPasswordType.value || props.errorMessage
       ? ['input-field--node-right']
       : []),
     ...(isDisabled.value ? ['input-field--disabled'] : []),
@@ -172,6 +172,9 @@ const setHeightCSSVar = (element: HTMLElement) => {
   top: 0;
   left: var(--field-padding-left);
   font-size: toRem(12);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  font-weight: 700;
   background-color: var(--background-primary);
   transform: translateY(-50%);
 
@@ -185,12 +188,15 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
   .input-field--error:not(:focus):not(:placeholder-shown) & {
     color: var(--field-error);
-    font-weight: 700;
   }
 
   .input-field__input:not(:focus):placeholder-shown + & {
     top: 50%;
     color: var(--field-label);
+    font-size: toRem(16);
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0.1em;
   }
 
   .input-field__input:not([disabled]):focus ~ & {
@@ -201,6 +207,10 @@ const setHeightCSSVar = (element: HTMLElement) => {
   .input-field__input:not(:focus):placeholder-shown:-webkit-autofill + & {
     top: 50%;
     color: var(--field-label);
+    font-size: toRem(16);
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0.1em;
   }
 }
 
@@ -212,6 +222,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
 .input-field__input {
   padding: var(--field-padding);
+  transition-property: box-shadow;
 
   @include field-text;
 
