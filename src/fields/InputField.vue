@@ -182,8 +182,8 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
   .input-field__input:not(:placeholder-shown) + & {
     top: 0;
-    color: var(--text-primary-main);
-    border-color: var(--border-primary-dark);
+    color: var(--field-text);
+    border-color: var(--field-border-hover);
   }
 
   .input-field--error:not(:focus):not(:placeholder-shown) & {
