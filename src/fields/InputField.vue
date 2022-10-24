@@ -280,7 +280,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
   &:not([disabled]):focus {
     box-sizing: border-box;
     box-shadow: 0 0 0 toRem(1) var(--field-border-focus);
-    border-color: var(--secondary-main);
+    border-color: var(--field-border-focus);
   }
 
   &:not([disabled]):not(:focus):hover {
