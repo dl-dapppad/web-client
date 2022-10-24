@@ -80,9 +80,9 @@
   --field-bg: var(--background-primary);
 
   /* label */
-  --field-label: var(--text-primary-main);
+  --field-label: var(--text-secondary-main);
   --field-label-hover: var(--text-primary-main);
-  --field-label-focus: var(--text-primary-main);
+  --field-label-focus: var(--secondary-main);
   --field-label-font-size: #{toRem(14)};
   --field-label-line-height: 1.4;
 
@@ -94,8 +94,8 @@
 
   /* border */
   --field-border: var(--border-primary-main);
-  --field-border-hover: var(--primary-light);
-  --field-border-focus: var(--primary-light);
+  --field-border-hover: var(--primary-main);
+  --field-border-focus: var(--secondary-main);
 
   /* transition duration */
   --field-transition-duration: 0.2s;

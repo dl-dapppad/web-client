@@ -46,13 +46,12 @@ $media-breakpoints: (
   font-size: var(--field-label-font-size);
   line-height: var(--field-label-line-height);
   color: var(--field-label);
-  transition: color var(--field-transition-duration) ease;
+  transition: all var(--field-transition-duration) ease;
   margin-bottom: toRem(8);
 }
 
 @mixin field-border {
   border: toRem(1) solid var(--field-border);
-  border-radius: toRem(10);
 }
 
 @mixin field-placeholder {
