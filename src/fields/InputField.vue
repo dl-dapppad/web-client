@@ -94,9 +94,6 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
 <template>
   <div class="input-field" :class="inputClasses">
-    <label v-if="label" :for="`input-field--${uid}`" class="input-field__label">
-      {{ label }}
-    </label>
     <div class="input-field__input-wrp">
       <div v-if="$slots.nodeLeft" class="input-field__node-left-wrp">
         <slot name="nodeLeft" />
@@ -114,8 +111,15 @@ const setHeightCSSVar = (element: HTMLElement) => {
         :max="max"
         :disabled="isDisabled || isReadonly"
       />
+      <label
+        v-if="label"
+        :for="`input-field--${uid}`"
+        class="input-field__label"
+      >
+        {{ label }}
+      </label>
       <div
-        v-if="$slots.nodeRight || isPasswordType"
+        v-if="$slots.nodeRight || isPasswordType || props.errorMessage"
         class="input-field__node-right-wrp"
       >
         <button
@@ -128,6 +132,11 @@ const setHeightCSSVar = (element: HTMLElement) => {
             :name="isPasswordShown ? $icons.eye : $icons.eyeOff"
           />
         </button>
+        <icon
+          v-else-if="props.errorMessage"
+          class="input-field__error-icon"
+          :name="$icons.exclamation"
+        />
         <slot v-else name="nodeRight" />
       </div>
     </div>
@@ -158,14 +167,40 @@ const setHeightCSSVar = (element: HTMLElement) => {
 }
 
 .input-field__label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  position: absolute;
+  padding: toRem(4);
+  top: 0;
+  left: var(--field-padding-left);
+  font-size: toRem(12);
+  background-color: var(--background-primary);
+  transform: translateY(-50%);
 
   @include field-label;
 
-  .input-field--error & {
+  .input-field__input:not(:placeholder-shown) + & {
+    top: 0;
+    color: var(--text-primary-main);
+    border-color: var(--border-primary-dark);
+  }
+
+  .input-field--error:not(:focus):not(:placeholder-shown) & {
     color: var(--field-error);
+    font-weight: 700;
+  }
+
+  .input-field__input:not(:focus):placeholder-shown + & {
+    top: 50%;
+    color: var(--field-label);
+  }
+
+  .input-field__input:not([disabled]):focus ~ & {
+    color: var(--field-label-focus);
+    font-weight: 700;
+  }
+
+  .input-field__input:not(:focus):placeholder-shown:-webkit-autofill + & {
+    top: 50%;
+    color: var(--field-label);
   }
 }
 
@@ -177,7 +212,6 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
 .input-field__input {
   padding: var(--field-padding);
-  transition-property: box-shadow;
 
   @include field-text;
 
@@ -221,6 +255,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
   .input-field--error & {
     border-color: var(--field-error);
+    box-shadow: 0 0 0 toRem(1) var(--field-error);
   }
 
   .input-field--node-left & {
@@ -233,8 +268,8 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
   &:not([disabled]):focus {
     box-sizing: border-box;
-    box-shadow: 0 0 0 toRem(1.5) var(--field-border-focus);
-    border-color: var(--field-border-focus);
+    box-shadow: 0 0 0 toRem(1) var(--field-border-focus);
+    border-color: var(--secondary-main);
   }
 
   &:not([disabled]):not(:focus):hover {
@@ -263,6 +298,12 @@ const setHeightCSSVar = (element: HTMLElement) => {
 .input-field__password-icon {
   max-width: toRem(24);
   max-height: toRem(24);
+}
+
+.input-field__error-icon {
+  max-width: toRem(24);
+  max-height: toRem(24);
+  color: var(--field-error);
 }
 
 .input-field__icon {
