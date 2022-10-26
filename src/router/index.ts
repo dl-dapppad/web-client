@@ -23,6 +23,11 @@ const routes: Array<RouteRecordRaw> = [
     name: ROUTE_NAMES.postItem,
     component: () => import('@/pages/PostItemPage.vue'),
   },
+  {
+    path: '/categories/:id/deploy',
+    name: ROUTE_NAMES.postItemDeployment,
+    component: () => import('@/forms/DeployForm.vue'),
+  },
 ]
 
 const router = createRouter({

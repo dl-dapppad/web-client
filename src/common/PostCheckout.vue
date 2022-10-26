@@ -1,7 +1,14 @@
 <script lang="ts" setup>
 import { AppButton, AppBlock, Icon } from '@/common'
+
 import { copyToClipboard } from '@/helpers'
 import { cropAddress } from '@/helpers'
+import { useRoute } from '@/router'
+import { computed } from 'vue'
+
+const route = useRoute()
+
+const postId = computed(() => route.params.id)
 
 const postCheckoutMetadata = {
   currentNetwork: 'Ethereum',
@@ -148,9 +155,14 @@ const postCheckoutMetadata = {
               {{ postCheckoutMetadata.currentPrice }}
             </span>
           </div>
-          <app-button class="post-checkout__buy-now-btn">
-            {{ $t('post-checkout.buy-now-btn') }}
-          </app-button>
+          <app-button
+            class="post-checkout__buy-now-btn"
+            :text="$t('post-checkout.buy-now-btn')"
+            :route="{
+              name: $routes.postItemDeployment,
+              params: { id: postId },
+            }"
+          />
           <div class="post-checkout__buy-description">
             {{ $t('post-checkout.buy-description-lbl') }}
           </div>

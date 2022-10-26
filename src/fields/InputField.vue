@@ -167,6 +167,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
 }
 
 .input-field__label {
+  pointer-events: none;
   position: absolute;
   padding: toRem(4);
   top: 0;
