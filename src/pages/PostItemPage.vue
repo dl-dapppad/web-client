@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppBlock, AppButton } from '@/common'
+import { AppBlock, AppButton, PostCheckout } from '@/common'
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import postsData from '@/assets/posts.json'
@@ -37,6 +37,7 @@ const post = computed(() => posts.find(el => el.id === postId.value))
         </div>
       </div>
     </app-block>
+    <post-checkout />
     <app-block class="post-item-page__content-wrp">
       <div v-if="post" class="post-item-page__content">
         <template v-for="([key, value], idx) in post.content">

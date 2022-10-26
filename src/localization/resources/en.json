@@ -63,5 +63,13 @@
     "balance-lbl": "Balance",
     "transfer-lbl": "Transfer",
     "mint-lbl": "Mint"
+  },
+  "post-checkout": {
+    "current-network-lbl": "Current network",
+    "sales-lbl": "Number of sales",
+    "decrease-percent-lbl": "Decrease percent",
+    "cashback-percent-lbl": "Cashback percent",
+    "implementation-address-lbl": "Implementation address",
+    "factory-address-lbl": "Factory address"
   }
 }
