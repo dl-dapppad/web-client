@@ -105,6 +105,7 @@ const postCheckoutMetadata = {
   width: 50%;
   letter-spacing: 0.1em;
 }
+
 .post-checkout__top-inner {
   padding: toRem(40) toRem(110);
   display: flex;
