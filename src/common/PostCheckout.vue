@@ -72,7 +72,7 @@ const postCheckoutMetadata = {
               {{ cropAddress(postCheckoutMetadata.implementation) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
-                :name="$icons.clipboardCopy"
+                :name="$icons.duplicate"
               />
             </span>
           </div>
@@ -88,7 +88,7 @@ const postCheckoutMetadata = {
               {{ cropAddress(postCheckoutMetadata.factory) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
-                :name="$icons.clipboardCopy"
+                :name="$icons.duplicate"
               />
             </span>
           </div>
