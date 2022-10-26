@@ -58,12 +58,14 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
             <template #default>
               <div class="erc20-deploy-form__form-control">
                 <input-field
+                  scheme="secondary"
                   v-model="form.paymentToken"
                   :label="'Payment token'"
                   :error-message="getFieldErrorMessage('paymentToken')"
                   @blur="touchField('paymentToken')"
                 />
                 <input-field
+                  scheme="secondary"
                   v-model="form.tokenName"
                   :label="'Token name'"
                   :error-message="getFieldErrorMessage('tokenName')"
@@ -77,30 +79,35 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
           </h4>
           <div class="erc20-deploy-form__form-control">
             <input-field
+              scheme="secondary"
               v-model="form.tokenSymbol"
               :label="'Tokens symbol'"
               :error-message="getFieldErrorMessage('tokenSymbol')"
               @blur="touchField('tokenSymbol')"
             />
             <input-field
+              scheme="secondary"
               v-model="form.mintAmount"
               :label="'Mint amount'"
               :error-message="getFieldErrorMessage('mintAmount')"
               @blur="touchField('mintAmount')"
             />
             <input-field
+              scheme="secondary"
               v-model="form.mintReceiver"
               :label="'Mint receiver'"
               :error-message="getFieldErrorMessage('mintReceiver')"
               @blur="touchField('mintReceiver')"
             />
             <input-field
+              scheme="secondary"
               v-model="form.tokenDecimals"
               :label="'Decimals'"
               :error-message="getFieldErrorMessage('tokenDecimals')"
               @blur="touchField('tokenDecimals')"
             />
             <input-field
+              scheme="secondary"
               v-model="form.cap"
               :label="'Cap'"
               :error-message="getFieldErrorMessage('cap')"
