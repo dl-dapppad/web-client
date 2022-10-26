@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppBlock, Icon } from '@/common'
+import { AppButton, AppBlock, Icon } from '@/common'
 import { copyToClipboard } from '@/helpers'
 import { cropAddress } from '@/helpers'
 
@@ -10,6 +10,10 @@ const postCheckoutMetadata = {
   cashbackPercent: 12,
   implementation: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
   factory: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
+  minPrice: '12 345.1234 ETH',
+  reward: '12 345.1234 DAPP',
+  distribution: '200.1234 USDT',
+  currentPrice: '12 345.1234 USDT',
 }
 </script>
 
@@ -95,10 +99,72 @@ const postCheckoutMetadata = {
         </div>
       </div>
     </app-block>
+    <app-block class="post-checkout__top">
+      <div class="post-checkout__top-inner">
+        <div class="post-checkout__about">
+          <div class="post-checkout__item">
+            <span class="post-checkout__key">
+              <icon
+                class="post-checkout__icon"
+                :name="$icons.informationCircle"
+              />
+              {{ $t('post-checkout.minimal-price-lbl') }}
+            </span>
+            <span class="post-checkout__value">
+              {{ postCheckoutMetadata.minPrice }}
+            </span>
+          </div>
+          <div class="post-checkout__item">
+            <span class="post-checkout__key">
+              <icon
+                class="post-checkout__icon"
+                :name="$icons.informationCircle"
+              />
+              {{ $t('post-checkout.reward-lbl') }}
+            </span>
+            <span class="post-checkout__value">
+              {{ postCheckoutMetadata.reward }}
+            </span>
+          </div>
+          <div class="post-checkout__item">
+            <span class="post-checkout__key">
+              <icon
+                class="post-checkout__icon"
+                :name="$icons.informationCircle"
+              />
+              {{ $t('post-checkout.distribution-lbl') }}
+            </span>
+            <span class="post-checkout__value">
+              {{ postCheckoutMetadata.distribution }}
+            </span>
+          </div>
+        </div>
+        <div class="post-checkout__buy">
+          <div class="post-checkout__item">
+            <span class="post-checkout__key">
+              {{ $t('post-checkout.current-price-lbl') }}
+            </span>
+            <span class="post-checkout__value">
+              {{ postCheckoutMetadata.currentPrice }}
+            </span>
+          </div>
+          <app-button class="post-checkout__buy-now-btn">
+            {{ $t('post-checkout.buy-now-btn') }}
+          </app-button>
+          <div class="post-checkout__buy-description">
+            {{ $t('post-checkout.buy-description-lbl') }}
+          </div>
+        </div>
+      </div>
+    </app-block>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.post-checkout {
+  display: flex;
+}
+
 .post-checkout__top {
   width: 50%;
   letter-spacing: 0.1em;
@@ -108,13 +174,21 @@ const postCheckoutMetadata = {
   padding: toRem(40) toRem(110);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: toRem(40);
+  height: 100%;
 }
 
 .post-checkout__about {
   display: flex;
   flex-direction: column;
   gap: toRem(23);
+}
+
+.post-checkout__buy {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(10);
 }
 
 .post-checkout__item {
@@ -158,5 +232,17 @@ const postCheckoutMetadata = {
   .post-checkout__address & {
     color: var(--text-primary-main);
   }
+}
+
+.post-checkout__buy-now-btn {
+  width: 100%;
+  font-size: toRem(20);
+}
+
+.post-checkout__buy-description {
+  color: var(--text-secondary-main);
+  font-size: toRem(14);
+  text-align: center;
+  padding: 0 toRem(30);
 }
 </style>

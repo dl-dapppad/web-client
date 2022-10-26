@@ -70,6 +70,12 @@
     "decrease-percent-lbl": "Decrease percent",
     "cashback-percent-lbl": "Cashback percent",
     "implementation-address-lbl": "Implementation address",
-    "factory-address-lbl": "Factory address"
+    "factory-address-lbl": "Factory address",
+    "minimal-price-lbl": "Minimal price",
+    "reward-lbl": "Reward",
+    "distribution-lbl": "Distribution",
+    "current-price-lbl": "Current price",
+    "buy-now-btn": "Buy now",
+    "buy-description-lbl": "First, the contract will be deployed, and then you can configure it"
   }
 }
