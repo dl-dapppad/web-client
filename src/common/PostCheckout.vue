@@ -5,11 +5,11 @@ import { cropAddress } from '@/helpers'
 
 const postCheckoutMetadata = {
   currentNetwork: 'Ethereum',
-  sales: 20,
-  decrease: 12,
-  cashback: 12,
-  implementationAddress: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
-  factoryAddress: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
+  salesCount: 20,
+  decreasePercent: 12,
+  cashbackPercent: 12,
+  implementation: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
+  factory: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
 }
 </script>
 
@@ -31,7 +31,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.sales-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ postCheckoutMetadata.sales }}
+              {{ postCheckoutMetadata.salesCount }}
             </span>
           </div>
           <div class="post-checkout__item">
@@ -43,7 +43,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.decrease-percent-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ `${postCheckoutMetadata.decrease}%` }}
+              {{ `${postCheckoutMetadata.decreasePercent}%` }}
             </span>
           </div>
           <div class="post-checkout__item">
@@ -55,7 +55,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.cashback-percent-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ `${postCheckoutMetadata.cashback}%` }}
+              {{ `${postCheckoutMetadata.cashbackPercent}%` }}
             </span>
           </div>
         </div>
@@ -65,13 +65,11 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.implementation-address-lbl') }}
             </span>
             <span
-              :title="postCheckoutMetadata.implementationAddress"
+              :title="postCheckoutMetadata.implementation"
               class="post-checkout__address"
-              @click="
-                copyToClipboard(postCheckoutMetadata.implementationAddress)
-              "
+              @click="copyToClipboard(postCheckoutMetadata.implementation)"
             >
-              {{ cropAddress(postCheckoutMetadata.implementationAddress) }}
+              {{ cropAddress(postCheckoutMetadata.implementation) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
                 :name="$icons.clipboardCopy"
@@ -83,11 +81,11 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.factory-address-lbl') }}
             </span>
             <span
-              :title="postCheckoutMetadata.factoryAddress"
+              :title="postCheckoutMetadata.factory"
               class="post-checkout__address"
-              @click="copyToClipboard(postCheckoutMetadata.factoryAddress)"
+              @click="copyToClipboard(postCheckoutMetadata.factory)"
             >
-              {{ cropAddress(postCheckoutMetadata.factoryAddress) }}
+              {{ cropAddress(postCheckoutMetadata.factory) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
                 :name="$icons.clipboardCopy"
