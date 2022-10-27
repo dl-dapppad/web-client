@@ -2,10 +2,15 @@
 import { AppBlock, AppButton, Collapse } from '@/common'
 import { InputField } from '@/fields'
 
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { useRouter } from 'vue-router'
+import { ErrorHandler } from '@/helpers'
+import Modal from '@/common/Modal.vue'
+import DeploySuccessMessage from '@/modules/ERC20/common/DeploySuccessMessage.vue'
+
+const isSuccessModalShown = ref(false)
 
 const router = useRouter()
 
@@ -31,10 +36,18 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
     cap: { required },
   },
 )
+
+const submit = async () => {
+  try {
+    isSuccessModalShown.value = true
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
 </script>
 
 <template>
-  <div class="erc20-deploy-form">
+  <form class="erc20-deploy-form" @submit.prevent="submit">
     <div class="erc20-deploy-form__title-wrp">
       <app-button
         class="erc20-deploy-form__back-btn"
@@ -127,6 +140,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
             />
             <app-button
               class="erc20-deploy-form__submit-btn"
+              type="submit"
               :text="'Buy'"
               size="small"
               :disabled="!isFieldsValid"
@@ -135,7 +149,12 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
         </div>
       </div>
     </app-block>
-  </div>
+    <modal v-model:is-shown="isSuccessModalShown">
+      <template #default="{ modal }">
+        <deploy-success-message @submit="modal.close" @close="modal.close" />
+      </template>
+    </modal>
+  </form>
 </template>
 
 <style lang="scss" scoped>
