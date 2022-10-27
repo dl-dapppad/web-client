@@ -14,6 +14,50 @@ const router = useRouter()
 const postId = computed(() => route.params.id)
 
 const post = computed(() => posts.find(el => el.id === postId.value))
+
+const startPrice = 5000
+const minPrice = 100
+const decreasePercent = 5
+const salesCount = 120
+
+const getPriceArr = (
+  startPrice: number,
+  minPrice: number,
+  decreasePercent: number,
+  salesCount: number,
+) => {
+  const result: number[] = []
+  let currentPrice = startPrice
+  for (let i = 0; i < salesCount; i++) {
+    result.push(currentPrice)
+    currentPrice *= 1 - decreasePercent / 100
+    currentPrice = currentPrice < minPrice ? minPrice : currentPrice
+  }
+  return result
+}
+
+const formatterChartFunc = (sales: number, price: number) => {
+  return `Count of sales: ${sales + 1}<br />Price: ${
+    Math.round(price * 100) / 100
+  }<br />Cashback: ${
+    Math.round(price * postCheckoutMetadata.cashbackPercent) / 100
+  }`
+}
+
+const postCheckoutMetadata = {
+  currentNetwork: 'Ethereum',
+  salesCount: 20,
+  decreasePercent: 5,
+  cashbackPercent: 10,
+  implementation: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
+  factory: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
+  minPrice: '12 345.1234 ETH',
+  reward: '12 345.1234 DAPP',
+  distribution: '200.1234 USDT',
+  currentPrice: '12 345.1234 USDT',
+  chartData: getPriceArr(startPrice, minPrice, decreasePercent, salesCount),
+  startPrice: 5000,
+}
 </script>
 
 <template>
@@ -37,7 +81,10 @@ const post = computed(() => posts.find(el => el.id === postId.value))
         </div>
       </div>
     </app-block>
-    <post-checkout />
+    <post-checkout
+      :post-checkout-metadata="postCheckoutMetadata"
+      :formatter-chart-func="formatterChartFunc"
+    />
     <app-block class="post-item-page__content-wrp">
       <div v-if="post" class="post-item-page__content">
         <template v-for="([key, value], idx) in post.content">

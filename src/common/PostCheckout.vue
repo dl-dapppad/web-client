@@ -3,17 +3,29 @@ import { AppButton, AppBlock, Icon, LineChart } from '@/common'
 import { copyToClipboard } from '@/helpers'
 import { cropAddress } from '@/helpers'
 
-const postCheckoutMetadata = {
-  currentNetwork: 'Ethereum',
-  salesCount: 20,
-  decreasePercent: 12,
-  cashbackPercent: 12,
-  implementation: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
-  factory: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
-  minPrice: '12 345.1234 ETH',
-  reward: '12 345.1234 DAPP',
-  distribution: '200.1234 USDT',
-  currentPrice: '12 345.1234 USDT',
+const props = defineProps<{
+  postCheckoutMetadata: {
+    currentNetwork: string
+    salesCount: number
+    decreasePercent: number
+    cashbackPercent: number
+    implementation: string
+    factory: string
+    minPrice: string
+    reward: string
+    distribution: string
+    currentPrice: string
+    chartData: number[]
+    startPrice: number
+  }
+  formatterChartFunc: {
+    (xValue: number, yValue: number): string
+  }
+}>()
+
+const chartData = {
+  data: props.postCheckoutMetadata.chartData,
+  yMaxChart: props.postCheckoutMetadata.startPrice,
 }
 </script>
 
@@ -27,7 +39,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.current-network-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ postCheckoutMetadata.currentNetwork }}
+              {{ props.postCheckoutMetadata.currentNetwork }}
             </span>
           </div>
           <div class="post-checkout__item">
@@ -35,7 +47,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.sales-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ postCheckoutMetadata.salesCount }}
+              {{ props.postCheckoutMetadata.salesCount }}
             </span>
           </div>
           <div class="post-checkout__item">
@@ -47,7 +59,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.decrease-percent-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ `${postCheckoutMetadata.decreasePercent}%` }}
+              {{ `${props.postCheckoutMetadata.decreasePercent}%` }}
             </span>
           </div>
           <div class="post-checkout__item">
@@ -59,7 +71,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.cashback-percent-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ `${postCheckoutMetadata.cashbackPercent}%` }}
+              {{ `${props.postCheckoutMetadata.cashbackPercent}%` }}
             </span>
           </div>
         </div>
@@ -69,11 +81,13 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.implementation-address-lbl') }}
             </span>
             <span
-              :title="postCheckoutMetadata.implementation"
+              :title="props.postCheckoutMetadata.implementation"
               class="post-checkout__address"
-              @click="copyToClipboard(postCheckoutMetadata.implementation)"
+              @click="
+                copyToClipboard(props.postCheckoutMetadata.implementation)
+              "
             >
-              {{ cropAddress(postCheckoutMetadata.implementation) }}
+              {{ cropAddress(props.postCheckoutMetadata.implementation) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
                 :name="$icons.duplicate"
@@ -85,11 +99,11 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.factory-address-lbl') }}
             </span>
             <span
-              :title="postCheckoutMetadata.factory"
+              :title="props.postCheckoutMetadata.factory"
               class="post-checkout__address"
-              @click="copyToClipboard(postCheckoutMetadata.factory)"
+              @click="copyToClipboard(props.postCheckoutMetadata.factory)"
             >
-              {{ cropAddress(postCheckoutMetadata.factory) }}
+              {{ cropAddress(props.postCheckoutMetadata.factory) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
                 :name="$icons.duplicate"
@@ -109,7 +123,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.minimal-price-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ postCheckoutMetadata.minPrice }}
+              {{ props.postCheckoutMetadata.minPrice }}
             </span>
           </div>
           <div class="post-checkout__item">
@@ -121,7 +135,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.reward-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ postCheckoutMetadata.reward }}
+              {{ props.postCheckoutMetadata.reward }}
             </span>
           </div>
           <div class="post-checkout__item">
@@ -133,7 +147,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.distribution-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ postCheckoutMetadata.distribution }}
+              {{ props.postCheckoutMetadata.distribution }}
             </span>
           </div>
         </div>
@@ -143,7 +157,7 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.current-price-lbl') }}
             </span>
             <span class="post-checkout__value">
-              {{ postCheckoutMetadata.currentPrice }}
+              {{ props.postCheckoutMetadata.currentPrice }}
             </span>
           </div>
           <app-button class="post-checkout__buy-now-btn">
@@ -157,10 +171,14 @@ const postCheckoutMetadata = {
     </div>
     <app-block class="post-checkout__bottom">
       <div class="post-checkout__bottom-inner">
-        <h2 class="post-checkout__buttom-title">
+        <h2 class="post-checkout__bottom-title">
           {{ $t('post-checkout.title-txt') }}
         </h2>
-        <line-chart class="post-checkout__chart" />
+        <line-chart
+          class="post-checkout__chart"
+          :chart-data="chartData"
+          :get-formatter-text="props.formatterChartFunc"
+        />
         <span class="post-checkout__bottom-description">
           {{ $t('post-checkout.description-txt') }}
         </span>
@@ -267,7 +285,7 @@ const postCheckoutMetadata = {
   max-width: 100%;
 }
 
-.post-checkout__buttom-title {
+.post-checkout__bottom-title {
   font-size: toRem(36);
   font-weight: 900;
 }

@@ -4,29 +4,16 @@ import Highcharts from 'highcharts'
 
 const chartInstanceElement = ref<HTMLElement | undefined>()
 
-const startPrice = 5000
-const minPrice = 100
-const decreasePercent = 5
-const cashbackPercent = 10
-const salesCount = 120
-
-const getPriceArr = (
-  startPrice: number,
-  minPrice: number,
-  decreasePercent: number,
-  salesCount: number,
-) => {
-  const result: number[] = []
-  let currentPrice = startPrice
-  for (let i = 0; i < salesCount; i++) {
-    result.push(currentPrice)
-    currentPrice *= 1 - decreasePercent / 100
-    currentPrice = currentPrice < minPrice ? minPrice : currentPrice
+const props = defineProps<{
+  chartData: {
+    data: number[]
+    yMaxChart?: number
   }
-  return result
-}
+  getFormatterText: {
+    (x: number, y: number): string
+  }
+}>()
 
-const dataArr = getPriceArr(startPrice, minPrice, decreasePercent, salesCount)
 Highcharts.setOptions({
   chart: {
     style: {
@@ -63,7 +50,7 @@ onMounted(() => {
           },
           gridLineColor: 'var(--border-primary-light)',
           gridLineWidth: 'toRem(1)',
-          max: startPrice,
+          max: props.chartData.yMaxChart ? props.chartData.yMaxChart : null,
         },
         xAxis: {
           title: {
@@ -82,17 +69,10 @@ onMounted(() => {
         },
         tooltip: {
           formatter() {
-            return `Count of sales: ${(this.x as number) + 1}<br />Price: ${
-              Math.round((this.y as number) * 100) / 100
-            }<br />Cashback: ${
-              Math.round((this.y as number) * cashbackPercent) / 100
-            }`
+            return props.getFormatterText(this.x as number, this.y as number)
           },
         },
         plotOptions: {
-          spline: {
-            color: 'var(--secondary-main)',
-          },
           series: {
             marker: {
               enabled: false,
@@ -109,10 +89,26 @@ onMounted(() => {
               },
             },
           },
+          area: {
+            fillColor: {
+              linearGradient: {
+                x1: 0,
+                y1: 0,
+                x2: 0,
+                y2: 1,
+              },
+              stops: [
+                [0, 'var(--secondary-main)'],
+                [1, 'rgba(255,255,255,0)'],
+              ],
+            },
+          },
         },
         series: [
           {
-            data: dataArr,
+            data: props.chartData.data,
+            type: 'area',
+            color: 'var(--secondary-main)',
           },
         ],
       },
