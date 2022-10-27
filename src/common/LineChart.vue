@@ -9,9 +9,6 @@ const props = defineProps<{
     data: number[]
     yMaxChart?: number
   }
-  getFormatterText: {
-    (x: number, y: number): string
-  }
 }>()
 
 Highcharts.setOptions({
@@ -66,11 +63,6 @@ onMounted(() => {
         },
         legend: {
           enabled: false,
-        },
-        tooltip: {
-          formatter() {
-            return props.getFormatterText(this.x as number, this.y as number)
-          },
         },
         plotOptions: {
           series: {

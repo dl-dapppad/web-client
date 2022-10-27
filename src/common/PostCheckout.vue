@@ -18,9 +18,6 @@ const props = defineProps<{
     chartData: number[]
     startPrice: number
   }
-  formatterChartFunc: {
-    (xValue: number, yValue: number): string
-  }
 }>()
 
 const chartData = {
@@ -174,11 +171,7 @@ const chartData = {
         <h2 class="post-checkout__bottom-title">
           {{ $t('post-checkout.title-txt') }}
         </h2>
-        <line-chart
-          class="post-checkout__chart"
-          :chart-data="chartData"
-          :get-formatter-text="props.formatterChartFunc"
-        />
+        <line-chart class="post-checkout__chart" :chart-data="chartData" />
         <span class="post-checkout__bottom-description">
           {{ $t('post-checkout.description-txt') }}
         </span>

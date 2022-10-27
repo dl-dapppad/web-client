@@ -15,34 +15,20 @@ const postId = computed(() => route.params.id)
 
 const post = computed(() => posts.find(el => el.id === postId.value))
 
-const startPrice = 5000
-const minPrice = 100
-const decreasePercent = 5
-const salesCount = 120
-
-const getPriceArr = (
-  startPrice: number,
-  minPrice: number,
-  decreasePercent: number,
-  salesCount: number,
-) => {
-  const result: number[] = []
-  let currentPrice = startPrice
-  for (let i = 0; i < salesCount; i++) {
-    result.push(currentPrice)
-    currentPrice *= 1 - decreasePercent / 100
-    currentPrice = currentPrice < minPrice ? minPrice : currentPrice
-  }
-  return result
-}
-
-const formatterChartFunc = (sales: number, price: number) => {
-  return `Count of sales: ${sales + 1}<br />Price: ${
-    Math.round(price * 100) / 100
-  }<br />Cashback: ${
-    Math.round(price * postCheckoutMetadata.cashbackPercent) / 100
-  }`
-}
+const chartData = [
+  5000, 4750, 4512.5, 4286.88, 4072.53, 3868.9, 3675.46, 3491.69, 3317.1,
+  3151.25, 2993.68, 2844, 2701.8, 2566.71, 2438.37, 2316.46, 2200.63, 2090.6,
+  1986.07, 1886.77, 1792.43, 1702.81, 1617.67, 1536.78, 1459.95, 1386.95,
+  1317.6, 1251.72, 1189.13, 1129.68, 1073.19, 1019.53, 968.56, 920.13, 874.12,
+  830.42, 788.9, 749.45, 711.98, 676.38, 642.56, 610.43, 579.91, 550.92, 523.37,
+  497.2, 472.34, 448.72, 426.29, 404.97, 384.72, 365.49, 347.21, 329.85, 313.36,
+  297.69, 282.81, 268.67, 255.23, 242.47, 230.35, 218.83, 207.89, 197.5, 187.62,
+  178.24, 169.33, 160.86, 152.82, 145.18, 137.92, 131.02, 124.47, 118.25,
+  112.34, 106.72, 101.38, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+  100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+  100, 100,
+]
 
 const postCheckoutMetadata = {
   currentNetwork: 'Ethereum',
@@ -55,7 +41,7 @@ const postCheckoutMetadata = {
   reward: '12 345.1234 DAPP',
   distribution: '200.1234 USDT',
   currentPrice: '12 345.1234 USDT',
-  chartData: getPriceArr(startPrice, minPrice, decreasePercent, salesCount),
+  chartData: chartData,
   startPrice: 5000,
 }
 </script>
@@ -81,10 +67,7 @@ const postCheckoutMetadata = {
         </div>
       </div>
     </app-block>
-    <post-checkout
-      :post-checkout-metadata="postCheckoutMetadata"
-      :formatter-chart-func="formatterChartFunc"
-    />
+    <post-checkout :post-checkout-metadata="postCheckoutMetadata" />
     <app-block class="post-item-page__content-wrp">
       <div v-if="post" class="post-item-page__content">
         <template v-for="([key, value], idx) in post.content">
