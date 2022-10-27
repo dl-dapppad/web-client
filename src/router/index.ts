@@ -19,14 +19,19 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/PostsPage.vue'),
   },
   {
-    path: '/categories/:id',
+    path: '/products/:id',
     name: ROUTE_NAMES.postItem,
     component: () => import('@/pages/PostItemPage.vue'),
   },
   {
-    path: '/categories/:id/deploy',
+    path: '/products/:id/deploy',
     name: ROUTE_NAMES.postItemDeployment,
     component: () => import('@/forms/DeployForm.vue'),
+  },
+  {
+    path: '/products/:id/edit',
+    name: ROUTE_NAMES.postItemEditing,
+    component: () => import('@/forms/EditForm.vue'),
   },
 ]
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Erc20DeployForm } from '@/modules'
+import { Erc20EditForm } from '@/modules'
 
 import postsData from '@/assets/posts.json'
 
@@ -17,15 +17,15 @@ const post = computed(() => posts.find(el => el.id === postId.value))
 </script>
 
 <template>
-  <div class="deploy-form">
+  <div class="edit-form">
     <template v-if="post?.module === 'ERC20'">
-      <erc20-deploy-form class="deploy-form__module" />
+      <erc20-edit-form class="edit-form__module" />
     </template>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.deploy-form__module {
+.edit-form__module {
   width: 100%;
   height: 100%;
 }

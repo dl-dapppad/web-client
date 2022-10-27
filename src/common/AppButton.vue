@@ -167,6 +167,30 @@ const buttonClasses = computed(() =>
   }
 
   /* schemes */
+  &--default {
+    --app-button-default-bg: transparent;
+    --app-button-default-bg-hover: transparent;
+    --app-button-default-bg-active: transparent;
+
+    --app-button-default-text: var(--text-primary-main);
+    --app-button-default-text-hover: var(--text-primary-main);
+
+    --app-button-default-border: 0;
+    --app-button-default-border-hover: 0;
+    --app-button-default-border-active: 0;
+
+    --app-button-bg: var(--app-button-default-bg);
+    --app-button-bg-hover: var(--app-button-default-bg-hover);
+    --app-button-bg-active: var(--app-button-default-bg-active);
+
+    --app-button-text: var(--app-button-default-text);
+    --app-button-text-hover: var(--app-button-default-text-hover);
+
+    --app-button-border: var(--app-button-default-border);
+    --app-button-border-hover: var(--app-button-default-border-hover);
+    --app-button-border-active: var(--app-button-default-border-active);
+  }
+
   &--filled {
     --app-button-filled-bg: var(--primary-main);
     --app-button-filled-bg-hover: var(--primary-main);
@@ -213,6 +237,9 @@ const buttonClasses = computed(() =>
 
   /* colors */
   &--secondary {
+    --app-button-default-text: var(--secondary-main);
+    --app-button-default-text-hover: var(--secondary-main);
+
     --app-button-flat-text: var(--secondary-main);
     --app-button-flat-text-hover: var(--secondary-main);
     --app-button-flat-border: #{toRem(2)} solid var(--secondary-main);

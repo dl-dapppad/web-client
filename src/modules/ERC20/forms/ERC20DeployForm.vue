@@ -5,6 +5,9 @@ import { InputField } from '@/fields'
 import { reactive } from 'vue'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const form = reactive({
   paymentToken: '',
@@ -32,9 +35,18 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
 
 <template>
   <div class="erc20-deploy-form">
-    <h2 class="erc20-deploy-form__title">
-      {{ 'Deploy' }}
-    </h2>
+    <div class="erc20-deploy-form__title-wrp">
+      <app-button
+        class="erc20-deploy-form__back-btn"
+        :icon-right="$icons.arrowLeft"
+        modification="border-circle"
+        color="tertiary"
+        @click="router.go(-1)"
+      />
+      <h2 class="erc20-deploy-form__title">
+        {{ 'Deploy' }}
+      </h2>
+    </div>
     <span class="erc20-deploy-form__subtitle">
       {{
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
@@ -130,7 +142,24 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
 .erc20-deploy-form {
   display: flex;
   flex-direction: column;
-  padding-bottom: toRem(65);
+  padding: toRem(50) 0 toRem(30);
+  max-width: toRem(990);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.erc20-deploy-form__title-wrp {
+  position: relative;
+}
+
+.erc20-deploy-form__back-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: toRem(54);
+  height: toRem(54);
+  right: calc(100% + #{toRem(56)});
+  padding: 0;
 }
 
 .erc20-deploy-form__title {
