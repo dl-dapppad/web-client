@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppButton, AppBlock, Icon } from '@/common'
+import { AppButton, AppBlock, Icon, LineChart } from '@/common'
 import { copyToClipboard } from '@/helpers'
 import { cropAddress } from '@/helpers'
 
@@ -19,8 +19,8 @@ const postCheckoutMetadata = {
 
 <template>
   <div class="post-checkout">
-    <app-block class="post-checkout__top">
-      <div class="post-checkout__top-inner">
+    <div class="post-checkout__top">
+      <app-block class="post-checkout__top-inner">
         <div class="post-checkout__about">
           <div class="post-checkout__item">
             <span class="post-checkout__key">
@@ -97,10 +97,8 @@ const postCheckoutMetadata = {
             </span>
           </div>
         </div>
-      </div>
-    </app-block>
-    <app-block class="post-checkout__top">
-      <div class="post-checkout__top-inner">
+      </app-block>
+      <app-block class="post-checkout__top-inner">
         <div class="post-checkout__about">
           <div class="post-checkout__item">
             <span class="post-checkout__key">
@@ -155,6 +153,17 @@ const postCheckoutMetadata = {
             {{ $t('post-checkout.buy-description-lbl') }}
           </div>
         </div>
+      </app-block>
+    </div>
+    <app-block class="post-checkout__bottom">
+      <div class="post-checkout__bottom-inner">
+        <h2 class="post-checkout__buttom-title">
+          {{ $t('post-checkout.title-txt') }}
+        </h2>
+        <line-chart class="post-checkout__chart" />
+        <span class="post-checkout__bottom-description">
+          {{ $t('post-checkout.description-txt') }}
+        </span>
       </div>
     </app-block>
   </div>
@@ -163,29 +172,30 @@ const postCheckoutMetadata = {
 <style lang="scss" scoped>
 .post-checkout {
   display: flex;
-}
-
-.post-checkout__top {
-  width: 50%;
+  flex-direction: column;
   letter-spacing: 0.1em;
 }
 
+.post-checkout__top {
+  width: 100%;
+  display: flex;
+}
+
 .post-checkout__top-inner {
+  display: flex;
+  width: 50%;
+}
+
+.post-checkout__about {
   padding: toRem(40) toRem(110);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: toRem(40);
-  height: 100%;
-}
-
-.post-checkout__about {
-  display: flex;
-  flex-direction: column;
   gap: toRem(23);
 }
 
 .post-checkout__buy {
+  padding: toRem(40) toRem(110);
   display: flex;
   flex-direction: column;
   gap: toRem(10);
@@ -244,5 +254,25 @@ const postCheckoutMetadata = {
   font-size: toRem(14);
   text-align: center;
   padding: 0 toRem(30);
+}
+
+.post-checkout__bottom-inner {
+  padding: toRem(70) toRem(165);
+  display: flex;
+  flex-direction: column;
+  gap: toRem(30);
+}
+
+.post-checkout__chart {
+  max-width: 100%;
+}
+
+.post-checkout__buttom-title {
+  font-size: toRem(36);
+  font-weight: 900;
+}
+
+.post-checkout__bottom-description {
+  font-size: toRem(20);
 }
 </style>
