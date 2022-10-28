@@ -1,10 +1,44 @@
 <script lang="ts" setup>
 import { Icon, AppButton } from '@/common'
+import { useI18n } from 'vue-i18n'
+import { formatNumber, cropAddress } from '@/helpers'
 
 const emit = defineEmits<{
   (e: 'submit'): void
   (e: 'close'): void
 }>()
+
+const { t } = useI18n({
+  locale: 'en',
+  messages: {
+    en: {
+      title: 'Success',
+      /* eslint-disable quotes */
+      description:
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took.",
+      /* eslint-enable */
+      'token-name-lbl': 'Token name',
+      'token-symbol-lbl': 'Token symbol',
+      'token-decimals-lbl': 'Token decimals',
+      'token-cap-lbl': 'Token cap',
+      'token-minted-lbl': 'Token minted',
+      'token-tracker-lbl': 'Token address',
+    },
+  },
+})
+
+const metadata = {
+  name: 'Test token',
+  symbol: 'TT',
+  decimals: 18,
+  cap: 10000000000000000,
+  minted: {
+    amount: 1000000,
+    asset: 'TT',
+  },
+  tokenTracker: 'Tether USD (USDT)',
+  contract: '0x0000000000000000000000000000000000000000',
+}
 </script>
 
 <template>
@@ -15,7 +49,7 @@ const emit = defineEmits<{
         :name="$icons.checkCircle"
       />
       <h5 class="deploy-success-message__title">
-        {{ 'Success!' }}
+        {{ t('title') }}
       </h5>
       <app-button
         scheme="default"
@@ -26,18 +60,61 @@ const emit = defineEmits<{
       />
     </div>
     <span class="deploy-success-message__description">
-      {{
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took."
-      }}
+      {{ t('description') }}
     </span>
 
-    <div class="deploy-success-message__metadata">
-      <div class="deploy-success-message__metadata-item">
-        <span class="deploy-success-message__metadata-lbl">
-          {{ 'Some text' }}
+    <div class="app__metadata">
+      <div class="app__metadata-row">
+        <span class="app__metadata-lbl">
+          {{ t('token-name-lbl') }}
         </span>
-        <span class="deploy-success-message__metadata-value">
-          {{ '32 310 389.1234 USDT' }}
+        <span class="app__metadata-value">
+          {{ metadata.name }}
+        </span>
+      </div>
+      <div class="app__metadata-row">
+        <span class="app__metadata-lbl">
+          {{ t('token-symbol-lbl') }}
+        </span>
+        <span class="app__metadata-value">
+          {{ metadata.symbol }}
+        </span>
+      </div>
+      <div class="app__metadata-row">
+        <span class="app__metadata-lbl">
+          {{ t('token-tracker-lbl') }}
+        </span>
+        <span class="app__metadata-value app__metadata-value--accent">
+          {{ metadata.tokenTracker }}
+        </span>
+      </div>
+      <div class="app__metadata-row">
+        <span class="app__metadata-lbl">
+          {{ t('token-decimals-lbl') }}
+        </span>
+        <span class="app__metadata-value app__metadata-value--accent">
+          {{ metadata.decimals }}
+        </span>
+      </div>
+      <div class="app__metadata-row">
+        <span class="app__metadata-lbl">
+          {{ t('token-minted-lbl') }}
+        </span>
+        <span class="app__metadata-value">
+          <span class="app__price">
+            {{ formatNumber(metadata.minted.amount) }}
+            <span class="app__price-asset">
+              {{ metadata.contractOwner }}
+            </span>
+          </span>
+        </span>
+      </div>
+      <div class="app__metadata-row">
+        <span class="app__metadata-lbl">
+          {{ t('token-minted-lbl') }}
+        </span>
+        <span class="app__metadata-value app__metadata-value--accent">
+          {{ cropAddress(metadata.contract) }}
         </span>
       </div>
     </div>
@@ -85,30 +162,6 @@ const emit = defineEmits<{
   line-height: 1.3;
   letter-spacing: 0.1em;
   margin: toRem(40) 0;
-}
-
-.deploy-success-message__metadata {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(24);
-}
-
-.deploy-success-message__metadata-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.deploy-success-message__metadata-lbl {
-  font-size: toRem(14);
-  line-height: 1.3;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--text-secondary-main);
-}
-
-.deploy-success-message__metadata-value {
-  text-align: right;
 }
 
 .deploy-success-message__submit {

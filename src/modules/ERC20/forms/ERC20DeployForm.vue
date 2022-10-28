@@ -9,6 +9,28 @@ import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { useRouter } from 'vue-router'
 import { ErrorHandler } from '@/helpers'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n({
+  locale: 'en',
+  messages: {
+    en: {
+      title: 'Deploy',
+      subtitle:
+        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+      'content-title-1': 'Base parameters',
+      'payment-token-lbl': 'Payment token',
+      'token-name-lbl': 'Token name',
+      'content-title-2': 'Other fields',
+      'token-symbol-lbl': 'Tokens symbol',
+      'mint-amount-lbl': 'Mint amount',
+      'mint-receiver-lbl': 'Mint receiver',
+      'decimals-lbl': 'Decimals',
+      'cap-lbl': 'Cap',
+      'submit-btn': 'Buy',
+    },
+  },
+})
 
 const isSuccessModalShown = ref(false)
 
@@ -57,42 +79,46 @@ const submit = async () => {
         @click="router.go(-1)"
       />
       <h2 class="app__module-title">
-        {{ 'Deploy' }}
+        {{ t('title') }}
       </h2>
     </div>
     <span class="app__module-subtitle">
-      {{
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
-      }}
+      {{ t('subtitle') }}
     </span>
     <app-block class="app__module-content-wrp">
       <div class="app__module-content">
         <div class="app__module-content-inner">
-          <collapse is-opened-by-default :is-close-by-click-outside="false">
+          <collapse
+            class="app__form-control"
+            is-opened-by-default
+            :is-close-by-click-outside="false"
+          >
             <template #head="{ collapse }">
               <app-button
                 class="app__module-content-title"
                 scheme="default"
                 color="default"
                 size="default"
-                :text="'Base parameters'"
+                :text="t('content-title-1')"
                 :icon-left="collapse.isOpen ? $icons.arrowUp : $icons.arrowDown"
                 @click="collapse.toggle"
               />
             </template>
             <template #default>
-              <div class="app__form-control">
+              <div
+                class="app__form-control erc20-deploy-form__collapsed-fields"
+              >
                 <input-field
                   scheme="secondary"
                   v-model="form.paymentToken"
-                  :label="'Payment token'"
+                  :label="t('content-title-1')"
                   :error-message="getFieldErrorMessage('paymentToken')"
                   @blur="touchField('paymentToken')"
                 />
                 <input-field
                   scheme="secondary"
                   v-model="form.tokenName"
-                  :label="'Token name'"
+                  :label="t('content-title-2')"
                   :error-message="getFieldErrorMessage('tokenName')"
                   @blur="touchField('tokenName')"
                 />
@@ -100,48 +126,48 @@ const submit = async () => {
             </template>
           </collapse>
           <h4 class="app__module-content-title">
-            {{ 'Other fields' }}
+            {{ t('content-title-2') }}
           </h4>
           <div class="app__form-control">
             <input-field
               scheme="secondary"
               v-model="form.tokenSymbol"
-              :label="'Tokens symbol'"
+              :label="t('token-symbol-lbl')"
               :error-message="getFieldErrorMessage('tokenSymbol')"
               @blur="touchField('tokenSymbol')"
             />
             <input-field
               scheme="secondary"
               v-model="form.mintAmount"
-              :label="'Mint amount'"
+              :label="t('mint-amount-lbl')"
               :error-message="getFieldErrorMessage('mintAmount')"
               @blur="touchField('mintAmount')"
             />
             <input-field
               scheme="secondary"
               v-model="form.mintReceiver"
-              :label="'Mint receiver'"
+              :label="t('mint-receiver-lbl')"
               :error-message="getFieldErrorMessage('mintReceiver')"
               @blur="touchField('mintReceiver')"
             />
             <input-field
               scheme="secondary"
               v-model="form.tokenDecimals"
-              :label="'Decimals'"
+              :label="t('decimals-lbl')"
               :error-message="getFieldErrorMessage('tokenDecimals')"
               @blur="touchField('tokenDecimals')"
             />
             <input-field
               scheme="secondary"
               v-model="form.cap"
-              :label="'Cap'"
+              :label="t('cap-lbl')"
               :error-message="getFieldErrorMessage('cap')"
               @blur="touchField('cap')"
             />
             <app-button
               class="erc20-deploy-form__submit-btn"
               type="submit"
-              :text="'Buy'"
+              :text="t('submit-btn')"
               size="small"
               :disabled="!isFieldsValid"
             />
@@ -151,8 +177,22 @@ const submit = async () => {
     </app-block>
     <modal v-model:is-shown="isSuccessModalShown">
       <template #default="{ modal }">
-        <deploy-success-message @submit="modal.close" @close="modal.close" />
+        <deploy-success-message
+          @submit="
+            () => {
+              modal.close()
+              router.push({ name: $routes.postItemEditing, params: { id: 2 } })
+            }
+          "
+          @close="modal.close"
+        />
       </template>
     </modal>
   </form>
 </template>
+
+<style lang="scss" scoped>
+.erc20-deploy-form__collapsed-fields {
+  padding: toRem(8) 0;
+}
+</style>

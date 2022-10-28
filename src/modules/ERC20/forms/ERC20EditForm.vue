@@ -2,9 +2,61 @@
 import { AppBlock, AppButton, Tabs } from '@/common'
 import { InputField } from '@/fields'
 
-import { Bus, cropAddress, ErrorHandler } from '@/helpers'
+import {
+  Bus,
+  cropAddress,
+  ErrorHandler,
+  formatNumber,
+  copyToClipboard,
+} from '@/helpers'
 import { useRouter } from 'vue-router'
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n({
+  locale: 'en',
+  messages: {
+    en: {
+      title: 'Editing',
+      address: 'Contract {address}',
+      subtitle:
+        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+      'content-title-1': 'Read block',
+      'metadata-1-lbl': 'Max total supplies',
+      'metadata-2-lbl': 'Contract creator',
+      'metadata-3-lbl': 'Token tracker',
+      'metadata-4-lbl': 'Contract owner',
+      'metadata-5-lbl': 'Contract',
+      'metadata-6-lbl': 'Decimals',
+      'metadata-7-lbl': 'Your balance',
+      'content-title-2': 'Edit block',
+      'approve-form': {
+        title: 'Approve',
+        'spender-address-lbl': 'Spender',
+        'value-amount-lbl': 'Value',
+        'submit-btn': 'Save Changes',
+      },
+      'transfer-from-form': {
+        title: 'Transfer From',
+        'from-address-lbl': 'From',
+        'to-address-lbl': 'To',
+        'value-amount-lbl': 'Value',
+        'submit-btn': 'Save Changes',
+      },
+      'transfer-form': {
+        title: 'Transfer',
+        'to-lbl': 'To',
+        'value-lbl': 'Value',
+        'submit-btn': 'Save Changes',
+      },
+      'transfer-ownership-form': {
+        title: 'Transfer Ownership',
+        'new-owner-lbl': 'New owner address',
+        'submit-btn': 'Save Changes',
+      },
+    },
+  },
+})
 
 const FORM_TABS = [
   {
@@ -20,6 +72,22 @@ const FORM_TABS = [
 const currentTabNumber = ref(FORM_TABS[0].number)
 
 const router = useRouter()
+
+const metadata = {
+  maxTotalSupplie: {
+    amount: 32310389.1234,
+    asset: 'USDT',
+  },
+  contractCreator: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
+  tokenTracker: 'Tether USD (USDT)',
+  contractOwner: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
+  contract: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
+  decimals: 6,
+  yourBalance: {
+    amount: 32310389.1234,
+    asset: 'USDT',
+  },
+}
 
 const approveForm = reactive({
   spenderAddress: '',
@@ -86,23 +154,24 @@ const handleTransferOwnership = () => {
         @click="router.go(-1)"
       />
       <h2 class="app__module-title">
-        {{ 'Editing' }}
+        {{ t('title') }}
       </h2>
       <app-button
         type="button"
         class="app__module-title-address"
-        :text="`Contract ${cropAddress(
-          '0xC87B0398F86276D3D590A14AB53fF57185899C42',
-        )}`"
+        :text="
+          t('address', {
+            address: cropAddress('0xC87B0398F86276D3D590A14AB53fF57185899C42'),
+          })
+        "
         :icon-right="$icons.duplicate"
         scheme="default"
         size="default"
+        @click="copyToClipboard('0xC87B0398F86276D3D590A14AB53fF57185899C42')"
       />
     </div>
     <span class="app__module-subtitle">
-      {{
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
-      }}
+      {{ t('subtitle') }}
     </span>
     <tabs
       v-model="currentTabNumber"
@@ -114,178 +183,186 @@ const handleTransferOwnership = () => {
     <app-block>
       <div class="app__module-content">
         <h4 class="app__module-content-title">
-          {{ 'Read block' }}
+          {{ t('content-title-1') }}
         </h4>
-        <div class="app__metadata">
+        <div class="app__metadata erc20-edit-form__metadata">
           <div class="app__metadata-row">
             <span class="app__metadata-lbl">
-              {{ 'Max total Supplie' }}
+              {{ t('metadata-1-lbl') }}
             </span>
             <span class="app__metadata-value">
-              {{ '32 310 389.1234 USDT' }}
+              <span class="app__price">
+                {{ formatNumber(metadata.maxTotalSupplie.amount) }}
+                <span class="app__price-asset">
+                  {{ metadata.maxTotalSupplie.asset }}
+                </span>
+              </span>
             </span>
           </div>
           <div class="app__metadata-row">
             <span class="app__metadata-lbl">
-              {{ 'Contract creator' }}
+              {{ t('metadata-2-lbl') }}
             </span>
             <span class="app__metadata-value">
               <app-button
                 scheme="default"
                 color="secondary"
                 size="default"
-                :text="
-                  cropAddress('0xC87B0398F86276D3D590A14AB53fF57185899C42')
-                "
+                :text="cropAddress(metadata.contractCreator)"
                 :icon-right="$icons.duplicate"
+                @click="copyToClipboard(metadata.contractCreator)"
               />
             </span>
           </div>
           <div class="app__metadata-row">
             <span class="app__metadata-lbl">
-              {{ 'Token Tracker' }}
+              {{ t('metadata-3-lbl') }}
             </span>
             <span class="app__metadata-value">
               <app-button
                 scheme="default"
                 color="secondary"
                 size="default"
-                :text="'Tether USD (USDT)'"
+                :text="metadata.tokenTracker"
+                @click="copyToClipboard(metadata.tokenTracker)"
               />
             </span>
           </div>
           <div class="app__metadata-row">
             <span class="app__metadata-lbl">
-              {{ 'Contract owner' }}
+              {{ t('metadata-4-lbl') }}
             </span>
             <span class="app__metadata-value">
               <app-button
                 scheme="default"
                 color="secondary"
                 size="default"
-                :text="
-                  cropAddress('0xC87B0398F86276D3D590A14AB53fF57185899C42')
-                "
+                :text="cropAddress(metadata.contractOwner)"
                 :icon-right="$icons.duplicate"
+                @click="copyToClipboard(metadata.contractOwner)"
               />
             </span>
           </div>
           <div class="app__metadata-row">
             <span class="app__metadata-lbl">
-              {{ 'Contract' }}
+              {{ t('metadata-5-lbl') }}
             </span>
             <span class="app__metadata-value">
               <app-button
                 scheme="default"
                 color="secondary"
                 size="default"
-                :text="
-                  cropAddress('0xC87B0398F86276D3D590A14AB53fF57185899C42')
-                "
+                :text="cropAddress(metadata.contract)"
                 :icon-right="$icons.duplicate"
+                @click="copyToClipboard(metadata.contract)"
               />
             </span>
           </div>
           <div class="app__metadata-row">
             <span class="app__metadata-lbl">
-              {{ 'Decimals' }}
+              {{ t('metadata-6-lbl') }}
             </span>
             <span class="app__metadata-value">
-              {{ '6' }}
+              {{ metadata.decimals }}
             </span>
           </div>
           <div class="app__metadata-row">
             <span class="app__metadata-lbl">
-              {{ 'Your balance' }}
+              {{ t('metadata-7-lbl') }}
             </span>
             <span class="app__metadata-value">
-              {{ '12 345.1234 SHIT' }}
+              <span class="app__price">
+                {{ formatNumber(metadata.yourBalance.amount) }}
+                <span class="app__price-asset">
+                  {{ metadata.yourBalance.asset }}
+                </span>
+              </span>
             </span>
           </div>
         </div>
         <h4 class="app__module-content-title">
-          {{ 'Edit block' }}
+          {{ t('content-title-2') }}
         </h4>
         <div class="app__form-control">
           <span class="app__form-control-title">
-            {{ 'Approve' }}
+            {{ t('approve-form.title') }}
           </span>
           <input-field
             v-model="approveForm.spenderAddress"
             scheme="secondary"
-            :label="'Spender'"
+            :label="t('approve-form.spender-address-lbl')"
           />
           <input-field
             v-model="approveForm.valueAmount"
             scheme="secondary"
-            :label="'Value'"
+            :label="t('approve-form.value-amount-lbl')"
           />
           <app-button
             type="button"
-            :text="'Save Changes'"
+            :text="t('approve-form.submit-btn')"
             size="small"
             @click="handleApprove"
           />
         </div>
         <div class="app__form-control">
           <span class="app__form-control-title">
-            {{ 'Transfer From' }}
+            {{ t('transfer-from-form.title') }}
           </span>
           <input-field
             v-model="transferFromForm.fromAddress"
             scheme="secondary"
-            :label="'From'"
+            :label="t('transfer-from-form.from-address-lbl')"
           />
           <input-field
             v-model="transferFromForm.toAddress"
             scheme="secondary"
-            :label="'To'"
+            :label="t('transfer-from-form.to-address-lbl')"
           />
           <input-field
             v-model="transferFromForm.valueAmount"
             scheme="secondary"
-            :label="'Value'"
+            :label="t('transfer-from-form.value-amount-lbl')"
           />
           <app-button
             type="button"
-            :text="'Save Changes'"
+            :text="t('transfer-from-form.submit-btn')"
             size="small"
             @click="handleTransferFrom"
           />
         </div>
         <div class="app__form-control">
           <span class="app__form-control-title">
-            {{ 'Transfer' }}
+            {{ t('transfer-form.title') }}
           </span>
           <input-field
             v-model="transferForm.toAddress"
             scheme="secondary"
-            :label="'To'"
+            :label="t('transfer-form.to-lbl')"
           />
           <input-field
             v-model="transferForm.valueAmount"
             scheme="secondary"
-            :label="'Value'"
+            :label="t('transfer-form.value-lbl')"
           />
           <app-button
             type="button"
-            :text="'Save Changes'"
+            :text="t('transfer-form.submit-btn')"
             size="small"
             @click="handleTransfer"
           />
         </div>
         <div class="app__form-control">
           <span class="app__form-control-title">
-            {{ 'Transfer Ownership' }}
+            {{ t('transfer-ownership-form.title') }}
           </span>
           <input-field
             v-model="transferOwnershipForm.newOwnerAddress"
             scheme="secondary"
-            :label="'New owner address'"
+            :label="t('transfer-ownership-form.new-owner-lbl')"
           />
           <app-button
             type="button"
-            :text="'Save Changes'"
+            :text="t('transfer-ownership-form.submit-btn')"
             size="small"
             @click="handleTransferOwnership"
           />
@@ -294,3 +371,9 @@ const handleTransferOwnership = () => {
     </app-block>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.erc20-edit-form__metadata {
+  margin: 0 0 toRem(70);
+}
+</style>
