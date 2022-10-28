@@ -3,14 +3,6 @@ import { onMounted, ref } from 'vue'
 
 import Highcharts, { SeriesOptionsType } from 'highcharts'
 
-Highcharts.setOptions({
-  chart: {
-    style: {
-      fontFamily: 'Montserrat',
-    },
-  },
-})
-
 const props = defineProps<{
   chartData: {
     data: {
@@ -36,6 +28,9 @@ onMounted(() => {
           backgroundColor: 'transparent',
           plotBackgroundColor: 'transparent',
           width: null,
+          style: {
+            fontFamily: 'Montserrat',
+          },
         },
         title: {
           text: props.chartData.title ? props.chartData.title : '',

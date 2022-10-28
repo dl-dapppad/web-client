@@ -3,14 +3,6 @@ import { onMounted, ref } from 'vue'
 
 import Highcharts from 'highcharts'
 
-Highcharts.setOptions({
-  chart: {
-    style: {
-      fontFamily: 'Montserrat',
-    },
-  },
-})
-
 const props = defineProps<{
   chartData: {
     lines: {
@@ -53,6 +45,9 @@ onMounted(() => {
           type: 'spline',
           backgroundColor: 'transparent',
           width: null,
+          style: {
+            fontFamily: 'Montserrat',
+          },
         },
         title: {
           text: '',
