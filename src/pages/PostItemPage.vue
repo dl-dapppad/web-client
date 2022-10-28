@@ -43,6 +43,8 @@ const postCheckoutMetadata = {
   currentPrice: '12 345.1234 USDT',
   chartData: chartData,
   startPrice: 5000,
+  chartTitle: post.value.chartTitle,
+  chartDescription: post.value.chartDescription,
 }
 </script>
 

@@ -23,6 +23,8 @@ const props = defineProps<{
     currentPrice: string
     chartData: number[]
     startPrice: number
+    chartTitle: string
+    chartDescription: string
   }
 }>()
 
@@ -184,14 +186,14 @@ const chartData = {
       <div class="post-checkout__block post-checkout__block--chart">
         <div class="app__metadata">
           <h2 class="post-checkout__block-title">
-            {{ $t('post-checkout.title-txt') }}
+            {{ postCheckoutMetadata.chartTitle }}
           </h2>
           <line-chart
             class="post-checkout__block-chart"
             :chart-data="chartData"
           />
           <span class="post-checkout__block-description">
-            {{ $t('post-checkout.description-txt') }}
+            {{ postCheckoutMetadata.chartDescription }}
           </span>
         </div>
       </div>
