@@ -7,7 +7,6 @@ const chartInstanceElement = ref<HTMLElement | undefined>()
 const props = defineProps<{
   chartData: {
     data: number[]
-    yMaxChart?: number
   }
 }>()
 
@@ -47,7 +46,6 @@ onMounted(() => {
           },
           gridLineColor: 'var(--border-primary-light)',
           gridLineWidth: 'toRem(1)',
-          max: props.chartData.yMaxChart ? props.chartData.yMaxChart : null,
         },
         xAxis: {
           title: {

@@ -30,7 +30,6 @@ const props = defineProps<{
 
 const chartData = {
   data: props.postCheckoutMetadata.chartData,
-  yMaxChart: props.postCheckoutMetadata.startPrice,
 }
 </script>
 
