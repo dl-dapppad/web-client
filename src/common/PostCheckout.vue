@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { AppButton, AppBlock, Icon } from '@/common'
-
+import { AppButton, AppBlock, Icon, LineChart } from '@/common'
 import { copyToClipboard } from '@/helpers'
 import { cropAddress } from '@/helpers'
 import { useRoute } from '@/router'
@@ -10,17 +9,27 @@ const route = useRoute()
 
 const postId = computed(() => route.params.id)
 
-const postCheckoutMetadata = {
-  currentNetwork: 'Ethereum',
-  salesCount: 20,
-  decreasePercent: 12,
-  cashbackPercent: 12,
-  implementation: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
-  factory: '0xa12b9db875AFaf4BD6bAD815CabC7D8C15e1545c',
-  minPrice: '12 345.1234 ETH',
-  reward: '12 345.1234 DAPP',
-  distribution: '200.1234 USDT',
-  currentPrice: '12 345.1234 USDT',
+const props = defineProps<{
+  postCheckoutMetadata: {
+    currentNetwork: string
+    salesCount: number
+    decreasePercent: number
+    cashbackPercent: number
+    implementation: string
+    factory: string
+    minPrice: string
+    reward: string
+    distribution: string
+    currentPrice: string
+    chartData: number[]
+    startPrice: number
+    chartTitle: string
+    chartDescription: string
+  }
+}>()
+
+const chartData = {
+  data: props.postCheckoutMetadata.chartData,
 }
 </script>
 
@@ -76,11 +85,13 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.implementation-address-lbl') }}
             </span>
             <span
-              :title="postCheckoutMetadata.implementation"
+              :title="props.postCheckoutMetadata.implementation"
               class="post-checkout__address"
-              @click="copyToClipboard(postCheckoutMetadata.implementation)"
+              @click="
+                copyToClipboard(props.postCheckoutMetadata.implementation)
+              "
             >
-              {{ cropAddress(postCheckoutMetadata.implementation) }}
+              {{ cropAddress(props.postCheckoutMetadata.implementation) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
                 :name="$icons.duplicate"
@@ -92,11 +103,11 @@ const postCheckoutMetadata = {
               {{ $t('post-checkout.factory-address-lbl') }}
             </span>
             <span
-              :title="postCheckoutMetadata.factory"
+              :title="props.postCheckoutMetadata.factory"
               class="post-checkout__address"
-              @click="copyToClipboard(postCheckoutMetadata.factory)"
+              @click="copyToClipboard(props.postCheckoutMetadata.factory)"
             >
-              {{ cropAddress(postCheckoutMetadata.factory) }}
+              {{ cropAddress(props.postCheckoutMetadata.factory) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
                 :name="$icons.duplicate"
@@ -170,6 +181,22 @@ const postCheckoutMetadata = {
         </div>
       </div>
     </app-block>
+    <app-block class="post-checkout__block-wrp">
+      <div class="post-checkout__block post-checkout__block--chart">
+        <div class="app__metadata">
+          <h2 class="post-checkout__block-title">
+            {{ postCheckoutMetadata.chartTitle }}
+          </h2>
+          <line-chart
+            class="post-checkout__block-chart"
+            :chart-data="chartData"
+          />
+          <span class="post-checkout__block-description">
+            {{ postCheckoutMetadata.chartDescription }}
+          </span>
+        </div>
+      </div>
+    </app-block>
   </div>
 </template>
 
@@ -222,5 +249,22 @@ const postCheckoutMetadata = {
   font-size: toRem(14);
   text-align: center;
   padding: 0 toRem(30);
+}
+
+.post-checkout__block-chart {
+  max-width: 100%;
+}
+
+.post-checkout__block-title {
+  font-size: toRem(36);
+  font-weight: 900;
+}
+
+.post-checkout__block-description {
+  font-size: toRem(20);
+}
+
+.post-checkout__block-wrp {
+  grid-column: 1 / -1;
 }
 </style>
