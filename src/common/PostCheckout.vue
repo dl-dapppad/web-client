@@ -251,13 +251,6 @@ const chartData = {
   padding: 0 toRem(30);
 }
 
-.app__metadata-inner {
-  padding: toRem(70) toRem(165);
-  display: flex;
-  flex-direction: column;
-  gap: toRem(30);
-}
-
 .post-checkout__block-chart {
   max-width: 100%;
 }
