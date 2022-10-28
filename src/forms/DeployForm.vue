@@ -3,22 +3,21 @@ import { Erc20DeployForm } from '@/modules'
 
 import postsData from '@/assets/posts.json'
 
-import { computed } from 'vue'
 import { useRoute } from '@/router'
 import { Post } from '@/types'
 
 const route = useRoute()
 
 const posts = postsData as unknown as Post[]
-
-const postId = computed(() => route.params.id)
-
-const post = computed(() => posts.find(el => el.id === postId.value))
+const post = posts.find(el => el.id === route.params.id)
 </script>
 
 <template>
   <div class="deploy-form">
-    <template v-if="post?.module === 'ERC20'">
+    <template v-if="post?.id === 'erc20'">
+      <erc20-deploy-form class="deploy-form__module" />
+    </template>
+    <template v-if="post?.id === 'erc721'">
       <erc20-deploy-form class="deploy-form__module" />
     </template>
   </div>

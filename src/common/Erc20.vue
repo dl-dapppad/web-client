@@ -7,7 +7,7 @@ import { reactive, ref } from 'vue'
 import { ErrorHandler } from '@/helpers'
 import Loader from '@/common/Loader.vue'
 
-const props = defineProps<{
+defineProps<{
   provider: UseProvider
 }>()
 
@@ -24,28 +24,25 @@ const mintForm = reactive({
   amount: '',
 })
 
-const erc20 = useErc20(
-  props.provider,
-  '0xBd7D317a57eF8211d2A40d2CF8E9cCF3c79a1aa0',
-)
+const erc20 = useErc20('0xBd7D317a57eF8211d2A40d2CF8E9cCF3c79a1aa0')
 
-const tryMint = async () => {
-  try {
-    await erc20.mint(mintForm.to, +mintForm.amount)
-    await init()
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
-}
+// const tryMint = async () => {
+//   try {
+//     await erc20.mint(mintForm.to, +mintForm.amount)
+//     await init()
+//   } catch (error) {
+//     ErrorHandler.process(error)
+//   }
+// }
 
-const tryTransfer = async () => {
-  try {
-    await erc20.transfer(transferForm.address, +transferForm.amount)
-    await init()
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
-}
+// const tryTransfer = async () => {
+//   try {
+//     await erc20.transfer(transferForm.address, +transferForm.amount)
+//     await init()
+//   } catch (error) {
+//     ErrorHandler.process(error)
+//   }
+// }
 
 const init = async () => {
   isLoaded.value = false

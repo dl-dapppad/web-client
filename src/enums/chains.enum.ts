@@ -4,6 +4,7 @@ export enum ETHEREUM_CHAINS {
   ropsten = '3',
   kovan = '42',
   goerli = '5',
+  localhost = '1337',
 }
 
 export enum SOLANA_CHAINS {

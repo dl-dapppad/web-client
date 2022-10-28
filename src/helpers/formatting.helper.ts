@@ -1,4 +1,4 @@
-import { BN } from '../utils/math.util'
+import { BN } from '../utils'
 
 export const formatAmount = (
   amount: number | string,
@@ -6,29 +6,31 @@ export const formatAmount = (
   symbol?: string,
   decimalPlaces = 4,
 ): string => {
-  let str = new BN(amount)
-    .div(new BN(10).pow(decimals))
-    .decimalPlaces(decimalPlaces)
-  str = formatFromBN(new BN(str).format())
+  let str = new BN(amount).fromFraction(decimals as number).format({
+    decimals: decimalPlaces,
+  })
+
+  str = formatFromBN(str)
 
   return symbol ? `${str} ${symbol}` : str
 }
 
 export const formatPercent = (percent: string, decimalPlaces = 4): string => {
-  let str = new BN(percent).div(new BN(10).pow(25)).decimalPlaces(decimalPlaces)
-  str = new BN(str).format()
+  const str = new BN(percent).fromFraction(25).format({
+    decimals: decimalPlaces,
+  })
 
   return `${formatFromBN(str)}%`
 }
 
-const formatFromBN = (num: string): string => {
+const formatFromBN = (str: string): string => {
   let reg = /[0]*$/
-  num = num.replace(reg, '')
+  str = str.replace(reg, '')
 
   reg = /[.]*$/
-  num = num.replace(reg, '')
+  str = str.replace(reg, '')
 
-  return num
+  return str
 }
 
 export function cropAddress(address: string) {

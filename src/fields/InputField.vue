@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Icon } from '@/common'
 
-import { BN } from '@/utils/math.util'
+import { BN } from '@/utils'
 import { computed, getCurrentInstance, ref, useAttrs, useSlots } from 'vue'
 
 type INPUT_TYPES = 'text' | 'number' | 'password'

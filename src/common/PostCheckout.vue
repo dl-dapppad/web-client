@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { config } from '@config'
 import { useWeb3ProvidersStore } from '@/store'
 import {
   formatAmount,
@@ -10,253 +9,298 @@ import {
   cropAddress,
   getChain,
   getEmptyChain,
+  isChainAvailable,
+  ErrorHandler,
 } from '@/helpers'
-import { Chain, Product } from '@/types'
-import { useErc20, useProductFactory, useFarming } from '@/composables'
+import { Chain, Post } from '@/types'
+import { useErc20, useProductFactory, useFarming, Product } from '@/composables'
 import { AppButton, AppBlock, Icon, LineChart } from '@/common'
 import { copyToClipboard } from '@/helpers'
-import { getAlias } from '@/helpers/product-alias.helper'
+import { BN } from '@/utils'
+import { CONTRACT_NAMES } from '@/enums'
+import { config } from '@/config'
 
-const route = useRoute()
+defineProps<{
+  post: Post
+}>()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
-const dapp = useErc20(
-  provider?.value.currentProvider,
-  provider?.value.currentSigner,
-)
-
-const paymentToken = useErc20(
-  provider?.value.currentProvider,
-  provider?.value.currentSigner,
-)
-
-const factory = useProductFactory(
-  provider?.value.currentProvider,
-  provider?.value.currentSigner,
-)
-
-const farming = useFarming(
-  provider?.value.currentProvider,
-  provider?.value.currentSigner,
-)
+const route = useRoute()
+const dapp = useErc20()
+const paymentToken = useErc20()
+const factory = useProductFactory()
+const farming = useFarming()
 
 const alias = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const product = ref<Product>(factory.getEmptyProduct())
 const cashback = ref('0')
+const chartData = ref<number[]>([])
+
+const getChartData = (product: Product, decimals: number) => {
+  let chartData = [] as number[]
+
+  const basePrice = Number(
+    new BN(product.currentPrice).fromFraction(decimals).toString(),
+  )
+
+  if (!basePrice) return []
+
+  const minPrice = Number(
+    new BN(product.minPrice).fromFraction(decimals).toString(),
+  )
+  let currentPrice = basePrice
+  const decreasePercent = Number(
+    new BN(product.decreasePercent).fromFraction(27).toString(),
+  )
+  const salesCount = Number(product.salesCount)
+  for (let i = salesCount; i > 0; i--) {
+    const price = currentPrice / (1 - decreasePercent)
+
+    chartData.push(price)
+    currentPrice = price
+  }
+
+  chartData = chartData.reverse()
+  chartData.push(basePrice)
+  currentPrice = basePrice
+
+  while (currentPrice > minPrice) {
+    const price = currentPrice * (1 - decreasePercent)
+    if (price < minPrice) {
+      for (let i = 0; i < 5; i++) {
+        chartData.push(minPrice)
+      }
+    } else {
+      chartData.push(price)
+    }
+
+    currentPrice = price
+  }
+
+  return chartData
+}
 
 const init = async () => {
-  chain.value = getChain(provider.value.chainId ?? '')
-  dapp.init(config.CONTRACT_DAPP)
-
-  await Promise.all([
-    dapp.loadDetails(),
-    farming.loadDetails(),
-    factory.products(alias.value),
-    factory.getCashback(alias.value),
-  ]).then(res => {
-    product.value = res[2]
-    cashback.value = res[3]
+  if (!provider.value.chainId || !isChainAvailable(provider.value.chainId))
     return
-  })
 
-  paymentToken.init(farming.rewardToken.value)
-  await paymentToken.loadDetails()
+  try {
+    alias.value = config.PRODUCT_ALIASES[route.params.id as string]
+    if (!alias.value) return
+
+    chain.value = getChain(provider.value.chainId)
+    dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
+
+    await Promise.all([
+      dapp.loadDetails(),
+      farming.loadDetails(),
+      factory.products(alias.value),
+      factory.getCashback(alias.value),
+    ]).then(res => {
+      product.value = res[2]
+      cashback.value = res[3]
+      return
+    })
+
+    paymentToken.init(farming.rewardToken.value)
+    await paymentToken.loadDetails()
+
+    chartData.value = getChartData(product.value, paymentToken.decimals.value)
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 
-if (provider.value.chainId) {
-  alias.value = getAlias(provider.value.chainId, route.params.id as string)
-  if (alias.value) init()
-}
+init()
 </script>
 
 <template>
   <div class="post-checkout">
-    <app-block>
-      <div class="post-checkout__block">
-        <div class="app__metadata">
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ $t('post-checkout.current-network-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              {{ chain?.name ?? "Network isn't detected" }}
-            </span>
+    <template v-if="alias">
+      <app-block>
+        <div class="post-checkout__block">
+          <div class="app__metadata">
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ $t('post-checkout.current-network-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                {{ chain?.name ?? "Network isn't detected" }}
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ $t('post-checkout.sales-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                {{ product.salesCount }}
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                <icon
+                  class="post-checkout__icon"
+                  :name="$icons.informationCircle"
+                />
+                {{ $t('post-checkout.decrease-percent-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                {{ formatPercent(product.decreasePercent) }}
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                <icon
+                  class="post-checkout__icon"
+                  :name="$icons.informationCircle"
+                />
+                {{ $t('post-checkout.cashback-percent-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                {{ formatPercent(product.cashbackPercent) }}
+              </span>
+            </div>
           </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ $t('post-checkout.sales-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              {{ product.salesCount }}
-            </span>
+          <div class="app__metadata">
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ $t('post-checkout.implementation-address-lbl') }}
+              </span>
+              <span
+                :title="product.implementation"
+                class="post-checkout__address"
+                @click="copyToClipboard(product.implementation)"
+              >
+                {{ cropAddress(product.implementation) }}
+                <icon
+                  class="post-checkout__icon post-checkout__icon-clipboard"
+                  :name="$icons.duplicate"
+                />
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ $t('post-checkout.factory-address-lbl') }}
+              </span>
+              <span
+                :title="factory.address.value"
+                class="post-checkout__address"
+                @click="copyToClipboard(factory.address.value)"
+              >
+                {{ cropAddress(factory.address.value) }}
+                <icon
+                  class="post-checkout__icon post-checkout__icon-clipboard"
+                  :name="$icons.duplicate"
+                />
+              </span>
+            </div>
           </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              <icon
-                class="post-checkout__icon"
-                :name="$icons.informationCircle"
-              />
-              {{ $t('post-checkout.decrease-percent-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              {{ formatPercent(product.decreasePercent) }}
-            </span>
+        </div>
+      </app-block>
+      <app-block>
+        <div class="post-checkout__block">
+          <div class="app__metadata">
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                <icon
+                  class="post-checkout__icon"
+                  :name="$icons.informationCircle"
+                />
+                {{ $t('post-checkout.minimal-price-lbl') }}
+              </span>
+              <span class="post-checkout__value">
+                {{
+                  formatAmount(
+                    product.minPrice,
+                    paymentToken?.decimals.value ?? '0',
+                    paymentToken?.symbol.value,
+                  )
+                }}
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                <icon
+                  class="post-checkout__icon"
+                  :name="$icons.informationCircle"
+                />
+                {{ $t('post-checkout.reward-lbl') }}
+              </span>
+              <span class="post-checkout__value">
+                {{
+                  formatAmount(
+                    cashback,
+                    dapp?.decimals.value ?? '0',
+                    dapp?.symbol.value,
+                  )
+                }}
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                <icon
+                  class="post-checkout__icon"
+                  :name="$icons.informationCircle"
+                />
+                {{ $t('post-checkout.distribution-lbl') }}
+              </span>
+              <span class="post-checkout__value">
+                {{
+                  formatAmount(
+                    cashback,
+                    paymentToken?.decimals.value,
+                    paymentToken?.symbol.value,
+                  )
+                }}
+              </span>
+            </div>
           </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              <icon
-                class="post-checkout__icon"
-                :name="$icons.informationCircle"
-              />
-              {{ $t('post-checkout.cashback-percent-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              {{ formatPercent(product.cashbackPercent) }}
+          <div class="post-checkout__buy-wrp">
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ $t('post-checkout.current-price-lbl') }}
+              </span>
+              <span class="post-checkout__value">
+                {{
+                  formatAmount(
+                    product.currentPrice,
+                    paymentToken?.decimals.value ?? '0',
+                    paymentToken?.symbol.value,
+                  )
+                }}
+              </span>
+            </div>
+            <app-button
+              class="post-checkout__buy-link"
+              size="large"
+              :text="$t('post-checkout.buy-now-link')"
+              :route="{
+                name: $routes.productDeploy,
+                params: { id: route.params.id },
+              }"
+            />
+            <div class="post-checkout__buy-description">
+              {{ $t('post-checkout.buy-description-lbl') }}
+            </div>
+          </div>
+        </div>
+      </app-block>
+      <app-block class="post-checkout__block-wrp">
+        <div class="post-checkout__block post-checkout__block--chart">
+          <div class="app__metadata">
+            <h2 class="post-checkout__block-title">
+              {{ post.chartTitle }}
+            </h2>
+            <line-chart class="post-checkout__block-chart" :data="chartData" />
+            <span class="post-checkout__block-description">
+              {{ post.chartDescription }}
             </span>
           </div>
         </div>
-        <div class="app__metadata">
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ $t('post-checkout.implementation-address-lbl') }}
-            </span>
-            <span
-              :title="product.implementation"
-              class="post-checkout__address"
-              @click="copyToClipboard(product.implementation)"
-            >
-              {{ cropAddress(product.implementation) }}
-              <icon
-                class="post-checkout__icon post-checkout__icon-clipboard"
-                :name="$icons.duplicate"
-              />
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ $t('post-checkout.factory-address-lbl') }}
-            </span>
-            <span
-              :title="factory.getAddress()"
-              class="post-checkout__address"
-              @click="copyToClipboard(factory.getAddress())"
-            >
-              {{ cropAddress(factory.getAddress()) }}
-              <icon
-                class="post-checkout__icon post-checkout__icon-clipboard"
-                :name="$icons.duplicate"
-              />
-            </span>
-          </div>
-        </div>
-      </div>
-    </app-block>
-    <app-block>
-      <div class="post-checkout__block">
-        <div class="app__metadata">
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              <icon
-                class="post-checkout__icon"
-                :name="$icons.informationCircle"
-              />
-              {{ $t('post-checkout.minimal-price-lbl') }}
-            </span>
-            <span class="post-checkout__value">
-              {{
-                formatAmount(
-                  product.minPrice,
-                  paymentToken?.decimals.value ?? '0',
-                  paymentToken?.symbol.value,
-                )
-              }}
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              <icon
-                class="post-checkout__icon"
-                :name="$icons.informationCircle"
-              />
-              {{ $t('post-checkout.reward-lbl') }}
-            </span>
-            <span class="post-checkout__value">
-              {{
-                formatAmount(
-                  cashback,
-                  dapp?.decimals.value ?? '0',
-                  dapp?.symbol.value,
-                )
-              }}
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              <icon
-                class="post-checkout__icon"
-                :name="$icons.informationCircle"
-              />
-              {{ $t('post-checkout.distribution-lbl') }}
-            </span>
-            <span class="post-checkout__value">
-              {{
-                formatAmount(
-                  cashback,
-                  paymentToken?.decimals.value,
-                  paymentToken?.symbol.value,
-                )
-              }}
-            </span>
-          </div>
-        </div>
-        <div class="post-checkout__buy-wrp">
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ $t('post-checkout.current-price-lbl') }}
-            </span>
-            <span class="post-checkout__value">
-              {{
-                formatAmount(
-                  product.currentPrice,
-                  paymentToken?.decimals.value ?? '0',
-                  paymentToken?.symbol.value,
-                )
-              }}
-            </span>
-          </div>
-          <app-button
-            class="post-checkout__buy-link"
-            size="large"
-            :text="$t('post-checkout.buy-now-link')"
-            :route="{
-              name: $routes.postItemDeployment,
-              params: { id: postId },
-            }"
-          />
-          <div class="post-checkout__buy-description">
-            {{ $t('post-checkout.buy-description-lbl') }}
-          </div>
-        </div>
-      </div>
-    </app-block>
-    <app-block class="post-checkout__block-wrp">
-      <div class="post-checkout__block post-checkout__block--chart">
-        <div class="app__metadata">
-          <h2 class="post-checkout__block-title">
-            {{ postCheckoutMetadata.chartTitle }}
-          </h2>
-          <line-chart
-            class="post-checkout__block-chart"
-            :chart-data="chartData"
-          />
-          <span class="post-checkout__block-description">
-            {{ postCheckoutMetadata.chartDescription }}
-          </span>
-        </div>
-      </div>
-    </app-block>
+      </app-block>
+    </template>
   </div>
 </template>
 

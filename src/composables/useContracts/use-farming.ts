@@ -1,48 +1,55 @@
-import { ref } from 'vue'
-import { ethers } from 'ethers'
-import { config } from '@config'
-import { FarmingContract } from '@/types'
+import { ref, Ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useWeb3ProvidersStore } from '@/store'
 import { Farming, Farming__factory } from '@/types'
+import { CONTRACT_NAMES } from '@/enums'
 
-export const useFarming = (
-  currentProvider?: ethers.providers.Web3Provider,
-  currentSigner?: ethers.providers.JsonRpcSigner,
-  address?: string,
-): FarmingContract => {
+import { config } from '@/config'
+
+export interface FarmingContract {
+  address: Ref<string>
+  investmentToken: Ref<string>
+  rewardToken: Ref<string>
+  init: () => void
+  loadDetails: () => Promise<void>
+  updateInvestmentToken: () => Promise<void>
+  updateRewardToken: () => Promise<void>
+}
+
+export const useFarming = (): FarmingContract => {
+  const { provider } = storeToRefs(useWeb3ProvidersStore())
+
   const _instance = ref<Farming | undefined>()
   const _instance_rw = ref<Farming | undefined>()
 
-  const init = (contractAddress: string): void => {
-    address = contractAddress
+  const address = ref('')
+  const investmentToken = ref('')
+  const rewardToken = ref('')
 
-    if (currentProvider) {
+  const init = (): void => {
+    if (!provider.value.chainId) return
+
+    address.value =
+      config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.FARMING]
+
+    if (provider.value.currentProvider) {
       _instance.value = Farming__factory.connect(
-        contractAddress,
-        currentProvider,
+        address.value,
+        provider.value.currentProvider,
       )
     }
-    if (currentSigner) {
+    if (provider.value.currentSigner) {
       _instance_rw.value = Farming__factory.connect(
-        contractAddress,
-        currentSigner,
+        address.value,
+        provider.value.currentSigner,
       )
     }
   }
-
-  if (!address) init(config.CONTRACT_FARMING)
-  else init(address ?? '')
-
-  const investmentToken = ref('')
-  const rewardToken = ref('')
 
   const loadDetails = async (): Promise<void> => {
     if (!_instance.value) return
 
     await Promise.all([updateRewardToken()])
-  }
-
-  const getAddress = (): string => {
-    return address ?? ''
   }
 
   const updateInvestmentToken = async (): Promise<void> => {
@@ -57,11 +64,13 @@ export const useFarming = (
     rewardToken.value = await _instance.value.rewardToken()
   }
 
+  init()
+
   return {
     init,
     loadDetails,
-    getAddress,
 
+    address,
     investmentToken,
     rewardToken,
 

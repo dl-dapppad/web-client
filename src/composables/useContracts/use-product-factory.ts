@@ -1,43 +1,65 @@
-import { ref } from 'vue'
-import { ethers } from 'ethers'
-import { config } from '@config'
-import { Product, ProductFactoryContract } from '@/types'
-import { ProdyctFactory, ProdyctFactory__factory } from '@/types'
+import { ref, Ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ContractTransaction } from 'ethers'
+import { useWeb3ProvidersStore } from '@/store'
+import { ProductFactory, ProductFactory__factory } from '@/types'
+import { CONTRACT_NAMES } from '@/enums'
+import { config } from '@/config'
 
-export const useProductFactory = (
-  currentProvider?: ethers.providers.Web3Provider,
-  currentSigner?: ethers.providers.JsonRpcSigner,
-  address?: string,
-): ProductFactoryContract => {
-  const _instance = ref<ProdyctFactory | undefined>()
-  const _instance_rw = ref<ProdyctFactory | undefined>()
+export interface Product {
+  cashbackPercent: string
+  decreasePercent: string
+  currentPrice: string
+  minPrice: string
+  implementation: string
+  salesCount: string
+  isActive: boolean
+}
 
-  const init = (contractAddress: string): void => {
-    address = contractAddress
+export interface ProductFactoryContract {
+  address: Ref<string>
+  init: (contractAddress: string) => void
+  getEmptyProduct: () => Product
+  payment: () => Promise<string>
+  products: (alias: string) => Promise<Product>
+  getCashback: (alias: string) => Promise<string>
+  getPotentialContractAddress: (
+    alias: string,
+    initializeData: string,
+  ) => Promise<string>
+  deploy: (
+    alias: string,
+    paymentToken: string,
+    initializeData: string,
+  ) => Promise<ContractTransaction>
+}
 
-    if (currentProvider) {
-      _instance.value = ProdyctFactory__factory.connect(
-        contractAddress,
-        currentProvider,
+export const useProductFactory = (): ProductFactoryContract => {
+  const { provider } = storeToRefs(useWeb3ProvidersStore())
+
+  const _instance = ref<ProductFactory | undefined>()
+  const _instance_rw = ref<ProductFactory | undefined>()
+
+  const address = ref('')
+
+  const init = (): void => {
+    if (!provider.value.chainId) return
+
+    address.value =
+      config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.PRODUCT_FACTORY]
+
+    if (provider.value.currentProvider) {
+      _instance.value = ProductFactory__factory.connect(
+        address.value,
+        provider.value.currentProvider,
       )
     }
-    if (currentSigner) {
-      _instance_rw.value = ProdyctFactory__factory.connect(
-        contractAddress,
-        currentSigner,
+    if (provider.value.currentSigner) {
+      _instance_rw.value = ProductFactory__factory.connect(
+        address.value,
+        provider.value.currentSigner,
       )
     }
-  }
-
-  if (!address) init(config.CONTRACT_PRODUCT_FACTORY)
-  else init(address ?? '')
-
-  const loadDetails = async (): Promise<void> => {
-    return
-  }
-
-  const getAddress = (): string => {
-    return address ?? ''
   }
 
   const getEmptyProduct = (): Product => {
@@ -52,17 +74,14 @@ export const useProductFactory = (
     }
   }
 
-  const products = async (alias: string): Promise<Product> => {
-    const product = {
-      cashbackPercent: '',
-      decreasePercent: '',
-      currentPrice: '',
-      minPrice: '',
-      implementation: '',
-      salesCount: '',
-      isActive: false,
-    }
+  const payment = async (): Promise<string> => {
+    if (!_instance.value) return '0'
 
+    return _instance.value.payment()
+  }
+
+  const products = async (alias: string): Promise<Product> => {
+    const product = getEmptyProduct()
     if (!_instance.value) return product
 
     const res = await _instance.value.products(alias)
@@ -84,13 +103,43 @@ export const useProductFactory = (
     return (await _instance.value.getCashback(alias)).toString()
   }
 
+  const getPotentialContractAddress = async (
+    alias: string,
+    initializeData: string,
+  ): Promise<string> => {
+    if (!_instance.value) return '0'
+
+    return _instance.value.getPotentialContractAddress(alias, initializeData)
+  }
+
+  const deploy = async (
+    alias: string,
+    paymentToken: string,
+    initializeData: string,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    const tx = await _instance_rw.value.deploy(
+      alias,
+      paymentToken,
+      initializeData,
+    )
+
+    return tx
+  }
+
+  init()
+
   return {
     init,
-    loadDetails,
-    getAddress,
+
+    address,
 
     getEmptyProduct,
+    payment,
     products,
     getCashback,
+    getPotentialContractAddress,
+    deploy,
   }
 }

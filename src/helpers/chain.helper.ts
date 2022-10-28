@@ -1,3 +1,5 @@
+import { config } from '@/config'
+import { ETHEREUM_CHAINS } from '@/enums'
 import { Chain, ChainId } from '@/types'
 
 export const getEmptyChain = (): Chain => {
@@ -11,11 +13,11 @@ export const getEmptyChain = (): Chain => {
   }
 }
 
-export const getChain = (id: ChainId): Chain => {
+export const getChain = (id?: ChainId): Chain => {
   id = String(id)
 
   switch (id) {
-    case '1':
+    case ETHEREUM_CHAINS.mainnet:
       return {
         id,
         name: 'Ethereum',
@@ -24,7 +26,7 @@ export const getChain = (id: ChainId): Chain => {
         symbol: 'ETH',
         decimals: 18,
       }
-    case '5':
+    case ETHEREUM_CHAINS.goerli:
       return {
         id,
         name: 'Goerli',
@@ -33,7 +35,7 @@ export const getChain = (id: ChainId): Chain => {
         symbol: 'GoerliETH',
         decimals: 18,
       }
-    case '1337':
+    case ETHEREUM_CHAINS.localhost:
       return {
         id,
         name: 'Local Network',
@@ -46,4 +48,10 @@ export const getChain = (id: ChainId): Chain => {
       return getEmptyChain()
     }
   }
+}
+
+export const isChainAvailable = (id: ChainId): boolean => {
+  const chainIds = config.AVAILABLE_CHAINS
+
+  return chainIds.includes(id as string)
 }

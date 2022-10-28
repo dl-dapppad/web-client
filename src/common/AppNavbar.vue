@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { AppLogo, Icon, AppButton, Dropdown } from '@/common'
-import { config } from '@config'
 import { useErc20 } from '@/composables'
 import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
 import { Chain } from '@/types'
@@ -9,24 +8,46 @@ import { InputField } from '@/fields'
 
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { ErrorHandler, formatNumber, cropAddress } from '@/helpers'
-import { computed, ref } from 'vue'
-import { ETHEREUM_CHAINS } from '@/enums'
+import { ErrorHandler, isChainAvailable } from '@/helpers'
+import { CONTRACT_NAMES, ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
+import { config } from '@/config'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
+const dapp = useErc20()
+
 const searchInput = ref('')
+const chain = ref<Chain>(getEmptyChain())
+const account = ref()
+const accountBalance = ref()
+const dappBalance = ref<string>('0')
 
-const farmBalance = computed(() => ({
-  amount: 12345.12345,
-  asset: 'DAPP',
-}))
+const init = async () => {
+  if (
+    !provider.value.isConnected ||
+    !provider.value.chainId ||
+    !isChainAvailable(provider.value.chainId)
+  ) {
+    return
+  }
+  chain.value = getChain(provider.value.chainId)
+  account.value = provider.value.selectedAddress
+  accountBalance.value = provider.value.selectedBalance
 
-const walletBalance = computed(() => ({
-  amount: 12345.12345,
-  asset: 'ETH',
-}))
+  const dappAddress =
+    config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP]
+
+  if (!dappAddress) return
+
+  dapp.init(dappAddress)
+  await Promise.all([dapp.loadDetails(), dapp.balanceOf(account.value)]).then(
+    res => {
+      dappBalance.value = res[1]
+      return
+    },
+  )
+}
 
 const trySwitchChain = async (chainId: string | number) => {
   try {
@@ -34,30 +55,6 @@ const trySwitchChain = async (chainId: string | number) => {
   } catch (error) {
     ErrorHandler.process(error)
   }
-}
-
-const dapp = useErc20(
-  provider?.value.currentProvider,
-  provider?.value.currentSigner,
-)
-
-const chain = ref<Chain>(getEmptyChain())
-const account = ref('')
-const accountBalance = ref('0')
-const dappBalance = ref<string>('0')
-
-const init = async () => {
-  chain.value = getChain(provider.value.chainId ?? '')
-  account.value = provider.value.selectedAddress ?? account.value
-  accountBalance.value = provider.value.selectedBalance ?? accountBalance.value
-
-  dapp.init(config.CONTRACT_DAPP)
-  await Promise.all([dapp.loadDetails(), dapp.balanceOf(account.value)]).then(
-    res => {
-      dappBalance.value = res[1]
-      return
-    },
-  )
 }
 
 const handleProviderBtnClick = () => {
@@ -72,9 +69,14 @@ const handleProviderBtnClick = () => {
   }
 }
 
-if (provider.value.currentProvider) {
-  init()
-}
+watch(
+  () => provider.value.selectedAddress,
+  () => {
+    init()
+  },
+)
+
+init()
 </script>
 
 <template>
@@ -87,8 +89,9 @@ if (provider.value.currentProvider) {
             class="app-navbar__farm-farm-balance-icon"
             :name="$icons.shoppingCart"
           />
-          {{ formatNumber(farmBalance.amount) }}
-          {{ farmBalance.asset }}
+          {{
+            formatAmount(dappBalance, dapp?.decimals.value, dapp?.symbol.value)
+          }}
         </span>
         <app-button
           :text="$t('app-navbar.farm-link')"
@@ -121,22 +124,21 @@ if (provider.value.currentProvider) {
         <template #default>
           <div class="app-navbar__chain-body">
             <app-button
-              v-for="chain in ETHEREUM_CHAINS"
-              :key="chain"
+              v-for="chainName in ETHEREUM_CHAINS"
+              :key="chainName"
               class="app-navbar__chain-item"
-              :text="localizeChain(chain)"
-              @click="trySwitchChain(chain)"
+              :text="localizeChain(chainName)"
+              @click="trySwitchChain(chainName)"
             />
           </div>
         </template>
       </dropdown>
       <div class="app-navbar__wallet">
         <span class="app-navbar__wallet-balance">
-          {{ formatNumber(walletBalance.amount) }}
-          {{ walletBalance.asset }}
+          {{ formatAmount(accountBalance, chain?.decimals, chain?.symbol) }}
         </span>
         <span class="app-navbar__wallet-address">
-          {{ cropAddress(provider.selectedAddress) }}
+          {{ cropAddress(provider.selectedAddress ?? '') }}
         </span>
       </div>
     </template>

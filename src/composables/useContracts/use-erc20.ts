@@ -1,44 +1,56 @@
-import { ref } from 'vue'
-import { ethers } from 'ethers'
-import { Erc20Contract } from '@/types'
+import { ref, Ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ContractTransaction } from 'ethers'
+import { useWeb3ProvidersStore } from '@/store'
 import { Erc20, Erc20__factory } from '@/types'
 
-export const useErc20 = (
-  currentProvider?: ethers.providers.Web3Provider,
-  currentSigner?: ethers.providers.JsonRpcSigner,
-  address?: string,
-): Erc20Contract => {
+export interface Erc20Contract {
+  address: Ref<string>
+  name: Ref<string>
+  symbol: Ref<string>
+  decimals: Ref<number>
+  init: (address: string) => void
+  loadDetails: () => Promise<void>
+  updateName: () => Promise<void>
+  updateSymbol: () => Promise<void>
+  updateDecimals: () => Promise<void>
+  balanceOf: (address: string) => Promise<string>
+  allowance: (owner: string, spender: string) => Promise<string>
+  approve: (spender: string, amount: string) => Promise<ContractTransaction>
+}
+
+export const useErc20 = (contractAddress?: string): Erc20Contract => {
+  const { provider } = storeToRefs(useWeb3ProvidersStore())
+
   const _instance = ref<Erc20 | undefined>()
   const _instance_rw = ref<Erc20 | undefined>()
 
-  const init = (contractAddress: string): void => {
-    address = contractAddress
-
-    if (currentProvider) {
-      _instance.value = Erc20__factory.connect(contractAddress, currentProvider)
-    }
-    if (currentSigner) {
-      _instance_rw.value = Erc20__factory.connect(
-        contractAddress,
-        currentSigner,
-      )
-    }
-  }
-
-  if (address) init(address ?? '')
-
+  const address = ref('')
   const name = ref('')
   const symbol = ref('')
   const decimals = ref(0)
+
+  const init = (contractAddress: string): void => {
+    address.value = contractAddress
+
+    if (provider.value.currentProvider) {
+      _instance.value = Erc20__factory.connect(
+        address.value,
+        provider.value.currentProvider,
+      )
+    }
+    if (provider.value.currentSigner) {
+      _instance_rw.value = Erc20__factory.connect(
+        address.value,
+        provider.value.currentSigner,
+      )
+    }
+  }
 
   const loadDetails = async (): Promise<void> => {
     if (!_instance.value) return
 
     await Promise.all([updateName(), updateSymbol(), updateDecimals()])
-  }
-
-  const getAddress = (): string => {
-    return address ?? ''
   }
 
   const updateName = async (): Promise<void> => {
@@ -65,11 +77,28 @@ export const useErc20 = (
     return (await _instance.value.balanceOf(address)).toString()
   }
 
+  const allowance = async (owner: string, spender: string): Promise<string> => {
+    if (!_instance.value) return '0'
+
+    return (await _instance.value.allowance(owner, spender)).toString()
+  }
+
+  const approve = async (
+    spender: string,
+    amount: string,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.approve(spender, amount)
+  }
+
+  if (contractAddress) init(contractAddress)
+
   return {
     init,
     loadDetails,
-    getAddress,
 
+    address,
     name,
     symbol,
     decimals,
@@ -78,5 +107,7 @@ export const useErc20 = (
     updateSymbol,
     updateDecimals,
     balanceOf,
+    allowance,
+    approve,
   }
 }

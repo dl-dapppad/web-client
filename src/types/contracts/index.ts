@@ -3,8 +3,8 @@
 /* eslint-disable */
 export type { Erc20 } from "./Erc20";
 export type { Farming } from "./Farming";
-export type { ProdyctFactory } from "./ProdyctFactory";
+export type { ProductFactory } from "./ProductFactory";
 export * as factories from "./factories";
 export { Erc20__factory } from "./factories/Erc20__factory";
 export { Farming__factory } from "./factories/Farming__factory";
-export { ProdyctFactory__factory } from "./factories/ProdyctFactory__factory";
+export { ProductFactory__factory } from "./factories/ProductFactory__factory";

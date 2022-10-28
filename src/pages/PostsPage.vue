@@ -1,19 +1,34 @@
 <script lang="ts" setup>
-import { AppBlock, AppButton, PostCard } from '@/common'
-import postsData from '@/assets/posts.json'
-import { useRouter } from '@/router'
-import { Post } from '@/types'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { animate } from 'motion'
+import { useRoute, useRouter } from '@/router'
+import { AppBlock, AppButton, PostCard } from '@/common'
+import { Post } from '@/types'
+import postsData from '@/assets/posts.json'
+
+const route = useRoute()
+const router = useRouter()
 
 const bannerDescription = ref<HTMLParagraphElement | null>(null)
 const defaultBannerDescriptionHeight = ref(0)
 
 const isBannerDescShown = ref(false)
 
-const posts = postsData as Post[]
+const postsAll = postsData as Post[]
+const post = ref<Post>()
+const subPosts = ref<Post[]>([])
 
-const router = useRouter()
+const updatePosts = (routeId: string) => {
+  subPosts.value = []
+  post.value = postsAll.find(post => routeId === post.id)
+
+  if (!post.value) return
+
+  post.value.subPosts.forEach(id => {
+    const subPost = postsAll.find(post => id === post.id)
+    if (subPost) subPosts.value.push(subPost)
+  })
+}
 
 onMounted(() => {
   if (!bannerDescription.value) return
@@ -36,6 +51,15 @@ const handleShowMore = () => {
 
   isBannerDescShown.value = !isBannerDescShown.value
 }
+
+watch(
+  () => route.params.id,
+  id => {
+    updatePosts(id as string)
+  },
+)
+
+updatePosts(route.params.id as string)
 </script>
 
 <template>
@@ -44,7 +68,7 @@ const handleShowMore = () => {
       <div class="posts-page__banner">
         <div class="posts-page__banner-title-wrp">
           <h2 class="posts-page__banner-title">
-            {{ posts[0].title }}
+            {{ post?.title }}
           </h2>
           <app-button
             class="posts-page__back-btn"
@@ -55,7 +79,7 @@ const handleShowMore = () => {
           />
         </div>
         <p ref="bannerDescription" class="posts-page__banner-desc">
-          {{ posts[0].description }}
+          {{ post?.description }}
         </p>
         <app-button
           class="posts-page__banner-show-more-btn"
@@ -71,18 +95,18 @@ const handleShowMore = () => {
         <div class="posts-page__banner-img-wrp">
           <img
             class="posts-page__banner-img"
-            :src="posts[0].imageUrl"
-            :alt="posts[0].title"
+            :src="post?.imageUrl"
+            :alt="post?.title"
           />
         </div>
       </div>
     </app-block>
     <app-block
-      v-for="post in posts.slice(1)"
-      :key="post.id"
+      v-for="subPost in subPosts"
+      :key="subPost.id"
       class="posts-page__card"
     >
-      <post-card :post="post" />
+      <post-card :post="subPost" />
     </app-block>
   </div>
 </template>
