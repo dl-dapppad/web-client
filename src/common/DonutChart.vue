@@ -137,7 +137,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: toRem(40);
+  gap: toRem(40);
 }
 
 .donut-chart__instance {
