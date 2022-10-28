@@ -180,7 +180,7 @@ const chartData = {
         </div>
       </div>
     </app-block>
-    <app-block class="app-block--chart">
+    <app-block class="post-checkout__block-wrp">
       <div class="post-checkout__block post-checkout__block--chart">
         <div class="app__metadata">
           <h2 class="app__metadata-title">
@@ -267,7 +267,7 @@ const chartData = {
   font-size: toRem(20);
 }
 
-.app-block--chart {
+.post-checkout__block-wrp {
   grid-column: 1 / -1;
 }
 </style>
