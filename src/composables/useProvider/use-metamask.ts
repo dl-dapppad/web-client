@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import {
   connectEthAccounts,
+  getChain,
   getEthExplorerAddressUrl,
   getEthExplorerTxUrl,
   handleEthError,
@@ -17,12 +18,14 @@ import {
   TransactionResponse,
   TxRequestBody,
 } from '@/types'
+import { errors } from '@/errors'
 import { Deferrable } from '@ethersproject/properties'
 import { TransactionRequest } from '@ethersproject/abstract-provider'
 
 export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
   const chainId = ref<ChainId>('')
   const selectedAddress = ref('')
+  const selectedBalance = ref('')
 
   const currentProvider = computed(
     () =>
@@ -65,6 +68,12 @@ export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
 
       const currentAccounts = await currentProvider.value.listAccounts()
       selectedAddress.value = currentAccounts[0]
+
+      if (selectedAddress.value) {
+        selectedBalance.value = (
+          await currentProvider.value.getBalance(selectedAddress.value)
+        ).toString()
+      }
     } catch (error) {
       handleEthError(error as EthProviderRpcError)
     }
@@ -122,11 +131,17 @@ export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
     return transactionResponse.hash
   }
 
-  const getTxUrl = (explorerUrl: string, txHash: string) => {
+  const getTxUrl = (txHash: string) => {
+    const explorerUrl = getChain(chainId.value).explorerUrl
+    if (!explorerUrl) throw new errors.ProviderChainNotFoundError()
+
     return getEthExplorerTxUrl(explorerUrl, txHash)
   }
 
-  const getAddressUrl = (explorerUrl: string, address: string) => {
+  const getAddressUrl = (address: string) => {
+    const explorerUrl = getChain(chainId.value).explorerUrl
+    if (!explorerUrl) throw new errors.ProviderChainNotFoundError()
+
     return getEthExplorerAddressUrl(explorerUrl, address)
   }
 
@@ -136,6 +151,7 @@ export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
 
     chainId,
     selectedAddress,
+    selectedBalance,
     isConnected,
 
     init,

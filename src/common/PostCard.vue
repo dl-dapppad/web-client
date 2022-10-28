@@ -17,7 +17,11 @@ defineProps<{
     </p>
     <router-link
       class="post-card__link"
-      :to="{ name: $routes.postItem, params: { id: post.id } }"
+      :to="{
+        name:
+          post.type === 'product' ? $routes.productItem : $routes.categoryItem,
+        params: { id: post.id },
+      }"
     />
   </div>
 </template>

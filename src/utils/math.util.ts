@@ -24,7 +24,7 @@ export type BnFormatCfg = BigNumber.Format & BnCfg
 export type BnLike = string | number | BigNumber | BN
 
 BigNumber.config({
-  DECIMAL_PLACES: 0,
+  DECIMAL_PLACES: 18,
   ROUNDING_MODE: BN_ROUNDING.DEFAULT,
   FORMAT: {
     decimalSeparator: '.',
@@ -93,6 +93,10 @@ export class BN {
 
   round(precision: number, mode?: BN_ROUNDING): string {
     return this.#bn.toPrecision(precision, mode)
+  }
+
+  decimalPlaces(decimals: number): string {
+    return this.#bn.decimalPlaces(decimals).toString()
   }
 
   format(format?: BnFormatCfg): string {

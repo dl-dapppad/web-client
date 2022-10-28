@@ -6,7 +6,7 @@
     "pre-push": "yarn test && yarn rsc"
   },
   "scripts": {
-    "vite-dev-server": "vite",
+    "vite-dev-server": "vite --host",
     "vite-build": "vite build",
     "start": "cross-env VITE_APP_ENVIRONMENT=development yarn vite-dev-server",
     "build": "cross-env VITE_APP_ENVIRONMENT=production yarn vite-build",
@@ -18,7 +18,7 @@
     "lint:scripts": "eslint \"{src,config}/**/*.{vue,js,ts}\" --cache --fix --max-warnings=0",
     "preview": "vite preview",
     "rsc": "node scripts/release-sanity-check.mjs",
-    "generate-ether-types": "typechain --target=ethers-v5 'src/abi/**/*.json' --out-dir src/types/contracts"
+    "generate-ether-types": "typechain --target=ethers-v5 'src/abi/**/*.json' --out-dir src/types/contract-types"
   },
   "dependencies": {
     "@solana/web3.js": "1.52.0",

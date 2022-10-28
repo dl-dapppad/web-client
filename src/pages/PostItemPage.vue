@@ -69,7 +69,7 @@ const postCheckoutMetadata = {
         </div>
       </div>
     </app-block>
-    <post-checkout :post-checkout-metadata="postCheckoutMetadata" />
+    <post-checkout v-if="post?.type === 'product'" />
     <app-block class="post-item-page__content-wrp">
       <div v-if="post" class="post-item-page__content">
         <template v-for="([key, value], idx) in post.content">

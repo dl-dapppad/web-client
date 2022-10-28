@@ -1,5 +1,10 @@
 <script lang="ts" setup>
+import { ref } from 'vue'
 import { AppLogo, Icon, AppButton, Dropdown } from '@/common'
+import { config } from '@config'
+import { useErc20 } from '@/composables'
+import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
+import { Chain } from '@/types'
 import { InputField } from '@/fields'
 
 import { storeToRefs } from 'pinia'
@@ -31,6 +36,30 @@ const trySwitchChain = async (chainId: string | number) => {
   }
 }
 
+const dapp = useErc20(
+  provider?.value.currentProvider,
+  provider?.value.currentSigner,
+)
+
+const chain = ref<Chain>(getEmptyChain())
+const account = ref('')
+const accountBalance = ref('0')
+const dappBalance = ref<string>('0')
+
+const init = async () => {
+  chain.value = getChain(provider.value.chainId ?? '')
+  account.value = provider.value.selectedAddress ?? account.value
+  accountBalance.value = provider.value.selectedBalance ?? accountBalance.value
+
+  dapp.init(config.CONTRACT_DAPP)
+  await Promise.all([dapp.loadDetails(), dapp.balanceOf(account.value)]).then(
+    res => {
+      dappBalance.value = res[1]
+      return
+    },
+  )
+}
+
 const handleProviderBtnClick = () => {
   try {
     if (provider.value.selectedAddress) {
@@ -41,6 +70,10 @@ const handleProviderBtnClick = () => {
   } catch (error) {
     ErrorHandler.process(error)
   }
+}
+
+if (provider.value.currentProvider) {
+  init()
 }
 </script>
 

@@ -2,6 +2,7 @@ import { config } from '@/config'
 
 export type Post = {
   id: string
+  type: string
   title: string
   description: string
   imageUrl: string

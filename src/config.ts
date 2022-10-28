@@ -7,6 +7,9 @@ export const config = {
   APP_NAME: import.meta.env.VITE_APP_NAME,
   LOG_LEVEL: 'trace' as LogLevelDesc,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
+  CONTRACT_DAPP: import.meta.env.VITE_APP_CONTRACT_DAPP,
+  CONTRACT_PRODUCT_FACTORY: import.meta.env.VITE_APP_CONTRACT_PRODUCT_FACTORY,
+  CONTRACT_FARMING: import.meta.env.VITE_APP_CONTRACT_FARMING,
   MODULES: ['ERC20'],
 } as const
 

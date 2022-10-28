@@ -1,11 +1,6 @@
 import { PROVIDERS } from '@/enums'
 import { computed, ComputedRef, Ref, ref } from 'vue'
-import {
-  useMetamask,
-  useCoinbase,
-  usePhantom,
-  useSolflare,
-} from '@/composables/useProvider'
+import { useMetamask } from '@/composables/useProvider'
 import {
   DesignatedProvider,
   ChainId,
@@ -23,6 +18,7 @@ export interface UseProvider {
   selectedProvider: Ref<PROVIDERS | undefined>
   chainId: ComputedRef<ChainId | undefined>
   selectedAddress: ComputedRef<string | undefined>
+  selectedBalance: ComputedRef<string | undefined>
   isConnected: ComputedRef<boolean>
 
   init: (provider: DesignatedProvider) => Promise<void>
@@ -36,8 +32,8 @@ export interface UseProvider {
   ) => Promise<void>
   signAndSendTx: (txRequestBody: TxRequestBody) => Promise<TransactionResponse>
   getHashFromTxResponse: (txResponse: TransactionResponse) => string
-  getTxUrl: (explorerUrl: string, txHash: string) => string
-  getAddressUrl: (explorerUrl: string, address: string) => string
+  getTxUrl: (txHash: string) => string
+  getAddressUrl: (address: string) => string
 }
 
 export const useProvider = (): UseProvider => {
@@ -61,6 +57,9 @@ export const useProvider = (): UseProvider => {
   const selectedAddress = computed(
     () => providerWrp.value?.selectedAddress as string | undefined,
   )
+  const selectedBalance = computed(
+    () => providerWrp.value?.selectedBalance as string | undefined,
+  )
   const isConnected = computed(() =>
     Boolean(chainId.value && selectedAddress.value),
   )
@@ -69,15 +68,6 @@ export const useProvider = (): UseProvider => {
     switch (provider.name as PROVIDERS) {
       case PROVIDERS.metamask:
         providerWrp.value = useMetamask(provider.instance)
-        break
-      case PROVIDERS.coinbase:
-        providerWrp.value = useCoinbase(provider.instance)
-        break
-      case PROVIDERS.phantom:
-        providerWrp.value = usePhantom(provider.instance)
-        break
-      case PROVIDERS.solflare:
-        providerWrp.value = useSolflare(provider.instance)
         break
       default:
         throw new Error('Invalid Provider')
@@ -131,18 +121,18 @@ export const useProvider = (): UseProvider => {
     return providerWrp.value.getHashFromTxResponse(txResponse)
   }
 
-  const getTxUrl = (explorerUrl: string, txHash: string): string => {
+  const getTxUrl = (txHash: string): string => {
     if (!providerWrp.value)
       throw new errors.ProviderWrapperMethodNotFoundError()
 
-    return providerWrp.value.getTxUrl(explorerUrl, txHash)
+    return providerWrp.value.getTxUrl(txHash)
   }
 
-  const getAddressUrl = (explorerUrl: string, address: string): string => {
+  const getAddressUrl = (address: string): string => {
     if (!providerWrp.value)
       throw new errors.ProviderWrapperMethodNotFoundError()
 
-    return providerWrp.value.getAddressUrl(explorerUrl, address)
+    return providerWrp.value.getAddressUrl(address)
   }
 
   return {
@@ -152,6 +142,7 @@ export const useProvider = (): UseProvider => {
     selectedProvider,
     chainId,
     selectedAddress,
+    selectedBalance,
     isConnected,
 
     init,

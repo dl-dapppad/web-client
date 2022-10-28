@@ -1,35 +1,73 @@
 <script lang="ts" setup>
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { config } from '@config'
+import { useWeb3ProvidersStore } from '@/store'
+import {
+  formatAmount,
+  formatPercent,
+  cropAddress,
+  getChain,
+  getEmptyChain,
+} from '@/helpers'
+import { Chain, Product } from '@/types'
+import { useErc20, useProductFactory, useFarming } from '@/composables'
 import { AppButton, AppBlock, Icon, LineChart } from '@/common'
 import { copyToClipboard } from '@/helpers'
-import { cropAddress } from '@/helpers'
-import { useRoute } from '@/router'
-import { computed } from 'vue'
+import { getAlias } from '@/helpers/product-alias.helper'
 
 const route = useRoute()
 
-const postId = computed(() => route.params.id)
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
-const props = defineProps<{
-  postCheckoutMetadata: {
-    currentNetwork: string
-    salesCount: number
-    decreasePercent: number
-    cashbackPercent: number
-    implementation: string
-    factory: string
-    minPrice: string
-    reward: string
-    distribution: string
-    currentPrice: string
-    chartData: number[]
-    startPrice: number
-    chartTitle: string
-    chartDescription: string
-  }
-}>()
+const dapp = useErc20(
+  provider?.value.currentProvider,
+  provider?.value.currentSigner,
+)
 
-const chartData = {
-  data: props.postCheckoutMetadata.chartData,
+const paymentToken = useErc20(
+  provider?.value.currentProvider,
+  provider?.value.currentSigner,
+)
+
+const factory = useProductFactory(
+  provider?.value.currentProvider,
+  provider?.value.currentSigner,
+)
+
+const farming = useFarming(
+  provider?.value.currentProvider,
+  provider?.value.currentSigner,
+)
+
+const alias = ref('')
+const chain = ref<Chain>(getEmptyChain())
+const product = ref<Product>(factory.getEmptyProduct())
+const cashback = ref('0')
+
+const init = async () => {
+  chain.value = getChain(provider.value.chainId ?? '')
+  dapp.init(config.CONTRACT_DAPP)
+
+  await Promise.all([
+    dapp.loadDetails(),
+    farming.loadDetails(),
+    factory.products(alias.value),
+    factory.getCashback(alias.value),
+  ]).then(res => {
+    product.value = res[2]
+    cashback.value = res[3]
+    return
+  })
+
+  paymentToken.init(farming.rewardToken.value)
+  await paymentToken.loadDetails()
+}
+
+if (provider.value.chainId) {
+  alias.value = getAlias(provider.value.chainId, route.params.id as string)
+  if (alias.value) init()
 }
 </script>
 
@@ -43,7 +81,7 @@ const chartData = {
               {{ $t('post-checkout.current-network-lbl') }}
             </span>
             <span class="app__metadata-value">
-              {{ postCheckoutMetadata.currentNetwork }}
+              {{ chain?.name ?? "Network isn't detected" }}
             </span>
           </div>
           <div class="app__metadata-row">
@@ -51,7 +89,7 @@ const chartData = {
               {{ $t('post-checkout.sales-lbl') }}
             </span>
             <span class="app__metadata-value">
-              {{ postCheckoutMetadata.salesCount }}
+              {{ product.salesCount }}
             </span>
           </div>
           <div class="app__metadata-row">
@@ -63,7 +101,7 @@ const chartData = {
               {{ $t('post-checkout.decrease-percent-lbl') }}
             </span>
             <span class="app__metadata-value">
-              {{ `${postCheckoutMetadata.decreasePercent}%` }}
+              {{ formatPercent(product.decreasePercent) }}
             </span>
           </div>
           <div class="app__metadata-row">
@@ -75,7 +113,7 @@ const chartData = {
               {{ $t('post-checkout.cashback-percent-lbl') }}
             </span>
             <span class="app__metadata-value">
-              {{ `${postCheckoutMetadata.cashbackPercent}%` }}
+              {{ formatPercent(product.cashbackPercent) }}
             </span>
           </div>
         </div>
@@ -85,13 +123,11 @@ const chartData = {
               {{ $t('post-checkout.implementation-address-lbl') }}
             </span>
             <span
-              :title="props.postCheckoutMetadata.implementation"
+              :title="product.implementation"
               class="post-checkout__address"
-              @click="
-                copyToClipboard(props.postCheckoutMetadata.implementation)
-              "
+              @click="copyToClipboard(product.implementation)"
             >
-              {{ cropAddress(props.postCheckoutMetadata.implementation) }}
+              {{ cropAddress(product.implementation) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
                 :name="$icons.duplicate"
@@ -103,11 +139,11 @@ const chartData = {
               {{ $t('post-checkout.factory-address-lbl') }}
             </span>
             <span
-              :title="props.postCheckoutMetadata.factory"
+              :title="factory.getAddress()"
               class="post-checkout__address"
-              @click="copyToClipboard(props.postCheckoutMetadata.factory)"
+              @click="copyToClipboard(factory.getAddress())"
             >
-              {{ cropAddress(props.postCheckoutMetadata.factory) }}
+              {{ cropAddress(factory.getAddress()) }}
               <icon
                 class="post-checkout__icon post-checkout__icon-clipboard"
                 :name="$icons.duplicate"
@@ -128,8 +164,14 @@ const chartData = {
               />
               {{ $t('post-checkout.minimal-price-lbl') }}
             </span>
-            <span class="app__metadata-value">
-              {{ postCheckoutMetadata.minPrice }}
+            <span class="post-checkout__value">
+              {{
+                formatAmount(
+                  product.minPrice,
+                  paymentToken?.decimals.value ?? '0',
+                  paymentToken?.symbol.value,
+                )
+              }}
             </span>
           </div>
           <div class="app__metadata-row">
@@ -140,8 +182,14 @@ const chartData = {
               />
               {{ $t('post-checkout.reward-lbl') }}
             </span>
-            <span class="app__metadata-value">
-              {{ postCheckoutMetadata.reward }}
+            <span class="post-checkout__value">
+              {{
+                formatAmount(
+                  cashback,
+                  dapp?.decimals.value ?? '0',
+                  dapp?.symbol.value,
+                )
+              }}
             </span>
           </div>
           <div class="app__metadata-row">
@@ -152,8 +200,14 @@ const chartData = {
               />
               {{ $t('post-checkout.distribution-lbl') }}
             </span>
-            <span class="app__metadata-value">
-              {{ postCheckoutMetadata.distribution }}
+            <span class="post-checkout__value">
+              {{
+                formatAmount(
+                  cashback,
+                  paymentToken?.decimals.value,
+                  paymentToken?.symbol.value,
+                )
+              }}
             </span>
           </div>
         </div>
@@ -162,8 +216,14 @@ const chartData = {
             <span class="app__metadata-lbl">
               {{ $t('post-checkout.current-price-lbl') }}
             </span>
-            <span class="app__metadata-value">
-              {{ postCheckoutMetadata.currentPrice }}
+            <span class="post-checkout__value">
+              {{
+                formatAmount(
+                  product.currentPrice,
+                  paymentToken?.decimals.value ?? '0',
+                  paymentToken?.symbol.value,
+                )
+              }}
             </span>
           </div>
           <app-button

@@ -1,8 +1,9 @@
 export enum ROUTE_NAMES {
   app = 'app',
   posts = 'posts',
-  postItem = 'post-item',
-  postItemDeployment = 'post-item-deployment',
-  postItemEditing = 'post-item-editing',
+  categoryItem = 'category-item',
+  productItem = 'product-item',
+  productItemDeployment = 'product-item-deployment',
+  productItemEditing = 'product-item-editing',
   farming = 'farming',
 }
