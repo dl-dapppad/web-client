@@ -10,14 +10,6 @@ const props = defineProps<{
   }
 }>()
 
-Highcharts.setOptions({
-  chart: {
-    style: {
-      fontFamily: 'Montserrat',
-    },
-  },
-})
-
 onMounted(() => {
   if (chartInstanceElement.value) {
     Highcharts.chart(
@@ -28,6 +20,9 @@ onMounted(() => {
           zoomType: 'x',
           backgroundColor: 'transparent',
           width: null,
+          style: {
+            fontFamily: 'Montserrat',
+          },
         },
         credits: {
           enabled: false,
