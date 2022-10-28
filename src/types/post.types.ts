@@ -1,3 +1,5 @@
+import { config } from '@/config'
+
 export type Post = {
   id: string
   title: string
@@ -5,4 +7,5 @@ export type Post = {
   imageUrl: string
   bannerUrl: string
   content: [string, string][]
+  module?: typeof config.MODULES
 }

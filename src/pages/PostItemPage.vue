@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { AppBlock, AppButton, PostCheckout } from '@/common'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter } from '@/router'
 import { computed } from 'vue'
 import postsData from '@/assets/posts.json'
 import { Post } from '@/types'
