@@ -6,8 +6,11 @@ import { computed, getCurrentInstance, ref, useAttrs, useSlots } from 'vue'
 
 type INPUT_TYPES = 'text' | 'number' | 'password'
 
+type SCHEMES = 'primary' | 'secondary'
+
 const props = withDefaults(
   defineProps<{
+    scheme?: SCHEMES
     modelValue: string | number
     label?: string
     placeholder?: string
@@ -15,6 +18,7 @@ const props = withDefaults(
     errorMessage?: string
   }>(),
   {
+    scheme: 'primary',
     type: 'text',
     label: '',
     placeholder: ' ',
@@ -69,6 +73,7 @@ const inputClasses = computed(() =>
     ...(isDisabled.value ? ['input-field--disabled'] : []),
     ...(isReadonly.value ? ['input-field--readonly'] : []),
     ...(props.errorMessage ? ['input-field--error'] : []),
+    `input-field--${props.scheme}`,
   ].join(' '),
 )
 
@@ -167,6 +172,15 @@ const setHeightCSSVar = (element: HTMLElement) => {
 }
 
 .input-field__label {
+  $input-field-secondary-label-bg: linear-gradient(
+    to bottom,
+    var(--field-bg) 0%,
+    var(--field-bg) 50%,
+    var(--background-secondary) 50%,
+    var(--background-secondary) 100%
+  );
+
+  pointer-events: none;
   position: absolute;
   padding: toRem(4);
   top: 0;
@@ -175,8 +189,8 @@ const setHeightCSSVar = (element: HTMLElement) => {
   line-height: 1.3;
   letter-spacing: 0.1em;
   font-weight: 700;
-  background-color: var(--field-bg);
   transform: translateY(-50%);
+  background: var(--field-bg);
 
   @include field-label;
 
@@ -184,12 +198,20 @@ const setHeightCSSVar = (element: HTMLElement) => {
     top: 0;
     color: var(--field-text);
     border-color: var(--field-border-hover);
+
+    .input-field--secondary & {
+      background: $input-field-secondary-label-bg;
+    }
   }
 
   .input-field--error:not(:focus):not(:placeholder-shown) & {
     color: var(--field-error);
-  }
 
+    .input-field--secondary & {
+      background: $input-field-secondary-label-bg;
+    }
+  }
+  /* stylelint-disable-next-line */
   .input-field__input:not(:focus):placeholder-shown + & {
     top: 50%;
     color: var(--field-label);
@@ -199,9 +221,14 @@ const setHeightCSSVar = (element: HTMLElement) => {
     letter-spacing: 0.1em;
   }
 
+  /* stylelint-disable-next-line */
   .input-field__input:not([disabled]):focus ~ & {
     color: var(--field-label-focus);
     font-weight: 700;
+
+    .input-field--secondary & {
+      background: $input-field-secondary-label-bg;
+    }
   }
 
   .input-field__input:not(:focus):placeholder-shown:-webkit-autofill + & {
@@ -211,6 +238,11 @@ const setHeightCSSVar = (element: HTMLElement) => {
     font-weight: 400;
     line-height: 1.3;
     letter-spacing: 0.1em;
+  }
+
+  /* stylelint-disable-next-line */
+  .input-field--secondary & {
+    background: var(--background-secondary);
   }
 }
 
@@ -223,6 +255,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
 .input-field__input {
   padding: var(--field-padding);
   transition-property: box-shadow;
+  background: var(--field-bg);
 
   @include field-text;
 
@@ -266,7 +299,8 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
   .input-field--error & {
     border-color: var(--field-error);
-    box-shadow: 0 0 0 toRem(1) var(--field-error);
+    box-shadow: inset 0 0 0 toRem(50) var(--background-secondary),
+      0 0 0 toRem(1) var(--field-error);
   }
 
   .input-field--node-left & {
@@ -277,9 +311,17 @@ const setHeightCSSVar = (element: HTMLElement) => {
     padding-right: calc(var(--field-padding-right) * 3);
   }
 
+  .input-field--secondary & {
+    &:not(:read-only) {
+      background: var(--background-secondary);
+      box-shadow: inset 0 0 0 toRem(50) var(--background-secondary);
+    }
+  }
+
   &:not([disabled]):focus {
     box-sizing: border-box;
-    box-shadow: 0 0 0 toRem(1) var(--field-border-focus);
+    box-shadow: inset 0 0 0 toRem(50) var(--background-secondary),
+      0 0 0 toRem(1) var(--field-border-focus);
     border-color: var(--field-border-focus);
   }
 

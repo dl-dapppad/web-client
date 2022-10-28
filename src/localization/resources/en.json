@@ -75,7 +75,7 @@
     "reward-lbl": "Reward",
     "distribution-lbl": "Distribution",
     "current-price-lbl": "Current price",
-    "buy-now-btn": "Buy now",
+    "buy-now-link": "Buy now",
     "buy-description-lbl": "First, the contract will be deployed, and then you can configure it"
   }
 }

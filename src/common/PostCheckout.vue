@@ -1,7 +1,14 @@
 <script lang="ts" setup>
 import { AppButton, AppBlock, Icon } from '@/common'
+
 import { copyToClipboard } from '@/helpers'
 import { cropAddress } from '@/helpers'
+import { useRoute } from '@/router'
+import { computed } from 'vue'
+
+const route = useRoute()
+
+const postId = computed(() => route.params.id)
 
 const postCheckoutMetadata = {
   currentNetwork: 'Ethereum',
@@ -19,53 +26,53 @@ const postCheckoutMetadata = {
 
 <template>
   <div class="post-checkout">
-    <app-block class="post-checkout__top">
-      <div class="post-checkout__top-inner">
-        <div class="post-checkout__about">
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+    <app-block>
+      <div class="post-checkout__block">
+        <div class="app__metadata">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ $t('post-checkout.current-network-lbl') }}
             </span>
-            <span class="post-checkout__value">
+            <span class="app__metadata-value">
               {{ postCheckoutMetadata.currentNetwork }}
             </span>
           </div>
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ $t('post-checkout.sales-lbl') }}
             </span>
-            <span class="post-checkout__value">
+            <span class="app__metadata-value">
               {{ postCheckoutMetadata.salesCount }}
             </span>
           </div>
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               <icon
                 class="post-checkout__icon"
                 :name="$icons.informationCircle"
               />
               {{ $t('post-checkout.decrease-percent-lbl') }}
             </span>
-            <span class="post-checkout__value">
+            <span class="app__metadata-value">
               {{ `${postCheckoutMetadata.decreasePercent}%` }}
             </span>
           </div>
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               <icon
                 class="post-checkout__icon"
                 :name="$icons.informationCircle"
               />
               {{ $t('post-checkout.cashback-percent-lbl') }}
             </span>
-            <span class="post-checkout__value">
+            <span class="app__metadata-value">
               {{ `${postCheckoutMetadata.cashbackPercent}%` }}
             </span>
           </div>
         </div>
-        <div class="post-checkout__about">
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+        <div class="app__metadata">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ $t('post-checkout.implementation-address-lbl') }}
             </span>
             <span
@@ -80,8 +87,8 @@ const postCheckoutMetadata = {
               />
             </span>
           </div>
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ $t('post-checkout.factory-address-lbl') }}
             </span>
             <span
@@ -99,58 +106,64 @@ const postCheckoutMetadata = {
         </div>
       </div>
     </app-block>
-    <app-block class="post-checkout__top">
-      <div class="post-checkout__top-inner">
-        <div class="post-checkout__about">
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+    <app-block>
+      <div class="post-checkout__block">
+        <div class="app__metadata">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               <icon
                 class="post-checkout__icon"
                 :name="$icons.informationCircle"
               />
               {{ $t('post-checkout.minimal-price-lbl') }}
             </span>
-            <span class="post-checkout__value">
+            <span class="app__metadata-value">
               {{ postCheckoutMetadata.minPrice }}
             </span>
           </div>
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               <icon
                 class="post-checkout__icon"
                 :name="$icons.informationCircle"
               />
               {{ $t('post-checkout.reward-lbl') }}
             </span>
-            <span class="post-checkout__value">
+            <span class="app__metadata-value">
               {{ postCheckoutMetadata.reward }}
             </span>
           </div>
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               <icon
                 class="post-checkout__icon"
                 :name="$icons.informationCircle"
               />
               {{ $t('post-checkout.distribution-lbl') }}
             </span>
-            <span class="post-checkout__value">
+            <span class="app__metadata-value">
               {{ postCheckoutMetadata.distribution }}
             </span>
           </div>
         </div>
-        <div class="post-checkout__buy">
-          <div class="post-checkout__item">
-            <span class="post-checkout__key">
+        <div class="post-checkout__buy-wrp">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ $t('post-checkout.current-price-lbl') }}
             </span>
-            <span class="post-checkout__value">
+            <span class="app__metadata-value">
               {{ postCheckoutMetadata.currentPrice }}
             </span>
           </div>
-          <app-button class="post-checkout__buy-now-btn">
-            {{ $t('post-checkout.buy-now-btn') }}
-          </app-button>
+          <app-button
+            class="post-checkout__buy-link"
+            size="large"
+            :text="$t('post-checkout.buy-now-link')"
+            :route="{
+              name: $routes.postItemDeployment,
+              params: { id: postId },
+            }"
+          />
           <div class="post-checkout__buy-description">
             {{ $t('post-checkout.buy-description-lbl') }}
           </div>
@@ -162,57 +175,23 @@ const postCheckoutMetadata = {
 
 <style lang="scss" scoped>
 .post-checkout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.post-checkout__top {
-  width: 50%;
-  letter-spacing: 0.1em;
-}
-
-.post-checkout__top-inner {
-  padding: toRem(40) toRem(110);
+.post-checkout__block {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: toRem(40) toRem(110);
   gap: toRem(40);
   height: 100%;
 }
 
-.post-checkout__about {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(23);
-}
-
-.post-checkout__buy {
+.post-checkout__buy-wrp {
   display: flex;
   flex-direction: column;
   gap: toRem(10);
-}
-
-.post-checkout__item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.post-checkout__key {
-  display: flex;
-  align-items: center;
-  gap: toRem(10);
-  font-size: toRem(14);
-  font-weight: 700;
-  color: var(--text-secondary-main);
-}
-
-.post-checkout__value {
-  display: flex;
-  align-items: center;
-  gap: toRem(10);
-  font-size: toRem(16);
-  font-weight: 700;
-  color: var(--text-primary-main);
 }
 
 .post-checkout__address {
@@ -234,9 +213,8 @@ const postCheckoutMetadata = {
   }
 }
 
-.post-checkout__buy-now-btn {
+.post-checkout__buy-link {
   width: 100%;
-  font-size: toRem(20);
 }
 
 .post-checkout__buy-description {
