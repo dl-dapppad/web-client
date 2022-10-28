@@ -183,11 +183,14 @@ const chartData = {
     <app-block class="post-checkout__block-wrp">
       <div class="post-checkout__block post-checkout__block--chart">
         <div class="app__metadata">
-          <h2 class="app__metadata-title">
+          <h2 class="post-checkout__block-title">
             {{ $t('post-checkout.title-txt') }}
           </h2>
-          <line-chart class="app__metadata-chart" :chart-data="chartData" />
-          <span class="app__metadata-description">
+          <line-chart
+            class="post-checkout__block-chart"
+            :chart-data="chartData"
+          />
+          <span class="post-checkout__block-description">
             {{ $t('post-checkout.description-txt') }}
           </span>
         </div>
@@ -254,16 +257,16 @@ const chartData = {
   gap: toRem(30);
 }
 
-.app__metadata-chart {
+.post-checkout__block-chart {
   max-width: 100%;
 }
 
-.app__metadata-title {
+.post-checkout__block-title {
   font-size: toRem(36);
   font-weight: 900;
 }
 
-.app__metadata-description {
+.post-checkout__block-description {
   font-size: toRem(20);
 }
 
