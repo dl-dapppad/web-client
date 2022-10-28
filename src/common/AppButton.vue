@@ -140,6 +140,7 @@ const buttonClasses = computed(() =>
   border: var(--app-button-border);
   background-color: var(--app-button-bg);
   color: var(--app-button-text);
+  font-family: var(--app-font-family-secondary);
 
   &:disabled,
   &--disabled {
@@ -330,6 +331,8 @@ const buttonClasses = computed(() =>
   &--large {
     padding: toRem(24) toRem(50);
     grid-gap: toRem(16);
+    font-weight: 700;
+    font-size: toRem(20);
   }
 
   &--medium {

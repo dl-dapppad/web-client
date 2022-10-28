@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { AppBlock, AppButton, Collapse } from '@/common'
+import { AppBlock, AppButton, Collapse, Modal } from '@/common'
 import { InputField } from '@/fields'
+
+import DeploySuccessMessage from '@/modules/ERC20/common/DeploySuccessMessage.vue'
 
 import { reactive, ref } from 'vue'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { useRouter } from 'vue-router'
 import { ErrorHandler } from '@/helpers'
-import Modal from '@/common/Modal.vue'
-import DeploySuccessMessage from '@/modules/ERC20/common/DeploySuccessMessage.vue'
 
 const isSuccessModalShown = ref(false)
 
@@ -48,30 +48,30 @@ const submit = async () => {
 
 <template>
   <form class="erc20-deploy-form" @submit.prevent="submit">
-    <div class="erc20-deploy-form__title-wrp">
+    <div class="app__module-title-wrp">
       <app-button
-        class="erc20-deploy-form__back-btn"
+        class="app__module-back-btn"
         :icon-right="$icons.arrowLeft"
         modification="border-circle"
         color="tertiary"
         @click="router.go(-1)"
       />
-      <h2 class="erc20-deploy-form__title">
+      <h2 class="app__module-title">
         {{ 'Deploy' }}
       </h2>
     </div>
-    <span class="erc20-deploy-form__subtitle">
+    <span class="app__module-subtitle">
       {{
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
       }}
     </span>
-    <app-block class="erc20-deploy-form__parameters-wrp">
-      <div class="erc20-deploy-form__parameters">
-        <div class="erc20-deploy-form__parameters-content">
+    <app-block class="app__module-content-wrp">
+      <div class="app__module-content">
+        <div class="app__module-content-inner">
           <collapse is-opened-by-default :is-close-by-click-outside="false">
             <template #head="{ collapse }">
               <app-button
-                class="erc20-deploy-form__parameters-title"
+                class="app__module-content-title"
                 scheme="default"
                 color="default"
                 size="default"
@@ -81,7 +81,7 @@ const submit = async () => {
               />
             </template>
             <template #default>
-              <div class="erc20-deploy-form__form-control">
+              <div class="app__form-control">
                 <input-field
                   scheme="secondary"
                   v-model="form.paymentToken"
@@ -99,10 +99,10 @@ const submit = async () => {
               </div>
             </template>
           </collapse>
-          <h4 class="erc20-deploy-form__parameters-title">
+          <h4 class="app__module-content-title">
             {{ 'Other fields' }}
           </h4>
-          <div class="erc20-deploy-form__form-control">
+          <div class="app__form-control">
             <input-field
               scheme="secondary"
               v-model="form.tokenSymbol"
@@ -156,80 +156,3 @@ const submit = async () => {
     </modal>
   </form>
 </template>
-
-<style lang="scss" scoped>
-.erc20-deploy-form {
-  display: flex;
-  flex-direction: column;
-  padding: toRem(50) 0 toRem(30);
-  max-width: toRem(990);
-  width: 100%;
-  margin: 0 auto;
-}
-
-.erc20-deploy-form__title-wrp {
-  position: relative;
-}
-
-.erc20-deploy-form__back-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: toRem(54);
-  height: toRem(54);
-  right: calc(100% + #{toRem(56)});
-  padding: 0;
-}
-
-.erc20-deploy-form__title {
-  font-size: toRem(70);
-  line-height: 1.2;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  color: var(--text-primary-main);
-}
-
-.erc20-deploy-form__subtitle {
-  font-size: toRem(16);
-  line-height: 1.3;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  margin: toRem(20) 0 toRem(40);
-}
-
-.erc20-deploy-form__parameters-wrp {
-  flex: 1;
-}
-
-.erc20-deploy-form__parameters {
-  display: flex;
-  flex-direction: column;
-  padding: toRem(40) toRem(165);
-}
-
-.erc20-deploy-form__parameters-content {
-  max-width: toRem(660);
-  width: 100%;
-  margin: 0 auto;
-}
-
-.erc20-deploy-form__parameters-title {
-  font-size: toRem(24);
-  line-height: 1.3;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  margin: toRem(20) 0;
-  grid-gap: toRem(20);
-}
-
-.erc20-deploy-form__form-control {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(20);
-  padding: toRem(10) 0;
-}
-
-.erc20-deploy-form__submit-btn {
-  min-width: toRem(240);
-}
-</style>

@@ -1,10 +1,23 @@
 <script lang="ts" setup>
-import { AppBlock, AppButton } from '@/common'
+import { AppBlock, AppButton, Tabs } from '@/common'
 import { InputField } from '@/fields'
 
 import { Bus, cropAddress, ErrorHandler } from '@/helpers'
 import { useRouter } from 'vue-router'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+
+const FORM_TABS = [
+  {
+    title: 'Read',
+    number: 1,
+  },
+  {
+    title: 'Write',
+    number: 2,
+  },
+]
+
+const currentTabNumber = ref(FORM_TABS[0].number)
 
 const router = useRouter()
 
@@ -63,21 +76,21 @@ const handleTransferOwnership = () => {
 
 <template>
   <div class="erc20-edit-form">
-    <div class="erc20-edit-form__title-wrp">
+    <div class="app__module-title-wrp">
       <app-button
         type="button"
-        class="erc20-edit-form__back-btn"
+        class="app__module-back-btn"
         :icon-right="$icons.arrowLeft"
         modification="border-circle"
         color="tertiary"
         @click="router.go(-1)"
       />
-      <h2 class="erc20-edit-form__title">
+      <h2 class="app__module-title">
         {{ 'Editing' }}
       </h2>
       <app-button
         type="button"
-        class="erc20-edit-form__address"
+        class="app__module-title-address"
         :text="`Contract ${cropAddress(
           '0xC87B0398F86276D3D590A14AB53fF57185899C42',
         )}`"
@@ -86,49 +99,37 @@ const handleTransferOwnership = () => {
         size="default"
       />
     </div>
-    <span class="erc20-edit-form__subtitle">
+    <span class="app__module-subtitle">
       {{
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
       }}
     </span>
-    <div class="erc20-edit-form__tabs">
-      <app-block>
-        <app-button
-          type="button"
-          size="small"
-          :text="'Read'"
-          color="secondary"
-          modification="border-rounded"
-        />
-      </app-block>
-      <app-block>
-        <app-button
-          type="button"
-          size="small"
-          :text="'Write'"
-          scheme="default"
-        />
-      </app-block>
-    </div>
-    <app-block class="erc20-edit-form__content-wrp">
-      <div class="erc20-edit-form__content">
-        <h4 class="erc20-edit-form__content-title">
+    <tabs
+      v-model="currentTabNumber"
+      :tabs-data="[
+        { title: 'Read', number: 1 },
+        { title: 'Write', number: 2 },
+      ]"
+    />
+    <app-block>
+      <div class="app__module-content">
+        <h4 class="app__module-content-title">
           {{ 'Read block' }}
         </h4>
-        <div class="erc20-edit-form__metadata">
-          <div class="erc20-edit-form__metadata-item">
-            <span class="erc20-edit-form__metadata-lbl">
+        <div class="app__metadata">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ 'Max total Supplie' }}
             </span>
-            <span class="erc20-edit-form__metadata-value">
+            <span class="app__metadata-value">
               {{ '32 310 389.1234 USDT' }}
             </span>
           </div>
-          <div class="erc20-edit-form__metadata-item">
-            <span class="erc20-edit-form__metadata-lbl">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ 'Contract creator' }}
             </span>
-            <span class="erc20-edit-form__metadata-value">
+            <span class="app__metadata-value">
               <app-button
                 scheme="default"
                 color="secondary"
@@ -140,11 +141,11 @@ const handleTransferOwnership = () => {
               />
             </span>
           </div>
-          <div class="erc20-edit-form__metadata-item">
-            <span class="erc20-edit-form__metadata-lbl">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ 'Token Tracker' }}
             </span>
-            <span class="erc20-edit-form__metadata-value">
+            <span class="app__metadata-value">
               <app-button
                 scheme="default"
                 color="secondary"
@@ -153,11 +154,11 @@ const handleTransferOwnership = () => {
               />
             </span>
           </div>
-          <div class="erc20-edit-form__metadata-item">
-            <span class="erc20-edit-form__metadata-lbl">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ 'Contract owner' }}
             </span>
-            <span class="erc20-edit-form__metadata-value">
+            <span class="app__metadata-value">
               <app-button
                 scheme="default"
                 color="secondary"
@@ -169,11 +170,11 @@ const handleTransferOwnership = () => {
               />
             </span>
           </div>
-          <div class="erc20-edit-form__metadata-item">
-            <span class="erc20-edit-form__metadata-lbl">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ 'Contract' }}
             </span>
-            <span class="erc20-edit-form__metadata-value">
+            <span class="app__metadata-value">
               <app-button
                 scheme="default"
                 color="secondary"
@@ -185,28 +186,28 @@ const handleTransferOwnership = () => {
               />
             </span>
           </div>
-          <div class="erc20-edit-form__metadata-item">
-            <span class="erc20-edit-form__metadata-lbl">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ 'Decimals' }}
             </span>
-            <span class="erc20-edit-form__metadata-value">
+            <span class="app__metadata-value">
               {{ '6' }}
             </span>
           </div>
-          <div class="erc20-edit-form__metadata-item">
-            <span class="erc20-edit-form__metadata-lbl">
+          <div class="app__metadata-row">
+            <span class="app__metadata-lbl">
               {{ 'Your balance' }}
             </span>
-            <span class="erc20-edit-form__metadata-value">
+            <span class="app__metadata-value">
               {{ '12 345.1234 SHIT' }}
             </span>
           </div>
         </div>
-        <h4 class="erc20-edit-form__content-title">
+        <h4 class="app__module-content-title">
           {{ 'Edit block' }}
         </h4>
-        <div class="erc20-edit-form__form-control">
-          <span class="erc20-edit-form__form-control-lbl">
+        <div class="app__form-control">
+          <span class="app__form-control-title">
             {{ 'Approve' }}
           </span>
           <input-field
@@ -226,8 +227,8 @@ const handleTransferOwnership = () => {
             @click="handleApprove"
           />
         </div>
-        <div class="erc20-edit-form__form-control">
-          <span class="erc20-edit-form__form-control-lbl">
+        <div class="app__form-control">
+          <span class="app__form-control-title">
             {{ 'Transfer From' }}
           </span>
           <input-field
@@ -252,8 +253,8 @@ const handleTransferOwnership = () => {
             @click="handleTransferFrom"
           />
         </div>
-        <div class="erc20-edit-form__form-control">
-          <span class="erc20-edit-form__form-control-lbl">
+        <div class="app__form-control">
+          <span class="app__form-control-title">
             {{ 'Transfer' }}
           </span>
           <input-field
@@ -273,8 +274,8 @@ const handleTransferOwnership = () => {
             @click="handleTransfer"
           />
         </div>
-        <div class="erc20-edit-form__form-control">
-          <span class="erc20-edit-form__form-control-lbl">
+        <div class="app__form-control">
+          <span class="app__form-control-title">
             {{ 'Transfer Ownership' }}
           </span>
           <input-field
@@ -293,121 +294,3 @@ const handleTransferOwnership = () => {
     </app-block>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.erc20-edit-form {
-  display: flex;
-  flex-direction: column;
-  padding: toRem(50) 0 toRem(30);
-  max-width: toRem(990);
-  width: 100%;
-  margin: 0 auto;
-}
-
-.erc20-edit-form__title-wrp {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: toRem(20);
-}
-
-.erc20-edit-form__back-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: toRem(54);
-  height: toRem(54);
-  right: calc(100% + #{toRem(56)});
-  padding: 0;
-}
-
-.erc20-edit-form__title {
-  font-size: toRem(70);
-  line-height: 1.2;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-}
-
-.erc20-edit-form__address {
-  grid-gap: toRem(20);
-  font-size: toRem(30);
-  line-height: 1.2;
-  font-weight: 700;
-  text-align: right;
-  letter-spacing: 0.1em;
-}
-
-.erc20-edit-form__subtitle {
-  font-size: toRem(16);
-  line-height: 1.3;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  margin-bottom: toRem(40);
-}
-
-.erc20-edit-form__tabs {
-  display: flex;
-}
-
-.erc20-edit-form__content {
-  flex: 1;
-  padding: toRem(40) toRem(165);
-}
-
-.erc20-edit-form__content-title {
-  font-size: toRem(24);
-  line-height: 1.3;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  margin-bottom: toRem(30);
-}
-
-.erc20-edit-form__metadata {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: toRem(70);
-  gap: toRem(20);
-}
-
-.erc20-edit-form__metadata-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.erc20-edit-form__metadata-lbl {
-  font-size: toRem(14);
-  line-height: 1.3;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--text-secondary-main);
-}
-
-.erc20-edit-form__metadata-value {
-  text-align: right;
-  font-size: toRem(16);
-  line-height: 1.3;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
-.erc20-edit-form__form-control {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(20);
-
-  &:not(:last-child) {
-    margin-bottom: toRem(30);
-  }
-}
-
-.erc20-edit-form__form-control-lbl {
-  display: block;
-  font-weight: 700;
-  font-size: toRem(20);
-  line-height: 1.3;
-  letter-spacing: 0.1em;
-  color: var(--text-secondary-main);
-}
-</style>
