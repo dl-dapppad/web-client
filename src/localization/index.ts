@@ -14,3 +14,5 @@ export const i18n = createI18n({
   fallbackLocale: locale,
   ...resources,
 })
+
+export * from './localizes'

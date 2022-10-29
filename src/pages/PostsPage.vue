@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AppBlock, AppButton, PostCard } from '@/common'
 import postsData from '@/assets/posts.json'
-import { useRouter } from 'vue-router'
+import { useRouter } from '@/router'
 import { Post } from '@/types'
 import { onMounted, ref } from 'vue'
 import { animate } from 'motion'
