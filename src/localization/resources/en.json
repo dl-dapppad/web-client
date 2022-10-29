@@ -36,8 +36,26 @@
     "default-message-info": "Something is happening. Just want you to know that",
     "default-message-default": "Just a message"
   },
+  "filters": {
+    "chains": {
+      "ethereum": {
+        "mainet": "mainet",
+        "rinkeby": "rinkeby",
+        "ropsten": "ropsten",
+        "kovan": "kovan",
+        "goerli": "goerli",
+        "polygon": "polygon",
+        "optimism": "optimism",
+        "binance": "binance",
+        "arbitrum": "arbitrum",
+        "mumbai": "mumbai"
+      }
+    }
+  },
   "app-navbar": {
-    "connect-btn": "Connect Wallet"
+    "connect-btn": "Connect Wallet",
+    "farm-link": "Farm",
+    "search-placeholder": "Search"
   },
   "app-footer": {
     "copyright": "All rights reserved",
