@@ -33,6 +33,11 @@ const routes: Array<RouteRecordRaw> = [
     name: ROUTE_NAMES.postItemEditing,
     component: () => import('@/forms/EditForm.vue'),
   },
+  {
+    path: '/farming',
+    name: ROUTE_NAMES.farming,
+    component: () => import('@/pages/FarmingPage.vue'),
+  },
 ]
 
 const router = createRouter({
