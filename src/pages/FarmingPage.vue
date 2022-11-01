@@ -9,6 +9,10 @@ import {
 import { cropAddress } from '@/helpers'
 import { useRouter } from '@/router'
 import { copyToClipboard, formatDMYTime } from '@/helpers'
+import { i18n } from '@/localization'
+import { ICON_NAMES } from '@/enums'
+
+const { t } = i18n.global
 
 const router = useRouter()
 const address = '0xa1234567af'
@@ -97,32 +101,99 @@ const linesChartData = {
   title: 'Stakes and rewards',
 }
 
-const stakingHistoryData = [
+const historyData = [
   {
-    date: 1665752259,
-    stakedFirst: '78.1234',
-    withdrawn: '78.0',
-    stakedSecond: '78.1234',
+    title: t('farming-page.staking-title'),
+    currency: t('farming-page.staking-currency'),
+    currencyIcon: ICON_NAMES.currencyBangladeshi,
+    data: [
+      {
+        date: 1665652259,
+        rows: [
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.cube,
+            label: t('farming-page.staking-history-first-lbl'),
+          },
+          {
+            value: '78.0',
+            icon: ICON_NAMES.chartBar,
+            label: t('farming-page.staking-history-second-lbl'),
+            selected: true,
+          },
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.cube,
+            label: t('farming-page.staking-history-third-lbl'),
+          },
+        ],
+      },
+      {
+        date: 1665652259,
+        rows: [
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.cube,
+            label: t('farming-page.staking-history-first-lbl'),
+          },
+          {
+            value: '78.0',
+            icon: ICON_NAMES.chartBar,
+            label: t('farming-page.staking-history-second-lbl'),
+            selected: true,
+          },
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.cube,
+            label: t('farming-page.staking-history-third-lbl'),
+          },
+        ],
+      },
+    ],
   },
   {
-    date: 1665752259,
-    stakedFirst: '78.1234',
-    withdrawn: '78.0',
-    stakedSecond: '78.1234',
-  },
-]
-
-const rewardsHistoryData = [
-  {
-    date: 1665752259,
-    accuredFirst: '78.1234',
-    claimed: '78.0',
-    accuredSecond: '78.1234',
-  },
-  {
-    date: 1665752259,
-    claimed: '78.0',
-    accuredSecond: '78.1234',
+    title: t('farming-page.rewards-title'),
+    currency: t('farming-page.rewards-currency'),
+    currencyIcon: ICON_NAMES.daiCoin,
+    data: [
+      {
+        date: 1665652259,
+        rows: [
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.gift,
+            label: t('farming-page.rewards-history-first-lbl'),
+          },
+          {
+            value: '78.0',
+            icon: ICON_NAMES.chartBar,
+            label: t('farming-page.rewards-history-second-lbl'),
+            selected: true,
+          },
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.gift,
+            label: t('farming-page.rewards-history-first-lbl'),
+          },
+        ],
+      },
+      {
+        date: 1665652259,
+        rows: [
+          {
+            value: '78.0',
+            icon: ICON_NAMES.chartBar,
+            label: t('farming-page.rewards-history-second-lbl'),
+            selected: true,
+          },
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.gift,
+            label: t('farming-page.rewards-history-first-lbl'),
+          },
+        ],
+      },
+    ],
   },
 ]
 </script>
@@ -289,126 +360,40 @@ const rewardsHistoryData = [
           </app-block>
         </div>
         <div class="farming-page__history">
-          <app-block>
+          <app-block v-for="(block, ind) of historyData" :key="ind">
             <div class="farming-page__history-item">
               <div class="farming-page__history-title">
                 <div class="farming-page__history-heading">
-                  {{ $t('farming-page.staking-title') }}
+                  {{ block.title }}
                 </div>
                 <div class="farming-page__history-currency">
-                  {{ $t('farming-page.staking-currency') }}
+                  {{ block.currency }}
                   <icon
                     class="farming-page__history-currency-icon"
-                    :name="$icons.currencyBangladeshi"
+                    :name="block.currencyIcon"
                   />
                 </div>
               </div>
               <div
                 class="farming-page__history-table"
-                v-for="(item, ind) of stakingHistoryData"
-                :key="ind"
+                v-for="(item, index) of block.data"
+                :key="index"
               >
                 <div class="farming-page__history-time">
                   {{ formatDMYTime(item.date) }}
-                </div>
-                <div class="farming-page__history-row" v-if="item.stakedFirst">
-                  <div class="farming-page__history-row-key">
-                    <icon
-                      :name="$icons.cube"
-                      class="farming-page__history-icon"
-                    />
-                    {{ $t('farming-page.staking-history-first-lbl') }}
-                  </div>
-                  <div class="farming-page__history-row-value">
-                    {{ item.stakedFirst }}
-                  </div>
-                </div>
-                <div class="farming-page__history-row" v-if="item.withdrawn">
-                  <div class="farming-page__history-row-key">
-                    <icon
-                      :name="$icons.chartBar"
-                      class="farming-page__history-icon"
-                    />
-                    {{ $t('farming-page.staking-history-second-lbl') }}
-                  </div>
-                  <div class="farming-page__history-row-value">
-                    {{ item.withdrawn }}
-                  </div>
-                </div>
-                <div class="farming-page__history-row" v-if="item.stakedSecond">
-                  <div class="farming-page__history-row-key">
-                    <icon
-                      :name="$icons.cube"
-                      class="farming-page__history-icon"
-                    />
-                    {{ $t('farming-page.staking-history-third-lbl') }}
-                  </div>
-                  <div class="farming-page__history-row-value">
-                    {{ item.stakedSecond }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </app-block>
-          <app-block>
-            <div class="farming-page__history-item">
-              <div class="farming-page__history-title">
-                <div class="farming-page__history-heading">
-                  {{ $t('farming-page.rewards-title') }}
-                </div>
-                <div class="farming-page__history-currency">
-                  {{ $t('farming-page.rewards-currency') }}
-                  <icon
-                    class="farming-page__history-currency-icon"
-                    :name="$icons.daiCoin"
-                  />
-                </div>
-              </div>
-              <div
-                class="farming-page__history-table"
-                v-for="(item, ind) of rewardsHistoryData"
-                :key="ind"
-              >
-                <div class="farming-page__history-time">
-                  {{ formatDMYTime(item.date) }}
-                </div>
-                <div class="farming-page__history-row" v-if="item.accuredFirst">
-                  <div class="farming-page__history-row-key">
-                    <icon
-                      :name="$icons.gift"
-                      class="farming-page__history-icon"
-                    />
-                    {{ $t('farming-page.rewards-history-first-lbl') }}
-                  </div>
-                  <div class="farming-page__history-row-value">
-                    {{ item.accuredFirst }}
-                  </div>
-                </div>
-                <div class="farming-page__history-row" v-if="item.claimed">
-                  <div class="farming-page__history-row-key">
-                    <icon
-                      :name="$icons.chartBar"
-                      class="farming-page__history-icon"
-                    />
-                    {{ $t('farming-page.rewards-history-second-lbl') }}
-                  </div>
-                  <div class="farming-page__history-row-value">
-                    {{ item.claimed }}
-                  </div>
                 </div>
                 <div
-                  class="farming-page__history-row"
-                  v-if="item.accuredSecond"
+                  class="farming-page__row"
+                  :class="{ 'farming-page__row--selected': row.selected }"
+                  v-for="(row, i) of item.rows"
+                  :key="i"
                 >
-                  <div class="farming-page__history-row-key">
-                    <icon
-                      :name="$icons.gift"
-                      class="farming-page__history-icon"
-                    />
-                    {{ $t('farming-page.rewards-history-third-lbl') }}
+                  <div class="farming-page__row-key">
+                    <icon :name="row.icon" class="farming-page__history-icon" />
+                    {{ row.label }}
                   </div>
-                  <div class="farming-page__history-row-value">
-                    {{ item.accuredSecond }}
+                  <div class="farming-page__row-value">
+                    {{ row.value }}
                   </div>
                 </div>
               </div>
@@ -635,19 +620,19 @@ const rewardsHistoryData = [
   height: toRem(16);
 }
 
-.farming-page__history-row {
+.farming-page__row {
   padding: toRem(20) toRem(10);
   display: flex;
   justify-content: space-between;
   border-bottom: toRem(1) solid var(--border-primary-main);
   font-weight: 700;
 
-  &:nth-last-child(2) {
+  &--selected {
     color: var(--secondary-main);
   }
 }
 
-.farming-page__history-row-key {
+.farming-page__row-key {
   display: flex;
   gap: toRem(5);
   align-items: center;
