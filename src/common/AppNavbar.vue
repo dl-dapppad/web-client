@@ -6,12 +6,15 @@ import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
 import { ErrorHandler, formatNumber, cropAddress } from '@/helpers'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const searchInput = ref('')
+
+const router = useRouter()
 
 const farmBalance = computed(() => ({
   amount: 12345.12345,
@@ -57,7 +60,15 @@ const handleProviderBtnClick = () => {
           {{ formatNumber(farmBalance.amount) }}
           {{ farmBalance.asset }}
         </span>
-        <app-button :text="$t('app-navbar.farm-link')" size="small" />
+        <app-button
+          :text="$t('app-navbar.farm-link')"
+          size="small"
+          @click="
+            () => {
+              router.push({ name: $routes.farming })
+            }
+          "
+        />
       </div>
       <input-field
         class="app-navbar___search"
