@@ -8,7 +8,7 @@ import {
 } from '@/common'
 import { cropAddress } from '@/helpers'
 import { useRouter } from '@/router'
-import { copyToClipboard } from '@/helpers'
+import { copyToClipboard, formatDMYTime } from '@/helpers'
 
 const router = useRouter()
 const address = '0xa1234567af'
@@ -96,6 +96,35 @@ const linesChartData = {
   isLegendShown: true,
   title: 'Stakes and rewards',
 }
+
+const stakingHistoryData = [
+  {
+    date: 1665752259,
+    stakedFirst: '78.1234',
+    withdrawn: '78.0',
+    stakedSecond: '78.1234',
+  },
+  {
+    date: 1665752259,
+    stakedFirst: '78.1234',
+    withdrawn: '78.0',
+    stakedSecond: '78.1234',
+  },
+]
+
+const rewardsHistoryData = [
+  {
+    date: 1665752259,
+    accuredFirst: '78.1234',
+    claimed: '78.0',
+    accuredSecond: '78.1234',
+  },
+  {
+    date: 1665752259,
+    claimed: '78.0',
+    accuredSecond: '78.1234',
+  },
+]
 </script>
 
 <template>
@@ -244,19 +273,148 @@ const linesChartData = {
           </span>
         </div>
       </div>
-      <div class="farming-page__charts">
-        <app-block>
-          <donut-chart
-            :chart-data="donutChartData"
-            class="farming-page__chart"
-          />
-        </app-block>
-        <app-block>
-          <multiple-line-chart
-            :chart-data="linesChartData"
-            class="farming-page__chart"
-          />
-        </app-block>
+      <div class="farming-page__charts-history-wrp">
+        <div class="farming-page__charts">
+          <app-block>
+            <donut-chart
+              :chart-data="donutChartData"
+              class="farming-page__chart"
+            />
+          </app-block>
+          <app-block>
+            <multiple-line-chart
+              :chart-data="linesChartData"
+              class="farming-page__chart"
+            />
+          </app-block>
+        </div>
+        <div class="farming-page__history">
+          <app-block>
+            <div class="farming-page__history-item">
+              <div class="farming-page__history-title">
+                <div class="farming-page__history-heading">
+                  {{ $t('farming-page.staking-title') }}
+                </div>
+                <div class="farming-page__history-currency">
+                  {{ $t('farming-page.staking-currency') }}
+                  <icon
+                    class="farming-page__history-currency-icon"
+                    :name="$icons.currencyBangladeshi"
+                  />
+                </div>
+              </div>
+              <div
+                class="farming-page__history-table"
+                v-for="(item, ind) of stakingHistoryData"
+                :key="ind"
+              >
+                <div class="farming-page__history-time">
+                  {{ formatDMYTime(item.date) }}
+                </div>
+                <div class="farming-page__history-row" v-if="item.stakedFirst">
+                  <div class="farming-page__history-row-key">
+                    <icon
+                      :name="$icons.cube"
+                      class="farming-page__history-icon"
+                    />
+                    {{ $t('farming-page.staking-history-first-lbl') }}
+                  </div>
+                  <div class="farming-page__history-row-value">
+                    {{ item.stakedFirst }}
+                  </div>
+                </div>
+                <div class="farming-page__history-row" v-if="item.withdrawn">
+                  <div class="farming-page__history-row-key">
+                    <icon
+                      :name="$icons.chartBar"
+                      class="farming-page__history-icon"
+                    />
+                    {{ $t('farming-page.staking-history-second-lbl') }}
+                  </div>
+                  <div class="farming-page__history-row-value">
+                    {{ item.withdrawn }}
+                  </div>
+                </div>
+                <div class="farming-page__history-row" v-if="item.stakedSecond">
+                  <div class="farming-page__history-row-key">
+                    <icon
+                      :name="$icons.cube"
+                      class="farming-page__history-icon"
+                    />
+                    {{ $t('farming-page.staking-history-third-lbl') }}
+                  </div>
+                  <div class="farming-page__history-row-value">
+                    {{ item.stakedSecond }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </app-block>
+          <app-block>
+            <div class="farming-page__history-item">
+              <div class="farming-page__history-title">
+                <div class="farming-page__history-heading">
+                  {{ $t('farming-page.rewards-title') }}
+                </div>
+                <div class="farming-page__history-currency">
+                  {{ $t('farming-page.rewards-currency') }}
+                  <icon
+                    class="farming-page__history-currency-icon"
+                    :name="$icons.daiCoin"
+                  />
+                </div>
+              </div>
+              <div
+                class="farming-page__history-table"
+                v-for="(item, ind) of rewardsHistoryData"
+                :key="ind"
+              >
+                <div class="farming-page__history-time">
+                  {{ formatDMYTime(item.date) }}
+                </div>
+                <div class="farming-page__history-row" v-if="item.accuredFirst">
+                  <div class="farming-page__history-row-key">
+                    <icon
+                      :name="$icons.gift"
+                      class="farming-page__history-icon"
+                    />
+                    {{ $t('farming-page.rewards-history-first-lbl') }}
+                  </div>
+                  <div class="farming-page__history-row-value">
+                    {{ item.accuredFirst }}
+                  </div>
+                </div>
+                <div class="farming-page__history-row" v-if="item.claimed">
+                  <div class="farming-page__history-row-key">
+                    <icon
+                      :name="$icons.chartBar"
+                      class="farming-page__history-icon"
+                    />
+                    {{ $t('farming-page.rewards-history-second-lbl') }}
+                  </div>
+                  <div class="farming-page__history-row-value">
+                    {{ item.claimed }}
+                  </div>
+                </div>
+                <div
+                  class="farming-page__history-row"
+                  v-if="item.accuredSecond"
+                >
+                  <div class="farming-page__history-row-key">
+                    <icon
+                      :name="$icons.gift"
+                      class="farming-page__history-icon"
+                    />
+                    {{ $t('farming-page.rewards-history-third-lbl') }}
+                  </div>
+                  <div class="farming-page__history-row-value">
+                    {{ item.accuredSecond }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </app-block>
+        </div>
       </div>
     </div>
   </div>
@@ -411,6 +569,11 @@ const linesChartData = {
   cursor: pointer;
 }
 
+.farming-page__charts-history-wrp {
+  display: flex;
+  flex-direction: column;
+}
+
 .farming-page__charts {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -418,5 +581,75 @@ const linesChartData = {
 
 .farming-page__chart {
   padding: toRem(40);
+}
+
+.farming-page__history {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+}
+
+.farming-page__history-item {
+  padding: toRem(40);
+}
+
+.farming-page__history-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.farming-page__history-heading {
+  font-family: var(--app-font-family-secondary);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: toRem(20);
+}
+
+.farming-page__history-currency {
+  font-weight: 700;
+  font-size: toRem(14);
+  display: flex;
+  gap: toRem(10);
+  align-items: center;
+}
+
+.farming-page__history-currency-icon {
+  height: toRem(24);
+  width: toRem(24);
+}
+
+.farming-page__history-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.farming-page__history-time {
+  padding: toRem(20) 0 toRem(10);
+  font-weight: 700;
+  font-family: var(--app-font-family-secondary);
+  color: var(--text-secondary-main);
+}
+
+.farming-page__history-icon {
+  width: toRem(16);
+  height: toRem(16);
+}
+
+.farming-page__history-row {
+  padding: toRem(20) toRem(10);
+  display: flex;
+  justify-content: space-between;
+  border-bottom: toRem(1) solid var(--border-primary-main);
+  font-weight: 700;
+
+  &:nth-last-child(2) {
+    color: var(--secondary-main);
+  }
+}
+
+.farming-page__history-row-key {
+  display: flex;
+  gap: toRem(5);
+  align-items: center;
 }
 </style>
