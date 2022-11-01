@@ -576,6 +576,9 @@ const historyData = [
 
 .farming-page__history-item {
   padding: toRem(40);
+  display: flex;
+  flex-direction: column;
+  gap: toRem(30);
 }
 
 .farming-page__history-title {
