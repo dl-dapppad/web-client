@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 
 import Highcharts from 'highcharts'
@@ -20,24 +20,29 @@ const { width, height } = useWindowSize()
 
 const chartInstanceElement = ref<HTMLElement | undefined>()
 
-const data: {
-  data: number[]
-  type: string
-  color: string
-  marker: {
-    symbol: string
-  }
-}[] = []
-for (const line of props.chartData.lines) {
-  data.push({
-    data: line.values,
-    type: 'spline',
-    color: line.color,
+const data = computed(
+  (): {
+    data: number[]
+    type: string
+    color: string
     marker: {
-      symbol: 'circle',
-    },
-  })
-}
+      symbol: string
+    }
+  }[] => {
+    const result = []
+    for (const line of props.chartData.lines) {
+      result.push({
+        data: line.values,
+        type: 'spline',
+        color: line.color,
+        marker: {
+          symbol: 'circle',
+        },
+      })
+    }
+    return result
+  },
+)
 
 const init = () => {
   if (!chartInstanceElement.value) return
@@ -101,7 +106,7 @@ const init = () => {
           },
         },
       },
-      series: data,
+      series: data.value,
     },
     () => ({}),
   )
@@ -129,14 +134,14 @@ watch([() => props.chartData, width, height], () => init())
           <div
             class="multiple-line-chart__legend-color"
             :style="{ backgroundColor: item.color }"
-          ></div>
+          />
           <div class="multiple-line-chart__legend-title">
             {{ item.label }}
           </div>
         </div>
       </div>
     </div>
-    <div id="multiple-line-chart__instance" ref="chartInstanceElement"></div>
+    <div id="multiple-line-chart__instance" ref="chartInstanceElement" />
   </div>
 </template>
 

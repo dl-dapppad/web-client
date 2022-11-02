@@ -112,7 +112,7 @@ watch([() => props.chartData, width, height], () => init())
 
 <template>
   <div class="donut-chart">
-    <div id="donut-chart__instance" ref="chartInstanceElement"></div>
+    <div id="donut-chart__instance" ref="chartInstanceElement" />
     <div class="donut-chart__legend" v-if="props.chartData.isLegendShown">
       <div
         class="donut-chart__legend-item"
