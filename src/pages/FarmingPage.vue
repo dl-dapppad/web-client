@@ -8,7 +8,11 @@ import {
 } from '@/common'
 import { cropAddress } from '@/helpers'
 import { useRouter } from '@/router'
-import { copyToClipboard } from '@/helpers'
+import { copyToClipboard, formatNumberWithSpaces } from '@/helpers'
+import { ICON_NAMES } from '@/enums'
+import { i18n } from '@/localization'
+
+const { t } = i18n.global
 
 const router = useRouter()
 const address = '0xa1234567af'
@@ -96,20 +100,48 @@ const linesChartData = {
   isLegendShown: true,
   title: 'Stakes and rewards',
 }
+
+const totalStake = {
+  icon: ICON_NAMES.database,
+  title: t('farming-page.total-stake-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
+
+const myStake = {
+  icon: ICON_NAMES.cube,
+  title: t('farming-page.my-stake-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
+
+const totalReward = {
+  icon: ICON_NAMES.gift,
+  title: t('farming-page.total-reward-lbl'),
+  count: 12345678.1234,
+  curr: 'DAI',
+}
+
+const currentRewards = {
+  icon: ICON_NAMES.gift,
+  title: t('farming-page.current-rewards-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
 </script>
 
 <template>
   <div class="farming-page">
-    <app-button
-      class="farming-page__back-btn"
-      :icon-left="$icons.arrowLeft"
-      modification="border-circle"
-      color="tertiary"
-      @click="router.go(-1)"
-    />
     <div class="farming-page__content">
       <div class="farming-page__title-wrp">
         <div class="farming-page__title">
+          <app-button
+            class="app__module-back-btn"
+            :icon-left="$icons.arrowLeft"
+            modification="border-circle"
+            color="tertiary"
+            @click="router.go(-1)"
+          />
           <div class="farming-page__heading">
             {{ $t('farming-page.title') }}
           </div>
@@ -130,15 +162,15 @@ const linesChartData = {
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="$icons.database" />
-              {{ $t('farming-page.total-stake-lbl') }}
+              <icon class="farming-page__table-icon" :name="totalStake.icon" />
+              {{ totalStake.title }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ $t('farming-page.total-stake-count') }}
+                {{ formatNumberWithSpaces(totalStake.count) }}
               </span>
               <span class="farming-page__table-currency">
-                {{ $t('farming-page.total-stake-curr') }}
+                {{ totalStake.curr }}
               </span>
             </div>
           </div>
@@ -146,15 +178,15 @@ const linesChartData = {
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="$icons.cube" />
-              {{ $t('farming-page.my-stake-lbl') }}
+              <icon class="farming-page__table-icon" :name="myStake.icon" />
+              {{ myStake.title }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ $t('farming-page.my-stake-count') }}
+                {{ formatNumberWithSpaces(myStake.count) }}
               </span>
               <span class="farming-page__table-currency">
-                {{ $t('farming-page.my-stake-curr') }}
+                {{ myStake.curr }}
               </span>
             </div>
           </div>
@@ -191,15 +223,15 @@ const linesChartData = {
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="$icons.gift" />
-              {{ $t('farming-page.total-reward-lbl') }}
+              <icon class="farming-page__table-icon" :name="totalReward.icon" />
+              {{ totalReward.title }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ $t('farming-page.total-reward-count') }}
+                {{ formatNumberWithSpaces(totalReward.count) }}
               </span>
               <span class="farming-page__table-currency">
-                {{ $t('farming-page.total-reward-curr') }}
+                {{ totalReward.curr }}
               </span>
             </div>
           </div>
@@ -211,16 +243,16 @@ const linesChartData = {
             <div class="farming-page__table-title">
               <icon
                 class="farming-page__table-icon"
-                :name="$icons.checkCircle"
+                :name="currentRewards.icon"
               />
-              {{ $t('farming-page.current-rewards-lbl') }}
+              {{ currentRewards.title }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ $t('farming-page.current-rewards-count') }}
+                {{ formatNumberWithSpaces(currentRewards.count) }}
               </span>
               <span class="farming-page__table-currency">
-                {{ $t('farming-page.current-rewards-curr') }}
+                {{ currentRewards.curr }}
               </span>
             </div>
           </div>
@@ -264,22 +296,16 @@ const linesChartData = {
 
 <style lang="scss" scoped>
 .farming-page {
-  padding: toRem(70) toRem(115) toRem(70) toRem(70);
+  padding: toRem(70) toRem(115) toRem(70) toRem(140);
   display: flex;
   gap: toRem(54);
   letter-spacing: 0.1em;
 }
 
-.farming-page__back-btn {
-  width: toRem(54);
-  height: toRem(54);
-  padding: 0;
-  transform: translateY(toRem(12.5));
-}
-
 .farming-page__content {
   display: flex;
   flex-direction: column;
+  justify-content: start;
   width: 100%;
   gap: toRem(40);
 }
@@ -294,6 +320,7 @@ const linesChartData = {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 .farming-page__heading {
