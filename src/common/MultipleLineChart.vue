@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 
 import Highcharts from 'highcharts'
 
@@ -14,6 +15,10 @@ const props = defineProps<{
     title?: string
   }
 }>()
+
+const { width, height } = useWindowSize()
+
+const chartInstanceElement = ref<HTMLElement | undefined>()
 
 const data: {
   data: number[]
@@ -34,75 +39,76 @@ for (const line of props.chartData.lines) {
   })
 }
 
-const chartInstanceElement = ref<HTMLElement | undefined>()
+const init = () => {
+  if (!chartInstanceElement.value) return
 
-onMounted(() => {
-  if (chartInstanceElement.value) {
-    Highcharts.chart(
-      chartInstanceElement.value,
-      {
-        chart: {
-          type: 'spline',
-          backgroundColor: 'transparent',
-          width: null,
-          style: {
-            fontFamily: 'Montserrat',
-          },
+  Highcharts.chart(
+    chartInstanceElement.value,
+    {
+      chart: {
+        type: 'spline',
+        backgroundColor: 'transparent',
+        width: null,
+        style: {
+          fontFamily: 'Montserrat',
         },
+      },
+      title: {
+        text: '',
+      },
+      credits: {
+        enabled: false,
+      },
+      accessibility: {
+        enabled: false,
+      },
+      legend: {
+        enabled: false,
+      },
+      yAxis: {
         title: {
           text: '',
         },
-        credits: {
-          enabled: false,
+        gridLineColor: 'var(--border-primary-light)',
+        gridLineWidth: 'toRem(1)',
+      },
+      xAxis: {
+        title: {
+          text: '',
         },
-        accessibility: {
-          enabled: false,
+        crosshair: {
+          width: 2,
+          color: 'var(--secondary-main)',
+          dashStyle: 'shortdot',
         },
-        legend: {
-          enabled: false,
-        },
-        yAxis: {
-          title: {
-            text: '',
-          },
-          gridLineColor: 'var(--border-primary-light)',
-          gridLineWidth: 'toRem(1)',
-        },
-        xAxis: {
-          title: {
-            text: '',
-          },
-          crosshair: {
-            width: 2,
-            color: 'var(--secondary-main)',
-            dashStyle: 'shortdot',
-          },
-        },
+      },
 
-        plotOptions: {
-          series: {
-            marker: {
-              enabled: false,
-              fillColor: 'var(--background-secondary)',
-              lineColor: '',
-              lineWidth: 2,
-            },
-            states: {
-              hover: {
-                enabled: true,
-                halo: {
-                  size: 0,
-                },
+      plotOptions: {
+        series: {
+          marker: {
+            enabled: false,
+            fillColor: 'var(--background-secondary)',
+            lineColor: '',
+            lineWidth: 2,
+          },
+          states: {
+            hover: {
+              enabled: true,
+              halo: {
+                size: 0,
               },
             },
           },
         },
-        series: data,
       },
-      () => ({}),
-    )
-  }
-})
+      series: data,
+    },
+    () => ({}),
+  )
+}
+onMounted(() => init())
+
+watch([() => props.chartData, width, height], () => init())
 </script>
 
 <template>

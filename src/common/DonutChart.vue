@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 
 import Highcharts, { SeriesOptionsType } from 'highcharts'
 
@@ -16,91 +17,97 @@ const props = defineProps<{
   }
 }>()
 
+const { width, height } = useWindowSize()
+
 const chartInstanceElement = ref<HTMLElement | undefined>()
 
-onMounted(() => {
-  if (chartInstanceElement.value) {
-    Highcharts.chart(
-      chartInstanceElement.value,
-      {
-        chart: {
-          type: 'pie',
-          backgroundColor: 'transparent',
-          plotBackgroundColor: 'transparent',
-          width: null,
-          style: {
-            fontFamily: 'Montserrat',
-          },
+const init = () => {
+  if (!chartInstanceElement.value) return
+
+  Highcharts.chart(
+    chartInstanceElement.value,
+    {
+      chart: {
+        type: 'pie',
+        backgroundColor: 'transparent',
+        plotBackgroundColor: 'transparent',
+        width: null,
+        style: {
+          fontFamily: 'Montserrat',
         },
-        title: {
-          text: props.chartData.title ? props.chartData.title : '',
-          align: 'center',
-          verticalAlign: 'middle',
-          style: {
-            color: 'var(--text-primary-main)',
-            fontWeight: '800',
-            fontSize: '2rem',
-            'letter-spacing': '0.1em',
-          },
-        },
-        subtitle: {
-          text: props.chartData.subtitle ? props.chartData.subtitle : '',
-          align: 'center',
-          verticalAlign: 'middle',
-          y: 40,
-          style: {
-            color: 'var(--text-primary-main)',
-            fontWeight: '700',
-            fontSize: '1rem',
-            'letter-spacing': '0.1em',
-          },
-        },
-        credits: {
-          enabled: false,
-        },
-        accessibility: {
-          enabled: false,
-        },
-        plotOptions: {
-          pie: {
-            innerSize: '65%',
-            shadow: false,
-            center: ['50%', '50%'],
-            cursor: 'pointer',
-            dataLabels: {
-              enabled: false,
-            },
-          },
-          series: {
-            animation: {
-              duration: 750,
-              easing: 'easeOutQuad',
-            },
-          },
-        },
-        tooltip: {
-          valueSuffix: '%',
-        },
-        series: [
-          {
-            animation: {
-              duration: 750,
-              easing: 'easeOutQuad',
-            },
-            data: props.chartData.data.map(el => ({
-              name: el.label,
-              y: +el.value,
-              color: el.color,
-            })),
-            size: '100%',
-            startAngle: 0,
-          } as SeriesOptionsType,
-        ],
       },
-      () => ({}),
-    )
-  }
-})
+      title: {
+        text: props.chartData.title ? props.chartData.title : '',
+        align: 'center',
+        verticalAlign: 'middle',
+        style: {
+          color: 'var(--text-primary-main)',
+          fontWeight: '800',
+          fontSize: '2rem',
+          'letter-spacing': '0.1em',
+        },
+      },
+      subtitle: {
+        text: props.chartData.subtitle ? props.chartData.subtitle : '',
+        align: 'center',
+        verticalAlign: 'middle',
+        y: 40,
+        style: {
+          color: 'var(--text-primary-main)',
+          fontWeight: '700',
+          fontSize: '1rem',
+          'letter-spacing': '0.1em',
+        },
+      },
+      credits: {
+        enabled: false,
+      },
+      accessibility: {
+        enabled: false,
+      },
+      plotOptions: {
+        pie: {
+          innerSize: '65%',
+          shadow: false,
+          center: ['50%', '50%'],
+          cursor: 'pointer',
+          dataLabels: {
+            enabled: false,
+          },
+        },
+        series: {
+          animation: {
+            duration: 750,
+            easing: 'easeOutQuad',
+          },
+        },
+      },
+      tooltip: {
+        valueSuffix: '%',
+      },
+      series: [
+        {
+          animation: {
+            duration: 750,
+            easing: 'easeOutQuad',
+          },
+          data: props.chartData.data.map(el => ({
+            name: el.label,
+            y: +el.value,
+            color: el.color,
+          })),
+          size: '100%',
+          startAngle: 0,
+        } as SeriesOptionsType,
+      ],
+    },
+    () => ({}),
+  )
+}
+
+onMounted(() => init())
+
+watch([() => props.chartData, width, height], () => init())
 </script>
 
 <template>
