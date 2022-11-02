@@ -105,6 +105,6 @@ onMounted(() => {
 
 <template>
   <div class="line-chart">
-    <div id="line-chart__instance" ref="chartInstanceElement"></div>
+    <div id="line-chart__instance" ref="chartInstanceElement" />
   </div>
 </template>
