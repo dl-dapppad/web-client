@@ -8,26 +8,60 @@ import {
 } from '@/common'
 import { cropAddress } from '@/helpers'
 import { useRouter } from '@/router'
-import { copyToClipboard, formatDMYTime } from '@/helpers'
-import { i18n } from '@/localization'
+import {
+  copyToClipboard,
+  formatNumberWithSpaces,
+  formatDMYTime,
+} from '@/helpers'
 import { ICON_NAMES } from '@/enums'
+import { i18n } from '@/localization'
 
 const { t } = i18n.global
 
 const router = useRouter()
 const address = '0xa1234567af'
+const addressStakeDAPP = '0xa1234567af'
+const addressStakeDAI = '0xa1234567af'
+
+const totalStake = {
+  icon: ICON_NAMES.database,
+  title: t('farming-page.total-stake-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
+
+const myStake = {
+  icon: ICON_NAMES.cube,
+  title: t('farming-page.my-stake-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
+
+const totalReward = {
+  icon: ICON_NAMES.gift,
+  title: t('farming-page.total-reward-lbl'),
+  count: 12345678.1234,
+  curr: 'DAI',
+}
+
+const currentRewards = {
+  icon: ICON_NAMES.gift,
+  title: t('farming-page.current-rewards-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
 
 const donutChartData = {
   data: [
     {
       value: 16,
       label: 'First label',
-      color: 'var(--tertiary-main)',
+      color: '#24d6b6',
     },
     {
       value: 10,
       label: 'Claiming reward',
-      color: 'var(--quaternary-main)',
+      color: '#1dbbed',
     },
     {
       value: 74,
@@ -58,7 +92,7 @@ const linesChartData = {
         100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
       ],
       label: 'Total stake',
-      color: 'var(--quaternary-main)',
+      color: '#1dbbed',
     },
     {
       values: [
@@ -76,7 +110,7 @@ const linesChartData = {
         100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
       ].reverse(),
       label: 'My stake',
-      color: 'var(--tertiary-main)',
+      color: '#24d6b6',
     },
     {
       values: [
@@ -200,16 +234,16 @@ const historyData = [
 
 <template>
   <div class="farming-page">
-    <app-button
-      class="farming-page__back-btn"
-      :icon-left="$icons.arrowLeft"
-      modification="border-circle"
-      color="tertiary"
-      @click="router.go(-1)"
-    />
     <div class="farming-page__content">
       <div class="farming-page__title-wrp">
         <div class="farming-page__title">
+          <app-button
+            class="app__module-back-btn"
+            :icon-left="$icons.arrowLeft"
+            modification="border-circle"
+            color="tertiary"
+            @click="router.go(-1)"
+          />
           <div class="farming-page__heading">
             {{ $t('farming-page.title') }}
           </div>
@@ -230,15 +264,15 @@ const historyData = [
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="$icons.database" />
-              {{ $t('farming-page.total-stake-lbl') }}
+              <icon class="farming-page__table-icon" :name="totalStake.icon" />
+              {{ totalStake.title }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ $t('farming-page.total-stake-count') }}
+                {{ formatNumberWithSpaces(totalStake.count) }}
               </span>
               <span class="farming-page__table-currency">
-                {{ $t('farming-page.total-stake-curr') }}
+                {{ totalStake.curr }}
               </span>
             </div>
           </div>
@@ -246,15 +280,15 @@ const historyData = [
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="$icons.cube" />
-              {{ $t('farming-page.my-stake-lbl') }}
+              <icon class="farming-page__table-icon" :name="myStake.icon" />
+              {{ myStake.title }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ $t('farming-page.my-stake-count') }}
+                {{ formatNumberWithSpaces(myStake.count) }}
               </span>
               <span class="farming-page__table-currency">
-                {{ $t('farming-page.my-stake-curr') }}
+                {{ myStake.curr }}
               </span>
             </div>
           </div>
@@ -282,7 +316,7 @@ const historyData = [
             :title="address"
             @click="copyToClipboard(address)"
           >
-            {{ cropAddress(address) }}
+            {{ cropAddress(addressStakeDAPP) }}
             <icon class="farming-page__table-icon" :name="$icons.duplicate" />
           </span>
         </div>
@@ -291,15 +325,15 @@ const historyData = [
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="$icons.gift" />
-              {{ $t('farming-page.total-reward-lbl') }}
+              <icon class="farming-page__table-icon" :name="totalReward.icon" />
+              {{ totalReward.title }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ $t('farming-page.total-reward-count') }}
+                {{ formatNumberWithSpaces(totalReward.count) }}
               </span>
               <span class="farming-page__table-currency">
-                {{ $t('farming-page.total-reward-curr') }}
+                {{ totalReward.curr }}
               </span>
             </div>
           </div>
@@ -311,16 +345,16 @@ const historyData = [
             <div class="farming-page__table-title">
               <icon
                 class="farming-page__table-icon"
-                :name="$icons.checkCircle"
+                :name="currentRewards.icon"
               />
-              {{ $t('farming-page.current-rewards-lbl') }}
+              {{ currentRewards.title }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ $t('farming-page.current-rewards-count') }}
+                {{ formatNumberWithSpaces(currentRewards.count) }}
               </span>
               <span class="farming-page__table-currency">
-                {{ $t('farming-page.current-rewards-curr') }}
+                {{ currentRewards.curr }}
               </span>
             </div>
           </div>
@@ -339,7 +373,7 @@ const historyData = [
             :title="address"
             @click="copyToClipboard(address)"
           >
-            {{ cropAddress(address) }}
+            {{ cropAddress(addressStakeDAI) }}
             <icon class="farming-page__table-icon" :name="$icons.duplicate" />
           </span>
         </div>
@@ -407,22 +441,16 @@ const historyData = [
 
 <style lang="scss" scoped>
 .farming-page {
-  padding: toRem(70) toRem(115) toRem(70) toRem(70);
+  padding: toRem(70) toRem(115) toRem(70) toRem(140);
   display: flex;
   gap: toRem(54);
   letter-spacing: 0.1em;
 }
 
-.farming-page__back-btn {
-  width: toRem(54);
-  height: toRem(54);
-  padding: 0;
-  transform: translateY(toRem(12.5));
-}
-
 .farming-page__content {
   display: flex;
   flex-direction: column;
+  justify-content: start;
   width: 100%;
   gap: toRem(40);
 }
@@ -437,6 +465,7 @@ const historyData = [
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 .farming-page__heading {
@@ -561,7 +590,7 @@ const historyData = [
 
 .farming-page__charts {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: minmax(#{toRem(346)}, 1fr) minmax(#{toRem(693)}, 2fr);
 }
 
 .farming-page__chart {
