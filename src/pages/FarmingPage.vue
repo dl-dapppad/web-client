@@ -22,12 +22,12 @@ const donutChartData = {
     {
       value: 16,
       label: 'First label',
-      color: 'var(--tertiary-main)',
+      color: '#24d6b6',
     },
     {
       value: 10,
       label: 'Claiming reward',
-      color: 'var(--quaternary-main)',
+      color: '#1dbbed',
     },
     {
       value: 74,
@@ -58,7 +58,7 @@ const linesChartData = {
         100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
       ],
       label: 'Total stake',
-      color: 'var(--quaternary-main)',
+      color: '#1dbbed',
     },
     {
       values: [
@@ -76,7 +76,7 @@ const linesChartData = {
         100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
       ].reverse(),
       label: 'My stake',
-      color: 'var(--tertiary-main)',
+      color: '#24d6b6',
     },
     {
       values: [
