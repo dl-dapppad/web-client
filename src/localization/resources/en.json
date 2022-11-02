@@ -95,5 +95,18 @@
     "current-price-lbl": "Current price",
     "buy-now-link": "Buy now",
     "buy-description-lbl": "First, the contract will be deployed, and then you can configure it"
+  },
+  "farming-page": {
+    "title": "Farming",
+    "subtitle": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    "withdraw-btn": "Withdraw",
+    "stake-btn": "Stake",
+    "claim-btn": "Claim",
+    "stake-address-dapp-lbl": "Stake token address (DAPP)",
+    "stake-address-dai-lbl": "Stake token address (DAI)",
+    "total-stake-lbl": "Total stake",
+    "my-stake-lbl": "My stake",
+    "total-reward-lbl": "Total reward",
+    "current-rewards-lbl": "Current rewards"
   }
 }

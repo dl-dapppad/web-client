@@ -4,4 +4,5 @@ export enum ROUTE_NAMES {
   postItem = 'post-item',
   postItemDeployment = 'post-item-deployment',
   postItemEditing = 'post-item-editing',
+  farming = 'farming',
 }
