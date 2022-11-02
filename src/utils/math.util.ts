@@ -97,18 +97,7 @@ export class BN {
 
   format(format?: BnFormatCfg): string {
     try {
-      const groupSeparatorFormat: { [key: string]: string | number } = {}
-      const {
-        decimals = BigNumber.config({}).DECIMAL_PLACES as number,
-        rounding = BigNumber.config({}).ROUNDING_MODE as BN_ROUNDING,
-        noGroupSeparator,
-        ...fmt
-      } = format || {}
-      if (noGroupSeparator) {
-        groupSeparatorFormat.groupSeparator = ''
-      }
-      Object.assign(fmt, BigNumber.config({}).FORMAT, groupSeparatorFormat)
-      return this.#bn.toFormat(decimals, rounding, fmt)
+      return this.#bn.toFormat(format as BnFormatCfg)
     } catch (error) {
       console.error(error)
       return '—'

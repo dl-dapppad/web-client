@@ -12,3 +12,12 @@ export function formatNumber(amount: number | string) {
     decimals: 6,
   })
 }
+
+export function formatNumberWithSpaces(amount: number | string) {
+  return new BN(amount).format({
+    decimalSeparator: '.',
+    groupSeparator: ' ',
+    groupSize: 3,
+    decimals: 4,
+  })
+}
