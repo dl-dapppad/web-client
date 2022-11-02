@@ -13,6 +13,7 @@ export function formatNumber(amount: number | string) {
   })
 }
 
+// TODO: Change function name
 export function formatNumberWithSpaces(amount: number | string) {
   return new BN(amount).format({
     decimalSeparator: '.',
