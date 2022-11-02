@@ -440,7 +440,7 @@ const currentRewards = {
 
 .farming-page__charts {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: minmax(#{toRem(346)}, 1fr) minmax(#{toRem(693)}, 2fr);
 }
 
 .farming-page__chart {
