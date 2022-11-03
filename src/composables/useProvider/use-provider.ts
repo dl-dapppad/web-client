@@ -18,7 +18,6 @@ export interface UseProvider {
   selectedProvider: Ref<PROVIDERS | undefined>
   chainId: ComputedRef<ChainId | undefined>
   selectedAddress: ComputedRef<string | undefined>
-  selectedBalance: ComputedRef<string | undefined>
   isConnected: ComputedRef<boolean>
 
   init: (provider: DesignatedProvider) => Promise<void>
@@ -56,9 +55,6 @@ export const useProvider = (): UseProvider => {
   )
   const selectedAddress = computed(
     () => providerWrp.value?.selectedAddress as string | undefined,
-  )
-  const selectedBalance = computed(
-    () => providerWrp.value?.selectedBalance as string | undefined,
   )
   const isConnected = computed(() =>
     Boolean(chainId.value && selectedAddress.value),
@@ -142,7 +138,6 @@ export const useProvider = (): UseProvider => {
     selectedProvider,
     chainId,
     selectedAddress,
-    selectedBalance,
     isConnected,
 
     init,

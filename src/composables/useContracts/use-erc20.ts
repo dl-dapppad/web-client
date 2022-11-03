@@ -16,7 +16,7 @@ export interface Erc20Contract {
   updateDecimals: () => Promise<void>
   balanceOf: (address: string) => Promise<string>
   allowance: (owner: string, spender: string) => Promise<string>
-  approve: (spender: string, amount: string) => Promise<ContractTransaction>
+  approve: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
 export const useErc20 = (contractAddress?: string): Erc20Contract => {
@@ -84,12 +84,11 @@ export const useErc20 = (contractAddress?: string): Erc20Contract => {
   }
 
   const approve = async (
-    spender: string,
-    amount: string,
+    args: Record<string, string>,
   ): Promise<ContractTransaction> => {
     if (!_instance_rw.value) throw new Error('Undefined instance')
 
-    return _instance_rw.value.approve(spender, amount)
+    return _instance_rw.value.approve(args.spender, args.amount)
   }
 
   if (contractAddress) init(contractAddress)

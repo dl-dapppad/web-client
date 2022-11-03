@@ -60,7 +60,6 @@ export interface ProviderWrapper {
 
   chainId: Ref<ChainId>
   selectedAddress: Ref<string>
-  selectedBalance: Ref<string>
   isConnected: ComputedRef<boolean>
 
   init: () => Promise<void>

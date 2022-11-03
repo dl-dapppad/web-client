@@ -7,21 +7,20 @@ import { Chain } from '@/types'
 import { InputField } from '@/fields'
 
 import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { ErrorHandler, isChainAvailable } from '@/helpers'
 import { CONTRACT_NAMES, ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
+const { account } = storeToRefs(useAccountStore())
 
 const dapp = useErc20()
 
 const searchInput = ref('')
 const chain = ref<Chain>(getEmptyChain())
-const account = ref()
-const accountBalance = ref()
-const dappBalance = ref<string>('0')
+const accountAddress = ref()
 
 const init = async () => {
   if (
@@ -32,21 +31,9 @@ const init = async () => {
     return
   }
   chain.value = getChain(provider.value.chainId)
-  account.value = provider.value.selectedAddress
-  accountBalance.value = provider.value.selectedBalance
+  accountAddress.value = provider.value.selectedAddress
 
-  const dappAddress =
-    config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP]
-
-  if (!dappAddress) return
-
-  dapp.init(dappAddress)
-  await Promise.all([dapp.loadDetails(), dapp.balanceOf(account.value)]).then(
-    res => {
-      dappBalance.value = res[1]
-      return
-    },
-  )
+  dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
 }
 
 const trySwitchChain = async (chainId: string | number) => {
@@ -90,7 +77,11 @@ init()
             :name="$icons.shoppingCart"
           />
           {{
-            formatAmount(dappBalance, dapp?.decimals.value, dapp?.symbol.value)
+            formatAmount(
+              account.dappBalance,
+              dapp?.decimals.value,
+              dapp?.symbol.value,
+            )
           }}
         </span>
         <app-button
@@ -135,7 +126,9 @@ init()
       </dropdown>
       <div class="app-navbar__wallet">
         <span class="app-navbar__wallet-balance">
-          {{ formatAmount(accountBalance, chain?.decimals, chain?.symbol) }}
+          {{
+            formatAmount(account.nativeBalance, chain?.decimals, chain?.symbol)
+          }}
         </span>
         <span class="app-navbar__wallet-address">
           {{ cropAddress(provider.selectedAddress ?? '') }}

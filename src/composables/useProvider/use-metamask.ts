@@ -25,7 +25,6 @@ import { TransactionRequest } from '@ethersproject/abstract-provider'
 export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
   const chainId = ref<ChainId>('')
   const selectedAddress = ref('')
-  const selectedBalance = ref('')
 
   const currentProvider = computed(
     () =>
@@ -68,12 +67,6 @@ export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
 
       const currentAccounts = await currentProvider.value.listAccounts()
       selectedAddress.value = currentAccounts[0]
-
-      if (selectedAddress.value) {
-        selectedBalance.value = (
-          await currentProvider.value.getBalance(selectedAddress.value)
-        ).toString()
-      }
     } catch (error) {
       handleEthError(error as EthProviderRpcError)
     }
@@ -151,7 +144,6 @@ export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
 
     chainId,
     selectedAddress,
-    selectedBalance,
     isConnected,
 
     init,

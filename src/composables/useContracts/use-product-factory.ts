@@ -27,11 +27,7 @@ export interface ProductFactoryContract {
     alias: string,
     initializeData: string,
   ) => Promise<string>
-  deploy: (
-    alias: string,
-    paymentToken: string,
-    initializeData: string,
-  ) => Promise<ContractTransaction>
+  deploy: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
 export const useProductFactory = (): ProductFactoryContract => {
@@ -113,16 +109,14 @@ export const useProductFactory = (): ProductFactoryContract => {
   }
 
   const deploy = async (
-    alias: string,
-    paymentToken: string,
-    initializeData: string,
+    args: Record<string, string>,
   ): Promise<ContractTransaction> => {
     if (!_instance_rw.value) throw new Error('Undefined instance')
 
     const tx = await _instance_rw.value.deploy(
-      alias,
-      paymentToken,
-      initializeData,
+      args.alias,
+      args.paymentToken,
+      args.initializeData,
     )
 
     return tx
