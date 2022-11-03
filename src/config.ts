@@ -1,7 +1,7 @@
 import packageJson from '../package.json'
 import { LogLevelDesc } from 'loglevel'
 import { pickBy, mapKeys } from 'lodash-es'
-import { ETHEREUM_CHAINS, CONTRACT_NAMES } from './enums'
+import { ETHEREUM_CHAINS, CONTRACT_NAMES, PRODUCT_IDS } from './enums'
 
 export const config = {
   API_URL: import.meta.env.VITE_API_URL,
@@ -18,8 +18,9 @@ export const config = {
     },
   },
   PRODUCT_ALIASES: {
-    erc20: import.meta.env.VITE_APP_CONTRACT_PRODUCT_ERC20_ALIAS,
-    erc721: import.meta.env.VITE_APP_CONTRACT_PRODUCT_ERC721_ALIAS,
+    [PRODUCT_IDS.ERC20]: import.meta.env.VITE_APP_CONTRACT_PRODUCT_ERC20_ALIAS,
+    [PRODUCT_IDS.ERC721]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC721_ALIAS,
   } as Record<string, string>,
   MODULES: ['ERC20'],
 } as const

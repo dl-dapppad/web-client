@@ -32,7 +32,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/forms/DeployForm.vue'),
   },
   {
-    path: '/product/:id/edit',
+    path: '/product/:id/edit/:contractAddress',
     name: ROUTE_NAMES.productEdit,
     component: () => import('@/forms/EditForm.vue'),
   },

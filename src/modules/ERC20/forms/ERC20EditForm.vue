@@ -1,21 +1,21 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { AppBlock, AppButton, Tabs } from '@/common'
-import { CommonForm } from '@/forms'
-
+import { InputField } from '@/fields'
 import {
   Bus,
   cropAddress,
   ErrorHandler,
-  formatNumber,
   copyToClipboard,
+  formatAmount,
 } from '@/helpers'
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { required, isAddress, numeric } from '@/validators'
+import { useProductErc20 } from '@/modules/ERC20/composables/use-product-erc20'
+import { useWeb3ProvidersStore } from '@/store'
+import { storeToRefs } from 'pinia'
+
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const { t } = useI18n({
   locale: 'en',
@@ -26,13 +26,12 @@ const { t } = useI18n({
       subtitle:
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
       'block-title-1': 'General info of Overview',
-      'metadata-1-lbl': 'Max total supplies',
-      'metadata-2-lbl': 'Contract creator',
-      'metadata-3-lbl': 'Token tracker',
-      'metadata-4-lbl': 'Contract owner',
-      'metadata-5-lbl': 'Contract',
-      'metadata-6-lbl': 'Decimals',
-      'metadata-7-lbl': 'Your balance',
+      'metadata-1-lbl': 'Total supply',
+      'metadata-2-lbl': 'Token tracker',
+      'metadata-3-lbl': 'Contract address',
+      'metadata-4-lbl': 'Owner address',
+      'metadata-5-lbl': 'Decimals',
+      'metadata-6-lbl': 'Your balance',
       'block-title-2': 'Interaction',
       'approve-form': {
         title: 'Approve',
@@ -74,24 +73,42 @@ const FORM_TABS = [
 ]
 
 const currentTabNumber = ref(FORM_TABS[0].number)
+const accountBalance = ref('0')
 
 const router = useRouter()
+const route = useRoute()
+const erc20 = useProductErc20(route.params.contractAddress as string)
 
-const metadata = {
-  maxTotalSupplie: {
-    amount: 32310389.1234,
-    asset: 'USDT',
-  },
-  contractCreator: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
-  tokenTracker: 'Tether USD (USDT)',
-  contractOwner: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
-  contract: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
-  decimals: 6,
-  yourBalance: {
-    amount: 32310389.1234,
-    asset: 'USDT',
-  },
+const init = async () => {
+  erc20.init(route.params.contractAddress as string)
+
+  await erc20.loadDetails()
+  if (provider.value.selectedAddress) {
+    accountBalance.value = await erc20.balanceOf(provider.value.selectedAddress)
+  }
 }
+
+init()
+
+const approveForm = reactive({
+  spenderAddress: '',
+  valueAmount: '',
+})
+
+const transferFromForm = reactive({
+  fromAddress: '',
+  toAddress: '',
+  valueAmount: '',
+})
+
+const transferForm = reactive({
+  toAddress: '',
+  valueAmount: '',
+})
+
+const transferOwnershipForm = reactive({
+  newOwnerAddress: '',
+})
 
 const handleApprove = () => {
   try {
@@ -137,11 +154,7 @@ const formScheme = {
       <app-button
         type="button"
         class="app__module-title-address"
-        :text="
-          t('address', {
-            address: cropAddress('0xC87B0398F86276D3D590A14AB53fF57185899C42'),
-          })
-        "
+        :text="cropAddress(erc20.address.value)"
         :icon-right="$icons.duplicate"
         scheme="default"
         size="default"
@@ -170,9 +183,11 @@ const formScheme = {
             </span>
             <span class="app__metadata-value">
               <span class="app__price">
-                {{ metadata.maxTotalSupplie.amount }}
+                {{
+                  formatAmount(erc20.totalSupply.value, erc20.decimals.value)
+                }}
                 <span class="app__price-asset">
-                  {{ metadata.maxTotalSupplie.asset }}
+                  {{ erc20.symbol.value }}
                 </span>
               </span>
             </span>
@@ -182,14 +197,7 @@ const formScheme = {
               {{ t('metadata-2-lbl') }}
             </span>
             <span class="app__metadata-value">
-              <app-button
-                scheme="default"
-                color="secondary"
-                size="default"
-                :text="cropAddress(metadata.contractCreator)"
-                :icon-right="$icons.duplicate"
-                @click="copyToClipboard(metadata.contractCreator)"
-              />
+              {{ `${erc20.name.value} (${erc20.symbol.value})` }}
             </span>
           </div>
           <div class="app__metadata-row">
@@ -201,8 +209,8 @@ const formScheme = {
                 scheme="default"
                 color="secondary"
                 size="default"
-                :text="metadata.tokenTracker"
-                @click="copyToClipboard(metadata.tokenTracker)"
+                :text="cropAddress(erc20.address.value)"
+                @click="copyToClipboard(erc20.address.value)"
               />
             </span>
           </div>
@@ -215,9 +223,9 @@ const formScheme = {
                 scheme="default"
                 color="secondary"
                 size="default"
-                :text="cropAddress(metadata.contractOwner)"
+                :text="cropAddress(erc20.owner.value)"
                 :icon-right="$icons.duplicate"
-                @click="copyToClipboard(metadata.contractOwner)"
+                @click="copyToClipboard(erc20.owner.value)"
               />
             </span>
           </div>
@@ -226,14 +234,7 @@ const formScheme = {
               {{ t('metadata-5-lbl') }}
             </span>
             <span class="app__metadata-value">
-              <app-button
-                scheme="default"
-                color="secondary"
-                size="default"
-                :text="cropAddress(metadata.contract)"
-                :icon-right="$icons.duplicate"
-                @click="copyToClipboard(metadata.contract)"
-              />
+              {{ erc20.decimals.value }}
             </span>
           </div>
           <div class="app__metadata-row">
@@ -241,18 +242,10 @@ const formScheme = {
               {{ t('metadata-6-lbl') }}
             </span>
             <span class="app__metadata-value">
-              {{ metadata.decimals }}
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ t('metadata-7-lbl') }}
-            </span>
-            <span class="app__metadata-value">
               <span class="app__price">
-                {{ metadata.yourBalance.amount }}
+                {{ formatAmount(accountBalance, erc20.decimals.value) }}
                 <span class="app__price-asset">
-                  {{ metadata.yourBalance.asset }}
+                  {{ erc20.symbol.value }}
                 </span>
               </span>
             </span>

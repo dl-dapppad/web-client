@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Erc20DeployForm } from '@/modules'
+import { PRODUCT_IDS } from '@/enums'
 
 import postsData from '@/assets/posts.json'
 
@@ -14,10 +15,10 @@ const post = posts.find(el => el.id === route.params.id)
 
 <template>
   <div class="deploy-form">
-    <template v-if="post?.id === 'erc20'">
+    <template v-if="post?.id === PRODUCT_IDS.ERC20">
       <erc20-deploy-form class="deploy-form__module" />
     </template>
-    <template v-if="post?.id === 'erc721'">
+    <template v-if="post?.id === PRODUCT_IDS.ERC721">
       <erc20-deploy-form class="deploy-form__module" />
     </template>
   </div>

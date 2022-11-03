@@ -36,6 +36,7 @@ const { t } = useI18n({
       'token-minted-lbl': 'Token minted',
       'token-mint-receiver-lbl': 'Minted to',
       'token-contract-lbl': 'Contract address',
+      'btn-submit-lbl': 'Great',
     },
   },
 })
@@ -114,10 +115,16 @@ const { t } = useI18n({
           {{ t('token-contract-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ cropAddress(props.deployMetadata.contract) }}
+          {{ props.deployMetadata.contract }}
         </span>
       </div>
     </div>
+    <app-button
+      class="deploy-success-message__submit"
+      :text="t('btn-submit-lbl')"
+      size="small"
+      @click="emit('submit')"
+    />
   </div>
 </template>
 

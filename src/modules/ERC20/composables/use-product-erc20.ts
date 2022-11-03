@@ -1,0 +1,142 @@
+import { ref, Ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ContractTransaction } from 'ethers'
+import { useWeb3ProvidersStore } from '@/store'
+import { ERC20, ERC20__factory } from '@/modules/ERC20/types'
+
+export interface ProductErc20Contract {
+  address: Ref<string>
+  name: Ref<string>
+  symbol: Ref<string>
+  decimals: Ref<number>
+  owner: Ref<string>
+  totalSupply: Ref<string>
+  init: (address: string) => void
+  loadDetails: () => Promise<void>
+  updateName: () => Promise<void>
+  updateSymbol: () => Promise<void>
+  updateDecimals: () => Promise<void>
+  updateOwner: () => Promise<void>
+  updateTotalSupply: () => Promise<void>
+  balanceOf: (address: string) => Promise<string>
+  allowance: (owner: string, spender: string) => Promise<string>
+  approve: (args: Record<string, string>) => Promise<ContractTransaction>
+}
+
+export const useProductErc20 = (
+  contractAddress?: string,
+): ProductErc20Contract => {
+  const { provider } = storeToRefs(useWeb3ProvidersStore())
+
+  const _instance = ref<ERC20 | undefined>()
+  const _instance_rw = ref<ERC20 | undefined>()
+
+  const address = ref('')
+  const name = ref('')
+  const symbol = ref('')
+  const decimals = ref(0)
+  const owner = ref('')
+  const totalSupply = ref('')
+
+  const init = (contractAddress: string): void => {
+    address.value = contractAddress
+
+    if (provider.value.currentProvider) {
+      _instance.value = ERC20__factory.connect(
+        address.value,
+        provider.value.currentProvider,
+      )
+    }
+    if (provider.value.currentSigner) {
+      _instance_rw.value = ERC20__factory.connect(
+        address.value,
+        provider.value.currentSigner,
+      )
+    }
+  }
+
+  const loadDetails = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    await Promise.all([
+      updateName(),
+      updateSymbol(),
+      updateDecimals(),
+      updateOwner(),
+      updateTotalSupply(),
+    ])
+  }
+
+  const updateName = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    name.value = await _instance.value.name()
+  }
+
+  const updateSymbol = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    symbol.value = await _instance.value.symbol()
+  }
+
+  const updateDecimals = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    decimals.value = Number(await _instance.value.decimals())
+  }
+
+  const updateOwner = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    owner.value = await _instance.value.owner()
+  }
+
+  const updateTotalSupply = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    totalSupply.value = (await _instance.value.totalSupply()).toString()
+  }
+
+  const balanceOf = async (address: string): Promise<string> => {
+    if (!_instance.value) return '0'
+
+    return (await _instance.value.balanceOf(address)).toString()
+  }
+
+  const allowance = async (owner: string, spender: string): Promise<string> => {
+    if (!_instance.value) return '0'
+
+    return (await _instance.value.allowance(owner, spender)).toString()
+  }
+
+  const approve = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.approve(args.spender, args.amount)
+  }
+
+  if (contractAddress) init(contractAddress)
+
+  return {
+    init,
+    loadDetails,
+
+    address,
+    name,
+    symbol,
+    decimals,
+    owner,
+    totalSupply,
+
+    updateName,
+    updateSymbol,
+    updateDecimals,
+    updateOwner,
+    updateTotalSupply,
+    balanceOf,
+    allowance,
+    approve,
+  }
+}

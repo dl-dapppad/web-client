@@ -11,6 +11,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ErrorHandler } from '@/helpers'
 import { useI18n } from 'vue-i18n'
 import { deploy } from '@/helpers/deploy.helper'
+import { PRODUCT_IDS } from '@/enums'
 
 const { t } = useI18n({
   locale: 'en',
@@ -39,6 +40,7 @@ const router = useRouter()
 const route = useRoute()
 
 const deployMetadata = ref<DeployERC20Metadata>()
+const potentialContractAddress = ref('')
 const form = reactive({
   paymentToken: '',
   tokenName: '',
@@ -62,7 +64,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
 
 const submit = async () => {
   try {
-    const potentialContractAddress = await deploy(
+    potentialContractAddress.value = await deploy(
       route.params.id as string,
       '0xe7deB4238d6AcFEE0B457dfa3f51d2e88a085367',
       [
@@ -80,7 +82,7 @@ const submit = async () => {
       decimals: form.tokenDecimals,
       mintAmount: form.mintAmount,
       mintReceiver: form.mintReceiver,
-      contract: potentialContractAddress,
+      contract: potentialContractAddress.value,
     }
 
     isSuccessModalShown.value = true
@@ -98,7 +100,12 @@ const submit = async () => {
         :icon-right="$icons.arrowLeft"
         modification="border-circle"
         color="tertiary"
-        @click="router.go(-1)"
+        @click="
+          router.push({
+            name: $routes.product,
+            params: { id: PRODUCT_IDS.ERC20 },
+          })
+        "
       />
       <h2 class="app__module-title">
         {{ t('title') }}
@@ -201,7 +208,13 @@ const submit = async () => {
           @submit="
             () => {
               modal.close()
-              router.push({ name: $routes.productEdit, params: { id: 2 } })
+              router.push({
+                name: $routes.productEdit,
+                params: {
+                  id: PRODUCT_IDS.ERC20,
+                  contractAddress: potentialContractAddress,
+                },
+              })
             }
           "
           @close="modal.close"
