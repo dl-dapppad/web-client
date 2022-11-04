@@ -22,5 +22,4 @@ deprecated
 *.njsproj
 *.sln
 *.local
-.env
 stats.html
