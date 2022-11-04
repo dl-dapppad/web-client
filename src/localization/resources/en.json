@@ -107,6 +107,16 @@
     "total-stake-lbl": "Total stake",
     "my-stake-lbl": "My stake",
     "total-reward-lbl": "Total reward",
-    "current-rewards-lbl": "Current rewards"
+    "current-rewards-lbl": "Current rewards",
+    "staking-title": "History of staking",
+    "staking-currency": "DAPPAD (DAPP)",
+    "staking-history-first-lbl": "Staked",
+    "staking-history-second-lbl": "Withdrawn",
+    "staking-history-third-lbl": "Staked",
+    "rewards-title": "History of rewards",
+    "rewards-currency": "Dai (DAI)",
+    "rewards-history-first-lbl": "Accured",
+    "rewards-history-second-lbl": "Claimed",
+    "rewards-history-third-lbl": "Accured"
   }
 }

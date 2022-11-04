@@ -8,7 +8,11 @@ import {
 } from '@/common'
 import { cropAddress } from '@/helpers'
 import { useRouter } from '@/router'
-import { copyToClipboard, formatNumberWithSpaces } from '@/helpers'
+import {
+  copyToClipboard,
+  formatNumberWithSpaces,
+  formatDMYTime,
+} from '@/helpers'
 import { ICON_NAMES } from '@/enums'
 import { i18n } from '@/localization'
 
@@ -16,6 +20,36 @@ const { t } = i18n.global
 
 const router = useRouter()
 const address = '0xa1234567af'
+const addressStakeDAPP = '0xa1234567af'
+const addressStakeDAI = '0xa1234567af'
+
+const totalStake = {
+  icon: ICON_NAMES.database,
+  title: t('farming-page.total-stake-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
+
+const myStake = {
+  icon: ICON_NAMES.cube,
+  title: t('farming-page.my-stake-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
+
+const totalReward = {
+  icon: ICON_NAMES.gift,
+  title: t('farming-page.total-reward-lbl'),
+  count: 12345678.1234,
+  curr: 'DAI',
+}
+
+const currentRewards = {
+  icon: ICON_NAMES.gift,
+  title: t('farming-page.current-rewards-lbl'),
+  count: 12345678.1234,
+  curr: 'DAPP',
+}
 
 const donutChartData = {
   data: [
@@ -101,33 +135,101 @@ const linesChartData = {
   title: 'Stakes and rewards',
 }
 
-const totalStake = {
-  icon: ICON_NAMES.database,
-  title: t('farming-page.total-stake-lbl'),
-  count: 12345678.1234,
-  curr: 'DAPP',
-}
-
-const myStake = {
-  icon: ICON_NAMES.cube,
-  title: t('farming-page.my-stake-lbl'),
-  count: 12345678.1234,
-  curr: 'DAPP',
-}
-
-const totalReward = {
-  icon: ICON_NAMES.gift,
-  title: t('farming-page.total-reward-lbl'),
-  count: 12345678.1234,
-  curr: 'DAI',
-}
-
-const currentRewards = {
-  icon: ICON_NAMES.gift,
-  title: t('farming-page.current-rewards-lbl'),
-  count: 12345678.1234,
-  curr: 'DAPP',
-}
+const historyData = [
+  {
+    title: t('farming-page.staking-title'),
+    currency: t('farming-page.staking-currency'),
+    currencyIcon: ICON_NAMES.currencyBangladeshi,
+    data: [
+      {
+        date: 1665652259,
+        rows: [
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.cube,
+            label: t('farming-page.staking-history-first-lbl'),
+          },
+          {
+            value: '78.0',
+            icon: ICON_NAMES.chartBar,
+            label: t('farming-page.staking-history-second-lbl'),
+            selected: true,
+          },
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.cube,
+            label: t('farming-page.staking-history-third-lbl'),
+          },
+        ],
+      },
+      {
+        date: 1665652259,
+        rows: [
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.cube,
+            label: t('farming-page.staking-history-first-lbl'),
+          },
+          {
+            value: '78.0',
+            icon: ICON_NAMES.chartBar,
+            label: t('farming-page.staking-history-second-lbl'),
+            selected: true,
+          },
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.cube,
+            label: t('farming-page.staking-history-third-lbl'),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: t('farming-page.rewards-title'),
+    currency: t('farming-page.rewards-currency'),
+    currencyIcon: ICON_NAMES.daiCoin,
+    data: [
+      {
+        date: 1665652259,
+        rows: [
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.gift,
+            label: t('farming-page.rewards-history-first-lbl'),
+          },
+          {
+            value: '78.0',
+            icon: ICON_NAMES.chartBar,
+            label: t('farming-page.rewards-history-second-lbl'),
+            selected: true,
+          },
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.gift,
+            label: t('farming-page.rewards-history-first-lbl'),
+          },
+        ],
+      },
+      {
+        date: 1665652259,
+        rows: [
+          {
+            value: '78.0',
+            icon: ICON_NAMES.chartBar,
+            label: t('farming-page.rewards-history-second-lbl'),
+            selected: true,
+          },
+          {
+            value: '78.1234',
+            icon: ICON_NAMES.gift,
+            label: t('farming-page.rewards-history-first-lbl'),
+          },
+        ],
+      },
+    ],
+  },
+]
 </script>
 
 <template>
@@ -214,7 +316,7 @@ const currentRewards = {
             :title="address"
             @click="copyToClipboard(address)"
           >
-            {{ cropAddress(address) }}
+            {{ cropAddress(addressStakeDAPP) }}
             <icon class="farming-page__table-icon" :name="$icons.duplicate" />
           </span>
         </div>
@@ -271,24 +373,67 @@ const currentRewards = {
             :title="address"
             @click="copyToClipboard(address)"
           >
-            {{ cropAddress(address) }}
+            {{ cropAddress(addressStakeDAI) }}
             <icon class="farming-page__table-icon" :name="$icons.duplicate" />
           </span>
         </div>
       </div>
-      <div class="farming-page__charts">
-        <app-block>
-          <donut-chart
-            :chart-data="donutChartData"
-            class="farming-page__chart"
-          />
-        </app-block>
-        <app-block>
-          <multiple-line-chart
-            :chart-data="linesChartData"
-            class="farming-page__chart"
-          />
-        </app-block>
+      <div class="farming-page__charts-history-wrp">
+        <div class="farming-page__charts">
+          <app-block>
+            <donut-chart
+              :chart-data="donutChartData"
+              class="farming-page__chart"
+            />
+          </app-block>
+          <app-block>
+            <multiple-line-chart
+              :chart-data="linesChartData"
+              class="farming-page__chart"
+            />
+          </app-block>
+        </div>
+        <div class="farming-page__history">
+          <app-block v-for="(block, ind) of historyData" :key="ind">
+            <div class="farming-page__history-item">
+              <div class="farming-page__history-title">
+                <div class="farming-page__history-heading">
+                  {{ block.title }}
+                </div>
+                <div class="farming-page__history-currency">
+                  {{ block.currency }}
+                  <icon
+                    class="farming-page__history-currency-icon"
+                    :name="block.currencyIcon"
+                  />
+                </div>
+              </div>
+              <div
+                class="farming-page__history-table"
+                v-for="(item, index) of block.data"
+                :key="index"
+              >
+                <div class="farming-page__history-time">
+                  {{ formatDMYTime(item.date) }}
+                </div>
+                <div
+                  v-for="(row, i) of item.rows"
+                  :key="i"
+                  class="farming-page__row"
+                  :class="{ 'farming-page__row--selected': row.selected }"
+                >
+                  <div class="farming-page__row-key">
+                    <icon :name="row.icon" class="farming-page__history-icon" />
+                    {{ row.label }}
+                  </div>
+                  <div class="farming-page__row-value">
+                    {{ row.value }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </app-block>
+        </div>
       </div>
     </div>
   </div>
@@ -438,6 +583,11 @@ const currentRewards = {
   cursor: pointer;
 }
 
+.farming-page__charts-history-wrp {
+  display: flex;
+  flex-direction: column;
+}
+
 .farming-page__charts {
   display: grid;
   grid-template-columns: minmax(#{toRem(346)}, 1fr) minmax(#{toRem(693)}, 2fr);
@@ -445,5 +595,78 @@ const currentRewards = {
 
 .farming-page__chart {
   padding: toRem(40);
+}
+
+.farming-page__history {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+}
+
+.farming-page__history-item {
+  padding: toRem(40);
+  display: flex;
+  flex-direction: column;
+  gap: toRem(30);
+}
+
+.farming-page__history-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.farming-page__history-heading {
+  font-family: var(--app-font-family-secondary);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: toRem(20);
+}
+
+.farming-page__history-currency {
+  font-weight: 700;
+  font-size: toRem(14);
+  display: flex;
+  gap: toRem(10);
+  align-items: center;
+}
+
+.farming-page__history-currency-icon {
+  height: toRem(24);
+  width: toRem(24);
+}
+
+.farming-page__history-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.farming-page__history-time {
+  padding: toRem(20) 0 toRem(10);
+  font-weight: 700;
+  font-family: var(--app-font-family-secondary);
+  color: var(--text-secondary-main);
+}
+
+.farming-page__history-icon {
+  width: toRem(16);
+  height: toRem(16);
+}
+
+.farming-page__row {
+  padding: toRem(20) toRem(10);
+  display: flex;
+  justify-content: space-between;
+  border-bottom: toRem(1) solid var(--border-primary-main);
+  font-weight: 700;
+
+  &--selected {
+    color: var(--secondary-main);
+  }
+}
+
+.farming-page__row-key {
+  display: flex;
+  gap: toRem(5);
+  align-items: center;
 }
 </style>

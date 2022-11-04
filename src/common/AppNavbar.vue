@@ -57,7 +57,11 @@ const handleProviderBtnClick = () => {
           {{ formatNumber(farmBalance.amount) }}
           {{ farmBalance.asset }}
         </span>
-        <app-button :text="$t('app-navbar.farm-link')" size="small" />
+        <app-button
+          :text="$t('app-navbar.farm-link')"
+          size="small"
+          :route="{ name: $routes.farming }"
+        />
       </div>
       <input-field
         class="app-navbar___search"
