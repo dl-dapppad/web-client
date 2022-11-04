@@ -417,10 +417,10 @@ const historyData = [
                   {{ formatDMYTime(item.date) }}
                 </div>
                 <div
-                  class="farming-page__row"
-                  :class="{ 'farming-page__row--selected': row.selected }"
                   v-for="(row, i) of item.rows"
                   :key="i"
+                  class="farming-page__row"
+                  :class="{ 'farming-page__row--selected': row.selected }"
                 >
                   <div class="farming-page__row-key">
                     <icon :name="row.icon" class="farming-page__history-icon" />
