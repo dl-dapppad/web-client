@@ -55,7 +55,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
       <span class="app__form-control-title common-form__title">
         <div class="common-form__icon">
           <icon
-            :name="$icons.informationCircle"
+            :name="$icons.informationCircleFilled"
             class="common-form__title-icon"
           />
           <div class="common-form__popup">
@@ -79,7 +79,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
           @blur="touchField(`${ind}`)"
         />
         <div class="common-form__input-icon">
-          <icon :name="$icons.informationCircle" />
+          <icon :name="$icons.informationCircleFilled" />
           <div class="common-form__popup">
             {{ input.info }}
           </div>
