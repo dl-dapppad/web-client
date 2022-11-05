@@ -16,7 +16,7 @@ const props = defineProps<{
   formData: {
     title: string
     titleInfo: string
-    inputs: {
+    fields: {
       label: string
       info: string
       value?: string

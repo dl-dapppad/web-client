@@ -98,10 +98,10 @@ const handleApprove = () => {
   }
 }
 
-const formData = {
+const formScheme = {
   title: t('approve-form.title'),
   titleInfo: 'Some title info',
-  inputs: [
+  fieelds: [
     {
       label: t('approve-form.spender-address-lbl'),
       info: 'Information about this input',
@@ -270,7 +270,7 @@ const formData = {
       <app-block>
         <div class="app__module-content">
           <common-form
-            :form-data="formData"
+            :form-scheme="formScheme"
             class="erc20-edit-form__form-control"
             @submit="handleApprove"
           />
