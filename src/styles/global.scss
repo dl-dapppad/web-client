@@ -217,6 +217,14 @@ a {
   color: var(--text-primary-main);
 }
 
+.app__module-block-title {
+  font-size: toRem(30);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: toRem(20);
+}
+
 .app__module-title-address {
   grid-gap: toRem(20);
   font-size: toRem(30);

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { AppBlock, AppButton, Tabs } from '@/common'
-import { InputField } from '@/fields'
+import { CommonForm } from '@/forms'
 
 import {
   Bus,
@@ -10,8 +10,9 @@ import {
   copyToClipboard,
 } from '@/helpers'
 import { useRouter } from 'vue-router'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { required, isAddress, numeric } from '@/validators'
 
 const { t } = useI18n({
   locale: 'en',
@@ -21,7 +22,7 @@ const { t } = useI18n({
       address: 'Contract {address}',
       subtitle:
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-      'content-title-1': 'Read block',
+      'block-title-1': 'General info of Overview',
       'metadata-1-lbl': 'Max total supplies',
       'metadata-2-lbl': 'Contract creator',
       'metadata-3-lbl': 'Token tracker',
@@ -29,7 +30,7 @@ const { t } = useI18n({
       'metadata-5-lbl': 'Contract',
       'metadata-6-lbl': 'Decimals',
       'metadata-7-lbl': 'Your balance',
-      'content-title-2': 'Edit block',
+      'block-title-2': 'Interaction',
       'approve-form': {
         title: 'Approve',
         'spender-address-lbl': 'Spender',
@@ -89,26 +90,6 @@ const metadata = {
   },
 }
 
-const approveForm = reactive({
-  spenderAddress: '',
-  valueAmount: '',
-})
-
-const transferFromForm = reactive({
-  fromAddress: '',
-  toAddress: '',
-  valueAmount: '',
-})
-
-const transferForm = reactive({
-  toAddress: '',
-  valueAmount: '',
-})
-
-const transferOwnershipForm = reactive({
-  newOwnerAddress: '',
-})
-
 const handleApprove = () => {
   try {
     Bus.success('approve')
@@ -117,263 +98,204 @@ const handleApprove = () => {
   }
 }
 
-const handleTransferFrom = () => {
-  try {
-    Bus.success('transferFrom')
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
-}
-
-const handleTransfer = () => {
-  try {
-    Bus.success('transfer')
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
-}
-
-const handleTransferOwnership = () => {
-  try {
-    Bus.success('transferOwnership')
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
+const formScheme = {
+  title: t('approve-form.title'),
+  titleInfo: 'Some title info',
+  fieelds: [
+    {
+      label: t('approve-form.spender-address-lbl'),
+      info: 'Information about this input',
+      validators: [required, isAddress],
+    },
+    {
+      label: t('approve-form.value-amount-lbl'),
+      info: 'Information about this input',
+      validators: [required, numeric],
+    },
+  ],
+  button: 'Button text',
 }
 </script>
 
 <template>
   <div class="erc20-edit-form">
-    <div class="app__module-title-wrp">
-      <app-button
-        type="button"
-        class="app__module-back-btn"
-        :icon-right="$icons.arrowLeft"
-        modification="border-circle"
-        color="tertiary"
-        @click="router.go(-1)"
-      />
-      <h2 class="app__module-title">
-        {{ t('title') }}
-      </h2>
-      <app-button
-        type="button"
-        class="app__module-title-address"
-        :text="
-          t('address', {
-            address: cropAddress('0xC87B0398F86276D3D590A14AB53fF57185899C42'),
-          })
-        "
-        :icon-right="$icons.duplicate"
-        scheme="default"
-        size="default"
-        @click="copyToClipboard('0xC87B0398F86276D3D590A14AB53fF57185899C42')"
-      />
-    </div>
-    <span class="app__module-subtitle">
-      {{ t('subtitle') }}
-    </span>
-    <tabs
-      v-model="currentTabNumber"
-      :tabs-data="[
-        { title: 'Read', number: 1 },
-        { title: 'Write', number: 2 },
-      ]"
-    />
-    <app-block>
-      <div class="app__module-content">
-        <h4 class="app__module-content-title">
-          {{ t('content-title-1') }}
-        </h4>
-        <div class="app__metadata erc20-edit-form__metadata">
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ t('metadata-1-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              <span class="app__price">
-                {{ formatNumber(metadata.maxTotalSupplie.amount) }}
-                <span class="app__price-asset">
-                  {{ metadata.maxTotalSupplie.asset }}
-                </span>
-              </span>
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ t('metadata-2-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              <app-button
-                scheme="default"
-                color="secondary"
-                size="default"
-                :text="cropAddress(metadata.contractCreator)"
-                :icon-right="$icons.duplicate"
-                @click="copyToClipboard(metadata.contractCreator)"
-              />
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ t('metadata-3-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              <app-button
-                scheme="default"
-                color="secondary"
-                size="default"
-                :text="metadata.tokenTracker"
-                @click="copyToClipboard(metadata.tokenTracker)"
-              />
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ t('metadata-4-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              <app-button
-                scheme="default"
-                color="secondary"
-                size="default"
-                :text="cropAddress(metadata.contractOwner)"
-                :icon-right="$icons.duplicate"
-                @click="copyToClipboard(metadata.contractOwner)"
-              />
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ t('metadata-5-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              <app-button
-                scheme="default"
-                color="secondary"
-                size="default"
-                :text="cropAddress(metadata.contract)"
-                :icon-right="$icons.duplicate"
-                @click="copyToClipboard(metadata.contract)"
-              />
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ t('metadata-6-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              {{ metadata.decimals }}
-            </span>
-          </div>
-          <div class="app__metadata-row">
-            <span class="app__metadata-lbl">
-              {{ t('metadata-7-lbl') }}
-            </span>
-            <span class="app__metadata-value">
-              <span class="app__price">
-                {{ formatNumber(metadata.yourBalance.amount) }}
-                <span class="app__price-asset">
-                  {{ metadata.yourBalance.asset }}
-                </span>
-              </span>
-            </span>
-          </div>
-        </div>
-        <h4 class="app__module-content-title">
-          {{ t('content-title-2') }}
-        </h4>
-        <div class="app__form-control">
-          <span class="app__form-control-title">
-            {{ t('approve-form.title') }}
-          </span>
-          <input-field
-            v-model="approveForm.spenderAddress"
-            scheme="secondary"
-            :label="t('approve-form.spender-address-lbl')"
-          />
-          <input-field
-            v-model="approveForm.valueAmount"
-            scheme="secondary"
-            :label="t('approve-form.value-amount-lbl')"
-          />
-          <app-button
-            type="button"
-            :text="t('approve-form.submit-btn')"
-            size="small"
-            @click="handleApprove"
-          />
-        </div>
-        <div class="app__form-control">
-          <span class="app__form-control-title">
-            {{ t('transfer-from-form.title') }}
-          </span>
-          <input-field
-            v-model="transferFromForm.fromAddress"
-            scheme="secondary"
-            :label="t('transfer-from-form.from-address-lbl')"
-          />
-          <input-field
-            v-model="transferFromForm.toAddress"
-            scheme="secondary"
-            :label="t('transfer-from-form.to-address-lbl')"
-          />
-          <input-field
-            v-model="transferFromForm.valueAmount"
-            scheme="secondary"
-            :label="t('transfer-from-form.value-amount-lbl')"
-          />
-          <app-button
-            type="button"
-            :text="t('transfer-from-form.submit-btn')"
-            size="small"
-            @click="handleTransferFrom"
-          />
-        </div>
-        <div class="app__form-control">
-          <span class="app__form-control-title">
-            {{ t('transfer-form.title') }}
-          </span>
-          <input-field
-            v-model="transferForm.toAddress"
-            scheme="secondary"
-            :label="t('transfer-form.to-lbl')"
-          />
-          <input-field
-            v-model="transferForm.valueAmount"
-            scheme="secondary"
-            :label="t('transfer-form.value-lbl')"
-          />
-          <app-button
-            type="button"
-            :text="t('transfer-form.submit-btn')"
-            size="small"
-            @click="handleTransfer"
-          />
-        </div>
-        <div class="app__form-control">
-          <span class="app__form-control-title">
-            {{ t('transfer-ownership-form.title') }}
-          </span>
-          <input-field
-            v-model="transferOwnershipForm.newOwnerAddress"
-            scheme="secondary"
-            :label="t('transfer-ownership-form.new-owner-lbl')"
-          />
-          <app-button
-            type="button"
-            :text="t('transfer-ownership-form.submit-btn')"
-            size="small"
-            @click="handleTransferOwnership"
-          />
-        </div>
+    <div class="erc20-edit-form__titles-wrp">
+      <div class="app__module-title-wrp">
+        <app-button
+          type="button"
+          class="app__module-back-btn"
+          :icon-right="$icons.arrowLeft"
+          modification="border-circle"
+          color="tertiary"
+          @click="router.go(-1)"
+        />
+        <h2 class="app__module-title">
+          {{ t('title') }}
+        </h2>
+        <app-button
+          type="button"
+          class="app__module-title-address"
+          :text="
+            t('address', {
+              address: cropAddress(
+                '0xC87B0398F86276D3D590A14AB53fF57185899C42',
+              ),
+            })
+          "
+          :icon-right="$icons.duplicate"
+          scheme="default"
+          size="default"
+          @click="copyToClipboard('0xC87B0398F86276D3D590A14AB53fF57185899C42')"
+        />
       </div>
-    </app-block>
+      <span class="app__module-subtitle">
+        {{ t('subtitle') }}
+      </span>
+    </div>
+    <div class="erc20-edit-form__block-wrp">
+      <h3 class="app__module-block-title">
+        {{ t('block-title-1') }}
+      </h3>
+      <app-block>
+        <div class="app__module-content">
+          <div class="app__metadata erc20-edit-form__metadata">
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ t('metadata-1-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                <span class="app__price">
+                  {{ formatNumber(metadata.maxTotalSupplie.amount) }}
+                  <span class="app__price-asset">
+                    {{ metadata.maxTotalSupplie.asset }}
+                  </span>
+                </span>
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ t('metadata-2-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                <app-button
+                  scheme="default"
+                  color="secondary"
+                  size="default"
+                  :text="cropAddress(metadata.contractCreator)"
+                  :icon-right="$icons.duplicate"
+                  @click="copyToClipboard(metadata.contractCreator)"
+                />
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ t('metadata-3-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                <app-button
+                  scheme="default"
+                  color="secondary"
+                  size="default"
+                  :text="metadata.tokenTracker"
+                  @click="copyToClipboard(metadata.tokenTracker)"
+                />
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ t('metadata-4-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                <app-button
+                  scheme="default"
+                  color="secondary"
+                  size="default"
+                  :text="cropAddress(metadata.contractOwner)"
+                  :icon-right="$icons.duplicate"
+                  @click="copyToClipboard(metadata.contractOwner)"
+                />
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ t('metadata-5-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                <app-button
+                  scheme="default"
+                  color="secondary"
+                  size="default"
+                  :text="cropAddress(metadata.contract)"
+                  :icon-right="$icons.duplicate"
+                  @click="copyToClipboard(metadata.contract)"
+                />
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ t('metadata-6-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                {{ metadata.decimals }}
+              </span>
+            </div>
+            <div class="app__metadata-row">
+              <span class="app__metadata-lbl">
+                {{ t('metadata-7-lbl') }}
+              </span>
+              <span class="app__metadata-value">
+                <span class="app__price">
+                  {{ formatNumber(metadata.yourBalance.amount) }}
+                  <span class="app__price-asset">
+                    {{ metadata.yourBalance.asset }}
+                  </span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </app-block>
+    </div>
+    <div class="erc20-edit-form__block-wrp">
+      <h3 class="app__module-block-title">
+        {{ t('block-title-2') }}
+      </h3>
+      <tabs
+        v-model="currentTabNumber"
+        :tabs-data="[
+          { title: 'Read', number: 1 },
+          { title: 'Write', number: 2 },
+        ]"
+      />
+      <app-block>
+        <div class="app__module-content">
+          <common-form
+            :form-scheme="formScheme"
+            class="erc20-edit-form__form-control"
+            @submit="handleApprove"
+          />
+        </div>
+      </app-block>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.erc20-edit-form__metadata {
-  margin: 0 0 toRem(70);
+.erc20-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(70);
+}
+
+.erc20-edit-form__titles-wrp {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(20);
+}
+
+.erc20-edit-form__form-control {
+  &:not(:last-child) {
+    margin-bottom: toRem(30);
+  }
 }
 </style>
