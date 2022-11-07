@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AppLogo from '@/common/AppLogo.vue'
-import AppButton from '@/common/AppButton.vue'
+import { AppButton } from '@/common'
 </script>
 
 <template>
@@ -11,7 +11,7 @@ import AppButton from '@/common/AppButton.vue'
     </span>
     <app-button
       class="app-footer__terms-link"
-      :icon-left="$icons.arrowCircleRight"
+      :icon-left="$icons.questionMarkCircleFilled"
       :text="$t('app-footer.terms-link')"
       color="default"
       scheme="default"
@@ -25,7 +25,7 @@ import AppButton from '@/common/AppButton.vue'
   align-items: center;
   justify-content: space-between;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: toRem(10) var(--app-padding-right) toRem(10) var(--app-padding-left);
+  padding: toRem(50) var(--app-padding-right) toRem(50) var(--app-padding-left);
 }
 
 .app-footer__logo {
@@ -41,8 +41,9 @@ import AppButton from '@/common/AppButton.vue'
 }
 
 .app-footer__terms-link {
+  text-transform: capitalize;
   justify-self: end;
-  font-size: toRem(12);
+  font-size: toRem(14);
   line-height: 1;
   font-weight: 700;
 }
