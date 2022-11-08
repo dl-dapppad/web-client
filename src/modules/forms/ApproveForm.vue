@@ -52,48 +52,48 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="common-rw-form">
+  <div class="app__common-form">
     <div class="app__form-control">
-      <span class="app__form-control-title common-rw-form__title">
-        <div class="common-rw-form__icon">
+      <span class="app__form-control-title app__common-form__title">
+        <div class="app__common-form__icon">
           <icon
             :name="$icons.informationCircleFilled"
-            class="common-rw-form__title-icon"
+            class="app__common-form__title-icon"
           />
-          <div class="common-rw-form__popup">
+          <div class="app__common-form__popup">
             {{ t('approve-form.title-info') }}
           </div>
         </div>
         {{ t('approve-form.title-lbl') }}
       </span>
-      <div class="common-rw-form__input-wrp">
+      <div class="app__common-form__input-wrp">
         <input-field
           v-model="form.spender"
           scheme="secondary"
           :label="t('approve-form.spender-lbl')"
-          class="common-rw-form__input"
+          class="app__common-form__input"
           :error-message="getFieldErrorMessage('spender')"
           @blur="touchField('spender')"
         />
-        <div class="common-rw-form__input-icon">
+        <div class="app__common-form__input-icon">
           <icon :name="$icons.informationCircleFilled" />
-          <div class="common-rw-form__popup">
+          <div class="app__common-form__popup">
             {{ t('approve-form.spender-info') }}
           </div>
         </div>
       </div>
-      <div class="common-rw-form__input-wrp">
+      <div class="app__common-form__input-wrp">
         <input-field
           v-model="form.amount"
           scheme="secondary"
           :label="t('approve-form.amount-lbl')"
-          class="common-rw-form__input"
+          class="app__common-form__input"
           :error-message="getFieldErrorMessage('amount')"
           @blur="touchField('amount')"
         />
-        <div class="common-rw-form__input-icon">
+        <div class="app__common-form__input-icon">
           <icon :name="$icons.informationCircleFilled" />
-          <div class="common-rw-form__popup">
+          <div class="app__common-form__popup">
             {{ t('approve-form.amount-info') }}
           </div>
         </div>
@@ -110,7 +110,7 @@ const submit = async () => {
 </template>
 
 <style lang="scss" scoped>
-.common-rw-form__title-icon {
+.app__common-form__title-icon {
   height: toRem(28);
   width: toRem(28);
   padding: toRem(6);

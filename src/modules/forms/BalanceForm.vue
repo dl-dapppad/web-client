@@ -45,32 +45,32 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="common-rw-form">
+  <div class="app__common-form">
     <div class="app__form-control">
-      <span class="app__form-control-title common-rw-form__title">
-        <div class="common-rw-form__icon">
+      <span class="app__form-control-title app__common-form__title">
+        <div class="app__common-form__icon">
           <icon
             :name="$icons.informationCircleFilled"
-            class="common-rw-form__title-icon"
+            class="app__common-form__title-icon"
           />
-          <div class="common-rw-form__popup">
+          <div class="app__common-form__popup">
             {{ t('balance-form.title-info') }}
           </div>
         </div>
         {{ t('balance-form.title-lbl') }}
       </span>
-      <div class="common-rw-form__input-wrp">
+      <div class="app__common-form__input-wrp">
         <input-field
           v-model="form.address"
           scheme="secondary"
           :label="t('balance-form.address-lbl')"
-          class="common-rw-form__input"
+          class="app__common-form__input"
           :error-message="getFieldErrorMessage('address')"
           @blur="touchField('address')"
         />
-        <div class="common-rw-form__input-icon">
+        <div class="app__common-form__input-icon">
           <icon :name="$icons.informationCircleFilled" />
-          <div class="common-rw-form__popup">
+          <div class="app__common-form__popup">
             {{ t('balance-form.address-info') }}
           </div>
         </div>
@@ -96,7 +96,7 @@ const submit = async () => {
 </template>
 
 <style lang="scss" scoped>
-.common-rw-form__title-icon {
+.app__common-form__title-icon {
   height: toRem(28);
   width: toRem(28);
   padding: toRem(6);
