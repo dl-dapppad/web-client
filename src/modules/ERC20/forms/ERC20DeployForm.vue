@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { AppBlock, AppButton, Collapse, Modal } from '@/common'
-import { InputField } from '@/fields'
+import { AppBlock, AppButton, Collapse, Modal, Icon } from '@/common'
+import { InputField, SelectField } from '@/fields'
 import DeploySuccessMessage, {
   DeployERC20Metadata,
 } from '@/modules/ERC20/common/DeploySuccessMessage.vue'
@@ -21,19 +21,22 @@ const { t } = useI18n({
       title: 'Deploy',
       subtitle:
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-      'content-title-1': 'Payment information',
+      'content-title-1': 'Base parameters',
       'payment-token-lbl': 'Payment token',
-      'content-title-2': 'Token info',
+      'balance-lbl': 'Balance',
+      'content-title-2': 'Other fields',
       'token-name-lbl': 'Token name',
       'token-symbol-lbl': 'Tokens symbol',
       'decimals-lbl': 'Decimals',
-      'content-title-3': 'Mint info',
+      'cap-lbl': 'Cap',
       'mint-amount-lbl': 'Mint amount',
       'mint-receiver-lbl': 'Mint receiver',
-      'submit-btn': 'Buy',
+      'submit-btn': 'Approve & Buy',
     },
   },
 })
+
+const tokens = ['USDT', 'DAPP']
 
 const isSuccessModalShown = ref(false)
 
@@ -49,6 +52,7 @@ const form = reactive({
   mintAmount: '',
   mintReceiver: '',
   tokenDecimals: '',
+  cap: '',
 })
 
 const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
@@ -60,6 +64,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
     mintAmount: { required },
     mintReceiver: { required },
     tokenDecimals: { required },
+    cap: { required },
   },
 )
 
@@ -131,21 +136,44 @@ const submit = async () => {
                 scheme="default"
                 color="default"
                 size="default"
-                :text="t('content-title-1')"
-                :icon-left="collapse.isOpen ? $icons.arrowUp : $icons.arrowDown"
                 @click="collapse.toggle"
-              />
+              >
+                <icon
+                  class="erc20-deploy-form__title-icon"
+                  :name="
+                    collapse.isOpen
+                      ? $icons.arrowUpTriangle
+                      : $icons.arrowDownTriangle
+                  "
+                />
+                {{ t('content-title-1') }}
+              </app-button>
             </template>
             <template #default>
               <div
                 class="app__form-control erc20-deploy-form__collapsed-fields"
               >
+                <div class="erc20-deploy-form__select-wrp">
+                  <select-field
+                    v-model="form.paymentToken"
+                    :label="t('payment-token-lbl')"
+                    :value-options="tokens"
+                  />
+                  <div class="erc20-deploy-form__row">
+                    <span class="erc20-deploy-form__row-title">
+                      {{ t('balance-lbl') }}
+                    </span>
+                    <span class="erc20-deploy-form__row-value">
+                      {{ `12,345.1234 USDT` }}
+                    </span>
+                  </div>
+                </div>
                 <input-field
                   scheme="secondary"
-                  v-model="form.paymentToken"
-                  :label="t('content-title-1')"
-                  :error-message="getFieldErrorMessage('paymentToken')"
-                  @blur="touchField('paymentToken')"
+                  v-model="form.tokenName"
+                  :label="t('token-name-lbl')"
+                  :error-message="getFieldErrorMessage('tokenName')"
+                  @blur="touchField('tokenName')"
                 />
               </div>
             </template>
@@ -156,28 +184,11 @@ const submit = async () => {
           <div class="app__form-control">
             <input-field
               scheme="secondary"
-              v-model="form.tokenName"
-              :label="t('token-name-lbl')"
-              :error-message="getFieldErrorMessage('tokenName')"
-              @blur="touchField('tokenName')"
-            />
-            <input-field
-              scheme="secondary"
               v-model="form.tokenSymbol"
               :label="t('token-symbol-lbl')"
               :error-message="getFieldErrorMessage('tokenSymbol')"
               @blur="touchField('tokenSymbol')"
             />
-            <input-field
-              scheme="secondary"
-              v-model="form.tokenDecimals"
-              :label="t('decimals-lbl')"
-              :error-message="getFieldErrorMessage('tokenDecimals')"
-              @blur="touchField('tokenDecimals')"
-            />
-            <h4 class="app__module-content-title">
-              {{ t('content-title-3') }}
-            </h4>
             <input-field
               scheme="secondary"
               v-model="form.mintAmount"
@@ -192,15 +203,28 @@ const submit = async () => {
               :error-message="getFieldErrorMessage('mintReceiver')"
               @blur="touchField('mintReceiver')"
             />
-
-            <app-button
-              class="erc20-deploy-form__submit-btn"
-              type="submit"
-              :text="t('submit-btn')"
-              size="small"
-              :disabled="!isFieldsValid"
+            <input-field
+              scheme="secondary"
+              v-model="form.tokenDecimals"
+              :label="t('decimals-lbl')"
+              :error-message="getFieldErrorMessage('tokenDecimals')"
+              @blur="touchField('tokenDecimals')"
+            />
+            <input-field
+              scheme="secondary"
+              v-model="form.cap"
+              :label="t('cap-lbl')"
+              :error-message="getFieldErrorMessage('cap')"
+              @blur="touchField('cap')"
             />
           </div>
+          <app-button
+            class="erc20-deploy-form__submit-btn"
+            type="submit"
+            :text="t('submit-btn')"
+            size="small"
+            :disabled="!isFieldsValid"
+          />
         </div>
       </div>
     </app-block>
@@ -230,5 +254,29 @@ const submit = async () => {
 <style lang="scss" scoped>
 .erc20-deploy-form__collapsed-fields {
   padding: toRem(8) 0;
+}
+
+.erc20-deploy-form__title-icon {
+  height: toRem(11);
+  width: toRem(31);
+  padding: 0 toRem(20) 0 0;
+}
+
+.erc20-deploy-form__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: toRem(10) 0 0 0;
+}
+
+.erc20-deploy-form__row-title {
+  font-weight: 700;
+  font-size: toRem(14);
+  color: var(--text-secondary-main);
+}
+
+.erc20-deploy-form__row-value {
+  font-weight: 700;
+  font-size: toRem(16);
 }
 </style>
