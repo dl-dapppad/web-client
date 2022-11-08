@@ -2,3 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Erc20__factory } from "./Erc20__factory";
+export { Farming__factory } from "./Farming__factory";
+export { ProductFactory__factory } from "./ProductFactory__factory";

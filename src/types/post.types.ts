@@ -1,11 +1,12 @@
-import { config } from '@/config'
-
 export type Post = {
   id: string
+  type: string
+  subPosts: string[]
+  bannerUrl: string
+  imageUrl: string
   title: string
   description: string
-  imageUrl: string
-  bannerUrl: string
+  chartTitle: string
+  chartDescription: string
   content: [string, string][]
-  module?: typeof config.MODULES
 }

@@ -85,6 +85,9 @@
     "mint-lbl": "Mint"
   },
   "post-checkout": {
+    "have-product-lbl": "Already have this product?",
+    "have-product-input-lbl": "Contract address",
+    "have-product-input-tooltip-txt": "You can edit contracts that you already have",
     "current-network-lbl": "Current network",
     "sales-lbl": "Number of sales",
     "decrease-percent-lbl": "Decrease percent",

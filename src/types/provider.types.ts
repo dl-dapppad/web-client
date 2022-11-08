@@ -30,6 +30,9 @@ export type Chain = {
   id: ChainId
   name: string
   rpcUrl: string
+  explorerUrl: string
+  symbol: string
+  decimals: number
 }
 
 export type TxRequestBody =
@@ -71,8 +74,8 @@ export interface ProviderWrapper {
     txRequestBody: TxRequestBody,
   ) => Promise<TransactionResponse>
   getHashFromTxResponse: (txResponse: TransactionResponse) => string
-  getTxUrl: (explorerUrl: string, txHash: string) => string
-  getAddressUrl: (explorerUrl: string, address: string) => string
+  getTxUrl: (txHash: string) => string
+  getAddressUrl: (address: string) => string
   disconnect?: () => void
 }
 

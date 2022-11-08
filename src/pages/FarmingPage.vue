@@ -8,11 +8,7 @@ import {
 } from '@/common'
 import { cropAddress } from '@/helpers'
 import { useRouter } from '@/router'
-import {
-  copyToClipboard,
-  formatNumberWithSpaces,
-  formatDMYTime,
-} from '@/helpers'
+import { copyToClipboard, formatAmount, formatDMYTime } from '@/helpers'
 import { ICON_NAMES } from '@/enums'
 import { i18n } from '@/localization'
 
@@ -269,7 +265,7 @@ const historyData = [
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ formatNumberWithSpaces(totalStake.count) }}
+                {{ formatAmount(totalStake.count, 3) }}
               </span>
               <span class="farming-page__table-currency">
                 {{ totalStake.curr }}
@@ -285,7 +281,7 @@ const historyData = [
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ formatNumberWithSpaces(myStake.count) }}
+                {{ formatAmount(myStake.count, 3) }}
               </span>
               <span class="farming-page__table-currency">
                 {{ myStake.curr }}
@@ -330,7 +326,7 @@ const historyData = [
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ formatNumberWithSpaces(totalReward.count) }}
+                {{ formatAmount(totalReward.count, 3) }}
               </span>
               <span class="farming-page__table-currency">
                 {{ totalReward.curr }}
@@ -351,7 +347,7 @@ const historyData = [
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ formatNumberWithSpaces(currentRewards.count) }}
+                {{ formatAmount(currentRewards.count, 3) }}
               </span>
               <span class="farming-page__table-currency">
                 {{ currentRewards.curr }}

@@ -23,3 +23,5 @@ deprecated
 *.sln
 *.local
 stats.html
+.env
+docker-compose.yaml

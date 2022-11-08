@@ -1,7 +1,20 @@
 <script lang="ts" setup>
 import { Icon, AppButton } from '@/common'
+import { cropAddress } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-import { formatNumber, cropAddress } from '@/helpers'
+
+export interface DeployERC20Metadata {
+  name: string
+  symbol: string
+  decimals: string
+  mintAmount: string
+  mintReceiver: string
+  contract: string
+}
+
+const props = defineProps<{
+  deployMetadata?: DeployERC20Metadata
+}>()
 
 const emit = defineEmits<{
   (e: 'submit'): void
@@ -20,25 +33,13 @@ const { t } = useI18n({
       'token-name-lbl': 'Token name',
       'token-symbol-lbl': 'Token symbol',
       'token-decimals-lbl': 'Token decimals',
-      'token-cap-lbl': 'Token cap',
       'token-minted-lbl': 'Token minted',
-      'token-tracker-lbl': 'Token address',
+      'token-mint-receiver-lbl': 'Minted to',
+      'token-contract-lbl': 'Contract address',
+      'btn-submit-lbl': 'Great',
     },
   },
 })
-
-const metadata = {
-  name: 'Test token',
-  symbol: 'TT',
-  decimals: 18,
-  cap: 10000000000000000,
-  minted: {
-    amount: 1000000,
-    asset: 'TT',
-  },
-  tokenTracker: 'Tether USD (USDT)',
-  contract: '0x0000000000000000000000000000000000000000',
-}
 </script>
 
 <template>
@@ -63,13 +64,13 @@ const metadata = {
       {{ t('description') }}
     </span>
 
-    <div class="app__metadata">
+    <div v-if="props.deployMetadata" class="app__metadata">
       <div class="app__metadata-row">
         <span class="app__metadata-lbl">
           {{ t('token-name-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ metadata.name }}
+          {{ props.deployMetadata.name }}
         </span>
       </div>
       <div class="app__metadata-row">
@@ -77,15 +78,7 @@ const metadata = {
           {{ t('token-symbol-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ metadata.symbol }}
-        </span>
-      </div>
-      <div class="app__metadata-row">
-        <span class="app__metadata-lbl">
-          {{ t('token-tracker-lbl') }}
-        </span>
-        <span class="app__metadata-value app__metadata-value--accent">
-          {{ metadata.tokenTracker }}
+          {{ props.deployMetadata.symbol }}
         </span>
       </div>
       <div class="app__metadata-row">
@@ -93,7 +86,7 @@ const metadata = {
           {{ t('token-decimals-lbl') }}
         </span>
         <span class="app__metadata-value app__metadata-value--accent">
-          {{ metadata.decimals }}
+          {{ props.deployMetadata.decimals }}
         </span>
       </div>
       <div class="app__metadata-row">
@@ -102,25 +95,33 @@ const metadata = {
         </span>
         <span class="app__metadata-value">
           <span class="app__price">
-            {{ formatNumber(metadata.minted.amount) }}
+            {{ props.deployMetadata.mintAmount }}
             <span class="app__price-asset">
-              {{ metadata.contractOwner }}
+              {{ props.deployMetadata.symbol }}
             </span>
           </span>
         </span>
       </div>
       <div class="app__metadata-row">
         <span class="app__metadata-lbl">
-          {{ t('token-minted-lbl') }}
+          {{ t('token-mint-receiver-lbl') }}
         </span>
         <span class="app__metadata-value app__metadata-value--accent">
-          {{ cropAddress(metadata.contract) }}
+          {{ cropAddress(props.deployMetadata.mintReceiver) }}
+        </span>
+      </div>
+      <div class="app__metadata-row">
+        <span class="app__metadata-lbl">
+          {{ t('token-contract-lbl') }}
+        </span>
+        <span class="app__metadata-value">
+          {{ props.deployMetadata.contract }}
         </span>
       </div>
     </div>
     <app-button
       class="deploy-success-message__submit"
-      :text="'Great'"
+      :text="t('btn-submit-lbl')"
       size="small"
       @click="emit('submit')"
     />

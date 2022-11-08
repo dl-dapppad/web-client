@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { AppBlock, AppButton, Collapse, Modal } from '@/common'
 import { InputField } from '@/fields'
-
-import DeploySuccessMessage from '@/modules/ERC20/common/DeploySuccessMessage.vue'
-
+import DeploySuccessMessage, {
+  DeployERC20Metadata,
+} from '@/modules/ERC20/common/DeploySuccessMessage.vue'
 import { reactive, ref } from 'vue'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ErrorHandler } from '@/helpers'
 import { useI18n } from 'vue-i18n'
+import { deploy } from '@/helpers/deploy.helper'
+import { PRODUCT_IDS } from '@/enums'
+import { BN } from '@/utils'
 
 const { t } = useI18n({
   locale: 'en',
@@ -18,15 +21,15 @@ const { t } = useI18n({
       title: 'Deploy',
       subtitle:
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-      'content-title-1': 'Base parameters',
+      'content-title-1': 'Payment information',
       'payment-token-lbl': 'Payment token',
+      'content-title-2': 'Token info',
       'token-name-lbl': 'Token name',
-      'content-title-2': 'Other fields',
       'token-symbol-lbl': 'Tokens symbol',
+      'decimals-lbl': 'Decimals',
+      'content-title-3': 'Mint info',
       'mint-amount-lbl': 'Mint amount',
       'mint-receiver-lbl': 'Mint receiver',
-      'decimals-lbl': 'Decimals',
-      'cap-lbl': 'Cap',
       'submit-btn': 'Buy',
     },
   },
@@ -35,7 +38,10 @@ const { t } = useI18n({
 const isSuccessModalShown = ref(false)
 
 const router = useRouter()
+const route = useRoute()
 
+const deployMetadata = ref<DeployERC20Metadata>()
+const potentialContractAddress = ref('')
 const form = reactive({
   paymentToken: '',
   tokenName: '',
@@ -43,7 +49,6 @@ const form = reactive({
   mintAmount: '',
   mintReceiver: '',
   tokenDecimals: '',
-  cap: '',
 })
 
 const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
@@ -55,12 +60,34 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
     mintAmount: { required },
     mintReceiver: { required },
     tokenDecimals: { required },
-    cap: { required },
   },
 )
 
 const submit = async () => {
   try {
+    potentialContractAddress.value = await deploy(
+      route.params.id as string,
+      '0xe7deB4238d6AcFEE0B457dfa3f51d2e88a085367',
+      [
+        form.tokenName,
+        form.tokenSymbol,
+        new BN(form.mintAmount)
+          .toFraction(Number(form.tokenDecimals))
+          .toString(),
+        form.mintReceiver,
+        form.tokenDecimals,
+      ],
+    )
+
+    deployMetadata.value = {
+      name: form.tokenName,
+      symbol: form.tokenSymbol,
+      decimals: form.tokenDecimals,
+      mintAmount: form.mintAmount,
+      mintReceiver: form.mintReceiver,
+      contract: potentialContractAddress.value,
+    }
+
     isSuccessModalShown.value = true
   } catch (error) {
     ErrorHandler.process(error)
@@ -76,7 +103,12 @@ const submit = async () => {
         :icon-right="$icons.arrowLeft"
         modification="border-circle"
         color="tertiary"
-        @click="router.go(-1)"
+        @click="
+          router.push({
+            name: $routes.product,
+            params: { id: PRODUCT_IDS.ERC20 },
+          })
+        "
       />
       <h2 class="app__module-title">
         {{ t('title') }}
@@ -115,13 +147,6 @@ const submit = async () => {
                   :error-message="getFieldErrorMessage('paymentToken')"
                   @blur="touchField('paymentToken')"
                 />
-                <input-field
-                  scheme="secondary"
-                  v-model="form.tokenName"
-                  :label="t('content-title-2')"
-                  :error-message="getFieldErrorMessage('tokenName')"
-                  @blur="touchField('tokenName')"
-                />
               </div>
             </template>
           </collapse>
@@ -131,11 +156,28 @@ const submit = async () => {
           <div class="app__form-control">
             <input-field
               scheme="secondary"
+              v-model="form.tokenName"
+              :label="t('token-name-lbl')"
+              :error-message="getFieldErrorMessage('tokenName')"
+              @blur="touchField('tokenName')"
+            />
+            <input-field
+              scheme="secondary"
               v-model="form.tokenSymbol"
               :label="t('token-symbol-lbl')"
               :error-message="getFieldErrorMessage('tokenSymbol')"
               @blur="touchField('tokenSymbol')"
             />
+            <input-field
+              scheme="secondary"
+              v-model="form.tokenDecimals"
+              :label="t('decimals-lbl')"
+              :error-message="getFieldErrorMessage('tokenDecimals')"
+              @blur="touchField('tokenDecimals')"
+            />
+            <h4 class="app__module-content-title">
+              {{ t('content-title-3') }}
+            </h4>
             <input-field
               scheme="secondary"
               v-model="form.mintAmount"
@@ -150,20 +192,7 @@ const submit = async () => {
               :error-message="getFieldErrorMessage('mintReceiver')"
               @blur="touchField('mintReceiver')"
             />
-            <input-field
-              scheme="secondary"
-              v-model="form.tokenDecimals"
-              :label="t('decimals-lbl')"
-              :error-message="getFieldErrorMessage('tokenDecimals')"
-              @blur="touchField('tokenDecimals')"
-            />
-            <input-field
-              scheme="secondary"
-              v-model="form.cap"
-              :label="t('cap-lbl')"
-              :error-message="getFieldErrorMessage('cap')"
-              @blur="touchField('cap')"
-            />
+
             <app-button
               class="erc20-deploy-form__submit-btn"
               type="submit"
@@ -178,10 +207,17 @@ const submit = async () => {
     <modal v-model:is-shown="isSuccessModalShown">
       <template #default="{ modal }">
         <deploy-success-message
+          :deploy-metadata="deployMetadata"
           @submit="
             () => {
               modal.close()
-              router.push({ name: $routes.postItemEditing, params: { id: 2 } })
+              router.push({
+                name: $routes.productEdit,
+                params: {
+                  id: PRODUCT_IDS.ERC20,
+                  contractAddress: potentialContractAddress,
+                },
+              })
             }
           "
           @close="modal.close"

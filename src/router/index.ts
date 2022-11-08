@@ -7,36 +7,48 @@ import {
 } from 'vue-router'
 
 import { ROUTE_NAMES } from '@/enums'
+import { categoryExistGuard } from '@/router/guards'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/:catchAll(.*)',
-    redirect: { name: ROUTE_NAMES.posts },
-  },
-  {
-    path: '/categories',
-    name: ROUTE_NAMES.posts,
+    path: '/categories/:id',
+    name: ROUTE_NAMES.categories,
+    beforeEnter: categoryExistGuard,
     component: () => import('@/pages/PostsPage.vue'),
   },
   {
-    path: '/products/:id',
-    name: ROUTE_NAMES.postItem,
+    path: '/category/:id',
+    name: ROUTE_NAMES.category,
     component: () => import('@/pages/PostItemPage.vue'),
   },
   {
-    path: '/products/:id/deploy',
-    name: ROUTE_NAMES.postItemDeployment,
+    path: '/product/:id',
+    name: ROUTE_NAMES.product,
+    component: () => import('@/pages/PostItemPage.vue'),
+  },
+  {
+    path: '/product/:id/deploy',
+    name: ROUTE_NAMES.productDeploy,
     component: () => import('@/forms/DeployForm.vue'),
   },
   {
-    path: '/products/:id/edit',
-    name: ROUTE_NAMES.postItemEditing,
+    path: '/product/:id/edit/:contractAddress',
+    name: ROUTE_NAMES.productEdit,
     component: () => import('@/forms/EditForm.vue'),
   },
   {
     path: '/farming',
     name: ROUTE_NAMES.farming,
     component: () => import('@/pages/FarmingPage.vue'),
+  },
+  {
+    path: '/404',
+    name: ROUTE_NAMES.notFound,
+    component: () => import('@/pages/404Page.vue'),
+  },
+  {
+    path: '/:catchAll(.*)*',
+    redirect: '/404',
   },
 ]
 

@@ -1,18 +1,15 @@
 <script lang="ts" setup>
-import { AppBlock, AppButton, Tabs } from '@/common'
-import { CommonForm } from '@/forms'
-
-import {
-  Bus,
-  cropAddress,
-  ErrorHandler,
-  formatNumber,
-  copyToClipboard,
-} from '@/helpers'
-import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { required, isAddress, numeric } from '@/validators'
+import { AppBlock, AppButton, Tabs } from '@/common'
+import { BalanceForm, ApproveForm } from '@/modules/forms'
+import { cropAddress, copyToClipboard, formatAmount } from '@/helpers'
+import { useProductErc20 } from '@/modules/ERC20/composables/use-product-erc20'
+import { useWeb3ProvidersStore } from '@/store'
+import { storeToRefs } from 'pinia'
+
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const { t } = useI18n({
   locale: 'en',
@@ -22,39 +19,14 @@ const { t } = useI18n({
       address: 'Contract {address}',
       subtitle:
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-      'block-title-1': 'General info of Overview',
-      'metadata-1-lbl': 'Max total supplies',
-      'metadata-2-lbl': 'Contract creator',
-      'metadata-3-lbl': 'Token tracker',
-      'metadata-4-lbl': 'Contract owner',
-      'metadata-5-lbl': 'Contract',
-      'metadata-6-lbl': 'Decimals',
-      'metadata-7-lbl': 'Your balance',
+      'block-title-1': 'Overview',
+      'metadata-1-lbl': 'Total supply',
+      'metadata-2-lbl': 'Token tracker',
+      'metadata-3-lbl': 'Contract address',
+      'metadata-4-lbl': 'Owner address',
+      'metadata-5-lbl': 'Decimals',
+      'metadata-6-lbl': 'Your balance',
       'block-title-2': 'Interaction',
-      'approve-form': {
-        title: 'Approve',
-        'spender-address-lbl': 'Spender',
-        'value-amount-lbl': 'Value',
-        'submit-btn': 'Save Changes',
-      },
-      'transfer-from-form': {
-        title: 'Transfer From',
-        'from-address-lbl': 'From',
-        'to-address-lbl': 'To',
-        'value-amount-lbl': 'Value',
-        'submit-btn': 'Save Changes',
-      },
-      'transfer-form': {
-        title: 'Transfer',
-        'to-lbl': 'To',
-        'value-lbl': 'Value',
-        'submit-btn': 'Save Changes',
-      },
-      'transfer-ownership-form': {
-        title: 'Transfer Ownership',
-        'new-owner-lbl': 'New owner address',
-        'submit-btn': 'Save Changes',
-      },
     },
   },
 })
@@ -71,50 +43,27 @@ const FORM_TABS = [
 ]
 
 const currentTabNumber = ref(FORM_TABS[0].number)
+const contractMetadata = ref({
+  accountBalance: '0',
+})
 
 const router = useRouter()
+const route = useRoute()
+const erc20 = useProductErc20(route.params.contractAddress as string)
 
-const metadata = {
-  maxTotalSupplie: {
-    amount: 32310389.1234,
-    asset: 'USDT',
-  },
-  contractCreator: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
-  tokenTracker: 'Tether USD (USDT)',
-  contractOwner: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
-  contract: '0xC87B0398F86276D3D590A14AB53fF57185899C42',
-  decimals: 6,
-  yourBalance: {
-    amount: 32310389.1234,
-    asset: 'USDT',
-  },
-}
+const init = async () => {
+  erc20.init(route.params.contractAddress as string)
 
-const handleApprove = () => {
-  try {
-    Bus.success('approve')
-  } catch (error) {
-    ErrorHandler.process(error)
+  await erc20.loadDetails()
+
+  if (provider.value.selectedAddress) {
+    contractMetadata.value.accountBalance = await erc20.balanceOf(
+      provider.value.selectedAddress,
+    )
   }
 }
 
-const formScheme = {
-  title: t('approve-form.title'),
-  titleInfo: 'Some title info',
-  fieelds: [
-    {
-      label: t('approve-form.spender-address-lbl'),
-      info: 'Information about this input',
-      validators: [required, isAddress],
-    },
-    {
-      label: t('approve-form.value-amount-lbl'),
-      info: 'Information about this input',
-      validators: [required, numeric],
-    },
-  ],
-  button: 'Button text',
-}
+init()
 </script>
 
 <template>
@@ -165,9 +114,11 @@ const formScheme = {
               </span>
               <span class="app__metadata-value">
                 <span class="app__price">
-                  {{ formatNumber(metadata.maxTotalSupplie.amount) }}
+                  {{
+                    formatAmount(erc20.totalSupply.value, erc20.decimals.value)
+                  }}
                   <span class="app__price-asset">
-                    {{ metadata.maxTotalSupplie.asset }}
+                    {{ erc20.symbol.value }}
                   </span>
                 </span>
               </span>
@@ -177,14 +128,7 @@ const formScheme = {
                 {{ t('metadata-2-lbl') }}
               </span>
               <span class="app__metadata-value">
-                <app-button
-                  scheme="default"
-                  color="secondary"
-                  size="default"
-                  :text="cropAddress(metadata.contractCreator)"
-                  :icon-right="$icons.duplicate"
-                  @click="copyToClipboard(metadata.contractCreator)"
-                />
+                {{ `${erc20.name.value} (${erc20.symbol.value})` }}
               </span>
             </div>
             <div class="app__metadata-row">
@@ -196,8 +140,8 @@ const formScheme = {
                   scheme="default"
                   color="secondary"
                   size="default"
-                  :text="metadata.tokenTracker"
-                  @click="copyToClipboard(metadata.tokenTracker)"
+                  :text="cropAddress(erc20.address.value)"
+                  @click="copyToClipboard(erc20.address.value)"
                 />
               </span>
             </div>
@@ -210,9 +154,9 @@ const formScheme = {
                   scheme="default"
                   color="secondary"
                   size="default"
-                  :text="cropAddress(metadata.contractOwner)"
+                  :text="cropAddress(erc20.owner.value)"
                   :icon-right="$icons.duplicate"
-                  @click="copyToClipboard(metadata.contractOwner)"
+                  @click="copyToClipboard(erc20.owner.value)"
                 />
               </span>
             </div>
@@ -221,14 +165,7 @@ const formScheme = {
                 {{ t('metadata-5-lbl') }}
               </span>
               <span class="app__metadata-value">
-                <app-button
-                  scheme="default"
-                  color="secondary"
-                  size="default"
-                  :text="cropAddress(metadata.contract)"
-                  :icon-right="$icons.duplicate"
-                  @click="copyToClipboard(metadata.contract)"
-                />
+                {{ erc20.decimals.value }}
               </span>
             </div>
             <div class="app__metadata-row">
@@ -236,18 +173,15 @@ const formScheme = {
                 {{ t('metadata-6-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{ metadata.decimals }}
-              </span>
-            </div>
-            <div class="app__metadata-row">
-              <span class="app__metadata-lbl">
-                {{ t('metadata-7-lbl') }}
-              </span>
-              <span class="app__metadata-value">
                 <span class="app__price">
-                  {{ formatNumber(metadata.yourBalance.amount) }}
+                  {{
+                    formatAmount(
+                      contractMetadata.accountBalance,
+                      erc20.decimals.value,
+                    )
+                  }}
                   <span class="app__price-asset">
-                    {{ metadata.yourBalance.asset }}
+                    {{ erc20.symbol.value }}
                   </span>
                 </span>
               </span>
@@ -260,20 +194,19 @@ const formScheme = {
       <h3 class="app__module-block-title">
         {{ t('block-title-2') }}
       </h3>
-      <tabs
-        v-model="currentTabNumber"
-        :tabs-data="[
-          { title: 'Read', number: 1 },
-          { title: 'Write', number: 2 },
-        ]"
-      />
+      <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
       <app-block>
-        <div class="app__module-content">
-          <common-form
-            :form-scheme="formScheme"
-            class="erc20-edit-form__form-control"
-            @submit="handleApprove"
-          />
+        <div
+          v-if="currentTabNumber === FORM_TABS[0].number"
+          class="app__module-content"
+        >
+          <balance-form :token="erc20"></balance-form>
+        </div>
+        <div
+          v-if="currentTabNumber === FORM_TABS[1].number"
+          class="app__module-content"
+        >
+          <approve-form :token="erc20"></approve-form>
         </div>
       </app-block>
     </div>
