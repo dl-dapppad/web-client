@@ -410,10 +410,9 @@ $z-local-index: 2;
   flex-direction: column;
   overflow: hidden auto;
   width: 100%;
-
-  // position: absolute;
-  // top: 105%;
-  // left: 0;
+  position: absolute;
+  top: 105%;
+  left: 0;
   max-height: 500%;
   z-index: $z-local-index;
   background: var(--background-secondary);

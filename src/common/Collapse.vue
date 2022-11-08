@@ -96,16 +96,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.collapse__body {
-  overflow: hidden;
-}
-
 .collapse__body-transition-enter-active {
   animation: collapse-frame-keyframes 0.25s ease-in-out;
+  overflow: hidden;
 }
 
 .collapse__body-transition-leave-active {
   animation: collapse-frame-keyframes 0.25s ease-in-out reverse;
+  overflow: hidden;
 }
 
 @keyframes collapse-frame-keyframes {
