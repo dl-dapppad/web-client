@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import AppLogo from '@/common/AppLogo.vue'
-import { AppButton } from '@/common'
+import { AppButton, AppLogo } from '@/common'
 </script>
 
 <template>
