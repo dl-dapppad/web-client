@@ -274,3 +274,78 @@ a {
   font-weight: 700;
   margin-bottom: toRem(30);
 }
+
+.app__common-form__title {
+  display: flex;
+  align-items: center;
+  gap: toRem(16);
+}
+
+.app__common-form__title-icon {
+  height: toRem(28);
+  width: toRem(28);
+  padding: toRem(6);
+  position: relative;
+}
+
+.app__common-form__input-wrp {
+  padding: 0 toRem(30) 0 0;
+  position: relative;
+}
+
+.app__common-form__popup {
+  background-color: var(--secondary-main);
+  color: var(--text-primary-invert-main);
+  font-size: toRem(12);
+  font-weight: 400;
+  padding: toRem(12) toRem(24);
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  min-width: toRem(200);
+  display: none;
+  justify-content: center;
+  transform: translateX(-50%);
+
+  &:before {
+    content: '';
+    position: absolute;
+    padding: toRem(7);
+    background-color: var(--secondary-main);
+    bottom: -#{toRem(7)};
+    transform: rotate(45deg);
+  }
+}
+
+.app__common-form__input-icon {
+  height: toRem(28);
+  width: toRem(28);
+  padding: toRem(6);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+  color: var(--text-secondary-main);
+
+  &:hover {
+    background-color: var(--secondary-main);
+    color: var(--text-primary-invert-main);
+
+    & > .app__common-form__popup {
+      display: flex;
+    }
+  }
+}
+
+.app__common-form__icon {
+  position: relative;
+
+  &:hover {
+    background-color: var(--secondary-main);
+    color: var(--text-primary-invert-main);
+
+    & > .app__common-form__popup {
+      display: flex;
+    }
+  }
+}

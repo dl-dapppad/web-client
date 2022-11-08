@@ -12,6 +12,7 @@ import { ErrorHandler } from '@/helpers'
 import { useI18n } from 'vue-i18n'
 import { deploy } from '@/helpers/deploy.helper'
 import { PRODUCT_IDS } from '@/enums'
+import { BN } from '@/utils'
 
 const { t } = useI18n({
   locale: 'en',
@@ -70,7 +71,9 @@ const submit = async () => {
       [
         form.tokenName,
         form.tokenSymbol,
-        form.mintAmount,
+        new BN(form.mintAmount)
+          .toFraction(Number(form.tokenDecimals))
+          .toString(),
         form.mintReceiver,
         form.tokenDecimals,
       ],

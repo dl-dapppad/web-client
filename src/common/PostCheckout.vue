@@ -210,7 +210,7 @@ init()
                 />
                 {{ $t('post-checkout.minimal-price-lbl') }}
               </span>
-              <span class="post-checkout__value">
+              <span class="app__metadata-value">
                 {{
                   formatAmount(
                     product.minPrice,
@@ -228,7 +228,7 @@ init()
                 />
                 {{ $t('post-checkout.reward-lbl') }}
               </span>
-              <span class="post-checkout__value">
+              <span class="app__metadata-value">
                 {{
                   formatAmount(
                     cashback,
@@ -246,7 +246,7 @@ init()
                 />
                 {{ $t('post-checkout.distribution-lbl') }}
               </span>
-              <span class="post-checkout__value">
+              <span class="app__metadata-value">
                 {{
                   formatAmount(
                     cashback,
@@ -262,7 +262,7 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.current-price-lbl') }}
               </span>
-              <span class="post-checkout__value">
+              <span class="app__metadata-value">
                 {{
                   formatAmount(
                     product.currentPrice,

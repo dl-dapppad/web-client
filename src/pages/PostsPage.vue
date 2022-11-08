@@ -4,6 +4,7 @@ import { animate } from 'motion'
 import { useRoute, useRouter } from '@/router'
 import { AppBlock, AppButton, PostCard } from '@/common'
 import { Post } from '@/types'
+import { ROUTE_NAMES } from '@/enums'
 import postsData from '@/assets/posts.json'
 
 const route = useRoute()
@@ -11,8 +12,6 @@ const router = useRouter()
 
 const bannerDescription = ref<HTMLParagraphElement | null>(null)
 const defaultBannerDescriptionHeight = ref(0)
-
-const isBannerDescShown = ref(false)
 
 const postsAll = postsData as Post[]
 const post = ref<Post>()
@@ -41,15 +40,7 @@ onMounted(() => {
 })
 
 const handleShowMore = () => {
-  if (!bannerDescription.value) return
-
-  animate(bannerDescription.value, {
-    height: isBannerDescShown.value
-      ? '120px'
-      : `${defaultBannerDescriptionHeight.value}px`,
-  })
-
-  isBannerDescShown.value = !isBannerDescShown.value
+  router.push({ name: ROUTE_NAMES.category, params: { id: post.value?.id } })
 }
 
 watch(
@@ -85,11 +76,7 @@ updatePosts(route.params.id as string)
           class="posts-page__banner-show-more-btn"
           color="tertiary"
           size="small"
-          :text="
-            isBannerDescShown
-              ? $t('posts-page.show-less-btn')
-              : $t('posts-page.show-more-btn')
-          "
+          :text="$t('posts-page.show-more-btn')"
           @click="handleShowMore"
         />
         <div class="posts-page__banner-img-wrp">
