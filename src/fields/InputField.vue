@@ -140,7 +140,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
         <icon
           v-else-if="props.errorMessage"
           class="input-field__error-icon"
-          :name="$icons.exclamation"
+          :name="$icons.exclamationFilled"
         />
         <slot v-else name="nodeRight" />
       </div>
@@ -256,6 +256,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
   padding: var(--field-padding);
   transition-property: box-shadow;
   background: var(--field-bg);
+  height: 100%;
 
   @include field-text;
 
@@ -354,8 +355,8 @@ const setHeightCSSVar = (element: HTMLElement) => {
 }
 
 .input-field__error-icon {
-  max-width: toRem(24);
-  max-height: toRem(24);
+  max-width: toRem(16);
+  max-height: toRem(16);
   color: var(--field-error);
 }
 

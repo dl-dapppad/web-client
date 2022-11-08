@@ -167,6 +167,10 @@ a {
   &--accent {
     color: var(--secondary-main);
   }
+
+  &--big {
+    font-size: toRem(20);
+  }
 }
 
 .app__price {

@@ -34,6 +34,7 @@ const init = async () => {
   accountAddress.value = provider.value.selectedAddress
 
   dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
+  await dapp.loadDetails()
 }
 
 const trySwitchChain = async (chainId: string | number) => {
@@ -74,7 +75,7 @@ init()
         <span class="app-navbar__farm-farm-balance-amount">
           <icon
             class="app-navbar__farm-farm-balance-icon"
-            :name="$icons.shoppingCart"
+            :name="$icons.gift"
           />
           {{
             formatAmount(
@@ -97,7 +98,7 @@ init()
         scheme="secondary"
       >
         <template #nodeRight>
-          <icon class="app-navbar___search-icon" :name="$icons.search" />
+          <icon class="app-navbar___search-icon" :name="$icons.searchFilled" />
         </template>
       </input-field>
       <dropdown class="app-navbar__chain">
@@ -106,6 +107,7 @@ init()
             class="app-navbar__chain-btn"
             size="small"
             :text="localizeChain(provider.chainId)"
+            :icon-left="$icons.circleFilled"
             :icon-right="
               dropdown.isOpen ? $icons.chevronUp : $icons.chevronDown
             "
@@ -132,6 +134,10 @@ init()
         </span>
         <span class="app-navbar__wallet-address">
           {{ cropAddress(provider.selectedAddress ?? '') }}
+          <icon
+            class="app-navbar__wallet-address-icon"
+            :name="$icons.circleFilled"
+          />
         </span>
       </div>
     </template>
@@ -190,6 +196,7 @@ init()
 
 .app-navbar___search {
   height: 100%;
+  display: grid;
 }
 
 .app-navbar___search-icon {
@@ -220,7 +227,6 @@ init()
   display: flex;
   align-items: center;
   text-transform: uppercase;
-  font-size: toRem(12);
   line-height: 1;
   font-weight: 700;
   border: toRem(1) solid var(--border-secondary-main);
@@ -229,17 +235,25 @@ init()
 
 .app-navbar__wallet-balance {
   padding: toRem(10);
+  font-size: toRem(12);
 }
 
 .app-navbar__wallet-address {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: toRem(10);
   border-left: toRem(1) solid var(--border-secondary-main);
   background: var(--background-secondary);
   height: calc(100% - #{toRem(2)});
   margin-right: toRem(1);
   padding: toRem(10);
+  font-size: toRem(12);
+}
+
+.app-navbar__wallet-address-icon {
+  height: toRem(16);
+  width: toRem(16);
 }
 
 .app-navbar__provider-btn {
