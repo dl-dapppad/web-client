@@ -16,7 +16,7 @@ import {
 } from '@/helpers'
 import { Chain, Post } from '@/types'
 import { useErc20, useProductFactory, useFarming, Product } from '@/composables'
-import { AppButton, AppBlock, Icon, LineChart } from '@/common'
+import { AppButton, AppBlock, Icon, LineChart, InfoTooltip } from '@/common'
 import { BN } from '@/utils'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
@@ -140,12 +140,10 @@ init()
                 v-model="contactAddress"
                 :label="t('post-checkout.have-product-input-lbl')"
               />
-              <div class="post-checkout__block-input-icon">
-                <icon :name="$icons.informationCircleFilled" />
-                <div class="post-checkout__block-input-popup">
-                  {{ $t('post-checkout.have-product-input-tooltip-txt') }}
-                </div>
-              </div>
+              <info-tooltip
+                class="post-checkout__block-tooltip"
+                :text="t('post-checkout.have-product-input-tooltip-txt')"
+              />
             </div>
           </div>
         </div>
@@ -259,7 +257,7 @@ init()
                 />
                 {{ $t('post-checkout.reward-lbl') }}
               </span>
-              <span class="post-checkout__value">
+              <span class="app__metadata-value">
                 {{
                   formatAmount(
                     cashback,
@@ -277,7 +275,7 @@ init()
                 />
                 {{ $t('post-checkout.distribution-lbl') }}
               </span>
-              <span class="post-checkout__value">
+              <span class="app__metadata-value">
                 {{
                   formatAmount(
                     cashback,
@@ -293,7 +291,7 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.current-price-lbl') }}
               </span>
-              <span class="post-checkout__value app__metadata-value--big">
+              <span class="app__metadata-value app__metadata-value--big">
                 {{
                   formatAmount(
                     product.currentPrice,
@@ -361,53 +359,8 @@ init()
   width: 100%;
   max-width: toRem(430);
   display: flex;
+  align-items: center;
   gap: toRem(10);
-  position: relative;
-  padding: 0 toRem(33);
-}
-
-.post-checkout__block-input-popup {
-  background-color: var(--secondary-main);
-  color: var(--text-primary-invert-main);
-  font-size: toRem(12);
-  font-weight: 400;
-  padding: toRem(12) toRem(24);
-  position: absolute;
-  bottom: 150%;
-  left: 50%;
-  min-width: toRem(200);
-  display: none;
-  justify-content: center;
-  transform: translateX(-50%);
-
-  &:before {
-    content: '';
-    position: absolute;
-    padding: toRem(7);
-    background-color: var(--secondary-main);
-    bottom: -#{toRem(7)};
-    transform: rotate(45deg);
-  }
-}
-
-.post-checkout__block-input-icon {
-  height: toRem(28);
-  width: toRem(28);
-  padding: toRem(6);
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  color: var(--text-secondary-main);
-
-  &:hover {
-    background-color: var(--secondary-main);
-    color: var(--text-primary-invert-main);
-
-    & > .post-checkout__block-input-popup {
-      display: flex;
-    }
-  }
 }
 
 .post-checkout__block-lbl-icon {
