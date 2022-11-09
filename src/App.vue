@@ -54,6 +54,14 @@ init()
   display: grid;
   grid-template-rows: max-content 1fr max-content;
   flex: 1;
+
+  @include respond-to(xmedium) {
+    grid-template-rows: 1fr;
+  }
+
+  @include respond-to(medium) {
+    display: block;
+  }
 }
 
 .app__main {

@@ -434,6 +434,8 @@ init()
 .post-checkout__icon {
   height: toRem(16);
   width: toRem(16);
+  min-height: toRem(16);
+  min-width: toRem(16);
 
   .post-checkout__address & {
     color: var(--text-primary-main);
