@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20 } from '@/composables'
@@ -65,6 +65,12 @@ watch(
   () => {
     init()
   },
+)
+
+const isProviderButtonShown = computed(
+  () =>
+    windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
+    !provider.value.selectedAddress,
 )
 
 init()
@@ -154,9 +160,7 @@ init()
       </div>
     </template>
     <app-button
-      v-if="
-        windowWidth >= WINDOW_BREAKPOINTS.medium || !provider.selectedAddress
-      "
+      v-if="isProviderButtonShown"
       class="app-navbar__provider-btn"
       size="small"
       :text="
@@ -169,10 +173,6 @@ init()
       <icon class="app-navbar__farming-btn-icon" :name="$icons.gift" />
       <menu-drawer
         class="app-navbar__menu-drawer"
-        :balance="
-          formatAmount(account.nativeBalance, chain?.decimals, chain?.symbol)
-        "
-        :chain-id="provider.chainId"
         @try-switch-chain="trySwitchChain"
         @provider-btn-click="handleProviderBtnClick"
       />

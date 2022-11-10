@@ -6,7 +6,6 @@ enum EVENTS {
   warning = 'warning',
   success = 'success',
   info = 'info',
-  toggleSearch = 'toggleSearch',
   default = 'default',
 }
 

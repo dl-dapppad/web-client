@@ -1,18 +1,27 @@
 <script lang="ts" setup>
 import { Drawer, AppButton, Icon, Dropdown } from '@/common'
-import { cropAddress } from '@/helpers'
+import { cropAddress, formatAmount, getEmptyChain, getChain } from '@/helpers'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
+import { Chain } from '@/types'
+import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
 
 const { t } = useI18n()
 
+const { provider } = storeToRefs(useWeb3ProvidersStore())
+const { account } = storeToRefs(useAccountStore())
+
+const chain = ref<Chain>(getEmptyChain())
+chain.value = getChain(provider.value.chainId)
+
 enum EVENTS {
-  trySwitchChain = 'trySwitchChain',
-  providerBtnClick = 'providerBtnClick',
+  trySwitchChain = 'try-switch-chain',
+  providerBtnClick = 'provider-btn-click',
 }
 
 const isDropdownOpen = ref(false)
@@ -22,11 +31,6 @@ const route = useRoute()
 watch(route, () => {
   isDropdownOpen.value = false
 })
-
-defineProps<{
-  balance: string
-  chainId: string | number
-}>()
 
 const emit = defineEmits<{
   (e: EVENTS.trySwitchChain, value: string | number): void
@@ -40,8 +44,6 @@ const trySwitchChain = (chainId: string | number) => {
 const handleProviderBtnClick = () => {
   emit(EVENTS.providerBtnClick)
 }
-
-const address = '123412341234'
 </script>
 
 <template>
@@ -64,7 +66,7 @@ const address = '123412341234'
               class="menu-drawer__section-icon"
               :name="$icons.circleFilled"
             />
-            {{ cropAddress(address) }}
+            {{ cropAddress(provider.selectedAddress) }}
           </span>
         </div>
         <div class="menu-drawer__section">
@@ -72,7 +74,13 @@ const address = '123412341234'
             {{ $t('app-navbar.balance-lbl') }}
           </span>
           <span class="menu-drawer__section-value">
-            {{ balance }}
+            {{
+              formatAmount(
+                account.nativeBalance,
+                chain?.decimals,
+                chain?.symbol,
+              )
+            }}
           </span>
         </div>
         <dropdown class="menu-drawer__chain-dropdown">
@@ -82,7 +90,7 @@ const address = '123412341234'
               :class="{
                 'menu-drawer__chain-dropdown-btn--active': dropdown.isOpen,
               }"
-              :text="localizeChain(chainId)"
+              :text="localizeChain(provider.chainId)"
               :icon-left="$icons.circleFilled"
               :icon-right="
                 dropdown.isOpen ? $icons.chevronUp : $icons.chevronDown
