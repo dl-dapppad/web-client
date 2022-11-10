@@ -129,5 +129,8 @@
     "rewards-history-first-lbl": "Accured",
     "rewards-history-second-lbl": "Claimed",
     "rewards-history-third-lbl": "Accured"
+  },
+  "edit": {
+    "overview": "Overview"
   }
 }

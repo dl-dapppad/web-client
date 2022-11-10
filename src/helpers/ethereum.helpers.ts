@@ -1,7 +1,10 @@
+import { ethers } from 'ethers'
 import { EthProviderRpcError } from '@/types'
 import { errors } from '@/errors'
-import { ethers } from 'ethers'
 import { EIP1193, EIP1474 } from '@/enums'
+import { BN } from '@/utils'
+import { Bus } from '@/helpers'
+import { useAccountStore } from '@/store'
 
 export const connectEthAccounts = async (
   provider: ethers.providers.Web3Provider,
@@ -80,4 +83,52 @@ export function getEthExplorerTxUrl(explorerUrl: string, txHash: string) {
 
 export function getEthExplorerAddressUrl(explorerUrl: string, address: string) {
   return `${explorerUrl}/address/${address}`
+}
+
+export const getMaxUint256 = (): string => {
+  return new BN(2).pow(256).sub(1).toString()
+}
+
+export const txWrapper = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  callback: any,
+  args?: Record<string, string>,
+) => {
+  try {
+    const accountStore = useAccountStore()
+
+    let tx
+    if (args) tx = await callback(args)
+    else tx = await callback()
+
+    await accountStore.updateNativeBalance()
+
+    Bus.success(`Transaction has been confirmed! ${tx.hash}`)
+  } catch (e) {
+    const err = e as unknown as Error
+
+    let reason = handleError(err.message)
+    const txReason = handleTxError(reason)
+    if (txReason) reason = txReason
+    if (!reason) throw new Error('Failed to complete the transaction')
+
+    throw new Error(reason)
+  }
+}
+
+export const handleError = (msg: string): string => {
+  const regex = /"message":"[a-zA-Z\r\n\d :,{}.']*"/
+  const arr = regex.exec(msg)
+
+  if (!arr) return ''
+  return arr[0].replace('"message":', '').replaceAll('"', '')
+}
+
+export const handleTxError = (msg: string): string => {
+  const regex = /'[a-zA-Z\r\n\d :,{}.']*/
+  const arr = regex.exec(msg)
+
+  if (!arr) return ''
+  // eslint-disable-next-line quotes
+  return arr[0].replaceAll("'", '')
 }

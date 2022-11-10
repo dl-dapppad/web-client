@@ -1,0 +1,396 @@
+<script lang="ts" setup>
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import {
+  AppBlock,
+  AppButton,
+  Collapse,
+  Modal,
+  Icon,
+  InfoTooltip,
+} from '@/common'
+import { InputField, SelectField } from '@/fields'
+import { useFormValidation } from '@/composables'
+import { required, isAddress, numeric } from '@/validators'
+import { ErrorHandler, formatAmount } from '@/helpers'
+import {
+  deploy,
+  getAvailableTokenList,
+  getSelectedTokenInfo,
+} from '@/helpers/deploy.helper'
+import { PRODUCT_IDS } from '@/enums'
+import { BN } from '@/utils'
+import DeploySuccessMessage, {
+  DeployERC20Metadata,
+} from '../../common/DeploySuccessMessage.vue'
+
+const { t } = useI18n({
+  locale: 'en',
+  messages: {
+    en: {
+      'erc20.title': 'Deploy',
+      'erc20.subtitle':
+        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+      'erc20.payment-group': 'Payment info',
+      'erc20.payment-lbl': 'Payment token',
+      'erc20.payment-info': 'Select the token you want to pay with',
+      'erc20.payment-balance': 'Balance',
+
+      'erc20.token-group': 'Token info',
+      'erc20.name-lbl': 'Token name',
+      'erc20.name-info': 'Enter the token name',
+      'erc20.symbol-lbl': 'Token symbol',
+      'erc20.symbol-info': 'Enter the token symbol',
+      'erc20.decimals-lbl': 'Token decimals',
+      'erc20.decimals-info': 'Enter the token decimals',
+
+      'erc20.mint-group': 'Mint info',
+      'erc20.mint-amount-lbl': 'Mint amount',
+      'erc20.mint-amount-info': 'Enter the initial mint amount',
+      'erc20.mint-receiver-lbl': 'Mint receiver',
+      'erc20.mint-receiver-info': 'Enter the tokens receiver',
+
+      'erc20.btn-lbl': 'Buy',
+    },
+  },
+})
+
+const paymentTokens = ref<Record<string, Array<string>>>({
+  symbols: [],
+  addresses: [],
+})
+const selectedPaymentToken = ref({
+  balance: '',
+  symbol: '',
+  decimals: 0,
+})
+
+const isSuccessModalShown = ref(false)
+
+const router = useRouter()
+const route = useRoute()
+
+const deployMetadata = ref<DeployERC20Metadata>()
+const potentialContractAddress = ref('')
+const form = reactive({
+  paymentToken: '',
+  name: '',
+  symbol: '',
+  mintAmount: '',
+  mintReceiver: '',
+  decimals: '',
+})
+
+const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
+  form,
+  {
+    paymentToken: { required },
+    name: { required },
+    symbol: { required },
+    mintAmount: { required, numeric },
+    mintReceiver: { required, isAddress },
+    decimals: { required, numeric },
+  },
+)
+
+const init = async () => {
+  const { symbols, addresses } = await getAvailableTokenList()
+
+  paymentTokens.value.symbols = symbols
+  paymentTokens.value.addresses = addresses
+}
+
+const getSelectedPaymentAddress = () => {
+  return paymentTokens.value.addresses[
+    paymentTokens.value.symbols.findIndex(
+      symbol => symbol === form.paymentToken,
+    )
+  ]
+}
+
+const onPaymentChange = async () => {
+  const { symbol, decimals, balance } = await getSelectedTokenInfo(
+    getSelectedPaymentAddress(),
+  )
+
+  selectedPaymentToken.value.symbol = symbol
+  selectedPaymentToken.value.decimals = Number(decimals)
+  selectedPaymentToken.value.balance = balance
+}
+
+const submit = async () => {
+  try {
+    const paymentTokenAddress = getSelectedPaymentAddress()
+
+    potentialContractAddress.value = await deploy(
+      route.params.id as string,
+      paymentTokenAddress,
+      [
+        form.name,
+        form.symbol,
+        new BN(form.mintAmount).toFraction(Number(form.decimals)).toString(),
+        form.mintReceiver,
+        form.decimals,
+      ],
+    )
+
+    deployMetadata.value = {
+      name: form.name,
+      symbol: form.symbol,
+      decimals: form.decimals,
+      mintAmount: form.mintAmount,
+      mintReceiver: form.mintReceiver,
+      contract: potentialContractAddress.value,
+    }
+
+    isSuccessModalShown.value = true
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
+init()
+</script>
+
+<template>
+  <form class="app" @submit.prevent="submit">
+    <div class="app__module-title-wrp">
+      <app-button
+        class="app__module-back-btn"
+        :icon-right="$icons.arrowLeft"
+        modification="border-circle"
+        color="tertiary"
+        @click="
+          router.push({
+            name: $routes.product,
+            params: { id: PRODUCT_IDS.ERC20 },
+          })
+        "
+      />
+      <h2 class="app__module-title">
+        {{ t('erc20.title') }}
+      </h2>
+    </div>
+    <span class="app__module-subtitle">
+      {{ t('erc20.subtitle') }}
+    </span>
+    <app-block class="app__module-content-wrp">
+      <div class="app__module-content">
+        <div class="app__module-content-inner">
+          <collapse
+            class="app__form-control"
+            is-opened-by-default
+            :is-close-by-click-outside="false"
+          >
+            <template #head="{ collapse }">
+              <app-button
+                class="app__module-content-title"
+                scheme="default"
+                color="default"
+                size="default"
+                @click="collapse.toggle"
+              >
+                <icon
+                  class="app__title-icon"
+                  :name="
+                    collapse.isOpen
+                      ? $icons.arrowUpTriangle
+                      : $icons.arrowDownTriangle
+                  "
+                />
+                {{ t('erc20.payment-group') }}
+              </app-button>
+            </template>
+            <template #default>
+              <div class="app__form-control app__collapsed-fields">
+                <div class="app__select-wrp">
+                  <div class="app__field-row">
+                    <select-field
+                      v-model="form.paymentToken"
+                      :label="t('erc20.payment-lbl')"
+                      :value-options="paymentTokens.symbols"
+                      @update:model-value="onPaymentChange"
+                    />
+                    <info-tooltip
+                      class="app__field-tooltip"
+                      :text="t('erc20.payment-info')"
+                    />
+                  </div>
+                  <div v-if="selectedPaymentToken.balance" class="app__row">
+                    <span class="app__row-title">
+                      {{ t('erc20.payment-balance') }}
+                    </span>
+                    <div class="app__balance">
+                      {{
+                        formatAmount(
+                          selectedPaymentToken.balance,
+                          selectedPaymentToken.decimals,
+                        )
+                      }}
+                      <span>{{ selectedPaymentToken.symbol }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </collapse>
+          <collapse
+            class="app__form-control"
+            is-opened-by-default
+            :is-close-by-click-outside="false"
+          >
+            <template #head="{ collapse }">
+              <app-button
+                class="app__module-content-title"
+                scheme="default"
+                color="default"
+                size="default"
+                @click="collapse.toggle"
+              >
+                <icon
+                  class="app__title-icon"
+                  :name="
+                    collapse.isOpen
+                      ? $icons.arrowUpTriangle
+                      : $icons.arrowDownTriangle
+                  "
+                />
+                {{ t('erc20.token-group') }}
+              </app-button>
+            </template>
+            <template #default>
+              <div class="app__form-control app__collapsed-fields">
+                <div class="app__form-control">
+                  <div class="app__field-row">
+                    <input-field
+                      scheme="secondary"
+                      v-model="form.name"
+                      :label="t('erc20.name-lbl')"
+                      :error-message="getFieldErrorMessage('name')"
+                      @blur="touchField('name')"
+                    />
+                    <info-tooltip
+                      class="app__field-tooltip"
+                      :text="t('erc20.name-info')"
+                    />
+                  </div>
+                  <div class="app__field-row">
+                    <input-field
+                      scheme="secondary"
+                      v-model="form.symbol"
+                      :label="t('erc20.symbol-lbl')"
+                      :error-message="getFieldErrorMessage('symbol')"
+                      @blur="touchField('symbol')"
+                    />
+                    <info-tooltip
+                      class="app__field-tooltip"
+                      :text="t('erc20.symbol-info')"
+                    />
+                  </div>
+                  <div class="app__field-row">
+                    <input-field
+                      scheme="secondary"
+                      v-model="form.decimals"
+                      :label="t('erc20.decimals-lbl')"
+                      :error-message="getFieldErrorMessage('decimals')"
+                      @blur="touchField('decimals')"
+                    />
+                    <info-tooltip
+                      class="app__field-tooltip"
+                      :text="t('erc20.decimals-info')"
+                    />
+                  </div>
+                </div>
+              </div>
+            </template>
+          </collapse>
+          <collapse
+            class="app__form-control"
+            is-opened-by-default
+            :is-close-by-click-outside="false"
+          >
+            <template #head="{ collapse }">
+              <app-button
+                class="app__module-content-title"
+                scheme="default"
+                color="default"
+                size="default"
+                @click="collapse.toggle"
+              >
+                <icon
+                  class="app__title-icon"
+                  :name="
+                    collapse.isOpen
+                      ? $icons.arrowUpTriangle
+                      : $icons.arrowDownTriangle
+                  "
+                />
+                {{ t('erc20.mint-group') }}
+              </app-button>
+            </template>
+            <template #default>
+              <div class="app__form-control app__collapsed-fields">
+                <div class="app__form-control">
+                  <div class="app__field-row">
+                    <input-field
+                      scheme="secondary"
+                      v-model="form.mintReceiver"
+                      :label="t('erc20.mint-receiver-lbl')"
+                      :error-message="getFieldErrorMessage('mintReceiver')"
+                      @blur="touchField('mintReceiver')"
+                    />
+                    <info-tooltip
+                      class="app__field-tooltip"
+                      :text="t('erc20.mint-receiver-info')"
+                    />
+                  </div>
+                  <div class="app__field-row">
+                    <input-field
+                      scheme="secondary"
+                      v-model="form.mintAmount"
+                      :label="t('erc20.mint-amount-lbl')"
+                      :error-message="getFieldErrorMessage('mintAmount')"
+                      @blur="touchField('mintAmount')"
+                    />
+                    <info-tooltip
+                      class="app__field-tooltip"
+                      :text="t('erc20.mint-amount-info')"
+                    />
+                  </div>
+                </div>
+              </div>
+            </template>
+          </collapse>
+          <app-button
+            class="app__submit-btn"
+            type="submit"
+            :text="t('erc20.btn-lbl')"
+            size="small"
+            :disabled="!isFieldsValid"
+          />
+        </div>
+      </div>
+    </app-block>
+    <modal v-model:is-shown="isSuccessModalShown">
+      <template #default="{ modal }">
+        <deploy-success-message
+          :deploy-metadata="deployMetadata"
+          @submit="
+            () => {
+              modal.close()
+              router.push({
+                name: $routes.productEdit,
+                params: {
+                  id: PRODUCT_IDS.ERC20,
+                  contractAddress: potentialContractAddress,
+                },
+              })
+            }
+          "
+          @close="modal.close"
+        />
+      </template>
+    </modal>
+  </form>
+</template>

@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { Erc20DeployForm } from '@/modules'
+import { Erc20DeployForm, Erc721DeployForm } from '@/modules'
 import { PRODUCT_IDS } from '@/enums'
-
-import postsData from '@/assets/posts.json'
-
 import { useRoute } from '@/router'
 import { Post } from '@/types'
+import postsData from '@/assets/posts.json'
 
 const route = useRoute()
 
@@ -19,7 +17,7 @@ const post = posts.find(el => el.id === route.params.id)
       <erc20-deploy-form class="deploy-form__module" />
     </template>
     <template v-if="post?.id === PRODUCT_IDS.ERC721">
-      <erc20-deploy-form class="deploy-form__module" />
+      <erc721-deploy-form class="deploy-form__module" />
     </template>
   </div>
 </template>

@@ -120,7 +120,7 @@ const buttonClasses = computed(() =>
   </template>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .app-button {
   --button-transition-duration: 0.2s;
 
