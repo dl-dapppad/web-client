@@ -210,8 +210,8 @@ init()
 }
 
 .app-navbar__search-icon-mobile {
-  width: toRem(14);
-  height: toRem(14);
+  max-width: toRem(14);
+  max-height: toRem(14);
   min-width: toRem(14);
   min-height: toRem(14);
 }
@@ -240,8 +240,8 @@ init()
 }
 
 .app-navbar__farm-farm-balance-icon {
-  width: toRem(14);
-  height: toRem(14);
+  max-width: toRem(14);
+  max-height: toRem(14);
   min-width: toRem(14);
   min-height: toRem(14);
 }
@@ -256,8 +256,8 @@ init()
 }
 
 .app-navbar__search-icon {
-  width: toRem(14);
-  height: toRem(14);
+  max-width: toRem(14);
+  max-height: toRem(14);
   min-height: toRem(14);
   min-width: toRem(14);
 
@@ -342,8 +342,8 @@ init()
 }
 
 .app-navbar__wallet-address-icon {
-  height: toRem(16);
-  width: toRem(16);
+  max-height: toRem(16);
+  max-width: toRem(16);
   min-height: toRem(16);
   min-width: toRem(16);
 }

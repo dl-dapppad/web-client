@@ -144,8 +144,8 @@ const handleProviderBtnClick = () => {
 }
 
 .menu-drawer__section-icon {
-  width: toRem(16);
-  height: toRem(16);
+  max-width: toRem(16);
+  max-height: toRem(16);
   min-width: toRem(16);
   min-height: toRem(16);
 }
@@ -158,6 +158,7 @@ const handleProviderBtnClick = () => {
 
 .menu-drawer__section-value {
   display: flex;
+  align-items: center;
   gap: toRem(10);
   font-weight: 700;
   font-size: toRem(20);
