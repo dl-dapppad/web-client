@@ -54,6 +54,9 @@
       }
     }
   },
+  "page-404": {
+    "sorry-lbl": "We are sorry. There was an error loading and the page is not responding. Reload the page or check back later"
+  },
   "app-navbar": {
     "connect-btn": "Connect Wallet",
     "farm-link": "Farm",
