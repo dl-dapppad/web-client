@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
+import { PRODUCT_IDS } from '@/enums'
 
 import { useRouter } from '@/router'
 
@@ -13,7 +14,12 @@ const router = useRouter()
       :icon-left="$icons.arrowLeft"
       modification="border-circle"
       color="tertiary"
-      @click="router.go(-1)"
+      @click="
+        router.push({
+          name: $routes.categories,
+          params: { id: PRODUCT_IDS.ERC20 },
+        })
+      "
     />
     <div class="page-404__content">
       <img
@@ -22,7 +28,7 @@ const router = useRouter()
         alt="404 Image"
       />
       <span class="page-404__sorry-text">
-        {{ $t('page-404.sorry-lbl') }}
+        {{ $t('page-404.title') }}
       </span>
     </div>
   </div>
@@ -44,6 +50,11 @@ const router = useRouter()
   top: toRem(129);
   left: toRem(115);
   padding: 0;
+
+  @include respond-to(tablet) {
+    top: toRem(69);
+    left: toRem(55);
+  }
 }
 
 .page-404__content {
@@ -56,6 +67,10 @@ const router = useRouter()
 
 .page-404__image {
   width: toRem(660);
+
+  @include respond-to(tablet) {
+    width: 100%;
+  }
 }
 
 .page-404__sorry-text {
