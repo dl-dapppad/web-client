@@ -5,7 +5,7 @@ import { computed, useAttrs } from 'vue'
 import { LocationAsRelativeRaw } from 'vue-router'
 import { ICON_NAMES } from '@/enums'
 
-type SCHEMES = 'filled' | 'flat' | 'default'
+type SCHEMES = 'filled' | 'flat' | 'borderless' | 'default'
 
 type MODIFICATIONS = 'border-circle' | 'border-rounded' | 'default'
 
@@ -236,6 +236,30 @@ const buttonClasses = computed(() =>
     --app-button-border-active: var(--app-button-flat-border-active);
   }
 
+  &--borderless {
+    --app-button-borderless-bg: var(--primary-main);
+    --app-button-borderless-bg-hover: var(--primary-main);
+    --app-button-borderless-bg-active: var(--primary-main);
+
+    --app-button-borderless-text: var(--text-primary-main);
+    --app-button-borderless-text-hover: var(--text-primary-dark);
+
+    --app-button-borderless-border: 0;
+    --app-button-borderless-border-hover: 0;
+    --app-button-borderless-border-active: 0;
+
+    --app-button-bg: var(--app-button-borderless-bg);
+    --app-button-bg-hover: var(--app-button-borderless-bg-hover);
+    --app-button-bg-active: var(--app-button-borderless-bg-active);
+
+    --app-button-text: var(--app-button-borderless-text);
+    --app-button-text-hover: var(--app-button-borderless-text-hover);
+
+    --app-button-border: var(--app-button-borderless-border);
+    --app-button-border-hover: var(--app-button-borderless-border-hover);
+    --app-button-border-active: var(--app-button-borderless-border-active);
+  }
+
   /* colors */
   &--secondary {
     --app-button-default-text: var(--secondary-main);
@@ -250,6 +274,12 @@ const buttonClasses = computed(() =>
     --app-button-filled-bg: var(--secondary-main);
     --app-button-filled-bg-hover: var(--secondary-main);
     --app-button-filled-bg-active: var(--secondary-main);
+
+    --app-button-borderless-text: var(--text-primary-invert-main);
+    --app-button-borderless-text-hover: var(--text-primary-invert-main);
+    --app-button-borderless-bg: var(--secondary-main);
+    --app-button-borderless-bg-hover: var(--secondary-main);
+    --app-button-borderless-bg-active: var(--secondary-dark);
   }
 
   &--tertiary {
@@ -259,15 +289,20 @@ const buttonClasses = computed(() =>
     $tertiary-border: #{toRem(2)} solid var(--background-secondary);
 
     --app-button-flat-border: $tertiary-border;
-
     --app-button-flat-border-hover: $tertiary-border;
     --app-button-flat-border-active: $tertiary-border;
 
     --app-button-filled-bg: var(--background-secondary);
     --app-button-filled-bg-hover: var(--background-secondary);
     --app-button-filled-bg-active: var(--background-secondary);
-    --app-button-filled-text: var(--primary-main);
-    --app-button-filled-text-hover: var(--primary-main);
+    --app-button-filled-text: var(--text-primary-main);
+    --app-button-filled-text-hover: var(--text-primary-main);
+
+    --app-button-borderless-text: var(--text-primary-main);
+    --app-button-borderless-text-hover: var(--text-primary-main);
+    --app-button-borderless-bg: var(--background-secondary);
+    --app-button-borderless-bg-hover: var(--background-secondary);
+    --app-button-borderless-bg-active: var(--background-secondary);
   }
 
   &--success {
@@ -280,6 +315,10 @@ const buttonClasses = computed(() =>
     --app-button-filled-bg: var(--success-main);
     --app-button-filled-bg-hover: var(--success-dark);
     --app-button-filled-bg-active: var(--success-dark);
+
+    --app-button-borderless-bg: var(--success-main);
+    --app-button-borderless-bg-hover: var(--success-main);
+    --app-button-borderless-bg-active: var(--success-dark);
   }
 
   &--error {
@@ -292,6 +331,10 @@ const buttonClasses = computed(() =>
     --app-button-filled-bg: var(--error-main);
     --app-button-filled-bg-hover: var(--error-dark);
     --app-button-filled-bg-active: var(--error-dark);
+
+    --app-button-borderless-bg: var(--error-main);
+    --app-button-borderless-bg-hover: var(--error-main);
+    --app-button-borderless-bg-active: var(--error-dark);
   }
 
   &--warning {
@@ -304,6 +347,10 @@ const buttonClasses = computed(() =>
     --app-button-filled-bg: var(--warning-main);
     --app-button-filled-bg-hover: var(--warning-dark);
     --app-button-filled-bg-active: var(--warning-dark);
+
+    --app-button-borderless-bg: var(--warning-main);
+    --app-button-borderless-bg-hover: var(--warning-main);
+    --app-button-borderless-bg-active: var(--warning-dark);
   }
 
   &--info {
@@ -316,6 +363,10 @@ const buttonClasses = computed(() =>
     --app-button-filled-bg: var(--info-main);
     --app-button-filled-bg-hover: var(--info-dark);
     --app-button-filled-bg-active: var(--info-dark);
+
+    --app-button-borderless-bg: var(--info-main);
+    --app-button-borderless-bg-hover: var(--info-main);
+    --app-button-borderless-bg-active: var(--info-dark);
   }
 
   /* modifications */
