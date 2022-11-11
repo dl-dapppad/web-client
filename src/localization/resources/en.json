@@ -27,10 +27,10 @@
     "provider-wrapper-method-not-found": "provider not exist or hasn't this method"
   },
   "notification": {
-    "default-title-success": "Success",
+    "default-title-success": "Success!",
     "default-title-error": "Error",
     "default-title-warning": "Warning",
-    "default-title-info": "Info",
+    "default-title-info": "Information",
     "default-title-default": "Just a message",
     "default-message-success": "Action successful",
     "default-message-error": "Something went wrong",
