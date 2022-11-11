@@ -46,14 +46,9 @@ const router = useRouter()
   transform: translateY(-50%);
   width: toRem(54);
   height: toRem(54);
-  top: toRem(129);
-  left: toRem(115);
+  top: 10%;
+  left: 10%;
   padding: 0;
-
-  @include respond-to(tablet) {
-    top: toRem(69);
-    left: toRem(55);
-  }
 }
 
 .page-404__content {

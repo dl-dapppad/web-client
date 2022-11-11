@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppButton, AppLogo } from '@/common'
+import { AppLogo, Icon } from '@/common'
 </script>
 
 <template>
@@ -8,13 +8,13 @@ import { AppButton, AppLogo } from '@/common'
     <span class="app-footer__copyright">
       {{ $t('app-footer.copyright') }}
     </span>
-    <app-button
-      class="app-footer__terms-link"
-      :icon-left="$icons.questionMarkCircleFilled"
-      :text="$t('app-footer.terms-link')"
-      color="default"
-      scheme="default"
-    />
+    <span class="app-footer__terms-link">
+      <icon
+        class="app-footer__terms-link-icon"
+        :name="$icons.questionMarkCircleFilled"
+      />
+      {{ $t('app-footer.terms-link') }}
+    </span>
   </div>
 </template>
 
@@ -25,6 +25,14 @@ import { AppButton, AppLogo } from '@/common'
   justify-content: space-between;
   grid-template-columns: 1fr 1fr 1fr;
   padding: toRem(50) var(--app-padding-right) toRem(50) var(--app-padding-left);
+
+  @include respond-to(small) {
+    padding: toRem(20) var(--app-padding-right) toRem(20)
+      var(--app-padding-left);
+    display: flex;
+    flex-direction: column;
+    gap: toRem(18);
+  }
 }
 
 .app-footer__logo {
@@ -40,10 +48,24 @@ import { AppButton, AppLogo } from '@/common'
 }
 
 .app-footer__terms-link {
+  display: flex;
+  align-items: center;
+  gap: toRem(10);
+  font-size: toRem(14);
+  font-weight: 700;
+  line-height: 1;
   text-transform: capitalize;
   justify-self: end;
-  font-size: toRem(14);
-  line-height: 1;
-  font-weight: 700;
+
+  @include respond-to(xsmall) {
+    font-size: toRem(12);
+  }
+}
+
+.app-footer__terms-link-icon {
+  max-width: toRem(12);
+  max-height: toRem(12);
+  min-width: toRem(12);
+  min-height: toRem(12);
 }
 </style>
