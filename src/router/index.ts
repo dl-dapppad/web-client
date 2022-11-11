@@ -7,7 +7,7 @@ import {
 } from 'vue-router'
 
 import { ROUTE_NAMES } from '@/enums'
-import { categoryExistGuard } from '@/router/guards'
+import { categoryExistGuard, productExistGuard } from '@/router/guards'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -19,21 +19,25 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/category/:id',
     name: ROUTE_NAMES.category,
+    beforeEnter: categoryExistGuard,
     component: () => import('@/pages/PostItemPage.vue'),
   },
   {
     path: '/product/:id',
     name: ROUTE_NAMES.product,
+    beforeEnter: productExistGuard,
     component: () => import('@/pages/PostItemPage.vue'),
   },
   {
     path: '/product/:id/deploy',
     name: ROUTE_NAMES.productDeploy,
+    beforeEnter: productExistGuard,
     component: () => import('@/forms/DeployForm.vue'),
   },
   {
     path: '/product/:id/edit/:contractAddress',
     name: ROUTE_NAMES.productEdit,
+    beforeEnter: productExistGuard,
     component: () => import('@/forms/EditForm.vue'),
   },
   {
