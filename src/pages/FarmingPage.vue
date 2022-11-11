@@ -1,11 +1,15 @@
 <script lang="ts" setup>
+import { ref } from 'vue'
+
 import {
   AppButton,
   Icon,
   AppBlock,
   DonutChart,
   MultipleLineChart,
+  Modal,
 } from '@/common'
+import { InputField } from '@/fields'
 import { cropAddress } from '@/helpers'
 import { useRouter } from '@/router'
 import { copyToClipboard, formatAmount, formatDMYTime } from '@/helpers'
@@ -18,6 +22,13 @@ const router = useRouter()
 const address = '0xa1234567af'
 const addressStakeDAPP = '0xa1234567af'
 const addressStakeDAI = '0xa1234567af'
+
+const staking = ref('')
+const withdrawing = ref('')
+
+const isModalStakingShown = ref(false)
+const isModalWithdrawingShown = ref(false)
+const isModalClaimingShown = ref(false)
 
 const totalStake = {
   icon: ICON_NAMES.database,
@@ -295,10 +306,15 @@ const historyData = [
               class="farming-page__table-btn"
               size="large"
               color="tertiary"
+              @click="isModalWithdrawingShown = true"
             >
               {{ $t('farming-page.withdraw-btn') }}
             </app-button>
-            <app-button class="farming-page__table-btn" size="large">
+            <app-button
+              class="farming-page__table-btn"
+              size="large"
+              @click="isModalStakingShown = true"
+            >
               {{ $t('farming-page.stake-btn') }}
             </app-button>
           </div>
@@ -356,7 +372,11 @@ const historyData = [
           </div>
         </app-block>
         <app-block>
-          <app-button class="farming-page__table-btn" size="large">
+          <app-button
+            class="farming-page__table-btn"
+            size="large"
+            @click="isModalClaimingShown = true"
+          >
             {{ $t('farming-page.claim-btn') }}
           </app-button>
         </app-block>
@@ -432,6 +452,141 @@ const historyData = [
         </div>
       </div>
     </div>
+    <modal v-model:is-shown="isModalWithdrawingShown">
+      <template #default="{ modal }">
+        <div class="farming-page__modal">
+          <div class="farming-page__modal-title-wrp">
+            <div class="farming-page__modal-title">
+              <icon class="farming-page__modal-icon" :name="$icons.coin" />
+              {{ $t('farming-page.withdrawing-modal-title') }}
+            </div>
+            <app-button
+              class="farming-page__modal-close"
+              size="small"
+              scheme="default"
+              :icon-right="$icons.x"
+              @click="modal.close"
+            />
+          </div>
+          <p class="farming-page__modal-paragraph">
+            {{ $t('farming-page.withdrawing-modal-text') }}
+          </p>
+          <div class="farming-page__modal-raw">
+            <span class="farming-page__modal-raw-key">
+              {{ $t('farming-page.withdrawing-modal-raw-key') }}
+            </span>
+            <span class="farming-page__modal-raw-value">
+              {{ formatAmount(32310389389.1234, 3) }}
+              <span class="farming-page__modal-raw-currency">
+                {{ `DAPP` }}
+              </span>
+            </span>
+          </div>
+          <div class="farming-page__modal-input">
+            <input-field
+              v-model="withdrawing"
+              scheme="secondary"
+              :label="t('farming-page.withdrawing-modal-input-label')"
+            />
+            <app-button
+              :text="t('farming-page.withdrawing-modal-input-btn-lbl')"
+            />
+          </div>
+          <app-button
+            class="farming-page__modal-btn"
+            size="large"
+            :text="t('farming-page.withdrawing-page-btn-lbl')"
+          />
+        </div>
+      </template>
+    </modal>
+    <modal v-model:is-shown="isModalStakingShown">
+      <template #default="{ modal }">
+        <div class="farming-page__modal">
+          <div class="farming-page__modal-title-wrp">
+            <div class="farming-page__modal-title">
+              <icon class="farming-page__modal-icon" :name="$icons.coin" />
+              {{ $t('farming-page.staking-modal-title') }}
+            </div>
+            <app-button
+              class="farming-page__modal-close"
+              size="small"
+              scheme="default"
+              :icon-right="$icons.x"
+              @click="modal.close"
+            />
+          </div>
+          <p class="farming-page__modal-paragraph">
+            {{ $t('farming-page.staking-modal-text-first') }}
+          </p>
+          <p class="farming-page__modal-paragraph">
+            {{ $t('farming-page.staking-modal-text-second') }}
+          </p>
+          <div class="farming-page__modal-raw">
+            <span class="farming-page__modal-raw-key">
+              {{ $t('farming-page.staking-modal-raw-key') }}
+            </span>
+            <span class="farming-page__modal-raw-value">
+              {{ formatAmount(32310389389.1234, 3) }}
+              <span class="farming-page__modal-raw-currency">
+                {{ `DAPP` }}
+              </span>
+            </span>
+          </div>
+          <div class="farming-page__modal-input">
+            <input-field
+              v-model="staking"
+              scheme="secondary"
+              :label="t('farming-page.staking-modal-input-label')"
+            />
+            <app-button :text="t('farming-page.staking-modal-input-btn-lbl')" />
+          </div>
+          <app-button
+            class="farming-page__modal-btn"
+            size="large"
+            :text="t('farming-page.staking-page-btn-lbl')"
+          />
+        </div>
+      </template>
+    </modal>
+    <modal v-model:is-shown="isModalClaimingShown">
+      <template #default="{ modal }">
+        <div class="farming-page__modal">
+          <div class="farming-page__modal-title-wrp">
+            <div class="farming-page__modal-title">
+              <icon class="farming-page__modal-icon" :name="$icons.coin" />
+              {{ $t('farming-page.claiming-modal-title') }}
+            </div>
+            <app-button
+              class="farming-page__modal-close"
+              size="small"
+              scheme="default"
+              :icon-right="$icons.x"
+              @click="modal.close"
+            />
+          </div>
+          <p class="farming-page__modal-paragraph">
+            {{ $t('farming-page.claiming-modal-text') }}
+          </p>
+          <div class="farming-page__modal-raw">
+            <span class="farming-page__modal-raw-key">
+              {{ $t('farming-page.claiming-modal-raw-key') }}
+            </span>
+            <span class="farming-page__modal-raw-value">
+              {{ formatAmount(32310389389.1234, 3) }}
+              <span class="farming-page__modal-raw-currency">
+                {{ `DAPP` }}
+              </span>
+            </span>
+          </div>
+          <app-button
+            class="farming-page__modal-btn"
+            size="large"
+            :text="t('farming-page.claiming-page-btn-lbl')"
+          />
+        </div>
+      </template>
+    </modal>
   </div>
 </template>
 
@@ -664,5 +819,79 @@ const historyData = [
   display: flex;
   gap: toRem(5);
   align-items: center;
+}
+
+.farming-page__modal {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(40);
+  background-color: var(--background-primary);
+  padding: toRem(20) toRem(40);
+  width: toRem(550);
+}
+
+.farming-page__modal-title-wrp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.farming-page__modal-title {
+  display: flex;
+  align-items: center;
+  gap: toRem(18);
+  font-family: var(--app-font-family-secondary);
+  font-size: toRem(30);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.farming-page__modal-icon {
+  width: toRem(30);
+  height: toRem(30);
+  color: var(--secondary-main);
+}
+
+.farming-page__modal-close {
+  padding: 0;
+  width: toRem(20);
+  height: toRem(20);
+  color: var(--text-secondary-main);
+  cursor: pointer;
+}
+
+.farming-page__modal-paragraph {
+  line-height: toRem(20);
+}
+
+.farming-page__modal-raw {
+  display: flex;
+  justify-content: space-between;
+}
+
+.farming-page__modal-raw-key {
+  font-size: toRem(14);
+  color: var(--text-secondary-main);
+  font-weight: 700;
+}
+
+.farming-page__modal-raw-value {
+  font-size: toRem(16);
+  font-weight: 700;
+}
+
+.farming-page__modal-raw-currency {
+  font-size: toRem(12);
+}
+
+.farming-page__modal-input {
+  display: flex;
+  gap: toRem(10);
+}
+
+.farming-page__modal-btn {
+  width: 100%;
+  padding-top: toRem(16);
+  padding-bottom: toRem(16);
 }
 </style>

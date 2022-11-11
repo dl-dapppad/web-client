@@ -66,6 +66,7 @@ export enum ICON_NAMES {
   cloud = 'cloud',
   code = 'code',
   cog = 'cog',
+  coin = 'coin',
   collection = 'collection',
   colorSwatch = 'color-swatch',
   creditCard = 'credit-card',

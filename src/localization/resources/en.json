@@ -128,7 +128,24 @@
     "rewards-currency": "Dai (DAI)",
     "rewards-history-first-lbl": "Accured",
     "rewards-history-second-lbl": "Claimed",
-    "rewards-history-third-lbl": "Accured"
+    "rewards-history-third-lbl": "Accured",
+    "withdrawing-modal-title": "Withdrawing",
+    "withdrawing-modal-text": "You can withdraw the DAPP at any time and receive a reward. But you can also increase the amount of staked DAPP to get a larger amount of rewards just claiming it at any time.",
+    "withdrawing-modal-raw-key": "Aviable to withdraw",
+    "withdrawing-modal-input-label": "Amount",
+    "withdrawing-modal-input-btn-lbl": "Max",
+    "withdrawing-page-btn-lbl": "Withdraw",
+    "staking-modal-title": "Staking DAPP",
+    "staking-modal-text-first": "In order to take part in the rewards distribution and claim it, you need to stake some amount of DAPP. 1 DAPP is equivalent to 1% of Pending rewards (DAI).",
+    "staking-modal-text-second": "You can withdraw the DAPP at any time and receive a reward. But you can also increase the amount of staked DAPP to get a larger amount of rewards just claiming it at any time.",
+    "staking-modal-raw-key": "Aviable to stake",
+    "staking-modal-input-label": "Amount",
+    "staking-modal-input-btn-lbl": "Max",
+    "staking-page-btn-lbl": "Stake",
+    "claiming-modal-title": "Claiming",
+    "claiming-modal-text": "To claim your rewards you need to stake DAPP first. 1 DAPP is equivalent to 1% of Pending rewards (DAI).",
+    "claiming-modal-raw-key": "Aviable to claim",
+    "claiming-page-btn-lbl": "Claim"
   },
   "edit": {
     "overview": "Overview"
