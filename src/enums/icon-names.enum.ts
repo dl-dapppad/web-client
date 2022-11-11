@@ -120,6 +120,7 @@ export enum ICON_NAMES {
   globeAlt = 'globe-alt',
   globe = 'globe',
   hand = 'hand',
+  hands = 'hands',
   hashtag = 'hashtag',
   heart = 'heart',
   home = 'home',

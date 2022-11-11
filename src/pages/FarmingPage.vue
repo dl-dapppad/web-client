@@ -457,7 +457,7 @@ const historyData = [
         <div class="farming-page__modal">
           <div class="farming-page__modal-title-wrp">
             <div class="farming-page__modal-title">
-              <icon class="farming-page__modal-icon" :name="$icons.coin" />
+              <icon class="farming-page__modal-icon" :name="$icons.hands" />
               {{ $t('farming-page.withdrawing-modal-title') }}
             </div>
             <app-button
@@ -554,7 +554,7 @@ const historyData = [
         <div class="farming-page__modal">
           <div class="farming-page__modal-title-wrp">
             <div class="farming-page__modal-title">
-              <icon class="farming-page__modal-icon" :name="$icons.coin" />
+              <icon class="farming-page__modal-icon" :name="$icons.hands" />
               {{ $t('farming-page.claiming-modal-title') }}
             </div>
             <app-button
