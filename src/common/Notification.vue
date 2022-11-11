@@ -23,7 +23,12 @@ defineProps<{
       <p class="notification__message">
         {{ message }}
       </p>
-      <a v-if="link" class="notification__link" :href="link.href">
+      <a
+        v-if="link"
+        class="notification__link"
+        :href="link.href"
+        target="_blank"
+      >
         {{ link.label }}
       </a>
     </div>
@@ -73,8 +78,8 @@ defineProps<{
 
 .notification .notification__icon {
   align-self: start;
-  max-width: toRem(48);
-  max-height: toRem(48);
+  max-width: toRem(28);
+  max-height: toRem(28);
 }
 
 .notification__details {
