@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { PRODUCT_IDS } from '@/enums'
 
 import { useRouter } from '@/router'
 
@@ -17,7 +16,7 @@ const router = useRouter()
       @click="
         router.push({
           name: $routes.categories,
-          params: { id: PRODUCT_IDS.ERC20 },
+          params: { id: `tokens` },
         })
       "
     />
