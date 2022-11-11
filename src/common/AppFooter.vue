@@ -1,5 +1,13 @@
 <script lang="ts" setup>
-import { AppLogo, Icon } from '@/common'
+import { computed } from 'vue'
+import { useWindowSize } from '@vueuse/core'
+
+import { AppButton, AppLogo } from '@/common'
+import { WINDOW_BREAKPOINTS } from '@/enums'
+
+const { width: windowWidth } = useWindowSize()
+
+const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
 </script>
 
 <template>
@@ -8,13 +16,14 @@ import { AppLogo, Icon } from '@/common'
     <span class="app-footer__copyright">
       {{ $t('app-footer.copyright') }}
     </span>
-    <span class="app-footer__terms-link">
-      <icon
-        class="app-footer__terms-link-icon"
-        :name="$icons.questionMarkCircleFilled"
-      />
-      {{ $t('app-footer.terms-link') }}
-    </span>
+    <app-button
+      class="app-footer__terms-link"
+      :icon-left="$icons.questionMarkCircleFilled"
+      :text="$t('app-footer.terms-link')"
+      :size="isXSmall ? 'small' : 'medium'"
+      color="default"
+      scheme="default"
+    />
   </div>
 </template>
 
@@ -31,12 +40,16 @@ import { AppLogo, Icon } from '@/common'
       var(--app-padding-left);
     display: flex;
     flex-direction: column;
-    gap: toRem(18);
   }
 }
 
 .app-footer__logo {
   max-width: toRem(70);
+
+  @include respond-to(small) {
+    padding: toRem(16) toRem(32);
+    max-width: toRem(134);
+  }
 }
 
 .app-footer__copyright {
@@ -45,27 +58,19 @@ import { AppLogo, Icon } from '@/common'
   font-size: toRem(14);
   line-height: 1.2;
   font-weight: 500;
-}
 
-.app-footer__terms-link {
-  display: flex;
-  align-items: center;
-  gap: toRem(10);
-  font-size: toRem(14);
-  font-weight: 700;
-  line-height: 1;
-  text-transform: capitalize;
-  justify-self: end;
-
-  @include respond-to(xsmall) {
-    font-size: toRem(12);
+  @include respond-to(small) {
+    padding: toRem(16) toRem(32);
   }
 }
 
-.app-footer__terms-link-icon {
-  max-width: toRem(12);
-  max-height: toRem(12);
-  min-width: toRem(12);
-  min-height: toRem(12);
+.app-footer__terms-link {
+  text-transform: capitalize;
+  justify-self: end;
+  font-size: toRem(14);
+  line-height: 1;
+  font-weight: 700;
+  padding-left: toRem(16);
+  padding-right: toRem(16);
 }
 </style>
