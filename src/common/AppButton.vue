@@ -150,8 +150,16 @@ const buttonClasses = computed(() =>
     opacity: 0.5;
   }
 
-  &:not([disabled]):hover,
   &:not([disabled]):focus {
+    text-decoration: none;
+    transition-timing-function: ease-out;
+    color: var(--app-button-text-focus);
+    background-color: var(--app-button-bg-focus);
+    border: var(--app-button-border-focus);
+  }
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus:hover {
     text-decoration: none;
     transition-timing-function: ease-out;
     color: var(--app-button-text-hover);
@@ -160,213 +168,288 @@ const buttonClasses = computed(() =>
     border: var(--app-button-border-hover);
   }
 
-  &:not([disabled]):active {
+  &:not([disabled]):focus:active {
     text-decoration: none;
     transition-timing-function: ease-out;
+    color: var(--app-button-text-active);
     background-color: var(--app-button-bg-active);
+    border-color: var(--app-button-border-active);
     border: var(--app-button-border-active);
   }
 
   /* schemes */
   &--default {
     --app-button-default-bg: transparent;
-    --app-button-default-bg-hover: transparent;
-    --app-button-default-bg-active: transparent;
+    --app-button-default-bg-hover: var(--secondary-main);
+    --app-button-default-bg-active: var(--secondary-dark);
+    --app-button-default-bg-focus: transparent;
 
     --app-button-default-text: var(--text-primary-main);
-    --app-button-default-text-hover: var(--text-primary-main);
+    --app-button-default-text-hover: var(--text-primary-invert-main);
+    --app-button-default-text-active: var(--text-primary-invert-main);
+    --app-button-default-text-focus: var(--text-primary-main);
 
-    --app-button-default-border: 0;
-    --app-button-default-border-hover: 0;
-    --app-button-default-border-active: 0;
+    --app-button-default-border: #{toRem(2)} solid transparent;
+    --app-button-default-border-hover: #{toRem(2)} solid transparent;
+    --app-button-default-border-active: #{toRem(2)} solid transparent;
+    --app-button-default-border-focus: #{toRem(2)} solid var(--secondary-main);
 
     --app-button-bg: var(--app-button-default-bg);
     --app-button-bg-hover: var(--app-button-default-bg-hover);
     --app-button-bg-active: var(--app-button-default-bg-active);
+    --app-button-bg-focus: var(--app-button-default-bg-focus);
 
     --app-button-text: var(--app-button-default-text);
     --app-button-text-hover: var(--app-button-default-text-hover);
+    --app-button-text-active: var(--app-button-default-text-active);
+    --app-button-text-focus: var(--app-button-default-text-focus);
 
     --app-button-border: var(--app-button-default-border);
     --app-button-border-hover: var(--app-button-default-border-hover);
     --app-button-border-active: var(--app-button-default-border-active);
+    --app-button-border-focus: var(--app-button-default-border-focus);
   }
 
   &--filled {
     --app-button-filled-bg: var(--primary-main);
-    --app-button-filled-bg-hover: var(--primary-main);
-    --app-button-filled-bg-active: var(--primary-main);
+    --app-button-filled-bg-hover: var(--secondary-main);
+    --app-button-filled-bg-active: var(--secondary-dark);
+    --app-button-filled-bg-focus: var(--primary-main);
 
     --app-button-filled-text: var(--text-primary-invert-main);
     --app-button-filled-text-hover: var(--text-primary-invert-main);
+    --app-button-filled-text-active: var(--text-primary-invert-main);
+    --app-button-filled-text-focus: var(--text-primary-invert-main);
 
     --app-button-filled-border: #{toRem(2)} solid var(--primary-main);
-    --app-button-filled-border-hover: #{toRem(2)} solid var(--secondary-main);
-    --app-button-filled-border-active: #{toRem(2)} solid var(--secondary-main);
+    --app-button-filled-border-hover: #{toRem(2)} solid var(--primary-main);
+    --app-button-filled-border-active: #{toRem(2)} solid var(--primary-main);
+    --app-button-filled-border-focus: #{toRem(2)} solid var(--secondary-main);
 
     --app-button-bg: var(--app-button-filled-bg);
     --app-button-bg-hover: var(--app-button-filled-bg-hover);
     --app-button-bg-active: var(--app-button-filled-bg-active);
+    --app-button-bg-focus: var(--app-button-filled-bg-focus);
 
     --app-button-text: var(--app-button-filled-text);
     --app-button-text-hover: var(--app-button-filled-text-hover);
+    --app-button-text-active: var(--app-button-filled-text-active);
+    --app-button-text-focus: var(--app-button-filled-text-focus);
 
     --app-button-border: var(--app-button-filled-border);
     --app-button-border-hover: var(--app-button-filled-border-hover);
     --app-button-border-active: var(--app-button-filled-border-active);
+    --app-button-border-focus: var(--app-button-filled-border-focus);
   }
 
   &--flat {
     --app-button-flat-text: var(--text-primary-main);
     --app-button-flat-text-hover: var(--text-primary-dark);
+    --app-button-flat-text-active: var(--text-primary-dark);
+    --app-button-flat-text-focus: var(--text-primary-main);
 
     --app-button-flat-border: #{toRem(2)} solid var(--text-primary-light);
     --app-button-flat-border-hover: var(--app-button-flat-border);
     --app-button-flat-border-active: var(--app-button-flat-border);
+    --app-button-flat-border-focus: var(--app-button-flat-border);
 
     --app-button-bg: transparent;
     --app-button-bg-hover: transparent;
     --app-button-bg-active: transparent;
+    --app-button-bg-focus: transparent;
 
     --app-button-text: var(--app-button-flat-text);
     --app-button-text-hover: var(--app-button-flat-text-hover);
+    --app-button-text-active: var(--app-button-flat-text-active);
+    --app-button-text-focus: var(--app-button-flat-text-focus);
 
     --app-button-border: var(--app-button-flat-border);
     --app-button-border-hover: var(--app-button-flat-border-hover);
     --app-button-border-active: var(--app-button-flat-border-active);
+    --app-button-border-focus: var(--app-button-flat-border-focus);
   }
 
   &--borderless {
     --app-button-borderless-bg: var(--primary-main);
-    --app-button-borderless-bg-hover: var(--primary-main);
-    --app-button-borderless-bg-active: var(--primary-main);
+    --app-button-borderless-bg-hover: var(--secondary-main);
+    --app-button-borderless-bg-active: var(--secondary-dark);
+    --app-button-borderless-bg-focus: var(--secondary-main);
 
-    --app-button-borderless-text: var(--text-primary-main);
-    --app-button-borderless-text-hover: var(--text-primary-dark);
+    --app-button-borderless-text: var(--text-primary-invert-main);
+    --app-button-borderless-text-hover: var(--text-primary-invert-dark);
+    --app-button-borderless-text-active: var(--text-primary-invert-main);
+    --app-button-borderless-text-focus: var(--text-primary-invert-dark);
 
     --app-button-borderless-border: 0;
     --app-button-borderless-border-hover: 0;
     --app-button-borderless-border-active: 0;
+    --app-button-borderless-border-focus: 0;
 
     --app-button-bg: var(--app-button-borderless-bg);
     --app-button-bg-hover: var(--app-button-borderless-bg-hover);
     --app-button-bg-active: var(--app-button-borderless-bg-active);
+    --app-button-bg-focus: var(--app-button-borderless-bg-focus);
 
     --app-button-text: var(--app-button-borderless-text);
     --app-button-text-hover: var(--app-button-borderless-text-hover);
+    --app-button-text-active: var(--app-button-borderless-text-active);
+    --app-button-text-focus: var(--app-button-borderless-text-focus);
 
     --app-button-border: var(--app-button-borderless-border);
     --app-button-border-hover: var(--app-button-borderless-border-hover);
     --app-button-border-active: var(--app-button-borderless-border-active);
+    --app-button-border-focus: var(--app-button-borderless-border-focus);
   }
 
   /* colors */
   &--secondary {
     --app-button-default-text: var(--secondary-main);
-    --app-button-default-text-hover: var(--secondary-main);
+    --app-button-default-text-hover: var(--text-primary-invert-main);
+    --app-button-default-text-active: var(--text-primary-invert-main);
+    --app-button-default-text-focus: var(--secondary-main);
 
     --app-button-flat-text: var(--secondary-main);
     --app-button-flat-text-hover: var(--secondary-main);
+    --app-button-flat-text-active: var(--secondary-main);
+    --app-button-flat-text-focus: var(--secondary-main);
     --app-button-flat-border: #{toRem(2)} solid var(--secondary-main);
     --app-button-flat-border-hover: #{toRem(2)} solid var(--secondary-main);
     --app-button-flat-border-active: #{toRem(2)} solid var(--secondary-main);
+    --app-button-flat-border-focus: #{toRem(2)} solid var(--secondary-main);
 
     --app-button-filled-bg: var(--secondary-main);
     --app-button-filled-bg-hover: var(--secondary-main);
-    --app-button-filled-bg-active: var(--secondary-main);
+    --app-button-filled-bg-active: var(--secondary-dark);
+    --app-button-filled-bg-focus: var(--secondary-main);
 
     --app-button-borderless-text: var(--text-primary-invert-main);
     --app-button-borderless-text-hover: var(--text-primary-invert-main);
+    --app-button-borderless-text-active: var(--text-primary-invert-main);
+    --app-button-borderless-text-focus: var(--text-primary-invert-main);
     --app-button-borderless-bg: var(--secondary-main);
     --app-button-borderless-bg-hover: var(--secondary-main);
     --app-button-borderless-bg-active: var(--secondary-dark);
+    --app-button-borderless-bg-focus: var(--secondary-main);
   }
 
   &--tertiary {
     --app-button-flat-text: var(--text-primary-main);
     --app-button-flat-text-hover: var(--text-primary-main);
+    --app-button-flat-text-active: var(--text-primary-main);
+    --app-button-flat-text-focus: var(--text-primary-main);
 
     $tertiary-border: #{toRem(2)} solid var(--background-secondary);
 
     --app-button-flat-border: $tertiary-border;
     --app-button-flat-border-hover: $tertiary-border;
     --app-button-flat-border-active: $tertiary-border;
+    --app-button-flat-border-focus: $tertiary-border;
 
     --app-button-filled-bg: var(--background-secondary);
-    --app-button-filled-bg-hover: var(--background-secondary);
-    --app-button-filled-bg-active: var(--background-secondary);
+    --app-button-filled-bg-hover: var(--secondary-main);
+    --app-button-filled-bg-active: var(--secondary-dark);
+    --app-button-filled-bg-focus: var(--background-secondary);
     --app-button-filled-text: var(--text-primary-main);
-    --app-button-filled-text-hover: var(--text-primary-main);
+    --app-button-filled-text-hover: var(--text-primary-invert-main);
+    --app-button-filled-text-active: var(--text-primary-invert-main);
+    --app-button-filled-text-focus: var(--text-primary-main);
+    --app-button-filled-border: #{toRem(2)} solid var(--primary-main);
+    --app-button-filled-border-hover: #{toRem(2)} solid var(--primary-main);
+    --app-button-filled-border-active: #{toRem(2)} solid var(--primary-main);
+    --app-button-filled-border-focus: #{toRem(2)} solid var(--secondary-main);
 
     --app-button-borderless-text: var(--text-primary-main);
-    --app-button-borderless-text-hover: var(--text-primary-main);
+    --app-button-borderless-text-hover: var(--text-primary-invert-main);
+    --app-button-borderless-text-active: var(--text-primary-invert-main);
+    --app-button-borderless-text-focus: var(--text-primary-main);
     --app-button-borderless-bg: var(--background-secondary);
-    --app-button-borderless-bg-hover: var(--background-secondary);
-    --app-button-borderless-bg-active: var(--background-secondary);
+    --app-button-borderless-bg-hover: var(--secondary-main);
+    --app-button-borderless-bg-active: var(--secondary-dark);
+    --app-button-borderless-bg-focus: var(--background-secondary);
   }
 
   &--success {
     --app-button-flat-text: var(--success-main);
     --app-button-flat-text-hover: var(--success-dark);
+    --app-button-flat-text-active: var(--success-dark);
+    --app-button-flat-text-focus: var(--success-dark);
     --app-button-flat-border: #{toRem(2)} solid var(--success-main);
     --app-button-flat-border-hover: #{toRem(2)} solid var(--success-dark);
     --app-button-flat-border-active: #{toRem(2)} solid var(--success-dark);
+    --app-button-flat-border-focus: #{toRem(2)} solid var(--success-dark);
 
     --app-button-filled-bg: var(--success-main);
     --app-button-filled-bg-hover: var(--success-dark);
     --app-button-filled-bg-active: var(--success-dark);
+    --app-button-filled-bg-focus: var(--success-dark);
 
     --app-button-borderless-bg: var(--success-main);
     --app-button-borderless-bg-hover: var(--success-main);
     --app-button-borderless-bg-active: var(--success-dark);
+    --app-button-borderless-bg-focus: var(--success-dark);
   }
 
   &--error {
     --app-button-flat-text: var(--error-main);
     --app-button-flat-text-hover: var(--error-dark);
+    --app-button-flat-text-active: var(--error-dark);
+    --app-button-flat-text-focus: var(--error-dark);
     --app-button-flat-border: #{toRem(2)} solid var(--error-main);
     --app-button-flat-border-hover: #{toRem(2)} solid var(--error-dark);
     --app-button-flat-border-active: #{toRem(2)} solid var(--error-dark);
+    --app-button-flat-border-focus: #{toRem(2)} solid var(--error-dark);
 
     --app-button-filled-bg: var(--error-main);
     --app-button-filled-bg-hover: var(--error-dark);
     --app-button-filled-bg-active: var(--error-dark);
+    --app-button-filled-bg-focus: var(--error-dark);
 
     --app-button-borderless-bg: var(--error-main);
     --app-button-borderless-bg-hover: var(--error-main);
     --app-button-borderless-bg-active: var(--error-dark);
+    --app-button-borderless-bg-focus: var(--error-dark);
   }
 
   &--warning {
     --app-button-flat-text: var(--warning-main);
     --app-button-flat-text-hover: var(--warning-dark);
-    --app-button-flat-border: #{toRem(2)} solid var(--warning-dark);
+    --app-button-flat-text-active: var(--warning-dark);
+    --app-button-flat-text-focus: var(--warning-dark);
+    --app-button-flat-border: #{toRem(2)} solid var(--warning-main);
     --app-button-flat-border-hover: #{toRem(2)} solid var(--warning-dark);
     --app-button-flat-border-active: #{toRem(2)} solid var(--warning-dark);
+    --app-button-flat-border-focus: #{toRem(2)} solid var(--warning-dark);
 
     --app-button-filled-bg: var(--warning-main);
     --app-button-filled-bg-hover: var(--warning-dark);
     --app-button-filled-bg-active: var(--warning-dark);
+    --app-button-filled-bg-focus: var(--warning-dark);
 
     --app-button-borderless-bg: var(--warning-main);
     --app-button-borderless-bg-hover: var(--warning-main);
     --app-button-borderless-bg-active: var(--warning-dark);
+    --app-button-borderless-bg-focus: var(--warning-dark);
   }
 
   &--info {
     --app-button-flat-text: var(--info-main);
     --app-button-flat-text-hover: var(--info-dark);
+    --app-button-flat-text-active: var(--info-dark);
+    --app-button-flat-text-focus: var(--info-dark);
     --app-button-flat-border: #{toRem(2)} solid var(--info-main);
     --app-button-flat-border-hover: #{toRem(2)} solid var(--info-dark);
     --app-button-flat-border-active: #{toRem(2)} solid var(--info-dark);
+    --app-button-flat-border-focus: #{toRem(2)} solid var(--info-dark);
 
     --app-button-filled-bg: var(--info-main);
     --app-button-filled-bg-hover: var(--info-dark);
     --app-button-filled-bg-active: var(--info-dark);
+    --app-button-filled-bg-focus: var(--info-dark);
 
     --app-button-borderless-bg: var(--info-main);
     --app-button-borderless-bg-hover: var(--info-main);
     --app-button-borderless-bg-active: var(--info-dark);
+    --app-button-borderless-bg-focus: var(--info-dark);
   }
 
   /* modifications */
