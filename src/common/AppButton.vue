@@ -362,10 +362,10 @@ const buttonClasses = computed(() =>
     --app-button-borderless-text-hover: var(--text-primary-invert-main);
     --app-button-borderless-text-active: var(--text-primary-invert-main);
     --app-button-borderless-text-focus: var(--text-primary-main);
-    --app-button-borderless-bg: var(--background-secondary);
+    --app-button-borderless-bg: var(--background-primary);
     --app-button-borderless-bg-hover: var(--secondary-main);
     --app-button-borderless-bg-active: var(--secondary-dark);
-    --app-button-borderless-bg-focus: var(--background-secondary);
+    --app-button-borderless-bg-focus: var(--background-primary);
   }
 
   &--success {
