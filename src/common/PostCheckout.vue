@@ -169,6 +169,7 @@ init()
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
+                <!-- TODO: Change Icon.informationCircle to InfoTooltips -->
                 <icon
                   class="post-checkout__icon"
                   :name="$icons.informationCircle"
