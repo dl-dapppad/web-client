@@ -56,6 +56,9 @@
   },
   "app-navbar": {
     "connect-btn": "Connect Wallet",
+    "logout-btn": "Log Out",
+    "wallet-address-lbl": "Wallet address",
+    "balance-lbl": "Balance",
     "farm-link": "Farm",
     "search-placeholder": "Search"
   },
