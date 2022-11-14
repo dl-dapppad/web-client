@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
-import { AppLogo, Icon, AppButton, Dropdown } from '@/common'
+import { ref, watch, computed } from 'vue'
+import { useWindowSize } from '@vueuse/core'
+import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20 } from '@/composables'
 import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
 import { Chain } from '@/types'
@@ -9,12 +10,14 @@ import { InputField } from '@/fields'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { ErrorHandler, isChainAvailable } from '@/helpers'
-import { CONTRACT_NAMES, ETHEREUM_CHAINS } from '@/enums'
+import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
+
+const { width: windowWidth } = useWindowSize()
 
 const dapp = useErc20()
 
@@ -64,12 +67,24 @@ watch(
   },
 )
 
+const isProviderButtonShown = computed(
+  () =>
+    windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
+    !provider.value.selectedAddress,
+)
+
 init()
 </script>
 
 <template>
   <div class="app-navbar">
-    <app-logo class="app-navbar__logo" />
+    <div class="app-navbar__logo-wrp">
+      <icon
+        class="app-navbar__search-icon-mobile"
+        :name="$icons.searchFilled"
+      />
+      <app-logo class="app-navbar__logo" />
+    </div>
     <template v-if="provider.isConnected">
       <div class="app-navbar__farm-farm-balance">
         <span class="app-navbar__farm-farm-balance-amount">
@@ -92,19 +107,20 @@ init()
         />
       </div>
       <input-field
-        class="app-navbar___search"
+        class="app-navbar__search"
         v-model="searchInput"
         :placeholder="$t('app-navbar.search-placeholder')"
         scheme="secondary"
       >
         <template #nodeRight>
-          <icon class="app-navbar___search-icon" :name="$icons.searchFilled" />
+          <icon class="app-navbar__search-icon" :name="$icons.searchFilled" />
         </template>
       </input-field>
       <dropdown class="app-navbar__chain">
         <template #head="{ dropdown }">
           <app-button
             class="app-navbar__chain-btn"
+            :class="{ 'app-navbar__chain-btn--active': dropdown.isOpen }"
             size="small"
             :text="localizeChain(provider.chainId)"
             :icon-left="$icons.circleFilled"
@@ -115,12 +131,14 @@ init()
           />
         </template>
         <template #default>
-          <div class="app-navbar__chain-body">
+          <div class="app-navbar__dropdown-body">
             <app-button
               v-for="chainName in ETHEREUM_CHAINS"
               :key="chainName"
               class="app-navbar__chain-item"
+              color="tertiary"
               :text="localizeChain(chainName)"
+              :icon-left="$icons.circleFilled"
               @click="trySwitchChain(chainName)"
             />
           </div>
@@ -142,6 +160,7 @@ init()
       </div>
     </template>
     <app-button
+      v-if="isProviderButtonShown"
       class="app-navbar__provider-btn"
       size="small"
       :text="
@@ -150,6 +169,14 @@ init()
       :icon-right="provider.selectedAddress ? $icons.logout : undefined"
       @click="handleProviderBtnClick"
     />
+    <div v-if="provider.selectedAddress" class="app-navbar__menu-farming-wrp">
+      <icon class="app-navbar__farming-btn-icon" :name="$icons.gift" />
+      <menu-drawer
+        class="app-navbar__menu-drawer"
+        @try-switch-chain="trySwitchChain"
+        @provider-btn-click="handleProviderBtnClick"
+      />
+    </div>
   </div>
 </template>
 
@@ -162,24 +189,47 @@ init()
   border-bottom: toRem(1) solid var(--border-primary-main);
   gap: toRem(10);
 
-  @include respond-to(tablet) {
-    flex-wrap: wrap;
+  @include respond-to(xmedium) {
+    justify-content: space-between;
   }
+
+  @include respond-to(medium) {
+    padding: toRem(25) var(--app-padding-right) toRem(25)
+      var(--app-padding-left);
+  }
+}
+
+.app-navbar__logo-wrp {
+  display: flex;
+  align-items: center;
+  gap: toRem(20);
 }
 
 .app-navbar__logo {
   max-width: toRem(70);
 }
 
+.app-navbar__search-icon-mobile {
+  max-width: toRem(14);
+  max-height: toRem(14);
+  min-width: toRem(14);
+  min-height: toRem(14);
+}
+
 .app-navbar__farm-farm-balance {
   display: flex;
   height: 100%;
+
+  @include respond-to(medium) {
+    display: none;
+  }
 }
 
 .app-navbar__farm-farm-balance-amount {
   display: flex;
   align-items: center;
   text-transform: uppercase;
+  white-space: nowrap;
   gap: toRem(12);
   background: var(--background-secondary);
   border: toRem(1) solid var(--border-secondary-main);
@@ -190,37 +240,72 @@ init()
 }
 
 .app-navbar__farm-farm-balance-icon {
-  width: toRem(14);
-  height: toRem(14);
+  max-width: toRem(14);
+  max-height: toRem(14);
+  min-width: toRem(14);
+  min-height: toRem(14);
 }
 
-.app-navbar___search {
+.app-navbar__search {
   height: 100%;
   display: grid;
+
+  @include respond-to(xmedium) {
+    display: none;
+  }
 }
 
-.app-navbar___search-icon {
-  width: toRem(14);
-  height: toRem(14);
+.app-navbar__search-icon {
+  max-width: toRem(14);
+  max-height: toRem(14);
+  min-height: toRem(14);
+  min-width: toRem(14);
+
+  &--tablet {
+    display: none;
+
+    @include respond-to(xmedium) {
+      display: block;
+    }
+  }
 }
 
 .app-navbar__chain {
   min-width: toRem(200);
+
+  @include respond-to(medium) {
+    display: none;
+  }
 }
 
 .app-navbar__chain-btn {
   justify-content: space-between;
   width: 100%;
+
+  &--active {
+    background-color: var(--secondary-main);
+
+    &:not([disabled]):hover,
+    &:not([disabled]):focus {
+      background-color: var(--secondary-main);
+    }
+  }
 }
 
-.app-navbar__chain-body {
+.app-navbar__dropdown-body {
   top: 0;
   left: 0;
+
+  &--search {
+    background-color: var(--secondary-main);
+    width: 100vw;
+  }
 }
 
 .app-navbar__chain-item {
-  justify-content: space-between;
+  justify-content: start;
   width: 100%;
+  padding: toRem(16) toRem(24);
 }
 
 .app-navbar__wallet {
@@ -231,11 +316,16 @@ init()
   font-weight: 700;
   border: toRem(1) solid var(--border-secondary-main);
   height: 100%;
+
+  @include respond-to(medium) {
+    display: none;
+  }
 }
 
 .app-navbar__wallet-balance {
   padding: toRem(10);
   font-size: toRem(12);
+  white-space: nowrap;
 }
 
 .app-navbar__wallet-address {
@@ -252,11 +342,31 @@ init()
 }
 
 .app-navbar__wallet-address-icon {
-  height: toRem(16);
-  width: toRem(16);
+  max-height: toRem(16);
+  max-width: toRem(16);
+  min-height: toRem(16);
+  min-width: toRem(16);
 }
 
 .app-navbar__provider-btn {
   margin-left: auto;
+
+  @include respond-to(xmedium) {
+    margin: 0;
+  }
+}
+
+.app-navbar__menu-farming-wrp {
+  display: none;
+  gap: toRem(35);
+
+  @include respond-to(medium) {
+    display: flex;
+  }
+}
+
+.app-navbar__farming-btn-icon {
+  height: toRem(16);
+  width: toRem(16);
 }
 </style>

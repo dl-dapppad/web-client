@@ -169,6 +169,7 @@ init()
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
+                <!-- TODO: Change Icon.informationCircle to InfoTooltips -->
                 <icon
                   class="post-checkout__icon"
                   :name="$icons.informationCircle"
@@ -385,8 +386,10 @@ init()
 }
 
 .post-checkout__icon {
-  height: toRem(16);
-  width: toRem(16);
+  max-height: toRem(16);
+  max-width: toRem(16);
+  min-height: toRem(16);
+  min-width: toRem(16);
 
   .post-checkout__address & {
     color: var(--text-primary-main);

@@ -64,10 +64,16 @@
   --app-txt: #{$text-primary-main};
   --app-font-family-primary: 'Montserrat', 'Arial', sans-serif;
   --app-font-family-secondary: 'Titillium_Web', 'Arial', sans-serif;
+  --app-font-family-tertiary: 'Consolas', 'Arial', sans-serif;
   --app-padding-right: #{toRem(60)};
   --app-padding-left: #{toRem(60)};
 
-  @include respond-to(tablet) {
+  @include respond-to(xmedium) {
+    --app-padding-right: #{toRem(40)};
+    --app-padding-left: #{toRem(40)};
+  }
+
+  @include respond-to(small) {
     --app-padding-right: #{toRem(24)};
     --app-padding-left: #{toRem(24)};
   }

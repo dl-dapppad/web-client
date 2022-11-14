@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppBlock, AppButton, PostCheckout } from '@/common'
+import { Icon, AppBlock, AppButton, PostCheckout } from '@/common'
 import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
 import postsData from '@/assets/posts.json'
@@ -50,12 +50,43 @@ const post = posts.find(el => el.id === route.params.id)
             </h4>
           </template>
           <template v-if="key === 'paragraph'">
-            <p :key="idx">
-              {{ value }}
-            </p>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <p :key="idx" class="post-item-page__paragarph" v-html="value" />
           </template>
           <template v-if="key === 'image'">
             <img :key="idx" class="post-item-page__img" :src="value" alt="" />
+          </template>
+          <template v-if="key === 'image-links'">
+            <div :key="idx" class="post-item-page__img-links">
+              <a
+                v-for="(link, ind) of value"
+                :key="ind"
+                class="post-item-page__img-links-item"
+                :href="`https://${link}/`"
+              >
+                {{ link }}
+                <icon
+                  class="post-item-page__img-links-icon"
+                  :name="$icons.externalLink"
+                />
+              </a>
+            </div>
+          </template>
+          <template v-if="key === 'unordered-list'">
+            <ul :key="idx" class="post-item-page__unordered-list">
+              <li
+                v-for="(item, ind) of value"
+                :key="ind"
+                class="post-item-page__unordered-list-item"
+              >
+                <icon
+                  class="post-item-page__unordered-list-icon"
+                  :name="$icons.circleFilled"
+                />
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <p class="post-item-page__unordered-list-text" v-html="item" />
+              </li>
+            </ul>
           </template>
         </template>
       </div>
@@ -63,7 +94,8 @@ const post = posts.find(el => el.id === route.params.id)
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+/* stylelint-disable declaration-no-important */
 $page-padding-left: toRem(165);
 $page-padding-right: toRem(165);
 
@@ -110,12 +142,27 @@ $page-padding-right: toRem(165);
   flex-direction: column;
   gap: toRem(30);
   padding: toRem(70) $page-padding-right toRem(40) $page-padding-left;
+}
 
-  p {
-    font-size: toRem(20);
-    line-height: 1.3;
-    letter-spacing: 0.1em;
-  }
+.post-item-page__bold {
+  font-size: toRem(20);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.post-item-page__consolas {
+  font-family: var(--app-font-family-tertiary);
+  font-size: toRem(20);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.post-item-page__paragarph {
+  font-size: toRem(20);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
 }
 
 .post-item-page__title {
@@ -135,5 +182,52 @@ $page-padding-right: toRem(165);
   max-width: 80%;
   height: auto;
   margin: 0 auto;
+}
+
+.post-item-page__img-links {
+  display: flex;
+  justify-content: center;
+  gap: toRem(35);
+}
+
+.post-item-page__img-links-item {
+  display: flex;
+  align-items: center;
+  gap: toRem(10);
+  color: var(--secondary-main);
+  font-size: toRem(16);
+}
+
+.post-item-page__img-links-icon {
+  color: var(--text-primary-main);
+  max-width: toRem(12) !important;
+  max-height: toRem(12) !important;
+  min-width: toRem(12);
+  min-height: toRem(12);
+}
+
+.post-item-page__unordered-list {
+  padding-left: toRem(30);
+}
+
+.post-item-page__unordered-list-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.post-item-page__unordered-list-text {
+  font-size: toRem(20);
+  line-height: toRem(26);
+}
+
+.post-item-page__unordered-list-icon {
+  max-width: toRem(3) !important;
+  max-height: toRem(3) !important;
+  min-width: toRem(3);
+  min-height: toRem(3);
+  position: absolute;
+  top: toRem(11);
+  left: -#{toRem(16)};
 }
 </style>
