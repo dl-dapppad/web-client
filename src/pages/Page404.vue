@@ -60,11 +60,8 @@ const router = useRouter()
 }
 
 .page-404__image {
-  width: toRem(660);
-
-  @include respond-to(tablet) {
-    width: 100%;
-  }
+  max-width: toRem(660);
+  width: 100%;
 }
 
 .page-404__sorry-text {
