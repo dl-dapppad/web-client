@@ -4,4 +4,8 @@ export type NotificationObjectPayload = {
   title?: string
   message: string
   iconName?: typeof ICON_NAMES | unknown
+  link?: {
+    label: string
+    href: string
+  }
 }

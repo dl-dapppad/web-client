@@ -24,6 +24,10 @@ export const useNotifications = (): void => {
     let title = ''
     let message = ''
     let iconName = ''
+    let link = {
+      label: '',
+      href: '',
+    }
 
     const defaultTitles = {
       [TYPE.SUCCESS]: t('notification.default-title-success'),
@@ -41,10 +45,10 @@ export const useNotifications = (): void => {
     }
     const defaultIconNames = {
       [TYPE.DEFAULT]: ICON_NAMES.informationCircle,
-      [TYPE.INFO]: ICON_NAMES.informationCircle,
-      [TYPE.SUCCESS]: ICON_NAMES.checkCircle,
+      [TYPE.INFO]: ICON_NAMES.informationCircleFilled,
+      [TYPE.SUCCESS]: ICON_NAMES.checkCircleFilled,
       [TYPE.ERROR]: ICON_NAMES.exclamationCircle,
-      [TYPE.WARNING]: ICON_NAMES.exclamation,
+      [TYPE.WARNING]: ICON_NAMES.exclamationFilled,
     }
 
     if (isObject(payload)) {
@@ -53,6 +57,10 @@ export const useNotifications = (): void => {
       title = msgPayload.title || ''
       message = msgPayload.message
       iconName = msgPayload.iconName ? (msgPayload.iconName as string) : ''
+      link = msgPayload.link || {
+        label: '',
+        href: '',
+      }
     } else if (payload) {
       message = payload as string
     } else {
@@ -73,6 +81,7 @@ export const useNotifications = (): void => {
           ...(title && { title }),
           message,
           ...(iconName && { iconName }),
+          ...(link && { link }),
         },
       },
       {

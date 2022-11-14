@@ -1,3 +1,18 @@
+<script lang="ts" setup>
+import { Icon } from '@/common'
+import { ICON_NAMES } from '@/enums'
+
+defineProps<{
+  title: string
+  message: string
+  iconName: ICON_NAMES
+  link?: {
+    label: string
+    href: string
+  }
+}>()
+</script>
+
 <template>
   <div class="notification">
     <icon class="notification__icon" :name="iconName" />
@@ -8,58 +23,50 @@
       <p class="notification__message">
         {{ message }}
       </p>
+      <a
+        v-if="link"
+        class="notification__link"
+        :href="link.href"
+        target="_blank"
+      >
+        {{ link.label }}
+      </a>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { Icon } from '@/common'
-
-import { defineComponent, PropType } from 'vue'
-import { ICON_NAMES } from '@/enums'
-
-export default defineComponent({
-  name: 'notification',
-  components: { Icon },
-  props: {
-    title: {
-      type: String,
-      default: '',
-    },
-    message: {
-      type: String,
-      required: true,
-    },
-    iconName: {
-      type: String as PropType<ICON_NAMES>,
-      default: ICON_NAMES.check,
-    },
-  },
-  setup() {
-    return {}
-  },
-})
-</script>
 
 <style lang="scss">
 @import 'vue-toastification/src/scss/index';
 
 .Vue-Toastification__toast {
+  border-radius: 0;
+  background: var(--background-secondary);
+
   &--success {
-    background: var(--success-dark);
+    border: toRem(2) solid var(--success-main);
+    color: var(--success-main);
   }
 
   &--error {
-    background: var(--error-dark);
+    border: toRem(2) solid var(--error-main);
+    color: var(--error-main);
   }
 
   &--warning {
-    background: var(--warning-dark);
+    border: toRem(2) solid var(--warning-main);
+    color: var(--warning-main);
   }
 
   &--info {
-    background: var(--primary-main);
+    border: toRem(2) solid var(--info-main);
+    color: var(--info-main);
   }
+}
+
+.Vue-Toastification__close-button {
+  color: var(--text-secondary-dark);
+  align-self: start;
+  font-size: toRem(32);
 }
 
 .notification {
@@ -70,8 +77,9 @@ export default defineComponent({
 }
 
 .notification .notification__icon {
-  max-width: toRem(48);
-  max-height: toRem(48);
+  align-self: start;
+  max-width: toRem(28);
+  max-height: toRem(28);
 }
 
 .notification__details {
@@ -81,10 +89,18 @@ export default defineComponent({
 }
 
 .notification__title {
-  color: var(--text-primary-invert-main);
+  font-family: var(--app-font-family-secondary);
+  font-size: toRem(24);
+  color: var(--text-primary-main);
+  font-weight: 700;
 }
 
 .notification__message {
-  color: var(--text-primary-invert-main);
+  font-size: toRem(14);
+  color: var(--text-primary-main);
+}
+
+.notification__link {
+  color: var(--secondary-main);
 }
 </style>
