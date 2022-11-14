@@ -6,38 +6,38 @@ import {
   useRouter,
 } from 'vue-router'
 
-import { ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES, ROUTE_GUARD_NAMES } from '@/enums'
 import { existGuard } from '@/router/guards'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/categories/:id',
     name: ROUTE_NAMES.categories,
-    beforeEnter: existGuard('category'),
+    beforeEnter: existGuard(ROUTE_GUARD_NAMES.category),
     component: () => import('@/pages/PostsPage.vue'),
   },
   {
     path: '/category/:id',
     name: ROUTE_NAMES.category,
-    beforeEnter: existGuard('category'),
+    beforeEnter: existGuard(ROUTE_GUARD_NAMES.category),
     component: () => import('@/pages/PostItemPage.vue'),
   },
   {
     path: '/product/:id',
     name: ROUTE_NAMES.product,
-    beforeEnter: existGuard('product'),
+    beforeEnter: existGuard(ROUTE_GUARD_NAMES.product),
     component: () => import('@/pages/PostItemPage.vue'),
   },
   {
     path: '/product/:id/deploy',
     name: ROUTE_NAMES.productDeploy,
-    beforeEnter: existGuard('product'),
+    beforeEnter: existGuard(ROUTE_GUARD_NAMES.product),
     component: () => import('@/forms/DeployForm.vue'),
   },
   {
     path: '/product/:id/edit/:contractAddress',
     name: ROUTE_NAMES.productEdit,
-    beforeEnter: existGuard('product'),
+    beforeEnter: existGuard(ROUTE_GUARD_NAMES.product),
     component: () => import('@/forms/EditForm.vue'),
   },
   {

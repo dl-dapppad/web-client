@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES, ROUTE_GUARD_NAMES } from '@/enums'
 import { Post } from '@/types'
 import postsData from '@/assets/posts.json'
 import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 
-export const existGuard = (thingToCheck?: string) => {
+export const existGuard = (thingToCheck?: ROUTE_GUARD_NAMES) => {
   return (
     to: RouteLocationNormalized,
     from: RouteLocationNormalized,
@@ -17,9 +17,15 @@ export const existGuard = (thingToCheck?: string) => {
     const post = posts.find(post => to.params?.id === post.id)
     if (!post) next(ROUTE_NAMES.notFound)
 
-    if (post?.subPosts.length !== 0 && thingToCheck === 'product')
+    if (
+      post?.subPosts.length !== 0 &&
+      thingToCheck === ROUTE_GUARD_NAMES.product
+    )
       next(ROUTE_NAMES.notFound)
-    if (post?.subPosts.length === 0 && thingToCheck === 'category')
+    if (
+      post?.subPosts.length === 0 &&
+      thingToCheck === ROUTE_GUARD_NAMES.category
+    )
       next(ROUTE_NAMES.notFound)
 
     next()
