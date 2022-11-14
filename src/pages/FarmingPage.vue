@@ -1,242 +1,139 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-
-import {
-  AppButton,
-  Icon,
-  AppBlock,
-  DonutChart,
-  MultipleLineChart,
-  Modal,
-} from '@/common'
+import { ref, reactive } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useWeb3ProvidersStore } from '@/store'
+import { AppButton, Icon, AppBlock, Modal } from '@/common'
 import { InputField } from '@/fields'
-import { cropAddress } from '@/helpers'
+import { cropAddress, getMaxUint256, txWrapper } from '@/helpers'
 import { useRouter } from '@/router'
-import { copyToClipboard, formatAmount, formatDMYTime } from '@/helpers'
+import { copyToClipboard, formatAmount } from '@/helpers'
 import { ICON_NAMES } from '@/enums'
 import { i18n } from '@/localization'
+import {
+  useErc20,
+  useFarming,
+  InvestInfo,
+  useFormValidation,
+} from '@/composables'
+import { required, numeric } from '@/validators'
+import { BN } from '@/utils'
 
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { t } = i18n.global
 
 const router = useRouter()
-const address = '0xa1234567af'
-const addressStakeDAPP = '0xa1234567af'
-const addressStakeDAI = '0xa1234567af'
-
-const staking = ref('')
-const withdrawing = ref('')
+const farming = useFarming()
+const investmentToken = useErc20()
+const rewardToken = useErc20()
 
 const isModalStakingShown = ref(false)
 const isModalWithdrawingShown = ref(false)
 const isModalClaimingShown = ref(false)
 
-const totalStake = {
-  icon: ICON_NAMES.database,
-  title: t('farming-page.total-stake-lbl'),
-  count: 12345678.1234,
-  curr: 'DAPP',
+const investmentBalance = ref('0')
+const investInfo = ref<InvestInfo>({
+  amount: '0',
+  rewards: '0',
+})
+
+const stakingForm = reactive({ amount: '' })
+const stakingValidation = useFormValidation(stakingForm, {
+  amount: { required, numeric },
+})
+
+const withdrawForm = reactive({ amount: '' })
+const withdrawValidation = useFormValidation(withdrawForm, {
+  amount: { required, numeric },
+})
+
+const init = async () => {
+  await farming.loadDetails()
+
+  investmentToken.init(farming.investmentToken.value)
+  rewardToken.init(farming.rewardToken.value)
+  await Promise.all([investmentToken.loadDetails(), rewardToken.loadDetails()])
+  await updateBalanceState()
 }
 
-const myStake = {
-  icon: ICON_NAMES.cube,
-  title: t('farming-page.my-stake-lbl'),
-  count: 12345678.1234,
-  curr: 'DAPP',
+const updateBalanceState = async () => {
+  if (!provider.value.selectedAddress) return
+
+  await Promise.all([
+    farming.accountInvestInfo(provider.value.selectedAddress),
+    farming.getRewards(provider.value.selectedAddress),
+    investmentToken.balanceOf(provider.value.selectedAddress),
+  ]).then(res => {
+    investInfo.value.amount = res[0].amount
+    investInfo.value.rewards = res[1]
+    investmentBalance.value = res[2]
+
+    return
+  })
 }
 
-const totalReward = {
-  icon: ICON_NAMES.gift,
-  title: t('farming-page.total-reward-lbl'),
-  count: 12345678.1234,
-  curr: 'DAI',
+const clickMaxStakingAmount = () => {
+  stakingForm.amount = new BN(investmentBalance.value)
+    .fromFraction(investmentToken.decimals.value)
+    .toString()
 }
 
-const currentRewards = {
-  icon: ICON_NAMES.gift,
-  title: t('farming-page.current-rewards-lbl'),
-  count: 12345678.1234,
-  curr: 'DAPP',
+const clickMaxWithdrawAmount = () => {
+  withdrawForm.amount = new BN(investInfo.value.amount)
+    .fromFraction(investmentToken.decimals.value)
+    .toString()
 }
 
-const donutChartData = {
-  data: [
-    {
-      value: 16,
-      label: 'First label',
-      color: '#24d6b6',
-    },
-    {
-      value: 10,
-      label: 'Claiming reward',
-      color: '#1dbbed',
-    },
-    {
-      value: 74,
-      label: 'Total reward',
-      color: 'var(--secondary-main)',
-    },
-  ],
-  isLegendShown: true,
-  title: '12.34M',
-  subtitle: 'USDT',
+const submitClaim = async () => {
+  if (!provider.value.selectedAddress) return
+
+  await txWrapper(farming.claim, { account: provider.value.selectedAddress })
+  await updateBalanceState()
+
+  isModalClaimingShown.value = false
 }
 
-const linesChartData = {
-  lines: [
-    {
-      values: [
-        5000, 4750, 4512.5, 4286.88, 4072.53, 3868.9, 3675.46, 3491.69, 3317.1,
-        3151.25, 2993.68, 2844, 2701.8, 2566.71, 2438.37, 2316.46, 2200.63,
-        2090.6, 1986.07, 1886.77, 1792.43, 1702.81, 1617.67, 1536.78, 1459.95,
-        1386.95, 1317.6, 1251.72, 1189.13, 1129.68, 1073.19, 1019.53, 968.56,
-        920.13, 874.12, 830.42, 788.9, 749.45, 711.98, 676.38, 642.56, 610.43,
-        579.91, 550.92, 523.37, 497.2, 472.34, 448.72, 426.29, 404.97, 384.72,
-        365.49, 347.21, 329.85, 313.36, 297.69, 282.81, 268.67, 255.23, 242.47,
-        230.35, 218.83, 207.89, 197.5, 187.62, 178.24, 169.33, 160.86, 152.82,
-        145.18, 137.92, 131.02, 124.47, 118.25, 112.34, 106.72, 101.38, 100,
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-      ],
-      label: 'Total stake',
-      color: '#1dbbed',
-    },
-    {
-      values: [
-        5000, 4750, 4512.5, 4286.88, 4072.53, 3868.9, 3675.46, 3491.69, 3317.1,
-        3151.25, 2993.68, 2844, 2701.8, 2566.71, 2438.37, 2316.46, 2200.63,
-        2090.6, 1986.07, 1886.77, 1792.43, 1702.81, 1617.67, 1536.78, 1459.95,
-        1386.95, 1317.6, 1251.72, 1189.13, 1129.68, 1073.19, 1019.53, 968.56,
-        920.13, 874.12, 830.42, 788.9, 749.45, 711.98, 676.38, 642.56, 610.43,
-        579.91, 550.92, 523.37, 497.2, 472.34, 448.72, 426.29, 404.97, 384.72,
-        365.49, 347.21, 329.85, 313.36, 297.69, 282.81, 268.67, 255.23, 242.47,
-        230.35, 218.83, 207.89, 197.5, 187.62, 178.24, 169.33, 160.86, 152.82,
-        145.18, 137.92, 131.02, 124.47, 118.25, 112.34, 106.72, 101.38, 100,
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-      ].reverse(),
-      label: 'My stake',
-      color: '#24d6b6',
-    },
-    {
-      values: [
-        1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048, 2048, 2048,
-        2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-        2048, 2048, 1251.72, 1189.13, 1129.68, 1073.19, 1019.53, 968.56, 920.13,
-        874.12, 830.42, 749.45, 711.98, 676.38, 642.56, 610.43, 579.91, 550.92,
-        523.37, 497.2, 472.34, 448.72, 426.29, 404.97, 384.72, 365.49, 347.21,
-        329.85, 313.36, 297.69, 282.81, 268.67, 255.23, 242.47, 230.35, 218.83,
-        207.89, 197.5, 187.62, 178.24, 169.33, 160.86, 152.82, 145.18, 137.92,
-        131.02, 124.47, 118.25, 1986.07, 1886.77, 1792.43, 1702.81, 1617.67,
-        1536.78, 1459.95, 1386.95, 1317.6, 124, 261, 174, 1234, 946, 143, 7426,
-        2566.71, 2438.37, 2316.46, 2200.63, 2090.6, 1986.07, 1886.77, 1792.43,
-        1702.81, 137.92, 131.02, 124.47, 118.25, 112.34, 106.72, 101.38, 100,
-        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-      ],
-      label: 'Additional line',
-      color: 'var(--primary-main)',
-    },
-  ],
-  isLegendShown: true,
-  title: 'Stakes and rewards',
+const submitStaking = async () => {
+  if (!provider.value.selectedAddress) return
+
+  const amount = new BN(stakingForm.amount)
+    .toFraction(investmentToken.decimals.value)
+    .toString()
+
+  const allowance = await investmentToken.allowance(
+    provider.value.selectedAddress,
+    farming.address.value,
+  )
+
+  if (new BN(allowance).compare(amount) < 0) {
+    await txWrapper(investmentToken.approve, {
+      spender: farming.address.value,
+      amount: getMaxUint256(),
+    })
+  }
+
+  await txWrapper(farming.invest, { amount })
+  await updateBalanceState()
+
+  isModalStakingShown.value = false
 }
 
-const historyData = [
-  {
-    title: t('farming-page.staking-title'),
-    currency: t('farming-page.staking-currency'),
-    currencyIcon: ICON_NAMES.currencyBangladeshi,
-    data: [
-      {
-        date: 1665652259,
-        rows: [
-          {
-            value: '78.1234',
-            icon: ICON_NAMES.cube,
-            label: t('farming-page.staking-history-first-lbl'),
-          },
-          {
-            value: '78.0',
-            icon: ICON_NAMES.chartBar,
-            label: t('farming-page.staking-history-second-lbl'),
-            selected: true,
-          },
-          {
-            value: '78.1234',
-            icon: ICON_NAMES.cube,
-            label: t('farming-page.staking-history-third-lbl'),
-          },
-        ],
-      },
-      {
-        date: 1665652259,
-        rows: [
-          {
-            value: '78.1234',
-            icon: ICON_NAMES.cube,
-            label: t('farming-page.staking-history-first-lbl'),
-          },
-          {
-            value: '78.0',
-            icon: ICON_NAMES.chartBar,
-            label: t('farming-page.staking-history-second-lbl'),
-            selected: true,
-          },
-          {
-            value: '78.1234',
-            icon: ICON_NAMES.cube,
-            label: t('farming-page.staking-history-third-lbl'),
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: t('farming-page.rewards-title'),
-    currency: t('farming-page.rewards-currency'),
-    currencyIcon: ICON_NAMES.daiCoin,
-    data: [
-      {
-        date: 1665652259,
-        rows: [
-          {
-            value: '78.1234',
-            icon: ICON_NAMES.gift,
-            label: t('farming-page.rewards-history-first-lbl'),
-          },
-          {
-            value: '78.0',
-            icon: ICON_NAMES.chartBar,
-            label: t('farming-page.rewards-history-second-lbl'),
-            selected: true,
-          },
-          {
-            value: '78.1234',
-            icon: ICON_NAMES.gift,
-            label: t('farming-page.rewards-history-first-lbl'),
-          },
-        ],
-      },
-      {
-        date: 1665652259,
-        rows: [
-          {
-            value: '78.0',
-            icon: ICON_NAMES.chartBar,
-            label: t('farming-page.rewards-history-second-lbl'),
-            selected: true,
-          },
-          {
-            value: '78.1234',
-            icon: ICON_NAMES.gift,
-            label: t('farming-page.rewards-history-first-lbl'),
-          },
-        ],
-      },
-    ],
-  },
-]
+const submitWithdraw = async () => {
+  if (!provider.value.selectedAddress) return
+
+  // TODO: add amount to tx after adding feature to SC
+  // const amount = new BN(withdrawForm.amount)
+  //   .toFraction(investmentToken.decimals.value)
+  //   .toString()
+
+  await txWrapper(farming.withdraw, {
+    receiver: provider.value.selectedAddress,
+  })
+  await updateBalanceState()
+
+  isModalWithdrawingShown.value = false
+}
+
+init()
 </script>
 
 <template>
@@ -256,10 +153,10 @@ const historyData = [
           </div>
           <div
             class="farming-page__title-address"
-            :title="address"
-            @click="copyToClipboard(address)"
+            :title="farming.address.value"
+            @click="copyToClipboard(farming.address.value)"
           >
-            {{ cropAddress(address) }}
+            {{ cropAddress(farming.address.value) }}
             <icon class="farming-page__title-icon" :name="$icons.duplicate" />
           </div>
         </div>
@@ -271,15 +168,23 @@ const historyData = [
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="totalStake.icon" />
-              {{ totalStake.title }}
+              <icon
+                class="farming-page__table-icon"
+                :name="ICON_NAMES.database"
+              />
+              {{ t('farming-page.total-stake-lbl') }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ formatAmount(totalStake.count, 3) }}
+                {{
+                  formatAmount(
+                    farming.totalInvestedAmount.value,
+                    investmentToken.decimals.value,
+                  )
+                }}
               </span>
               <span class="farming-page__table-currency">
-                {{ totalStake.curr }}
+                {{ investmentToken.symbol.value }}
               </span>
             </div>
           </div>
@@ -287,15 +192,20 @@ const historyData = [
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="myStake.icon" />
-              {{ myStake.title }}
+              <icon class="farming-page__table-icon" :name="ICON_NAMES.cube" />
+              {{ t('farming-page.my-stake-lbl') }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ formatAmount(myStake.count, 3) }}
+                {{
+                  formatAmount(
+                    investInfo.amount,
+                    investmentToken.decimals.value,
+                  )
+                }}
               </span>
               <span class="farming-page__table-currency">
-                {{ myStake.curr }}
+                {{ investmentToken.symbol.value }}
               </span>
             </div>
           </div>
@@ -321,14 +231,18 @@ const historyData = [
         </app-block>
         <div class="farming-page__table-desc">
           <span class="farming-page__table-desc-text">
-            {{ $t('farming-page.stake-address-dapp-lbl') }}
+            {{
+              `${$t('farming-page.stake-address-lbl')} (${
+                investmentToken.symbol.value
+              })`
+            }}
           </span>
           <span
             class="farming-page__table-desc-address"
-            :title="address"
-            @click="copyToClipboard(address)"
+            :title="investmentToken.address.value"
+            @click="copyToClipboard(investmentToken.address.value)"
           >
-            {{ cropAddress(addressStakeDAPP) }}
+            {{ cropAddress(investmentToken.address.value) }}
             <icon class="farming-page__table-icon" :name="$icons.duplicate" />
           </span>
         </div>
@@ -337,15 +251,20 @@ const historyData = [
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="totalReward.icon" />
-              {{ totalReward.title }}
+              <icon class="farming-page__table-icon" :name="ICON_NAMES.gift" />
+              {{ t('farming-page.total-reward-lbl') }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ formatAmount(totalReward.count, 3) }}
+                {{
+                  formatAmount(
+                    farming.totalRewardAmount.value,
+                    rewardToken.decimals.value,
+                  )
+                }}
               </span>
               <span class="farming-page__table-currency">
-                {{ totalReward.curr }}
+                {{ rewardToken.symbol.value }}
               </span>
             </div>
           </div>
@@ -355,18 +274,17 @@ const historyData = [
             class="farming-page__table-item farming-page__table-item--secondary"
           >
             <div class="farming-page__table-title">
-              <icon
-                class="farming-page__table-icon"
-                :name="currentRewards.icon"
-              />
-              {{ currentRewards.title }}
+              <icon class="farming-page__table-icon" :name="ICON_NAMES.gift" />
+              {{ t('farming-page.current-rewards-lbl') }}
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
-                {{ formatAmount(currentRewards.count, 3) }}
+                {{
+                  formatAmount(investInfo.rewards, rewardToken.decimals.value)
+                }}
               </span>
               <span class="farming-page__table-currency">
-                {{ currentRewards.curr }}
+                {{ rewardToken.symbol.value }}
               </span>
             </div>
           </div>
@@ -382,73 +300,20 @@ const historyData = [
         </app-block>
         <div class="farming-page__table-desc">
           <span class="farming-page__table-desc-text">
-            {{ $t('farming-page.stake-address-dai-lbl') }}
+            {{
+              `${$t('farming-page.reward-address-lbl')} (${
+                rewardToken.symbol.value
+              })`
+            }}
           </span>
           <span
             class="farming-page__table-desc-address"
-            :title="address"
-            @click="copyToClipboard(address)"
+            :title="rewardToken.address.value"
+            @click="copyToClipboard(rewardToken.address.value)"
           >
-            {{ cropAddress(addressStakeDAI) }}
+            {{ cropAddress(rewardToken.address.value) }}
             <icon class="farming-page__table-icon" :name="$icons.duplicate" />
           </span>
-        </div>
-      </div>
-      <div class="farming-page__charts-history-wrp">
-        <div class="farming-page__charts">
-          <app-block>
-            <donut-chart
-              :chart-data="donutChartData"
-              class="farming-page__chart"
-            />
-          </app-block>
-          <app-block>
-            <multiple-line-chart
-              :chart-data="linesChartData"
-              class="farming-page__chart"
-            />
-          </app-block>
-        </div>
-        <div class="farming-page__history">
-          <app-block v-for="(block, ind) of historyData" :key="ind">
-            <div class="farming-page__history-item">
-              <div class="farming-page__history-title">
-                <div class="farming-page__history-heading">
-                  {{ block.title }}
-                </div>
-                <div class="farming-page__history-currency">
-                  {{ block.currency }}
-                  <icon
-                    class="farming-page__history-currency-icon"
-                    :name="block.currencyIcon"
-                  />
-                </div>
-              </div>
-              <div
-                class="farming-page__history-table"
-                v-for="(item, index) of block.data"
-                :key="index"
-              >
-                <div class="farming-page__history-time">
-                  {{ formatDMYTime(item.date) }}
-                </div>
-                <div
-                  v-for="(row, i) of item.rows"
-                  :key="i"
-                  class="farming-page__row"
-                  :class="{ 'farming-page__row--selected': row.selected }"
-                >
-                  <div class="farming-page__row-key">
-                    <icon :name="row.icon" class="farming-page__history-icon" />
-                    {{ row.label }}
-                  </div>
-                  <div class="farming-page__row-value">
-                    {{ row.value }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </app-block>
         </div>
       </div>
     </div>
@@ -476,26 +341,33 @@ const historyData = [
               {{ $t('farming-page.withdrawing-modal-raw-key') }}
             </span>
             <span class="farming-page__modal-raw-value">
-              {{ formatAmount(32310389389.1234, 3) }}
+              {{
+                formatAmount(investInfo.amount, investmentToken.decimals.value)
+              }}
               <span class="farming-page__modal-raw-currency">
-                {{ `DAPP` }}
+                {{ investmentToken.symbol.value }}
               </span>
             </span>
           </div>
           <div class="farming-page__modal-input">
             <input-field
-              v-model="withdrawing"
+              v-model="withdrawForm.amount"
               scheme="secondary"
               :label="t('farming-page.withdrawing-modal-input-label')"
+              :error-message="withdrawValidation.getFieldErrorMessage('amount')"
+              @blur="withdrawValidation.touchField('amount')"
             />
             <app-button
               :text="t('farming-page.withdrawing-modal-input-btn-lbl')"
+              @click="clickMaxWithdrawAmount"
             />
           </div>
           <app-button
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.withdrawing-page-btn-lbl')"
+            :disabled="!withdrawValidation.isFieldsValid"
+            @click="submitWithdraw"
           />
         </div>
       </template>
@@ -527,24 +399,33 @@ const historyData = [
               {{ $t('farming-page.staking-modal-raw-key') }}
             </span>
             <span class="farming-page__modal-raw-value">
-              {{ formatAmount(32310389389.1234, 3) }}
+              {{
+                formatAmount(investmentBalance, investmentToken.decimals.value)
+              }}
               <span class="farming-page__modal-raw-currency">
-                {{ `DAPP` }}
+                {{ investmentToken.symbol.value }}
               </span>
             </span>
           </div>
           <div class="farming-page__modal-input">
             <input-field
-              v-model="staking"
+              v-model="stakingForm.amount"
               scheme="secondary"
               :label="t('farming-page.staking-modal-input-label')"
+              :error-message="stakingValidation.getFieldErrorMessage('amount')"
+              @blur="stakingValidation.touchField('amount')"
             />
-            <app-button :text="t('farming-page.staking-modal-input-btn-lbl')" />
+            <app-button
+              :text="t('farming-page.staking-modal-input-btn-lbl')"
+              @click="clickMaxStakingAmount"
+            />
           </div>
           <app-button
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.staking-page-btn-lbl')"
+            :disabled="!stakingValidation.isFieldsValid"
+            @click="submitStaking"
           />
         </div>
       </template>
@@ -573,9 +454,9 @@ const historyData = [
               {{ $t('farming-page.claiming-modal-raw-key') }}
             </span>
             <span class="farming-page__modal-raw-value">
-              {{ formatAmount(32310389389.1234, 3) }}
+              {{ formatAmount(investInfo.rewards, rewardToken.decimals.value) }}
               <span class="farming-page__modal-raw-currency">
-                {{ `DAPP` }}
+                {{ rewardToken.symbol.value }}
               </span>
             </span>
           </div>
@@ -583,6 +464,7 @@ const historyData = [
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.claiming-page-btn-lbl')"
+            @click="submitClaim"
           />
         </div>
       </template>
