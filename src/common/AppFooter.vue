@@ -1,5 +1,13 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
+import { useWindowSize } from '@vueuse/core'
+
 import { AppButton, AppLogo } from '@/common'
+import { WINDOW_BREAKPOINTS } from '@/enums'
+
+const { width: windowWidth } = useWindowSize()
+
+const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
 </script>
 
 <template>
@@ -12,6 +20,7 @@ import { AppButton, AppLogo } from '@/common'
       class="app-footer__terms-link"
       :icon-left="$icons.questionMarkCircleFilled"
       :text="$t('app-footer.terms-link')"
+      :size="isXSmall ? 'small' : 'medium'"
       color="default"
       scheme="default"
     />
@@ -25,10 +34,22 @@ import { AppButton, AppLogo } from '@/common'
   justify-content: space-between;
   grid-template-columns: 1fr 1fr 1fr;
   padding: toRem(50) var(--app-padding-right) toRem(50) var(--app-padding-left);
+
+  @include respond-to(small) {
+    padding: toRem(20) var(--app-padding-right) toRem(20)
+      var(--app-padding-left);
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .app-footer__logo {
   max-width: toRem(70);
+
+  @include respond-to(small) {
+    padding: toRem(16) toRem(32);
+    max-width: toRem(134);
+  }
 }
 
 .app-footer__copyright {
@@ -37,6 +58,10 @@ import { AppButton, AppLogo } from '@/common'
   font-size: toRem(14);
   line-height: 1.2;
   font-weight: 500;
+
+  @include respond-to(small) {
+    padding: toRem(16) toRem(32);
+  }
 }
 
 .app-footer__terms-link {
@@ -45,5 +70,7 @@ import { AppButton, AppLogo } from '@/common'
   font-size: toRem(14);
   line-height: 1;
   font-weight: 700;
+  padding-left: toRem(16);
+  padding-right: toRem(16);
 }
 </style>

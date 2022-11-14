@@ -27,10 +27,10 @@
     "provider-wrapper-method-not-found": "provider not exist or hasn't this method"
   },
   "notification": {
-    "default-title-success": "Success",
+    "default-title-success": "Success!",
     "default-title-error": "Error",
     "default-title-warning": "Warning",
-    "default-title-info": "Info",
+    "default-title-info": "Information",
     "default-title-default": "Just a message",
     "default-message-success": "Action successful",
     "default-message-error": "Something went wrong",
@@ -53,6 +53,9 @@
         "mumbai": "mumbai"
       }
     }
+  },
+  "page-404": {
+    "title": "We are sorry. There was an error loading and the page is not responding. Reload the page or check back later"
   },
   "app-navbar": {
     "connect-btn": "Connect Wallet",
