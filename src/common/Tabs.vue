@@ -20,9 +20,9 @@ const emit = defineEmits<{
       <app-button
         type="button"
         size="small"
+        scheme="borderless"
         :text="tab.title"
-        :color="modelValue === tab.number ? 'secondary' : ''"
-        :scheme="modelValue === tab.number ? 'filled' : 'default'"
+        :color="modelValue === tab.number ? 'secondary' : 'tertiary'"
         modification="border-rounded"
         @click="emit('update:modelValue', tab.number)"
       />
