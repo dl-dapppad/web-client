@@ -39,7 +39,7 @@ const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
     padding: toRem(20) var(--app-padding-right) toRem(20)
       var(--app-padding-left);
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 }
 
@@ -70,7 +70,7 @@ const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
   font-size: toRem(14);
   line-height: 1;
   font-weight: 700;
-  padding-left: toRem(16);
-  padding-right: toRem(16);
+  padding-left: 0;
+  padding-right: 0;
 }
 </style>
