@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
 import { useWindowSize } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20 } from '@/composables'
 import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
 import { Chain } from '@/types'
 import { InputField } from '@/fields'
-
-import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { ErrorHandler, isChainAvailable } from '@/helpers'
 import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'

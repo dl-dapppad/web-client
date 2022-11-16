@@ -1,0 +1,153 @@
+<script lang="ts" setup>
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
+import { useWeb3ProvidersStore } from '@/store'
+import { AppBlock, AppButton, Tabs, EditOverview } from '@/common'
+import { cropAddress, copyToClipboard } from '@/helpers'
+import { OVERVIEW_ROW } from '@/enums'
+import { OverviewRow } from '@/common/EditOverview.vue'
+import {
+  BalanceForm,
+  MintForm,
+  ApproveForm,
+  ApproveAllForm,
+  SafeTransferForm,
+  OwnerForm,
+} from '../../forms'
+import { useProductErc721 } from '../composables/use-product-erc721'
+
+const { provider } = storeToRefs(useWeb3ProvidersStore())
+
+const { t } = useI18n({
+  locale: 'en',
+  messages: {
+    en: {
+      'erc721.title': 'Editing',
+      'erc721.contract-address': 'Contract {address}',
+      'erc721.subtitle':
+        'ERC721 is a standard for representing ownership of non-fungible tokens, that is, where each token is unique.',
+      'erc721.tracker': 'Token tracker',
+      'erc721.owner': 'Owner address',
+      'erc721.balance': 'Your balance',
+      'erc721.interaction': 'Interaction',
+    },
+  },
+})
+
+const FORM_TABS = [
+  {
+    title: 'Read',
+    number: 1,
+  },
+  {
+    title: 'Write',
+    number: 2,
+  },
+]
+
+const currentTabNumber = ref(FORM_TABS[0].number)
+const overviewRows = ref<Array<OverviewRow>>()
+
+const router = useRouter()
+const route = useRoute()
+const erc721 = useProductErc721(route.params.contractAddress as string)
+
+const init = async () => {
+  erc721.init(route.params.contractAddress as string)
+
+  let balance = '0'
+  if (provider.value.selectedAddress) {
+    await Promise.all([
+      erc721.loadDetails(),
+      erc721.balanceOf(provider.value.selectedAddress),
+    ]).then(res => {
+      balance = res[1]
+
+      return
+    })
+  }
+
+  overviewRows.value = [
+    {
+      name: t('erc721.tracker'),
+      value: `${erc721.name.value} (${erc721.symbol.value})`,
+      type: OVERVIEW_ROW.default,
+    },
+    {
+      name: t('erc721.owner'),
+      value: cropAddress(erc721.owner.value),
+      type: OVERVIEW_ROW.address,
+    },
+    {
+      name: t('erc721.balance'),
+      value: balance,
+      type: OVERVIEW_ROW.default,
+    },
+  ]
+}
+
+init()
+</script>
+
+<template>
+  <div class="erc20-edit-form">
+    <div class="edit-form__titles-wrp">
+      <div class="app__module-title-wrp">
+        <app-button
+          type="button"
+          class="app__module-back-btn"
+          :icon-right="$icons.arrowLeft"
+          modification="border-circle"
+          color="tertiary"
+          @click="router.go(-1)"
+        />
+        <h2 class="app__module-title">
+          {{ t('erc721.title') }}
+        </h2>
+        <app-button
+          type="button"
+          class="app__module-title-address"
+          :text="
+            t('erc721.contract-address', {
+              address: cropAddress(erc721.address.value),
+            })
+          "
+          :icon-right="$icons.duplicate"
+          scheme="default"
+          size="default"
+          @click="copyToClipboard(erc721.address.value)"
+        />
+      </div>
+      <span class="app__module-subtitle">
+        {{ t('erc721.subtitle') }}
+      </span>
+    </div>
+    <edit-overview :rows="overviewRows"></edit-overview>
+    <div>
+      <h3 class="app__module-block-title">
+        {{ t('erc721.interaction') }}
+      </h3>
+      <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
+      <app-block>
+        <div
+          v-if="currentTabNumber === FORM_TABS[0].number"
+          class="app__module-content"
+        >
+          <balance-form :token="erc721"></balance-form>
+          <owner-form :token="erc721"></owner-form>
+        </div>
+        <div
+          v-if="currentTabNumber === FORM_TABS[1].number"
+          class="app__module-content"
+        >
+          <approve-form :token="erc721"></approve-form>
+          <approve-all-form :token="erc721"></approve-all-form>
+          <mint-form :token="erc721"></mint-form>
+          <safe-transfer-form :token="erc721"></safe-transfer-form>
+        </div>
+      </app-block>
+    </div>
+  </div>
+</template>

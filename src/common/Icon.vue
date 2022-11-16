@@ -19,14 +19,12 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .icon {
   display: grid;
   place-items: center;
   pointer-events: none;
   max-width: 100%;
   max-height: 100%;
-  width: 100%;
-  height: 100%;
 }
 </style>
