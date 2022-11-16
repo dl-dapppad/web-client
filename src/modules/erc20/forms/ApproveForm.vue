@@ -3,10 +3,10 @@ import { reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
-import { Icon, AppButton } from '@/common'
+import { Icon, InfoTooltip, AppButton } from '@/common'
 import { useFormValidation } from '@/composables'
 import { required, isAddress, numeric } from '@/validators'
-import { ProductErc20Contract } from '@/modules/ERC20/composables/use-product-erc20'
+import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 import { BN } from '@/utils'
 
 const props = defineProps<{
@@ -17,13 +17,15 @@ const { t } = useI18n({
   locale: 'en',
   messages: {
     en: {
-      'approve-form.title-lbl': 'Approve tokens',
-      'approve-form.title-info': 'Approve tokens amount for address',
-      'approve-form.spender-lbl': 'Address',
+      'approve-form.title-lbl': 'Approve',
+      'approve-form.title-info':
+        // eslint-disable-next-line prettier/prettier
+        'Sets `amount` as the allowance of `spender` over the caller\'s tokens',
+      'approve-form.spender-lbl': 'Spender',
       'approve-form.spender-info': 'Enter the spender address',
       'approve-form.amount-lbl': 'Amount',
       'approve-form.amount-info': 'Enter the approved amount',
-      'approve-form.btn-lbl': 'Send',
+      'approve-form.btn-lbl': 'Write',
     },
   },
 })
@@ -66,37 +68,31 @@ const submit = async () => {
         </div>
         {{ t('approve-form.title-lbl') }}
       </span>
-      <div class="app__common-form__input-wrp">
+      <div class="app__field-row">
         <input-field
           v-model="form.spender"
           scheme="secondary"
           :label="t('approve-form.spender-lbl')"
-          class="app__common-form__input"
           :error-message="getFieldErrorMessage('spender')"
           @blur="touchField('spender')"
         />
-        <div class="app__common-form__input-icon">
-          <icon :name="$icons.informationCircleFilled" />
-          <div class="app__common-form__popup">
-            {{ t('approve-form.spender-info') }}
-          </div>
-        </div>
+        <info-tooltip
+          class="app__field-tooltip"
+          :text="t('approve-form.spender-info')"
+        />
       </div>
-      <div class="app__common-form__input-wrp">
+      <div class="app__field-row">
         <input-field
           v-model="form.amount"
           scheme="secondary"
           :label="t('approve-form.amount-lbl')"
-          class="app__common-form__input"
           :error-message="getFieldErrorMessage('amount')"
           @blur="touchField('amount')"
         />
-        <div class="app__common-form__input-icon">
-          <icon :name="$icons.informationCircleFilled" />
-          <div class="app__common-form__popup">
-            {{ t('approve-form.amount-info') }}
-          </div>
-        </div>
+        <info-tooltip
+          class="app__field-tooltip"
+          :text="t('approve-form.amount-info')"
+        />
       </div>
       <app-button
         type="button"
@@ -108,12 +104,3 @@ const submit = async () => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.app__common-form__title-icon {
-  height: toRem(28);
-  width: toRem(28);
-  padding: toRem(6);
-  position: relative;
-}
-</style>

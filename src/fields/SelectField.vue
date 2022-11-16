@@ -396,8 +396,7 @@ $z-local-index: 2;
   right: var(--field-padding-right);
   transform: translateY(-50%);
   transition: transform 0.1s ease-in-out;
-  width: toRem(18);
-  height: toRem(18);
+  width: toRem(10);
   color: var(--field-text);
 
   &--open {

@@ -1,19 +1,34 @@
 import { ref, Ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { ContractTransaction } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
 import { Farming, Farming__factory } from '@/types'
 import { CONTRACT_NAMES } from '@/enums'
 
 import { config } from '@/config'
 
+export interface InvestInfo {
+  amount: string
+  rewards: string
+}
+
 export interface FarmingContract {
   address: Ref<string>
   investmentToken: Ref<string>
   rewardToken: Ref<string>
+  totalInvestedAmount: Ref<string>
+  totalRewardAmount: Ref<string>
   init: () => void
   loadDetails: () => Promise<void>
   updateInvestmentToken: () => Promise<void>
   updateRewardToken: () => Promise<void>
+  updateTotalInvestedAmount: () => Promise<void>
+  updateTotalRewardAmount: () => Promise<void>
+  accountInvestInfo: (address: string) => Promise<InvestInfo>
+  getRewards: (address: string) => Promise<string>
+  invest: (args: Record<string, string>) => Promise<ContractTransaction>
+  claim: (args: Record<string, string>) => Promise<ContractTransaction>
+  withdraw: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
 export const useFarming = (): FarmingContract => {
@@ -25,6 +40,8 @@ export const useFarming = (): FarmingContract => {
   const address = ref('')
   const investmentToken = ref('')
   const rewardToken = ref('')
+  const totalInvestedAmount = ref('')
+  const totalRewardAmount = ref('')
 
   const init = (): void => {
     if (!provider.value.chainId) return
@@ -49,7 +66,12 @@ export const useFarming = (): FarmingContract => {
   const loadDetails = async (): Promise<void> => {
     if (!_instance.value) return
 
-    await Promise.all([updateRewardToken()])
+    await Promise.all([
+      updateRewardToken(),
+      updateInvestmentToken(),
+      updateTotalInvestedAmount(),
+      updateTotalRewardAmount(),
+    ])
   }
 
   const updateInvestmentToken = async (): Promise<void> => {
@@ -64,6 +86,62 @@ export const useFarming = (): FarmingContract => {
     rewardToken.value = await _instance.value.rewardToken()
   }
 
+  const updateTotalInvestedAmount = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    totalInvestedAmount.value = (
+      await _instance.value.getTotalInvestedAmount()
+    ).toString()
+  }
+
+  const updateTotalRewardAmount = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    totalRewardAmount.value = (
+      await _instance.value.getTotalRewardAmount()
+    ).toString()
+  }
+
+  const accountInvestInfo = async (address: string): Promise<InvestInfo> => {
+    if (!_instance.value) return { amount: '0', rewards: '0' }
+
+    const res = await _instance.value.accountInvestInfo(address)
+    return {
+      amount: res.amount.toString(),
+      rewards: res.rewards.toString(),
+    }
+  }
+
+  const getRewards = async (address: string): Promise<string> => {
+    if (!_instance.value) return '0'
+
+    return (await _instance.value.getRewards(address)).toString()
+  }
+
+  const invest = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.invest(args.amount)
+  }
+
+  const claim = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.claim(args.account)
+  }
+
+  const withdraw = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.withdraw(args.receiver)
+  }
+
   init()
 
   return {
@@ -73,8 +151,17 @@ export const useFarming = (): FarmingContract => {
     address,
     investmentToken,
     rewardToken,
+    totalInvestedAmount,
+    totalRewardAmount,
 
     updateInvestmentToken,
     updateRewardToken,
+    updateTotalInvestedAmount,
+    updateTotalRewardAmount,
+    getRewards,
+    accountInvestInfo,
+    invest,
+    claim,
+    withdraw,
   }
 }

@@ -2,7 +2,7 @@ import { ref, Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
-import { ERC20, ERC20__factory } from '@/modules/ERC20/types'
+import { ERC20, ERC20__factory } from '../types'
 
 export interface ProductErc20Contract {
   address: Ref<string>
@@ -21,6 +21,8 @@ export interface ProductErc20Contract {
   balanceOf: (address: string) => Promise<string>
   allowance: (owner: string, spender: string) => Promise<string>
   approve: (args: Record<string, string>) => Promise<ContractTransaction>
+  transfer: (args: Record<string, string>) => Promise<ContractTransaction>
+  transferFrom: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
 export const useProductErc20 = (
@@ -117,6 +119,26 @@ export const useProductErc20 = (
     return _instance_rw.value.approve(args.spender, args.amount)
   }
 
+  const transfer = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.transfer(args.recipient, args.amount)
+  }
+
+  const transferFrom = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.transferFrom(
+      args.sender,
+      args.recipient,
+      args.amount,
+    )
+  }
+
   if (contractAddress) init(contractAddress)
 
   return {
@@ -138,5 +160,7 @@ export const useProductErc20 = (
     balanceOf,
     allowance,
     approve,
+    transfer,
+    transferFrom,
   }
 }

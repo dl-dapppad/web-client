@@ -250,6 +250,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
   display: flex;
   flex-direction: column;
   position: relative;
+  flex: 1;
 }
 
 .input-field__input {

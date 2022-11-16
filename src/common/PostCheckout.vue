@@ -398,6 +398,8 @@ init()
 
 .post-checkout__buy-link {
   width: 100%;
+  padding-top: toRem(11);
+  padding-bottom: toRem(11);
 }
 
 .post-checkout__buy-description {
