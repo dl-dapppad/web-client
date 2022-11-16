@@ -2,12 +2,9 @@
 import { useRouter } from 'vue-router'
 
 import { AppBlock, AppButton } from '@/common'
+import { CATEGORIES_IDS, PRODUCT_IDS } from '@/enums'
 
 const router = useRouter()
-
-const redirect = (link: string) => {
-  window.location.href = link
-}
 </script>
 
 <template>
@@ -30,7 +27,7 @@ const redirect = (link: string) => {
                 @click="
                   router.push({
                     name: $routes.categories,
-                    params: { id: `tokens` },
+                    params: { id: CATEGORIES_IDS.tokens },
                   })
                 "
               />
@@ -53,7 +50,7 @@ const redirect = (link: string) => {
                 @click="
                   router.push({
                     name: $routes.product,
-                    params: { id: `erc20` },
+                    params: { id: PRODUCT_IDS.ERC20 },
                   })
                 "
               />
@@ -76,7 +73,7 @@ const redirect = (link: string) => {
                 @click="
                   router.push({
                     name: $routes.product,
-                    params: { id: `erc721` },
+                    params: { id: PRODUCT_IDS.ERC721 },
                   })
                 "
               />
@@ -96,7 +93,7 @@ const redirect = (link: string) => {
               <app-button
                 :text="$t('main-page.fourth-block-btn')"
                 size="small"
-                @click="redirect('https://distributedlab.com/')"
+                :href="'https://distributedlab.com/'"
               />
             </div>
           </div>
