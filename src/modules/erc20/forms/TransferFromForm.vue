@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
@@ -32,6 +32,7 @@ const { t } = useI18n({
   },
 })
 
+const txProcessing = ref(false)
 const form = reactive({
   sender: '',
   recipient: '',
@@ -48,6 +49,8 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
 )
 
 const submit = async () => {
+  txProcessing.value = true
+
   await txWrapper(props.token.transferFrom, {
     sender: form.sender,
     recipient: form.recipient,
@@ -55,6 +58,8 @@ const submit = async () => {
       .toFraction(props.token.decimals.value)
       .toString(),
   })
+
+  txProcessing.value = false
 }
 </script>
 
@@ -81,12 +86,10 @@ const submit = async () => {
           :error-message="getFieldErrorMessage('sender')"
           @blur="touchField('spender')"
         />
-        <div class="app__common-form__input-icon">
-          <icon :name="$icons.informationCircleFilled" />
-          <div class="app__common-form__popup">
-            {{ t('transfer-from-form.sender-info') }}
-          </div>
-        </div>
+        <info-tooltip
+          class="app__field-tooltip"
+          :text="t('transfer-from-form.sender-info')"
+        />
       </div>
       <div class="app__field-row">
         <input-field
@@ -100,12 +103,6 @@ const submit = async () => {
           class="app__field-tooltip"
           :text="t('transfer-from-form.recipient-info')"
         />
-        <div class="app__common-form__input-icon">
-          <icon :name="$icons.informationCircleFilled" />
-          <div class="app__common-form__popup">
-            {{ t('transfer-from-form.recipient-info') }}
-          </div>
-        </div>
       </div>
       <div class="app__field-row">
         <input-field
@@ -124,7 +121,7 @@ const submit = async () => {
         type="button"
         size="small"
         :text="t('transfer-from-form.btn-lbl')"
-        :disabled="!isFieldsValid"
+        :disabled="!isFieldsValid || txProcessing"
         @click="submit"
       />
     </div>

@@ -42,6 +42,8 @@ const init = async () => {
 const trySwitchChain = async (chainId: string | number) => {
   try {
     await provider.value.switchChain(chainId)
+    await useAccountStore().updateDappBalance()
+    await useAccountStore().updateNativeBalance()
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -121,7 +123,7 @@ init()
             class="app-navbar__chain-btn"
             :class="{ 'app-navbar__chain-btn--active': dropdown.isOpen }"
             size="small"
-            :text="localizeChain(provider.chainId)"
+            :text="localizeChain(provider.chainId as string)"
             :icon-left="$icons.circleFilled"
             :icon-right="
               dropdown.isOpen ? $icons.chevronUp : $icons.chevronDown

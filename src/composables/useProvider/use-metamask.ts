@@ -83,6 +83,7 @@ export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
   const switchChain = async (chainId: ChainId) => {
     try {
       await requestSwitchEthChain(currentProvider.value, Number(chainId))
+      await _updateProviderState()
     } catch (error) {
       handleEthError(error as EthProviderRpcError)
     }

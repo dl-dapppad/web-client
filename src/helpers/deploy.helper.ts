@@ -31,31 +31,33 @@ export const deploy = async (
   let product = factory.getEmptyProduct()
 
   let paymentContractAddress = ''
-  let potentialContractAddress = ''
-  await Promise.all([
-    factory.products(alias),
-    factory.payment(),
-    factory.getPotentialContractAddress(alias, initializeData),
-  ]).then(res => {
+  await Promise.all([factory.products(alias), factory.payment()]).then(res => {
     product = res[0]
     paymentContractAddress = res[1]
-    potentialContractAddress = res[2]
     return
   })
 
   const paymentTokenContract = useErc20(paymentTokenAddress)
-  await approve(
+  const isApproved = await approve(
     paymentTokenContract,
     provider.value.selectedAddress as string,
     paymentContractAddress,
     product.currentPrice,
   )
+  if (!isApproved) return ''
 
-  await txWrapper(factory.deploy, {
+  const potentialContractAddress = await factory.getPotentialContractAddress(
+    alias,
+    initializeData,
+  )
+
+  const txSucces = await txWrapper(factory.deploy, {
     alias,
     paymentToken: paymentTokenAddress,
     initializeData,
   })
+
+  if (!txSucces) return ''
 
   await useAccountStore().updateDappBalance()
 
@@ -67,15 +69,15 @@ const approve = async (
   address: string,
   paymentContractAddress: string,
   productPrice: string,
-) => {
+): Promise<boolean> => {
   const allowance = await paymentTokenContract.allowance(
     address,
     paymentContractAddress,
   )
 
-  if (new BN(allowance).compare(productPrice) >= 0) return
+  if (new BN(allowance).compare(productPrice) >= 0) return true
 
-  await txWrapper(paymentTokenContract.approve, {
+  return txWrapper(paymentTokenContract.approve, {
     spender: paymentContractAddress,
     amount: getMaxUint256(),
   })

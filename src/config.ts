@@ -8,13 +8,23 @@ export const config = {
   APP_NAME: import.meta.env.VITE_APP_NAME,
   LOG_LEVEL: 'trace' as LogLevelDesc,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
-  AVAILABLE_CHAINS: [ETHEREUM_CHAINS.localhost] as string[],
+  AVAILABLE_CHAINS: [
+    ETHEREUM_CHAINS.goerli,
+    ETHEREUM_CHAINS.localhost,
+  ] as string[],
   CONTRACTS: {
     [ETHEREUM_CHAINS.localhost as string]: {
       [CONTRACT_NAMES.DAPP]: import.meta.env.VITE_APP_CONTRACT_LOCAL_DAPP,
       [CONTRACT_NAMES.FARMING]: import.meta.env.VITE_APP_CONTRACT_LOCAL_FARMING,
       [CONTRACT_NAMES.PRODUCT_FACTORY]: import.meta.env
         .VITE_APP_CONTRACT_LOCAL_PRODUCT_FACTORY,
+    },
+    [ETHEREUM_CHAINS.goerli as string]: {
+      [CONTRACT_NAMES.DAPP]: import.meta.env.VITE_APP_CONTRACT_GOERLI_DAPP,
+      [CONTRACT_NAMES.FARMING]: import.meta.env
+        .VITE_APP_CONTRACT_GOERLI_FARMING,
+      [CONTRACT_NAMES.PRODUCT_FACTORY]: import.meta.env
+        .VITE_APP_CONTRACT_GOERLI_PRODUCT_FACTORY,
     },
   },
   PRODUCT_ALIASES: {

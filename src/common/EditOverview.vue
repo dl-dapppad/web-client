@@ -17,7 +17,7 @@ const props = defineProps<{
 <template>
   <div>
     <h3 class="app__module-block-title">
-      {{ $t('edit.oveview') }}
+      {{ $t('edit.overview') }}
     </h3>
     <app-block>
       <div class="app__module-content">

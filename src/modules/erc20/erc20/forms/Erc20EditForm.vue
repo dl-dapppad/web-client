@@ -26,7 +26,7 @@ const { t } = useI18n({
       'erc20.title': 'Editing',
       'erc20.contract-address': 'Contract {address}',
       'erc20.subtitle':
-        'ERC-20 is the technical standard for fungible tokens created using the EVM blockchain.',
+        'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
       'erc20.total': 'Total supply',
       'erc20.tracker': 'Token tracker',
       'erc20.owner': 'Owner address',

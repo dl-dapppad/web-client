@@ -50,7 +50,7 @@ export interface FarmingInterface extends utils.Interface {
     "transferOwnership(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
-    "withdraw(address)": FunctionFragment;
+    "withdraw(uint256,address)": FunctionFragment;
     "withdrawStuckERC20(address,address,uint256)": FunctionFragment;
   };
 
@@ -159,7 +159,7 @@ export interface FarmingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawStuckERC20",
@@ -461,6 +461,7 @@ export interface Farming extends BaseContract {
     ): Promise<ContractTransaction>;
 
     withdraw(
+      amount_: PromiseOrValue<BigNumberish>,
       receiver_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -559,6 +560,7 @@ export interface Farming extends BaseContract {
   ): Promise<ContractTransaction>;
 
   withdraw(
+    amount_: PromiseOrValue<BigNumberish>,
     receiver_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -653,6 +655,7 @@ export interface Farming extends BaseContract {
     ): Promise<void>;
 
     withdraw(
+      amount_: PromiseOrValue<BigNumberish>,
       receiver_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -823,6 +826,7 @@ export interface Farming extends BaseContract {
     ): Promise<BigNumber>;
 
     withdraw(
+      amount_: PromiseOrValue<BigNumberish>,
       receiver_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -920,6 +924,7 @@ export interface Farming extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdraw(
+      amount_: PromiseOrValue<BigNumberish>,
       receiver_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

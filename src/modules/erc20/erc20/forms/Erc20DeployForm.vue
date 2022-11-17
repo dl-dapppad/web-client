@@ -13,7 +13,7 @@ import {
 import { InputField, SelectField } from '@/fields'
 import { useFormValidation } from '@/composables'
 import { required, isAddress, numeric } from '@/validators'
-import { ErrorHandler, formatAmount } from '@/helpers'
+import { formatAmount } from '@/helpers'
 import {
   deploy,
   getAvailableTokenList,
@@ -31,7 +31,7 @@ const { t } = useI18n({
     en: {
       'erc20.title': 'Deploy',
       'erc20.subtitle':
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+        'Deploy your product on chain. You should deploy product smart contract only one time with a transaction.',
       'erc20.payment-group': 'Payment info',
       'erc20.payment-lbl': 'Payment token',
       'erc20.payment-info': 'Select the token you want to pay with',
@@ -73,6 +73,7 @@ const route = useRoute()
 
 const deployMetadata = ref<DeployERC20Metadata>()
 const potentialContractAddress = ref('')
+const txProcessing = ref(false)
 const form = reactive({
   paymentToken: '',
   name: '',
@@ -120,34 +121,32 @@ const onPaymentChange = async () => {
 }
 
 const submit = async () => {
-  try {
-    const paymentTokenAddress = getSelectedPaymentAddress()
+  const paymentTokenAddress = getSelectedPaymentAddress()
 
-    potentialContractAddress.value = await deploy(
-      route.params.id as string,
-      paymentTokenAddress,
-      [
-        form.name,
-        form.symbol,
-        new BN(form.mintAmount).toFraction(Number(form.decimals)).toString(),
-        form.mintReceiver,
-        form.decimals,
-      ],
-    )
+  txProcessing.value = true
+  potentialContractAddress.value = await deploy(
+    route.params.id as string,
+    paymentTokenAddress,
+    [
+      form.name,
+      form.symbol,
+      new BN(form.mintAmount).toFraction(Number(form.decimals)).toString(),
+      form.mintReceiver,
+      form.decimals,
+    ],
+  )
 
-    deployMetadata.value = {
-      name: form.name,
-      symbol: form.symbol,
-      decimals: form.decimals,
-      mintAmount: form.mintAmount,
-      mintReceiver: form.mintReceiver,
-      contract: potentialContractAddress.value,
-    }
-
-    isSuccessModalShown.value = true
-  } catch (error) {
-    ErrorHandler.process(error)
+  deployMetadata.value = {
+    name: form.name,
+    symbol: form.symbol,
+    decimals: form.decimals,
+    mintAmount: form.mintAmount,
+    mintReceiver: form.mintReceiver,
+    contract: potentialContractAddress.value,
   }
+
+  isSuccessModalShown.value = true
+  txProcessing.value = false
 }
 
 init()
@@ -367,7 +366,7 @@ init()
             type="submit"
             :text="t('erc20.btn-lbl')"
             size="small"
-            :disabled="!isFieldsValid"
+            :disabled="!isFieldsValid || txProcessing"
           />
         </div>
       </div>

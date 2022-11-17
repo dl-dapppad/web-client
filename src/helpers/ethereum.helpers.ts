@@ -4,7 +4,7 @@ import { errors } from '@/errors'
 import { EIP1193, EIP1474 } from '@/enums'
 import { BN } from '@/utils'
 import { Bus } from '@/helpers'
-import { useAccountStore } from '@/store'
+import { useAccountStore, useWeb3ProvidersStore } from '@/store'
 
 export const connectEthAccounts = async (
   provider: ethers.providers.Web3Provider,
@@ -93,38 +93,65 @@ export const txWrapper = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback: any,
   args?: Record<string, string>,
-) => {
+): Promise<boolean> => {
   try {
+    const providerStore = useWeb3ProvidersStore()
     const accountStore = useAccountStore()
 
     let tx
     if (args) tx = await callback(args)
     else tx = await callback()
 
+    const url = providerStore.provider.getTxUrl(tx.hash)
+    Bus.info({
+      message:
+        'The transaction has been sent to the blockchain, wait for confirmation',
+      link: {
+        href: url,
+        label: 'View transaction',
+      },
+    })
+
+    await tx.wait()
     await accountStore.updateNativeBalance()
 
-    Bus.success(`Transaction has been confirmed! ${tx.hash}`)
+    Bus.success({
+      message: 'Your transaction is confirmed!',
+      link: {
+        href: url,
+        label: 'View transaction',
+      },
+    })
+
+    return true
   } catch (e) {
-    const err = e as unknown as Error
+    handleTxError(e)
 
-    let reason = handleError(err.message)
-    const txReason = handleTxError(reason)
-    if (txReason) reason = txReason
-    if (!reason) throw new Error('Failed to complete the transaction')
-
-    throw new Error(reason)
+    return false
   }
 }
 
-export const handleError = (msg: string): string => {
-  const regex = /"message":"[a-zA-Z\r\n\d :,{}.']*"/
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handleTxError = (e: any) => {
+  const err = e as unknown as Error
+
+  let msg = handleErrorMessage(err.message)
+  const txMessage = handleTxErrorMessage(msg)
+  if (txMessage) msg = txMessage
+  if (!msg) msg = 'Failed to complete the transaction'
+
+  Bus.error(msg)
+}
+
+export const handleErrorMessage = (msg: string): string => {
+  const regex = /("message":|string )"[a-zA-Z\r\n\d :,{}.']*"/
   const arr = regex.exec(msg)
 
   if (!arr) return ''
   return arr[0].replace('"message":', '').replaceAll('"', '')
 }
 
-export const handleTxError = (msg: string): string => {
+export const handleTxErrorMessage = (msg: string): string => {
   const regex = /'[a-zA-Z\r\n\d :,{}.']*/
   const arr = regex.exec(msg)
 

@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { InputField } from '@/fields'
 import { Icon, InfoTooltip, AppButton } from '@/common'
+import { handleTxError } from '@/helpers'
 import { useFormValidation } from '@/composables'
 import { required, isAddress } from '@/validators'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
@@ -38,7 +39,11 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
 const result = ref('')
 
 const submit = async () => {
-  result.value = await props.token.balanceOf(form.account)
+  try {
+    result.value = await props.token.balanceOf(form.account)
+  } catch (e) {
+    handleTxError(e)
+  }
 }
 </script>
 

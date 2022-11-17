@@ -87,6 +87,7 @@ export const useNotifications = (): void => {
       {
         icon: false,
         type: messageType,
+        timeout: 10000,
       },
     )
   }

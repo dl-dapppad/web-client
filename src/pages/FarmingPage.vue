@@ -30,6 +30,12 @@ const isModalStakingShown = ref(false)
 const isModalWithdrawingShown = ref(false)
 const isModalClaimingShown = ref(false)
 
+const txProcessing = ref({
+  stake: false,
+  claim: false,
+  withdraw: false,
+})
+
 const investmentBalance = ref('0')
 const investInfo = ref<InvestInfo>({
   amount: '0',
@@ -56,6 +62,8 @@ const init = async () => {
 }
 
 const updateBalanceState = async () => {
+  await farming.loadDetails()
+
   if (!provider.value.selectedAddress) return
 
   await Promise.all([
@@ -86,15 +94,19 @@ const clickMaxWithdrawAmount = () => {
 const submitClaim = async () => {
   if (!provider.value.selectedAddress) return
 
+  txProcessing.value.claim = true
+
   await txWrapper(farming.claim, { account: provider.value.selectedAddress })
   await updateBalanceState()
 
   isModalClaimingShown.value = false
+  txProcessing.value.claim = false
 }
 
 const submitStaking = async () => {
   if (!provider.value.selectedAddress) return
 
+  txProcessing.value.stake = true
   const amount = new BN(stakingForm.amount)
     .toFraction(investmentToken.decimals.value)
     .toString()
@@ -115,22 +127,26 @@ const submitStaking = async () => {
   await updateBalanceState()
 
   isModalStakingShown.value = false
+  txProcessing.value.stake = false
 }
 
 const submitWithdraw = async () => {
   if (!provider.value.selectedAddress) return
 
-  // TODO: add amount to tx after adding feature to SC
-  // const amount = new BN(withdrawForm.amount)
-  //   .toFraction(investmentToken.decimals.value)
-  //   .toString()
+  const amount = new BN(withdrawForm.amount)
+    .toFraction(investmentToken.decimals.value)
+    .toString()
+
+  txProcessing.value.withdraw = true
 
   await txWrapper(farming.withdraw, {
+    amount,
     receiver: provider.value.selectedAddress,
   })
   await updateBalanceState()
 
   isModalWithdrawingShown.value = false
+  txProcessing.value.withdraw = false
 }
 
 init()
@@ -366,7 +382,9 @@ init()
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.withdrawing-page-btn-lbl')"
-            :disabled="!withdrawValidation.isFieldsValid"
+            :disabled="
+              !withdrawValidation.isFieldsValid || txProcessing.withdraw
+            "
             @click="submitWithdraw"
           />
         </div>
@@ -390,9 +408,6 @@ init()
           </div>
           <p class="farming-page__modal-paragraph">
             {{ $t('farming-page.staking-modal-text-first') }}
-          </p>
-          <p class="farming-page__modal-paragraph">
-            {{ $t('farming-page.staking-modal-text-second') }}
           </p>
           <div class="farming-page__modal-raw">
             <span class="farming-page__modal-raw-key">
@@ -424,7 +439,7 @@ init()
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.staking-page-btn-lbl')"
-            :disabled="!stakingValidation.isFieldsValid"
+            :disabled="!stakingValidation.isFieldsValid || txProcessing.stake"
             @click="submitStaking"
           />
         </div>
@@ -464,6 +479,7 @@ init()
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.claiming-page-btn-lbl')"
+            :disabled="txProcessing.claim"
             @click="submitClaim"
           />
         </div>

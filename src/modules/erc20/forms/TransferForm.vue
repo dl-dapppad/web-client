@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
@@ -30,6 +30,7 @@ const { t } = useI18n({
   },
 })
 
+const txProcessing = ref(false)
 const form = reactive({
   recipient: '',
   amount: '',
@@ -44,12 +45,16 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
 )
 
 const submit = async () => {
+  txProcessing.value = true
+
   await txWrapper(props.token.transfer, {
     recipient: form.recipient,
     amount: new BN(form.amount)
       .toFraction(props.token.decimals.value)
       .toString(),
   })
+
+  txProcessing.value = false
 }
 </script>
 
@@ -98,7 +103,7 @@ const submit = async () => {
         type="button"
         size="small"
         :text="t('transfer-form.btn-lbl')"
-        :disabled="!isFieldsValid"
+        :disabled="!isFieldsValid || txProcessing"
         @click="submit"
       />
     </div>

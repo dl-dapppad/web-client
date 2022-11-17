@@ -27,7 +27,7 @@ const { t } = useI18n({
       'erc721.title': 'Editing',
       'erc721.contract-address': 'Contract {address}',
       'erc721.subtitle':
-        'ERC721 is a standard for representing ownership of non-fungible tokens, that is, where each token is unique.',
+        'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
       'erc721.tracker': 'Token tracker',
       'erc721.owner': 'Owner address',
       'erc721.balance': 'Your balance',

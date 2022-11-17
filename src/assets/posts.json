@@ -30,7 +30,7 @@
   {
     "id": "erc20-tokens",
     "type": "category",
-    "subPosts": ["erc20", "erc20-mint", "erc20-burn", "erc20-mint-burn", "erc20-mint-capp", "erc20-mint-burn-capp"],
+    "subPosts": ["erc20"],
     "bannerUrl": "/images/erc20.png",
     "imageUrl": "/images/erc20.png",
     "title": "ERC20 Tokens",
@@ -45,7 +45,7 @@
   {
     "id": "erc721-tokens",
     "type": "category",
-    "subPosts": ["erc721", "erc721-enum", "erc721-burn", "erc721-enum-burn"],
+    "subPosts": ["erc721"],
     "bannerUrl": "/images/erc20.png",
     "imageUrl": "/images/erc20.png",
     "title": "ERC721 Tokens",
@@ -65,8 +65,8 @@
     "imageUrl": "/images/erc20.png",
     "title": "ERC20",
     "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Price change",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    "chartTitle": "Product Price Bonding Curve",
+    "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "content": [
       ["title-accent", "Title 1"],
       ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"],
@@ -86,81 +86,6 @@
     ]
   },
   {
-    "id": "erc20-mint",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
-    "title": "ERC20 Mintable",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Erc20",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
-    ]
-  },
-  {
-    "id": "erc20-burn",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
-    "title": "ERC20 Burnable",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Erc20",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
-    ]
-  },
-  {
-    "id": "erc20-mint-burn",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
-    "title": "ERC20 Mintable Burnable",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Erc20",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
-    ]
-  },
-  {
-    "id": "erc20-mint-capp",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
-    "title": "ERC20 Mintable Capped",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Erc20",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
-    ]
-  },
-  {
-    "id": "erc20-mint-burn-capp",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
-    "title": "ERC20 Mintable Burnable Capped",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Price change",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
-    ]
-  },
-  {
     "id": "erc721",
     "type": "product",
     "subPosts": [],
@@ -168,8 +93,8 @@
     "imageUrl": "/images/erc20.png",
     "title": "ERC721",
     "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Price change",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    "chartTitle": "Product Price Bonding Curve",
+    "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
       ["paragraph", "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!"],
@@ -229,51 +154,6 @@
       ["paragraph", "The transfer and accept functions’ documentation only specify conditions when the transaction MUST throw. Your implementation MAY also throw in other situations. This allows implementations to achieve interesting results:"],
       ["unordered-list", ["Disallow transfers if the contract is paused — prior art, CryptoKitties deployed contract, line 611", "Blocklist certain address from receiving NFTs — prior art, CryptoKitties deployed contract, lines 565, 566", "Disallow unsafe transfers — transferFrom throws unless _to equals msg.sender or countOf(_to) is non-zero or was non-zero previously (because such cases are safe)", "Charge a fee to both parties of a transaction — require payment when calling approve with a non-zero _approved if it was previously the zero address, refund payment if calling approve with the zero address if it was previously a non-zero address, require payment when calling any transfer function, require transfer parameter _to to equal msg.sender, require transfer parameter _to to be the approved address for the NFT", "Read only NFT registry — always throw from safeTransferFrom, transferFrom, approve and setApprovalForAll"]],
       ["image", "../static/images/ERC721_16.png"]
-    ]
-  },
-  {
-    "id": "erc721-burn",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
-    "title": "ERC721 Burnable",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Erc721",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
-    ]
-  },
-  {
-    "id": "erc721-enum",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
-    "title": "ERC721 Enumerable",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Erc721",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
-    ]
-  },
-  {
-    "id": "erc721-enum-burn",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
-    "title": "ERC721 Enumerable Burnable",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    "chartTitle": "Erc721",
-    "chartDescription": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
     ]
   }
 ]
