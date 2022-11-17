@@ -88,7 +88,7 @@ export const useErc20 = (contractAddress?: string): Erc20Contract => {
   ): Promise<ContractTransaction> => {
     if (!_instance_rw.value) throw new Error('Undefined instance')
 
-    return await _instance_rw.value.approve(args.spender, args.amount)
+    return _instance_rw.value.approve(args.spender, args.amount)
   }
 
   if (contractAddress) init(contractAddress)

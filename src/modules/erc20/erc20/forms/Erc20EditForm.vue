@@ -24,7 +24,6 @@ const { t } = useI18n({
   messages: {
     en: {
       'erc20.title': 'Editing',
-      'erc20.contract-address': 'Contract {address}',
       'erc20.subtitle':
         'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
       'erc20.total': 'Total supply',
@@ -126,11 +125,7 @@ init()
         <app-button
           type="button"
           class="app__module-title-address"
-          :text="
-            t('erc20.contract-address', {
-              address: cropAddress(erc20.address.value),
-            })
-          "
+          :text="cropAddress(erc20.address.value)"
           :icon-right="$icons.duplicate"
           scheme="default"
           size="default"

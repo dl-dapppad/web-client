@@ -21,7 +21,11 @@ export const existGuard = (
     !['categories', 'category'].includes(to.name as string)
   )
     next(ROUTE_NAMES.notFound)
-  if (post?.type === 'product' && !['product'].includes(to.name as string))
+
+  if (
+    post?.type === 'product' &&
+    !['product', 'product-deploy', 'product-edit'].includes(to.name as string)
+  )
     next(ROUTE_NAMES.notFound)
 
   next()
