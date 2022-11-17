@@ -4,7 +4,7 @@ import { Post } from '@/types'
 import postsData from '@/assets/posts.json'
 import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 
-export const categoryExistGuard = (
+export const existGuard = (
   to: RouteLocationNormalized,
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
@@ -15,6 +15,14 @@ export const categoryExistGuard = (
 
   const post = posts.find(post => to.params?.id === post.id)
   if (!post) next(ROUTE_NAMES.notFound)
+
+  if (
+    post?.type === 'category' &&
+    !['categories', 'category'].includes(to.name as string)
+  )
+    next(ROUTE_NAMES.notFound)
+  if (post?.type === 'product' && !['product'].includes(to.name as string))
+    next(ROUTE_NAMES.notFound)
 
   next()
 }
