@@ -23,7 +23,8 @@ export const deploy = async (
   initializeDataValues: any[],
 ): Promise<string> => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
-  if (!provider.value.chainId) throw new Error('Provider is not set')
+  if (!provider.value.chainId || !provider.value.selectedAddress)
+    throw new Error('Provider is not set')
 
   const alias = config.PRODUCT_ALIASES[productId as string]
   const initializeData = getInitializeData(productId, initializeDataValues)
@@ -49,6 +50,7 @@ export const deploy = async (
   const potentialContractAddress = await factory.getPotentialContractAddress(
     alias,
     initializeData,
+    provider.value.selectedAddress,
   )
 
   const txSucces = await txWrapper(factory.deploy, {
