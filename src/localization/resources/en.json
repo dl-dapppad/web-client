@@ -54,6 +54,30 @@
       }
     }
   },
+  "main-page": {
+    "first-block-title": "Tokens",
+    "first-block-description": "Tokens, generally speaking, are non-mineable digital units of value that exist as registry entries in blockchains. Tokens come in many different forms – they can be used as currencies for specific ecosystems or encode unique data. Additionally, some tokens might be redeemable for off-chain assets (i.e., gold, property, stocks).",
+    "first-block-btn": "Show more",
+    "second-block-title": "ERC-20",
+    "second-block-description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
+    "second-block-btn": "Show more",
+    "third-block-title": "ERC-721",
+    "third-block-description": "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!",
+    "third-block-btn": "Show more",
+    "fourth-block-title": "Who We Are",
+    "fourth-block-description": "Ukrainian R&D blockchain center consisting of developers, cryptographers, business analysts and architects specialized on launching custom blockchain platforms turn-key, in sum around 100 people in-house. On market since 2014.",
+    "fourth-block-btn": "Show more",
+    "first-people-name": "Pavel",
+    "first-people-surname": "Kravchenko",
+    "first-people-subtitle": "Co‐Founder, CEO",
+    "second-people-name": "Vadimir",
+    "second-people-surname": "Dubinin",
+    "second-people-subtitle": "Co‐Founder, COO",
+    "third-people-name": "Yaroslav",
+    "third-people-surname": "Panasenko",
+    "third-people-subtitle": "CTO",
+    "people-description": "The team consists of researchers, developers, analysts. Main activities are creation of innovative products and architectures, education events and conferences. The goal of Distributed Lab is to create financial internet that uses open, uniform protocol that facilitates trade and value transfer."
+  },
   "page-404": {
     "title": "We are sorry. There was an error loading and the page is not responding. Reload the page or check back later"
   },

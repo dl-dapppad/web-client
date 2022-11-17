@@ -11,6 +11,11 @@ import { existGuard } from '@/router/guards'
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/',
+    name: ROUTE_NAMES.main,
+    component: () => import('@/pages/MainPage.vue'),
+  },
+  {
     path: '/categories/:id',
     name: ROUTE_NAMES.categories,
     beforeEnter: existGuard,
