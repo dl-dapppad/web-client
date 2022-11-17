@@ -1,15 +1,28 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 
 import { AppBlock, AppButton } from '@/common'
-import { CATEGORIES_IDS, PRODUCT_IDS } from '@/enums'
+import { CATEGORIES_IDS, PRODUCT_IDS, WINDOW_BREAKPOINTS } from '@/enums'
 
 const router = useRouter()
+const { width: windowWidth } = useWindowSize()
+
+const isTablet = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
+const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
 </script>
 
 <template>
   <div class="main-page">
-    <img class="main-page__title-img" src="static/images/MainTitle.svg" />
+    <img
+      class="main-page__title-img"
+      :src="
+        isMobile
+          ? 'static/images/MainTitleMobile.png'
+          : 'static/images/MainTitle.png'
+      "
+    />
     <div class="main-page__content">
       <div class="main-page__rows">
         <div class="main-page__row">
@@ -33,7 +46,14 @@ const router = useRouter()
               />
             </div>
           </app-block>
-          <img class="main-page__row-img" src="static/images/MainPage_1.png" />
+          <img
+            class="main-page__row-img"
+            :src="
+              isTablet
+                ? 'static/images/MainPage_1Mobile.png'
+                : 'static/images/MainPage_1.png'
+            "
+          />
         </div>
         <div class="main-page__row main-page__row--inverted">
           <app-block class="main-page__row-block">
@@ -171,7 +191,7 @@ const router = useRouter()
       <span class="main-page__under-people-description">
         {{ $t('main-page.people-description') }}
       </span>
-      <img src="static/images/MainPage_5.svg" />
+      <img class="main-page__sphere-logo" src="static/images/MainPage_5.svg" />
     </div>
   </div>
 </template>
@@ -193,10 +213,27 @@ const router = useRouter()
   flex-direction: column;
   gap: toRem(30);
   padding: toRem(40) toRem(70);
+
+  @include respond-to(xmedium) {
+    padding: toRem(40) toRem(60);
+  }
+
+  @include respond-to(small) {
+    padding: toRem(40) toRem(30);
+  }
 }
 
 .main-page__row-img {
   transform: translateX(-#{toRem(125)});
+
+  @include respond-to(medium) {
+    width: 100%;
+    transform: translate(0, 25%);
+
+    &--mobile-up {
+      transform: translateY(15%);
+    }
+  }
 }
 
 .main-page__row {
@@ -211,15 +248,32 @@ const router = useRouter()
     .main-page__row-block-inner {
       align-items: end;
       text-align: end;
+
+      @include respond-to(medium) {
+        align-items: start;
+        text-align: start;
+      }
     }
 
     .main-page__row-img {
       transform: translateX(25%);
 
+      @include respond-to(medium) {
+        transform: translate(0, 17.5%);
+      }
+
       &--low-translate {
         transform: translateX(10%);
+
+        @include respond-to(medium) {
+          padding-top: toRem(70);
+        }
       }
     }
+  }
+
+  @include respond-to(medium) {
+    flex-direction: column-reverse;
   }
 }
 
@@ -232,6 +286,14 @@ const router = useRouter()
   font-family: var(--app-font-family-secondary);
   font-weight: 900;
   font-size: toRem(70);
+
+  @include respond-to(xmedium) {
+    font-size: toRem(56);
+  }
+
+  @include respond-to(xsmall) {
+    font-size: toRem(54);
+  }
 }
 
 .main-page__row-description {
@@ -239,9 +301,20 @@ const router = useRouter()
   line-height: toRem(26);
 }
 
+.app-main__row-btn {
+  @include respond-to(medium) {
+    width: 100%;
+  }
+}
+
 .main-page__people {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+
+  @include respond-to(xmedium) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+  }
 }
 
 .main-page__people-item {
@@ -249,6 +322,16 @@ const router = useRouter()
   flex-direction: column;
   gap: toRem(40);
   padding: toRem(40) toRem(46);
+
+  @include respond-to(small) {
+    padding: toRem(40) toRem(20);
+  }
+}
+
+.main-page__people-img {
+  @include respond-to(large) {
+    width: 100%;
+  }
 }
 
 .main-page__people-description {
@@ -264,6 +347,13 @@ const router = useRouter()
   font-weight: 900;
   letter-spacing: 0.1em;
   text-align: center;
+  word-spacing: toRem(99999);
+
+  @include respond-to(xmedium) {
+    font-size: toRem(30);
+    font-weight: 700;
+    word-spacing: normal;
+  }
 }
 
 .main-page__under-people-description {
@@ -271,5 +361,10 @@ const router = useRouter()
   text-align: center;
   font-size: toRem(20);
   line-height: toRem(26);
+}
+
+.main-page__sphere-logo {
+  max-width: toRem(295);
+  width: 100%;
 }
 </style>
