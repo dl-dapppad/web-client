@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { InputField } from '@/fields'
-import { Icon, InfoTooltip, AppButton } from '@/common'
+import { InfoTooltip, AppButton } from '@/common'
 import { handleTxError } from '@/helpers'
 import { useFormValidation } from '@/composables'
 import { required, isAddress } from '@/validators'
@@ -51,15 +51,7 @@ const submit = async () => {
   <div class="app__common-form">
     <div class="app__form-control">
       <span class="app__form-control-title app__common-form__title">
-        <div class="app__common-form__icon">
-          <icon
-            :name="$icons.informationCircleFilled"
-            class="app__common-form__title-icon"
-          />
-          <div class="app__common-form__popup">
-            {{ t('balance-form.title-info') }}
-          </div>
-        </div>
+        <info-tooltip :text="t('balance-form.title-info')" />
         {{ t('balance-form.title-lbl') }}
       </span>
       <div class="app__field-row">
@@ -70,10 +62,9 @@ const submit = async () => {
           :error-message="getFieldErrorMessage('account')"
           @blur="touchField('account')"
         />
-        <info-tooltip
-          class="app__field-tooltip"
-          :text="t('balance-form.account-info')"
-        />
+        <div class="app__field-tooltip">
+          <info-tooltip :text="t('balance-form.account-info')" />
+        </div>
       </div>
       <div class="app__common-form__button-wrp">
         <app-button

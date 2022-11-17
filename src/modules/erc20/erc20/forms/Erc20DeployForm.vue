@@ -211,10 +211,9 @@ init()
                       :value-options="paymentTokens.symbols"
                       @update:model-value="onPaymentChange"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.payment-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.payment-info')" />
+                    </div>
                   </div>
                   <div v-if="selectedPaymentToken.balance" class="app__row">
                     <span class="app__row-title">
@@ -269,10 +268,9 @@ init()
                       :error-message="getFieldErrorMessage('name')"
                       @blur="touchField('name')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.name-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.name-info')" />
+                    </div>
                   </div>
                   <div class="app__field-row">
                     <input-field
@@ -282,10 +280,9 @@ init()
                       :error-message="getFieldErrorMessage('symbol')"
                       @blur="touchField('symbol')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.symbol-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.symbol-info')" />
+                    </div>
                   </div>
                   <div class="app__field-row">
                     <input-field
@@ -295,10 +292,9 @@ init()
                       :error-message="getFieldErrorMessage('decimals')"
                       @blur="touchField('decimals')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.decimals-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.decimals-info')" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -339,10 +335,9 @@ init()
                       :error-message="getFieldErrorMessage('mintReceiver')"
                       @blur="touchField('mintReceiver')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.mint-receiver-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.mint-receiver-info')" />
+                    </div>
                   </div>
                   <div class="app__field-row">
                     <input-field
@@ -352,10 +347,9 @@ init()
                       :error-message="getFieldErrorMessage('mintAmount')"
                       @blur="touchField('mintAmount')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.mint-amount-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.mint-amount-info')" />
+                    </div>
                   </div>
                 </div>
               </div>

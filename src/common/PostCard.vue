@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+
+import { Icon } from '@/common'
 import { Post } from '@/types'
 import { ROUTE_NAMES } from '@/enums'
 
@@ -27,8 +29,19 @@ const nextRouteName =
       {{ post.description }}
     </p>
     <p v-if="subPostsCount" class="post-card__subcategories">
+      <icon class="post-card__subcategories-icon" :name="$icons.folder" />
       {{ `${subPostsCount} SubCategories` }}
     </p>
+    <div v-else class="post-card__price">
+      <div class="post-card__price-icon-wrp">
+        <icon class="post-card__price-icon" :name="$icons.tag" />
+        {{ `Price` }}
+      </div>
+      <div class="post-card__price-lbl-wrp">
+        <span class="post-card__price-lbl">{{ `1000.12` }}</span>
+        <span class="post-card__price-lbl--small">{{ `USDT` }}</span>
+      </div>
+    </div>
     <router-link
       class="post-card__link"
       :to="{
@@ -44,7 +57,9 @@ const nextRouteName =
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   padding: toRem(20);
+  height: 100%;
 }
 
 .post-card__img {
@@ -52,6 +67,7 @@ const nextRouteName =
   object-position: center;
   width: 100%;
   max-height: clamp(#{toRem(200)}, 25vw, #{toRem(350)});
+  min-height: clamp(#{toRem(200)}, 25vw, #{toRem(350)});
 }
 
 .post-card__title {
@@ -69,7 +85,43 @@ const nextRouteName =
 }
 
 .post-card__subcategories {
+  display: flex;
+  align-items: center;
+  gap: toRem(14);
+  padding-top: toRem(25);
   font-weight: 700;
+}
+
+.post-card__price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: toRem(25);
+  font-weight: 700;
+}
+
+.post-card__price-icon-wrp {
+  display: flex;
+  align-items: center;
+  gap: toRem(14);
+}
+
+.post-card__subcategories-icon,
+.post-card__price-icon {
+  max-width: toRem(14);
+  max-height: toRem(14);
+}
+
+.post-card__price-lbl-wrp {
+  display: flex;
+  align-items: end;
+  gap: toRem(6);
+}
+
+.post-card__price-lbl {
+  &--small {
+    font-size: toRem(12);
+  }
 }
 
 .post-card__link {

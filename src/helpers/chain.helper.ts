@@ -17,15 +17,6 @@ export const getChain = (id?: ChainId): Chain => {
   id = String(id)
 
   switch (id) {
-    case ETHEREUM_CHAINS.mainnet:
-      return {
-        id,
-        name: 'Ethereum',
-        explorerUrl: 'https://etherscan.io',
-        rpcUrl: '',
-        symbol: 'ETH',
-        decimals: 18,
-      }
     case ETHEREUM_CHAINS.goerli:
       return {
         id,

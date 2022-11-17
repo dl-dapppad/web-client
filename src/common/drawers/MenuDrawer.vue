@@ -48,13 +48,12 @@ const handleProviderBtnClick = () => {
 
 <template>
   <div class="menu-drawer">
-    <app-button
-      class="menu-drawer__trigger"
-      scheme="default"
-      size="x-small"
-      :icon-right="isDropdownOpen ? $icons.x : $icons.menu"
-      @click="isDropdownOpen = !isDropdownOpen"
-    />
+    <div class="menu-drawer__trigger" @click="isDropdownOpen = !isDropdownOpen">
+      <icon
+        class="menu-drawer__trigger-icon"
+        :name="isDropdownOpen ? $icons.x : $icons.menu"
+      />
+    </div>
     <drawer class="menu-drawer__drawer" v-model:is-shown="isDropdownOpen">
       <div class="menu-drawer__content">
         <div class="menu-drawer__section">
@@ -126,6 +125,15 @@ const handleProviderBtnClick = () => {
 </template>
 
 <style lang="scss" scoped>
+.menu-drawer__trigger {
+  cursor: pointer;
+}
+
+.menu-drawer__trigger-icon {
+  max-width: toRem(22);
+  max-height: toRem(22);
+}
+
 .menu-drawer__content {
   display: flex;
   flex-direction: column;

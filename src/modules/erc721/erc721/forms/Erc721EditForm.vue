@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppBlock, AppButton, Tabs, EditOverview } from '@/common'
+import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
 import { cropAddress, copyToClipboard } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
 import { OverviewRow } from '@/common/EditOverview.vue'
@@ -105,21 +105,27 @@ init()
         <h2 class="app__module-title">
           {{ t('erc721.title') }}
         </h2>
-        <app-button
-          type="button"
-          class="app__module-title-address"
-          :text="cropAddress(erc721.address.value)"
-          :icon-right="$icons.duplicate"
-          scheme="default"
-          size="default"
-          @click="copyToClipboard(erc721.address.value)"
-        />
+        <div
+          class="app__link-wrp app__link-wrp--big"
+          :title="erc721.address.value"
+        >
+          <a
+            class="app__link app__link--big"
+            :href="provider.getAddressUrl(erc721.address.value)"
+            target="_blank"
+          >
+            {{ cropAddress(erc721.address.value) }}
+          </a>
+          <div @click="copyToClipboard(erc721.address.value)">
+            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
+          </div>
+        </div>
       </div>
       <span class="app__module-subtitle">
         {{ t('erc721.subtitle') }}
       </span>
     </div>
-    <edit-overview :rows="overviewRows"></edit-overview>
+    <edit-overview :rows="overviewRows" />
     <div>
       <h3 class="app__module-block-title">
         {{ t('erc721.interaction') }}

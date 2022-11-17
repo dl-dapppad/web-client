@@ -123,6 +123,7 @@ init()
             class="app-navbar__chain-btn"
             :class="{ 'app-navbar__chain-btn--active': dropdown.isOpen }"
             size="small"
+            scheme="borderless"
             :text="localizeChain(provider.chainId as string)"
             :icon-left="$icons.circleFilled"
             :icon-right="
@@ -138,6 +139,7 @@ init()
               :key="chainName"
               class="app-navbar__chain-item"
               color="tertiary"
+              scheme="borderless"
               :text="localizeChain(chainName)"
               :icon-left="$icons.circleFilled"
               @click="trySwitchChain(chainName)"
@@ -211,10 +213,15 @@ init()
 }
 
 .app-navbar__search-icon-mobile {
+  display: none;
   max-width: toRem(14);
   max-height: toRem(14);
   min-width: toRem(14);
   min-height: toRem(14);
+
+  @include respond-to(xmedium) {
+    display: block;
+  }
 }
 
 .app-navbar__farm-farm-balance {
@@ -272,7 +279,9 @@ init()
 }
 
 .app-navbar__chain {
+  display: grid;
   min-width: toRem(200);
+  height: 100%;
 
   @include respond-to(medium) {
     display: none;
@@ -296,17 +305,29 @@ init()
 .app-navbar__dropdown-body {
   top: 0;
   left: 0;
-
-  &--search {
-    background-color: var(--secondary-main);
-    width: 100vw;
-  }
 }
 
 .app-navbar__chain-item {
   justify-content: start;
   width: 100%;
-  padding: toRem(16) toRem(24);
+  padding: toRem(20) toRem(16);
+  border: toRem(1) solid var(--primary-main);
+  border-bottom: 0;
+
+  &:last-child {
+    border-bottom: toRem(1) solid var(--primary-main);
+  }
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus,
+  &:not([disabled]):active {
+    border: toRem(1) solid var(--primary-main);
+    border-bottom: 0;
+
+    &:last-child {
+      border-bottom: toRem(1) solid var(--primary-main);
+    }
+  }
 }
 
 .app-navbar__wallet {
@@ -359,6 +380,7 @@ init()
 
 .app-navbar__menu-farming-wrp {
   display: none;
+  align-items: center;
   gap: toRem(35);
 
   @include respond-to(medium) {
