@@ -99,7 +99,10 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
               />
             </div>
           </app-block>
-          <img class="main-page__row-img" src="static/images/MainPage_3.png" />
+          <img
+            class="main-page__row-img main-page__row-img--mobile-up"
+            src="static/images/MainPage_3.png"
+          />
         </div>
         <div class="main-page__row main-page__row--inverted">
           <div class="main-page__row-block">
