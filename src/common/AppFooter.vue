@@ -72,5 +72,9 @@ const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
   font-weight: 700;
   padding-left: 0;
   padding-right: 0;
+
+  @include respond-to(small) {
+    font-size: toRem(12);
+  }
 }
 </style>

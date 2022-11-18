@@ -295,7 +295,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
   }
 
   @include respond-to(xsmall) {
-    font-size: toRem(54);
+    font-size: toRem(52);
   }
 }
 
@@ -367,7 +367,8 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
 }
 
 .main-page__sphere-logo {
-  max-width: toRem(295);
+  max-width: toRem(375);
   width: 100%;
+  padding: 0 toRem(40);
 }
 </style>
