@@ -242,14 +242,16 @@ init()
                 {{ $t('post-checkout.minimal-price-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{
-                  formatAmount(
-                    product.minPrice,
-                    paymentToken?.decimals.value ?? '0',
-                  )
-                }}
-                <span class="app__metadata-value--small">
-                  {{ paymentToken?.symbol.value }}
+                <span class="app__price">
+                  {{
+                    formatAmount(
+                      product.minPrice,
+                      paymentToken?.decimals.value ?? '0',
+                    )
+                  }}
+                  <span class="app__price-asset">
+                    {{ paymentToken?.symbol.value }}
+                  </span>
                 </span>
               </span>
             </div>
@@ -262,9 +264,11 @@ init()
                 {{ $t('post-checkout.reward-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{ formatAmount(cashback, dapp?.decimals.value ?? '0') }}
-                <span class="app__metadata-value--small">
-                  {{ dapp?.symbol.value }}
+                <span class="app__price">
+                  {{ formatAmount(cashback, dapp?.decimals.value ?? '0') }}
+                  <span class="app__price-asset">
+                    {{ dapp?.symbol.value }}
+                  </span>
                 </span>
               </span>
             </div>
@@ -277,9 +281,11 @@ init()
                 {{ $t('post-checkout.distribution-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{ formatAmount(cashback, paymentToken?.decimals.value) }}
-                <span class="app__metadata-value--small">
-                  {{ paymentToken?.symbol.value }}
+                <span class="app__price">
+                  {{ formatAmount(cashback, paymentToken?.decimals.value) }}
+                  <span class="app__price-asset">
+                    {{ paymentToken?.symbol.value }}
+                  </span>
                 </span>
               </span>
             </div>
@@ -290,14 +296,16 @@ init()
                 {{ $t('post-checkout.current-price-lbl') }}
               </span>
               <span class="app__metadata-value app__metadata-value--big">
-                {{
-                  formatAmount(
-                    product.currentPrice,
-                    paymentToken?.decimals.value ?? '0',
-                  )
-                }}
-                <span class="app__metadata-value--small">
-                  {{ paymentToken?.symbol.value }}
+                <span class="app__price app__price--big">
+                  {{
+                    formatAmount(
+                      product.currentPrice,
+                      paymentToken?.decimals.value ?? '0',
+                    )
+                  }}
+                  <span class="app__price-asset">
+                    {{ paymentToken?.symbol.value }}
+                  </span>
                 </span>
               </span>
             </div>

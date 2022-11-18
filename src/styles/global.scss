@@ -167,14 +167,6 @@ a {
   &--accent {
     color: var(--secondary-main);
   }
-
-  &--small {
-    font-size: toRem(12);
-  }
-
-  &--big {
-    font-size: toRem(20);
-  }
 }
 
 .app__price {
@@ -186,10 +178,13 @@ a {
   line-height: 130%;
   color: var(--text-primary-main);
 
-  &-asset {
-    text-transform: uppercase;
-    font-size: 0.7em;
+  &--big {
+    font-size: toRem(20);
   }
+}
+
+.app__price-asset {
+  font-size: 0.7em;
 }
 
 .app__link-wrp {
