@@ -111,6 +111,7 @@ init()
         class="app-navbar__search"
         v-model="searchInput"
         :placeholder="$t('app-navbar.search-placeholder')"
+        :is-search-input="true"
         scheme="secondary"
       >
         <template #nodeRight>
