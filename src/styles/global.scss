@@ -181,11 +181,10 @@ a {
   font-size: toRem(16);
   line-height: 130%;
   color: var(--text-primary-main);
+}
 
-  &-asset {
-    text-transform: uppercase;
-    font-size: 0.7em;
-  }
+.app__price-asset {
+  font-size: 0.75em;
 }
 
 .app__form-control {
