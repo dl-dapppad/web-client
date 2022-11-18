@@ -155,8 +155,8 @@ init()
           class="app__module-content"
         >
           <approve-form :token="erc20"></approve-form>
-          <transfer-form :token="erc20"></transfer-form>
-          <transfer-from-form :token="erc20"></transfer-from-form>
+          <transfer-form :token="erc20" @change-balance="init" />
+          <transfer-from-form :token="erc20" @change-balance="init" />
         </div>
       </app-block>
     </div>

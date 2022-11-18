@@ -8,6 +8,14 @@ import { useFormValidation } from '@/composables'
 import { required, isAddress, numeric } from '@/validators'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
+enum EMITS {
+  changeBalance = 'change-balance',
+}
+
+const emit = defineEmits<{
+  (e: EMITS.changeBalance): void
+}>()
+
 const props = defineProps<{
   token: ProductErc721Contract
 }>()
@@ -49,6 +57,8 @@ const submit = async () => {
     to: form.to,
     tokenId: form.tokenId,
   })
+
+  emit(EMITS.changeBalance)
 
   txProcessing.value = false
 }

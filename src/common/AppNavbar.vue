@@ -133,15 +133,16 @@ init()
         </template>
         <template #default>
           <div class="app-navbar__dropdown-body">
-            <app-button
-              v-for="chainName in ETHEREUM_CHAINS"
-              :key="chainName"
-              class="app-navbar__chain-item"
-              color="tertiary"
-              :text="localizeChain(chainName)"
-              :icon-left="$icons.circleFilled"
-              @click="trySwitchChain(chainName)"
-            />
+            <div v-for="chainName in ETHEREUM_CHAINS" :key="chainName">
+              <app-button
+                v-if="config.AVAILABLE_CHAINS.includes(chainName)"
+                class="app-navbar__chain-item"
+                color="tertiary"
+                :text="localizeChain(chainName)"
+                :icon-left="$icons.circleFilled"
+                @click="trySwitchChain(chainName)"
+              />
+            </div>
           </div>
         </template>
       </dropdown>

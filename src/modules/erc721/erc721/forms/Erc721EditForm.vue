@@ -139,8 +139,8 @@ init()
         >
           <approve-form :token="erc721"></approve-form>
           <approve-all-form :token="erc721"></approve-all-form>
-          <mint-form :token="erc721"></mint-form>
-          <safe-transfer-form :token="erc721"></safe-transfer-form>
+          <mint-form :token="erc721" @change-balance="init" />
+          <safe-transfer-form :token="erc721" @change-balance="init" />
         </div>
       </app-block>
     </div>
