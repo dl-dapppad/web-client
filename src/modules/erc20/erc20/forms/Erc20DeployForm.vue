@@ -211,7 +211,7 @@ init()
                       :value-options="paymentTokens.symbols"
                       @update:model-value="onPaymentChange"
                     />
-                    <div class="app__field-tooltip">
+                    <div class="app__field-tooltip app__field-tooltip--select">
                       <info-tooltip :text="t('erc20.payment-info')" />
                     </div>
                   </div>
