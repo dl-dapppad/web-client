@@ -496,11 +496,14 @@ const buttonClasses = computed(() =>
 }
 
 .app-button__text {
+  display: flex;
+  align-items: center;
   color: inherit;
   font: inherit;
   pointer-events: none;
   word-break: break-all;
   min-width: 0;
+  height: 100%;
 
   @include text-ellipsis;
 }
