@@ -310,7 +310,7 @@ init()
 .app-navbar__chain-item {
   justify-content: start;
   width: 100%;
-  padding: toRem(20) toRem(16);
+  padding: toRem(12) toRem(24);
   border: toRem(1) solid var(--primary-main);
   border-bottom: 0;
 
