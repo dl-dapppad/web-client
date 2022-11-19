@@ -18,17 +18,19 @@ const post = posts.find(el => el.id === route.params.id)
         class="post-item-page__banner"
         :style="{ backgroundImage: `url(${post?.bannerUrl})` }"
       >
-        <div class="post-item-page__banner-title-wrp">
-          <h1 class="post-item-page__banner-title">
-            {{ post?.title }}
-          </h1>
-          <app-button
-            class="post-item-page__back-btn"
-            :icon-left="$icons.arrowLeft"
-            modification="border-circle"
-            color="tertiary"
-            @click="router.go(-1)"
-          />
+        <div class="post-item-page__banner-darker">
+          <div class="post-item-page__banner-title-wrp">
+            <h1 class="post-item-page__banner-title">
+              {{ post?.title }}
+            </h1>
+            <app-button
+              class="post-item-page__back-btn"
+              :icon-left="$icons.arrowLeft"
+              modification="border-circle"
+              color="tertiary"
+              @click="router.go(-1)"
+            />
+          </div>
         </div>
       </div>
     </app-block>
@@ -126,9 +128,21 @@ $page-padding-right: toRem(165);
 .post-item-page__banner {
   background-size: cover;
   background-position: center;
+  border-radius: toRem(12);
+}
+
+.post-item-page__banner-darker {
   min-height: toRem(200);
   padding: toRem(50) $page-padding-right toRem(60) $page-padding-left;
+  background: linear-gradient(
+    90deg,
+    rgba(236, 234, 245, 0.5) 0%,
+    rgba(50, 49, 52, 0.5) 10.42%,
+    rgba(0, 0, 0, 0.5) 88.02%,
+    rgba(236, 234, 245, 0.5) 100%
+  );
   border-radius: toRem(12);
+  overflow: hidden;
 }
 
 .post-item-page__banner-title-wrp {

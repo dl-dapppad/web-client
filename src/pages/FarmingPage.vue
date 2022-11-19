@@ -217,15 +217,16 @@ init()
               size="large"
               color="tertiary"
               scheme="borderless"
+              modification="border-rounded"
               @click="isModalWithdrawingShown = true"
             >
               {{ $t('farming-page.withdraw-btn') }}
             </app-button>
-            <div class="farming-page__table-buttons-separator" />
             <app-button
               class="farming-page__table-btn"
               size="large"
               scheme="borderless"
+              modification="border-rounded"
               @click="isModalStakingShown = true"
             >
               {{ $t('farming-page.stake-btn') }}
@@ -303,6 +304,7 @@ init()
             class="farming-page__table-btn"
             size="large"
             scheme="borderless"
+            modification="border-rounded"
             @click="isModalClaimingShown = true"
           >
             {{ $t('farming-page.claim-btn') }}
@@ -621,11 +623,8 @@ init()
 
 .farming-page__table-buttons {
   display: grid;
-  grid-template-columns: 1fr toRem(2) 1fr;
+  grid-template-columns: 1fr 1fr;
   height: 100%;
-}
-
-.farming-page__table-buttons-separator {
   background-color: var(--primary-main);
 }
 
