@@ -133,11 +133,16 @@ init()
         </template>
         <template #default>
           <div class="app-navbar__dropdown-body">
-            <div v-for="chainName in ETHEREUM_CHAINS" :key="chainName">
+            <div
+              class="app-navbar__chain-item-wrp"
+              v-for="chainName in ETHEREUM_CHAINS"
+              :key="chainName"
+            >
               <app-button
                 v-if="config.AVAILABLE_CHAINS.includes(chainName)"
                 class="app-navbar__chain-item"
                 color="tertiary"
+                scheme="borderless"
                 :text="localizeChain(chainName)"
                 :icon-left="$icons.circleFilled"
                 @click="trySwitchChain(chainName)"
@@ -307,7 +312,22 @@ init()
 .app-navbar__chain-item {
   justify-content: start;
   width: 100%;
-  padding: toRem(16) toRem(24);
+  padding: toRem(12) toRem(24);
+  border: toRem(1) solid var(--primary-main);
+  border-bottom: 0;
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus,
+  &:not([disabled]):active {
+    border: toRem(1) solid var(--primary-main);
+    border-bottom: 0;
+  }
+}
+
+.app-navbar__chain-item-wrp {
+  &:last-child {
+    border-bottom: toRem(1) solid var(--primary-main);
+  }
 }
 
 .app-navbar__wallet {
