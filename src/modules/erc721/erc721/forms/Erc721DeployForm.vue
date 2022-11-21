@@ -192,10 +192,9 @@ init()
                       :value-options="paymentTokens.symbols"
                       @update:model-value="onPaymentChange"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc721.payment-info')"
-                    />
+                    <div class="app__field-tooltip app__field-tooltip--select">
+                      <info-tooltip :text="t('erc721.payment-info')" />
+                    </div>
                   </div>
                   <div v-if="selectedPaymentToken.balance" class="app__row">
                     <span class="app__row-title">
@@ -250,10 +249,9 @@ init()
                       :error-message="getFieldErrorMessage('name')"
                       @blur="touchField('name')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc721.name-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc721.name-info')" />
+                    </div>
                   </div>
                   <div class="app__field-row">
                     <input-field
@@ -263,10 +261,9 @@ init()
                       :error-message="getFieldErrorMessage('symbol')"
                       @blur="touchField('symbol')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc721.symbol-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc721.symbol-info')" />
+                    </div>
                   </div>
                 </div>
               </div>

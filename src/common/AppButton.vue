@@ -180,19 +180,19 @@ const buttonClasses = computed(() =>
   /* schemes */
   &--default {
     --app-button-default-bg: transparent;
-    --app-button-default-bg-hover: var(--secondary-main);
-    --app-button-default-bg-active: var(--secondary-dark);
+    --app-button-default-bg-hover: transparent;
+    --app-button-default-bg-active: transparent;
     --app-button-default-bg-focus: transparent;
 
     --app-button-default-text: var(--text-primary-main);
-    --app-button-default-text-hover: var(--text-primary-invert-main);
-    --app-button-default-text-active: var(--text-primary-invert-main);
+    --app-button-default-text-hover: var(--text-primary-main);
+    --app-button-default-text-active: var(--text-primary-main);
     --app-button-default-text-focus: var(--text-primary-main);
 
-    --app-button-default-border: #{toRem(2)} solid transparent;
-    --app-button-default-border-hover: #{toRem(2)} solid transparent;
-    --app-button-default-border-active: #{toRem(2)} solid transparent;
-    --app-button-default-border-focus: #{toRem(2)} solid var(--secondary-main);
+    --app-button-default-border: 0;
+    --app-button-default-border-hover: 0;
+    --app-button-default-border-active: 0;
+    --app-button-default-border-focus: 0;
 
     --app-button-bg: var(--app-button-default-bg);
     --app-button-bg-hover: var(--app-button-default-bg-hover);

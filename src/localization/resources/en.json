@@ -45,12 +45,13 @@
         "rinkeby": "rinkeby",
         "ropsten": "ropsten",
         "kovan": "kovan",
-        "goerli": "goerli",
+        "goerli": "Goerli Testnet",
         "polygon": "polygon",
         "optimism": "optimism",
         "binance": "binance",
         "arbitrum": "arbitrum",
-        "mumbai": "mumbai"
+        "mumbai": "mumbai",
+        "localhost": "Localhost"
       }
     }
   },
@@ -114,6 +115,10 @@
     "transfer-lbl": "Transfer",
     "mint-lbl": "Mint"
   },
+  "post-card": {
+    "subcategories-lbl": "SubCategories",
+    "price-lbl": "Price"
+  },
   "post-checkout": {
     "have-product-lbl": "Already have this product?",
     "have-product-input-lbl": "Contract address",
@@ -121,12 +126,17 @@
     "current-network-lbl": "Current network",
     "sales-lbl": "Number of sales",
     "decrease-percent-lbl": "Decrease percent",
+    "decrease-percent-tooltip": "Decrease percent tooltip",
     "cashback-percent-lbl": "Cashback percent",
+    "cashback-percent-tooltip": "Cashback percent tooltip",
     "implementation-address-lbl": "Implementation address",
     "factory-address-lbl": "Factory address",
     "minimal-price-lbl": "Minimal price",
+    "minimal-price-tooltip": "Minimal price tooltip",
     "reward-lbl": "Reward",
+    "reward-tooltip": "Reward tooltip",
     "distribution-lbl": "Distribution",
+    "distribution-tooltip": "Distribution tooltip",
     "current-price-lbl": "Current price",
     "buy-now-link": "Buy now",
     "buy-description-lbl": "First, the contract will be deployed, and then you can configure it"
@@ -169,6 +179,14 @@
     "claiming-modal-text": "Claim your rewards.",
     "claiming-modal-raw-key": "Aviable to claim",
     "claiming-page-btn-lbl": "Claim"
+  },
+  "farming-history": {
+    "title": "History",
+    "switch-left-lbl": "Global",
+    "switch-right-lbl": "My",
+    "grid-address-lbl": "Address",
+    "grid-date-lbl": "Date and time",
+    "grid-amount-lbl": "Amount (DAPP)"
   },
   "edit": {
     "overview": "Overview"

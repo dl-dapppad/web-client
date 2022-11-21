@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
-import { Icon, InfoTooltip, AppButton } from '@/common'
+import { InfoTooltip, AppButton } from '@/common'
 import { useFormValidation } from '@/composables'
 import { required, isAddress, numeric } from '@/validators'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
@@ -62,15 +62,7 @@ const submit = async () => {
   <div class="app__common-form">
     <div class="app__form-control">
       <span class="app__form-control-title app__common-form__title">
-        <div class="app__common-form__icon">
-          <icon
-            :name="$icons.informationCircleFilled"
-            class="app__common-form__title-icon"
-          />
-          <div class="app__common-form__popup">
-            {{ t('transfer-form.title-info') }}
-          </div>
-        </div>
+        <info-tooltip :text="t('transfer-form.title-info')" />
         {{ t('transfer-form.title-lbl') }}
       </span>
       <div class="app__field-row">
@@ -81,10 +73,9 @@ const submit = async () => {
           :error-message="getFieldErrorMessage('recipient')"
           @blur="touchField('spender')"
         />
-        <info-tooltip
-          class="app__field-tooltip"
-          :text="t('transfer-form.recipient-info')"
-        />
+        <div class="app__field-tooltip">
+          <info-tooltip :text="t('transfer-form.recipient-info')" />
+        </div>
       </div>
       <div class="app__field-row">
         <input-field
@@ -94,10 +85,9 @@ const submit = async () => {
           :error-message="getFieldErrorMessage('amount')"
           @blur="touchField('amount')"
         />
-        <info-tooltip
-          class="app__field-tooltip"
-          :text="t('transfer-form.amount-info')"
-        />
+        <div class="app__field-tooltip">
+          <info-tooltip :text="t('transfer-form.amount-info')" />
+        </div>
       </div>
       <app-button
         type="button"

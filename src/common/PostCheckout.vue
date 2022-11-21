@@ -169,10 +169,9 @@ init()
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
-                <!-- TODO: Change Icon.informationCircle to InfoTooltips -->
-                <icon
-                  class="post-checkout__icon"
-                  :name="$icons.informationCircle"
+                <info-tooltip
+                  class="post-checkout__metadata-tooltip"
+                  :text="$t('post-checkout.decrease-percent-tooltip')"
                 />
                 {{ $t('post-checkout.decrease-percent-lbl') }}
               </span>
@@ -182,9 +181,9 @@ init()
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
-                <icon
-                  class="post-checkout__icon"
-                  :name="$icons.informationCircle"
+                <info-tooltip
+                  class="post-checkout__metadata-tooltip"
+                  :text="$t('post-checkout.cashback-percent-tooltip')"
                 />
                 {{ $t('post-checkout.cashback-percent-lbl') }}
               </span>
@@ -198,32 +197,34 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.implementation-address-lbl') }}
               </span>
-              <span
-                :title="product.implementation"
-                class="post-checkout__address"
-                @click="copyToClipboard(product.implementation)"
-              >
-                {{ cropAddress(product.implementation) }}
-                <icon
-                  class="post-checkout__icon post-checkout__icon-clipboard"
-                  :name="$icons.duplicate"
-                />
+              <span :title="product.implementation" class="app__link-wrp">
+                <a
+                  class="app__link app__link--accented"
+                  :href="provider.getAddressUrl(product.implementation)"
+                  target="_blank"
+                >
+                  {{ cropAddress(product.implementation) }}
+                </a>
+                <div @click="copyToClipboard(product.implementation)">
+                  <icon class="app__link-icon" :name="$icons.duplicateFilled" />
+                </div>
               </span>
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.factory-address-lbl') }}
               </span>
-              <span
-                :title="factory.address.value"
-                class="post-checkout__address"
-                @click="copyToClipboard(factory.address.value)"
-              >
-                {{ cropAddress(factory.address.value) }}
-                <icon
-                  class="post-checkout__icon post-checkout__icon-clipboard"
-                  :name="$icons.duplicate"
-                />
+              <span :title="factory.address.value" class="app__link-wrp">
+                <a
+                  class="app__link app__link--accented"
+                  :href="provider.getAddressUrl(factory.address.value)"
+                  target="_blank"
+                >
+                  {{ cropAddress(factory.address.value) }}
+                </a>
+                <div @click="copyToClipboard(factory.address.value)">
+                  <icon class="app__link-icon" :name="$icons.duplicateFilled" />
+                </div>
               </span>
             </div>
           </div>
@@ -234,56 +235,58 @@ init()
           <div class="app__metadata">
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
-                <icon
-                  class="post-checkout__icon"
-                  :name="$icons.informationCircle"
+                <info-tooltip
+                  class="post-checkout__metadata-tooltip"
+                  :text="$t('post-checkout.minimal-price-tooltip')"
                 />
                 {{ $t('post-checkout.minimal-price-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{
-                  formatAmount(
-                    product.minPrice,
-                    paymentToken?.decimals.value ?? '0',
-                    paymentToken?.symbol.value,
-                  )
-                }}
+                <span class="app__price">
+                  {{
+                    formatAmount(
+                      product.minPrice,
+                      paymentToken?.decimals.value ?? '0',
+                    )
+                  }}
+                  <span class="app__price-asset">
+                    {{ paymentToken?.symbol.value }}
+                  </span>
+                </span>
               </span>
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
-                <icon
-                  class="post-checkout__icon"
-                  :name="$icons.informationCircle"
+                <info-tooltip
+                  class="post-checkout__metadata-tooltip"
+                  :text="$t('post-checkout.reward-tooltip')"
                 />
                 {{ $t('post-checkout.reward-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{
-                  formatAmount(
-                    cashback,
-                    dapp?.decimals.value ?? '0',
-                    dapp?.symbol.value,
-                  )
-                }}
+                <span class="app__price">
+                  {{ formatAmount(cashback, dapp?.decimals.value ?? '0') }}
+                  <span class="app__price-asset">
+                    {{ dapp?.symbol.value }}
+                  </span>
+                </span>
               </span>
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
-                <icon
-                  class="post-checkout__icon"
-                  :name="$icons.informationCircle"
+                <info-tooltip
+                  class="post-checkout__metadata-tooltip"
+                  :text="$t('post-checkout.distribution-tooltip')"
                 />
                 {{ $t('post-checkout.distribution-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{
-                  formatAmount(
-                    cashback,
-                    paymentToken?.decimals.value,
-                    paymentToken?.symbol.value,
-                  )
-                }}
+                <span class="app__price">
+                  {{ formatAmount(cashback, paymentToken?.decimals.value) }}
+                  <span class="app__price-asset">
+                    {{ paymentToken?.symbol.value }}
+                  </span>
+                </span>
               </span>
             </div>
           </div>
@@ -293,13 +296,17 @@ init()
                 {{ $t('post-checkout.current-price-lbl') }}
               </span>
               <span class="app__metadata-value app__metadata-value--big">
-                {{
-                  formatAmount(
-                    product.currentPrice,
-                    paymentToken?.decimals.value ?? '0',
-                    paymentToken?.symbol.value,
-                  )
-                }}
+                <span class="app__price app__price--big">
+                  {{
+                    formatAmount(
+                      product.currentPrice,
+                      paymentToken?.decimals.value ?? '0',
+                    )
+                  }}
+                  <span class="app__price-asset">
+                    {{ paymentToken?.symbol.value }}
+                  </span>
+                </span>
               </span>
             </div>
             <app-button
@@ -318,7 +325,7 @@ init()
         </div>
       </app-block>
       <app-block class="post-checkout__block-wrp">
-        <div class="post-checkout__block">
+        <div class="post-checkout__block post-checkout__block--chart">
           <div class="app__metadata">
             <h2 class="post-checkout__block-title">
               {{ post.chartTitle }}
@@ -347,6 +354,10 @@ init()
   padding: toRem(40) toRem(110);
   gap: toRem(40);
   height: 100%;
+
+  &--chart {
+    padding: toRem(70) toRem(165);
+  }
 }
 
 .post-checkout__block-lbl {
@@ -394,6 +405,13 @@ init()
   .post-checkout__address & {
     color: var(--text-primary-main);
   }
+
+  &--clipboard {
+    max-height: toRem(12);
+    max-width: toRem(12);
+    min-height: toRem(12);
+    min-width: toRem(12);
+  }
 }
 
 .post-checkout__buy-link {
@@ -404,9 +422,9 @@ init()
 
 .post-checkout__buy-description {
   color: var(--text-secondary-main);
-  font-size: toRem(14);
+  font-size: toRem(12);
   text-align: center;
-  padding: 0 toRem(30);
+  padding: 0 toRem(5);
 }
 
 .post-checkout__block-chart {
@@ -424,5 +442,9 @@ init()
 
 .post-checkout__block-wrp {
   grid-column: 1 / -1;
+}
+
+.post-checkout__metadata-tooltip {
+  transform: translateX(-#{toRem(6)});
 }
 </style>

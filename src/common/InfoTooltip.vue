@@ -42,6 +42,7 @@ defineProps<{
 
 .info-tooltip {
   color: var(--text-secondary-main);
+  position: relative;
   padding: toRem(6);
 
   &:hover {

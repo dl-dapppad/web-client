@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppButton, Icon, AppBlock, Modal } from '@/common'
+import { AppButton, Icon, AppBlock, Modal, FarmingHistory } from '@/common'
 import { InputField } from '@/fields'
 import { cropAddress, getMaxUint256, txWrapper } from '@/helpers'
 import { useRouter } from '@/router'
@@ -30,12 +30,6 @@ const isModalStakingShown = ref(false)
 const isModalWithdrawingShown = ref(false)
 const isModalClaimingShown = ref(false)
 
-const txProcessing = ref({
-  stake: false,
-  claim: false,
-  withdraw: false,
-})
-
 const investmentBalance = ref('0')
 const investInfo = ref<InvestInfo>({
   amount: '0',
@@ -62,8 +56,6 @@ const init = async () => {
 }
 
 const updateBalanceState = async () => {
-  await farming.loadDetails()
-
   if (!provider.value.selectedAddress) return
 
   await Promise.all([
@@ -94,19 +86,15 @@ const clickMaxWithdrawAmount = () => {
 const submitClaim = async () => {
   if (!provider.value.selectedAddress) return
 
-  txProcessing.value.claim = true
-
   await txWrapper(farming.claim, { account: provider.value.selectedAddress })
   await updateBalanceState()
 
   isModalClaimingShown.value = false
-  txProcessing.value.claim = false
 }
 
 const submitStaking = async () => {
   if (!provider.value.selectedAddress) return
 
-  txProcessing.value.stake = true
   const amount = new BN(stakingForm.amount)
     .toFraction(investmentToken.decimals.value)
     .toString()
@@ -127,26 +115,22 @@ const submitStaking = async () => {
   await updateBalanceState()
 
   isModalStakingShown.value = false
-  txProcessing.value.stake = false
 }
 
 const submitWithdraw = async () => {
   if (!provider.value.selectedAddress) return
 
-  const amount = new BN(withdrawForm.amount)
-    .toFraction(investmentToken.decimals.value)
-    .toString()
-
-  txProcessing.value.withdraw = true
+  // TODO: add amount to tx after adding feature to SC
+  // const amount = new BN(withdrawForm.amount)
+  //   .toFraction(investmentToken.decimals.value)
+  //   .toString()
 
   await txWrapper(farming.withdraw, {
-    amount,
     receiver: provider.value.selectedAddress,
   })
   await updateBalanceState()
 
   isModalWithdrawingShown.value = false
-  txProcessing.value.withdraw = false
 }
 
 init()
@@ -158,7 +142,7 @@ init()
       <div class="farming-page__title-wrp">
         <div class="farming-page__title">
           <app-button
-            class="app__module-back-btn"
+            class="farming-page__back-btn"
             :icon-left="$icons.arrowLeft"
             modification="border-circle"
             color="tertiary"
@@ -173,7 +157,10 @@ init()
             @click="copyToClipboard(farming.address.value)"
           >
             {{ cropAddress(farming.address.value) }}
-            <icon class="farming-page__title-icon" :name="$icons.duplicate" />
+            <icon
+              class="farming-page__title-icon"
+              :name="$icons.duplicateFilled"
+            />
           </div>
         </div>
         <div class="farming-page__subtitle">
@@ -184,10 +171,7 @@ init()
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon
-                class="farming-page__table-icon"
-                :name="ICON_NAMES.database"
-              />
+              <icon class="farming-page__table-icon" :name="ICON_NAMES.coins" />
               {{ t('farming-page.total-stake-lbl') }}
             </div>
             <div class="farming-page__table-body">
@@ -208,7 +192,7 @@ init()
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="ICON_NAMES.cube" />
+              <icon class="farming-page__table-icon" :name="ICON_NAMES.coin" />
               {{ t('farming-page.my-stake-lbl') }}
             </div>
             <div class="farming-page__table-body">
@@ -232,6 +216,8 @@ init()
               class="farming-page__table-btn"
               size="large"
               color="tertiary"
+              scheme="borderless"
+              modification="border-rounded"
               @click="isModalWithdrawingShown = true"
             >
               {{ $t('farming-page.withdraw-btn') }}
@@ -239,6 +225,8 @@ init()
             <app-button
               class="farming-page__table-btn"
               size="large"
+              scheme="borderless"
+              modification="border-rounded"
               @click="isModalStakingShown = true"
             >
               {{ $t('farming-page.stake-btn') }}
@@ -259,7 +247,10 @@ init()
             @click="copyToClipboard(investmentToken.address.value)"
           >
             {{ cropAddress(investmentToken.address.value) }}
-            <icon class="farming-page__table-icon" :name="$icons.duplicate" />
+            <icon
+              class="farming-page__under-table-icon"
+              :name="$icons.duplicateFilled"
+            />
           </span>
         </div>
       </div>
@@ -290,7 +281,10 @@ init()
             class="farming-page__table-item farming-page__table-item--secondary"
           >
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="ICON_NAMES.gift" />
+              <icon
+                class="farming-page__table-icon"
+                :name="ICON_NAMES.checkCircleFilled"
+              />
               {{ t('farming-page.current-rewards-lbl') }}
             </div>
             <div class="farming-page__table-body">
@@ -309,6 +303,8 @@ init()
           <app-button
             class="farming-page__table-btn"
             size="large"
+            scheme="borderless"
+            modification="border-rounded"
             @click="isModalClaimingShown = true"
           >
             {{ $t('farming-page.claim-btn') }}
@@ -328,10 +324,14 @@ init()
             @click="copyToClipboard(rewardToken.address.value)"
           >
             {{ cropAddress(rewardToken.address.value) }}
-            <icon class="farming-page__table-icon" :name="$icons.duplicate" />
+            <icon
+              class="farming-page__under-table-icon"
+              :name="$icons.duplicateFilled"
+            />
           </span>
         </div>
       </div>
+      <farming-history class="farming-page__history-grid" />
     </div>
     <modal v-model:is-shown="isModalWithdrawingShown">
       <template #default="{ modal }">
@@ -374,6 +374,7 @@ init()
               @blur="withdrawValidation.touchField('amount')"
             />
             <app-button
+              class="farming-page__modal-max-btn"
               :text="t('farming-page.withdrawing-modal-input-btn-lbl')"
               @click="clickMaxWithdrawAmount"
             />
@@ -382,9 +383,7 @@ init()
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.withdrawing-page-btn-lbl')"
-            :disabled="
-              !withdrawValidation.isFieldsValid || txProcessing.withdraw
-            "
+            :disabled="!withdrawValidation.isFieldsValid.value"
             @click="submitWithdraw"
           />
         </div>
@@ -409,6 +408,9 @@ init()
           <p class="farming-page__modal-paragraph">
             {{ $t('farming-page.staking-modal-text-first') }}
           </p>
+          <p class="farming-page__modal-paragraph">
+            {{ $t('farming-page.staking-modal-text-second') }}
+          </p>
           <div class="farming-page__modal-raw">
             <span class="farming-page__modal-raw-key">
               {{ $t('farming-page.staking-modal-raw-key') }}
@@ -431,6 +433,7 @@ init()
               @blur="stakingValidation.touchField('amount')"
             />
             <app-button
+              class="farming-page__modal-max-btn"
               :text="t('farming-page.staking-modal-input-btn-lbl')"
               @click="clickMaxStakingAmount"
             />
@@ -439,7 +442,7 @@ init()
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.staking-page-btn-lbl')"
-            :disabled="!stakingValidation.isFieldsValid || txProcessing.stake"
+            :disabled="!stakingValidation.isFieldsValid.value"
             @click="submitStaking"
           />
         </div>
@@ -479,7 +482,6 @@ init()
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.claiming-page-btn-lbl')"
-            :disabled="txProcessing.claim"
             @click="submitClaim"
           />
         </div>
@@ -502,6 +504,16 @@ init()
   justify-content: start;
   width: 100%;
   gap: toRem(40);
+}
+
+.farming-page__back-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: toRem(54);
+  height: toRem(54);
+  left: -#{toRem(79)};
+  padding: 0;
 }
 
 .farming-page__title-wrp {
@@ -558,8 +570,17 @@ init()
 }
 
 .farming-page__table-icon {
-  width: toRem(16);
-  height: toRem(16);
+  min-width: toRem(16);
+  min-height: toRem(16);
+  max-width: toRem(16);
+  max-height: toRem(16);
+}
+
+.farming-page__under-table-icon {
+  min-width: toRem(12);
+  min-height: toRem(12);
+  max-width: toRem(12);
+  max-height: toRem(12);
   color: var(--text-primary-main);
 }
 
@@ -602,13 +623,15 @@ init()
 
 .farming-page__table-buttons {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   height: 100%;
+  background-color: var(--primary-main);
 }
 
 .farming-page__table-btn {
   width: 100%;
   height: 100%;
+  padding: toRem(1);
 }
 
 .farming-page__table-desc {
@@ -787,9 +810,19 @@ init()
   gap: toRem(10);
 }
 
+.farming-page__modal-max-btn {
+  padding: 0 toRem(20);
+  font-size: toRem(14);
+  max-height: toRem(56);
+}
+
 .farming-page__modal-btn {
   width: 100%;
   padding-top: toRem(16);
   padding-bottom: toRem(16);
+}
+
+.farming-page__history-grid {
+  padding-top: toRem(30);
 }
 </style>

@@ -18,17 +18,19 @@ const post = posts.find(el => el.id === route.params.id)
         class="post-item-page__banner"
         :style="{ backgroundImage: `url(${post?.bannerUrl})` }"
       >
-        <div class="post-item-page__banner-title-wrp">
-          <h1 class="post-item-page__banner-title">
-            {{ post?.title }}
-          </h1>
-          <app-button
-            class="post-item-page__back-btn"
-            :icon-left="$icons.arrowLeft"
-            modification="border-circle"
-            color="tertiary"
-            @click="router.go(-1)"
-          />
+        <div class="post-item-page__banner-darker">
+          <div class="post-item-page__banner-title-wrp">
+            <h1 class="post-item-page__banner-title">
+              {{ post?.title }}
+            </h1>
+            <app-button
+              class="post-item-page__back-btn"
+              :icon-left="$icons.arrowLeft"
+              modification="border-circle"
+              color="tertiary"
+              @click="router.go(-1)"
+            />
+          </div>
         </div>
       </div>
     </app-block>
@@ -49,6 +51,19 @@ const post = posts.find(el => el.id === route.params.id)
               {{ value }}
             </h4>
           </template>
+          <template v-if="key === 'subtitle-low'">
+            <h5
+              class="post-item-page__subtitle post-item-page__subtitle--low"
+              :key="idx"
+            >
+              {{ value }}
+            </h5>
+          </template>
+          <template v-if="key === 'subtitle'">
+            <h5 class="post-item-page__subtitle" :key="idx">
+              {{ value }}
+            </h5>
+          </template>
           <template v-if="key === 'paragraph'">
             <!-- eslint-disable-next-line vue/no-v-html -->
             <p :key="idx" class="post-item-page__paragarph" v-html="value" />
@@ -62,9 +77,11 @@ const post = posts.find(el => el.id === route.params.id)
                 v-for="(link, ind) of value"
                 :key="ind"
                 class="post-item-page__img-links-item"
-                :href="`https://${link}/`"
+                target="_blank"
+                :href="link"
               >
-                {{ link }}
+                <!-- https://www.google.com/search?q=smth -> google.com -->
+                {{ link.split(/\/+/)[1] }}
                 <icon
                   class="post-item-page__img-links-icon"
                   :name="$icons.externalLink"
@@ -88,6 +105,10 @@ const post = posts.find(el => el.id === route.params.id)
               </li>
             </ul>
           </template>
+          <template v-if="key === 'code-row'">
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <p :key="idx" class="post-item-page__code-row" v-html="value" />
+          </template>
         </template>
       </div>
     </app-block>
@@ -107,8 +128,21 @@ $page-padding-right: toRem(165);
 .post-item-page__banner {
   background-size: cover;
   background-position: center;
+  border-radius: toRem(12);
+}
+
+.post-item-page__banner-darker {
   min-height: toRem(200);
   padding: toRem(50) $page-padding-right toRem(60) $page-padding-left;
+  background: linear-gradient(
+    90deg,
+    rgba(236, 234, 245, 0.5) 0%,
+    rgba(50, 49, 52, 0.5) 10.42%,
+    rgba(0, 0, 0, 0.5) 88.02%,
+    rgba(236, 234, 245, 0.5) 100%
+  );
+  border-radius: toRem(12);
+  overflow: hidden;
 }
 
 .post-item-page__banner-title-wrp {
@@ -178,6 +212,19 @@ $page-padding-right: toRem(165);
   }
 }
 
+.post-item-page__subtitle {
+  font-size: toRem(26);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-primary-main);
+
+  &--low {
+    font-size: toRem(22);
+    font-weight: 500;
+  }
+}
+
 .post-item-page__img {
   max-width: 80%;
   height: auto;
@@ -229,5 +276,19 @@ $page-padding-right: toRem(165);
   position: absolute;
   top: toRem(11);
   left: -#{toRem(16)};
+}
+
+.post-item-page__code-row {
+  font-family: var(--app-font-family-tertiary);
+  font-size: toRem(20);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  padding-left: 5%;
+
+  &--bold {
+    font-size: toRem(20);
+    font-weight: 700;
+  }
 }
 </style>
