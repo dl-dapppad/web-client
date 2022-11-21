@@ -323,19 +323,11 @@ init()
   border: toRem(1) solid var(--primary-main);
   border-bottom: 0;
 
-  &:last-child {
-    border-bottom: toRem(1) solid var(--primary-main);
-  }
-
   &:not([disabled]):hover,
   &:not([disabled]):focus,
   &:not([disabled]):active {
     border: toRem(1) solid var(--primary-main);
     border-bottom: 0;
-
-    &:last-child {
-      border-bottom: toRem(1) solid var(--primary-main);
-    }
   }
 }
 

@@ -103,7 +103,7 @@ export const txWrapper = async (
     else tx = await callback()
 
     const url = providerStore.provider.getTxUrl(tx.hash)
-    Bus.info({
+    Bus.processing({
       message:
         'The transaction has been sent to the blockchain, wait for confirmation',
       link: {
