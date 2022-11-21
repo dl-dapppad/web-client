@@ -13,7 +13,7 @@ const emit = defineEmits<{
   (e: EVENTS.updateModelValue, value: boolean): void
 }>()
 
-const onChange = (event: Event) => {
+const handleChange = (event: Event) => {
   const target = event.target as HTMLInputElement
 
   emit(EVENTS.updateModelValue, target.checked)
@@ -30,7 +30,7 @@ const onChange = (event: Event) => {
         class="switch-field__checkbox"
         :checked="modelValue"
         type="checkbox"
-        @change="onChange"
+        @change="handleChange"
       />
     </div>
     <span class="switch-field__lbl" v-if="rightLbl">

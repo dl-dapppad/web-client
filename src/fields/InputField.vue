@@ -16,7 +16,6 @@ const props = withDefaults(
     placeholder?: string
     type?: INPUT_TYPES
     errorMessage?: string
-    isSearchInput?: boolean
   }>(),
   {
     scheme: 'primary',
@@ -24,7 +23,6 @@ const props = withDefaults(
     label: '',
     placeholder: ' ',
     errorMessage: '',
-    isSearchInput: false,
   },
 )
 
@@ -107,7 +105,6 @@ const setHeightCSSVar = (element: HTMLElement) => {
       </div>
       <input
         class="input-field__input"
-        :class="{ 'input-field__input--search': isSearchInput }"
         :id="`input-field--${uid}`"
         v-bind="$attrs"
         v-on="listeners"
@@ -302,10 +299,6 @@ const setHeightCSSVar = (element: HTMLElement) => {
     }
   }
 
-  &--search {
-    height: 100%;
-  }
-
   .input-field--error & {
     border-color: var(--field-error);
     box-shadow: inset 0 0 0 toRem(50) var(--background-secondary),
@@ -350,6 +343,8 @@ const setHeightCSSVar = (element: HTMLElement) => {
 }
 
 .input-field__node-right-wrp {
+  display: flex;
+  align-items: center;
   position: absolute;
   top: 50%;
   right: var(--field-padding-right);

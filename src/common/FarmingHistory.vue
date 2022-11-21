@@ -20,7 +20,7 @@ const FORM_TABS = [
 ]
 
 const currentTabNumber = ref(FORM_TABS[0].number)
-const currentSwitchState = ref(true)
+const isMyHistory = ref(true)
 
 const historyData = [
   {
@@ -114,14 +114,16 @@ const historyData = [
     <div class="farming-history__controls">
       <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
       <switch-field
-        v-model="currentSwitchState"
+        v-model="isMyHistory"
         :left-lbl="$t('farming-history.switch-left-lbl')"
         :right-lbl="$t('farming-history.switch-right-lbl')"
       />
     </div>
     <app-block>
       <div class="farming-history__grid">
-        <div class="farming-history__grid-row farming-history__grid-row--title">
+        <div
+          class="farming-history__grid-row farming-history__grid-row--titled"
+        >
           <span class="farming-history__grid-row-value">
             {{ $t('farming-history.grid-address-lbl') }}
           </span>
@@ -180,7 +182,7 @@ const historyData = [
   font-size: toRem(16);
   border-bottom: #{toRem(1) solid var(--border-primary-main)};
 
-  &--title {
+  &--titled {
     font-family: var(--app-font-family-secondary);
     color: var(--text-secondary-main);
     font-size: toRem(14);

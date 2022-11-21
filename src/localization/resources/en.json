@@ -115,6 +115,10 @@
     "transfer-lbl": "Transfer",
     "mint-lbl": "Mint"
   },
+  "post-card": {
+    "subcategories-lbl": "SubCategories",
+    "price-lbl": "Price"
+  },
   "post-checkout": {
     "have-product-lbl": "Already have this product?",
     "have-product-input-lbl": "Contract address",

@@ -1,9 +1,23 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import { Icon } from '@/common'
 import { Post } from '@/types'
 import { ROUTE_NAMES } from '@/enums'
+import { config } from '@/config'
+import { ErrorHandler, isChainAvailable, formatAmount } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
+import { useErc20, useFarming, useProductFactory, Product } from '@/composables'
+
+const { provider } = storeToRefs(useWeb3ProvidersStore())
+
+const paymentToken = useErc20()
+const factory = useProductFactory()
+const farming = useFarming()
+
+const alias = ref('')
+const product = ref<Product>(factory.getEmptyProduct())
 
 const props = defineProps<{
   post: Post
@@ -16,6 +30,31 @@ const nextRouteName =
       ? ROUTE_NAMES.categories
       : ROUTE_NAMES.category
     : ROUTE_NAMES.product
+
+const init = async () => {
+  if (!provider.value.chainId || !isChainAvailable(provider.value.chainId))
+    return
+
+  try {
+    alias.value = config.PRODUCT_ALIASES[props.post.id as string]
+    if (!alias.value) return
+
+    await Promise.all([
+      farming.loadDetails(),
+      factory.products(alias.value),
+    ]).then(res => {
+      product.value = res[1]
+      return
+    })
+
+    paymentToken.init(farming.rewardToken.value)
+    await paymentToken.loadDetails()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
+init()
 </script>
 
 <template>
@@ -30,16 +69,25 @@ const nextRouteName =
     </p>
     <p v-if="subPostsCount" class="post-card__subcategories">
       <icon class="post-card__subcategories-icon" :name="$icons.folder" />
-      {{ `${subPostsCount} SubCategories` }}
+      {{ `${subPostsCount} ${$t('post-card.subcategories-lbl')}` }}
     </p>
     <div v-else class="post-card__price">
       <div class="post-card__price-icon-wrp">
         <icon class="post-card__price-icon" :name="$icons.tag" />
-        {{ `Price` }}
+        {{ $t('post-card.price-lbl') }}
       </div>
       <div class="post-card__price-lbl-wrp">
-        <span class="post-card__price-lbl">{{ `1000.12` }}</span>
-        <span class="post-card__price-lbl--small">{{ `USDT` }}</span>
+        <span class="app__price app__price--big">
+          {{
+            formatAmount(
+              product.currentPrice,
+              paymentToken?.decimals.value ?? '0',
+            )
+          }}
+          <span class="app__price-asset">
+            {{ paymentToken?.symbol.value }}
+          </span>
+        </span>
       </div>
     </div>
     <router-link

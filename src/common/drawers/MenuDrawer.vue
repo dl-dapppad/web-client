@@ -48,12 +48,13 @@ const handleProviderBtnClick = () => {
 
 <template>
   <div class="menu-drawer">
-    <div class="menu-drawer__trigger" @click="isDropdownOpen = !isDropdownOpen">
-      <icon
-        class="menu-drawer__trigger-icon"
-        :name="isDropdownOpen ? $icons.x : $icons.menu"
-      />
-    </div>
+    <app-button
+      class="menu-drawer__trigger"
+      scheme="default"
+      size="x-small"
+      :icon-right="isDropdownOpen ? $icons.x : $icons.menu"
+      @click="isDropdownOpen = !isDropdownOpen"
+    />
     <drawer class="menu-drawer__drawer" v-model:is-shown="isDropdownOpen">
       <div class="menu-drawer__content">
         <div class="menu-drawer__section">
@@ -86,6 +87,7 @@ const handleProviderBtnClick = () => {
           <template #head="{ dropdown }">
             <app-button
               class="menu-drawer__chain-dropdown-btn"
+              scheme="borderless"
               :class="{
                 'menu-drawer__chain-dropdown-btn--active': dropdown.isOpen,
               }"
@@ -104,6 +106,7 @@ const handleProviderBtnClick = () => {
                 :key="chainName"
                 class="menu-drawer__chain-dropdown-item"
                 color="tertiary"
+                scheme="borderless"
                 :text="localizeChain(chainName)"
                 :icon-left="$icons.circleFilled"
                 @click="trySwitchChain(chainName)"
@@ -126,7 +129,7 @@ const handleProviderBtnClick = () => {
 
 <style lang="scss" scoped>
 .menu-drawer__trigger {
-  cursor: pointer;
+  font-size: toRem(17);
 }
 
 .menu-drawer__trigger-icon {
@@ -179,6 +182,23 @@ const handleProviderBtnClick = () => {
 .menu-drawer__chain-dropdown-item {
   width: 100%;
   justify-content: start;
+  border: toRem(1) solid var(--primary-main);
+  border-bottom: 0;
+
+  &:last-child {
+    border-bottom: toRem(1) solid var(--primary-main);
+  }
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus,
+  &:not([disabled]):active {
+    border: toRem(1) solid var(--primary-main);
+    border-bottom: 0;
+
+    &:last-child {
+      border-bottom: toRem(1) solid var(--primary-main);
+    }
+  }
 }
 
 .menu-drawer__chain-dropdown-btn {

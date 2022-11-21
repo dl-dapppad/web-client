@@ -111,7 +111,6 @@ init()
         class="app-navbar__search"
         v-model="searchInput"
         :placeholder="$t('app-navbar.search-placeholder')"
-        :is-search-input="true"
         scheme="secondary"
       >
         <template #nodeRight>
@@ -256,8 +255,12 @@ init()
 }
 
 .app-navbar__search {
-  height: 100%;
   display: grid;
+  height: 100%;
+
+  :not([disabled]) {
+    height: 100%;
+  }
 
   @include respond-to(xmedium) {
     display: none;
