@@ -24,6 +24,8 @@ import { BN } from '@/utils'
 import DeploySuccessMessage, {
   DeployERC20Metadata,
 } from '../../common/DeploySuccessMessage.vue'
+import { storeToRefs } from 'pinia'
+import { useWeb3ProvidersStore } from '@/store'
 
 const { t } = useI18n({
   locale: 'en',
@@ -71,6 +73,8 @@ const isSuccessModalShown = ref(false)
 const router = useRouter()
 const route = useRoute()
 
+const { provider } = storeToRefs(useWeb3ProvidersStore())
+
 const deployMetadata = ref<DeployERC20Metadata>()
 const potentialContractAddress = ref('')
 const txProcessing = ref(false)
@@ -100,6 +104,8 @@ const init = async () => {
 
   paymentTokens.value.symbols = symbols
   paymentTokens.value.addresses = addresses
+
+  form.mintReceiver = provider.value.selectedAddress as string
 }
 
 const getSelectedPaymentAddress = () => {

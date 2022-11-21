@@ -9,6 +9,14 @@ import { required, isAddress, numeric } from '@/validators'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 import { BN } from '@/utils'
 
+enum EMITS {
+  changeBalance = 'change-balance',
+}
+
+const emit = defineEmits<{
+  (e: EMITS.changeBalance): void
+}>()
+
 const props = defineProps<{
   token: ProductErc20Contract
 }>()
@@ -53,6 +61,8 @@ const submit = async () => {
       .toFraction(props.token.decimals.value)
       .toString(),
   })
+
+  emit(EMITS.changeBalance)
 
   txProcessing.value = false
 }

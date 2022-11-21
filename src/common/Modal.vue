@@ -27,7 +27,7 @@ export default defineComponent({
     },
     isCloseByClickOutside: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   setup(props, { emit }) {
