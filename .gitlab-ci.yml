@@ -81,19 +81,19 @@ Lint and Test:
   except: [schedules]
   interruptible: true
 
-# Deploy to Staging:
-#   services:
-#       - docker:18-dind
-#   image: dtzar/helm-kubectl:latest
-#   tags:
-#     - tokend-deploy
-#   stage: deploy
-#   script:
-#     - mkdir ~/.kube/
-#     - echo ${k8sconfig} | base64 -d > config
-#     - mv config ~/.kube/
-#     - helm upgrade -i "webclient" ".helm" --set global.IngressDomain=stage.${DOMAIN} --set "image.repository=${REGISTRY}" --set "image.tag=${CI_COMMIT_SHA}" --create-namespace --namespace $CI_PROJECT_NAME-stage
-#   interruptible: true
+Deploy to Staging:
+  services:
+      - docker:18-dind
+  image: dtzar/helm-kubectl:latest
+  tags:
+    - tokend-deploy
+  stage: deploy
+  script:
+    - mkdir ~/.kube/
+    - echo ${k8sconfig} | base64 -d > config
+    - mv config ~/.kube/
+    - helm upgrade -i "webclient2" ".helm" --set global.IngressDomain=stage2.${DOMAIN} --set "image.repository=${REGISTRY}" --set "image.tag=${CI_COMMIT_SHA}" --create-namespace --namespace web-client-dappad-stage
+  interruptible: true
 
 # Deploy to Production:
 #   services:
