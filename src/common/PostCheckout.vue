@@ -135,14 +135,18 @@ init()
               {{ $t('post-checkout.have-product-lbl') }}
             </div>
             <div class="post-checkout__block-input-value">
+              <info-tooltip
+                class="post-checkout__block-tooltip"
+                :text="t('post-checkout.have-product-input-tooltip-txt')"
+              />
               <input-field
                 scheme="secondary"
                 v-model="contactAddress"
                 :label="t('post-checkout.have-product-input-lbl')"
               />
-              <info-tooltip
-                class="post-checkout__block-tooltip"
-                :text="t('post-checkout.have-product-input-tooltip-txt')"
+              <app-button
+                class="post-checkout__block-search-btn"
+                :icon-right="$icons.searchFilled"
               />
             </div>
           </div>
@@ -386,6 +390,12 @@ init()
 .post-checkout__block-lbl-icon {
   height: toRem(20);
   width: toRem(20);
+}
+
+.post-checkout__block-search-btn {
+  padding: toRem(17);
+  height: 100%;
+  font-size: toRem(15);
 }
 
 .post-checkout__buy-wrp {

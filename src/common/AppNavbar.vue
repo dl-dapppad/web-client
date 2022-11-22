@@ -4,7 +4,14 @@ import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20 } from '@/composables'
-import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
+import {
+  formatAmount,
+  getChain,
+  getEmptyChain,
+  cropAddress,
+  isErc20Contract,
+  Bus,
+} from '@/helpers'
 import { Chain } from '@/types'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
@@ -61,6 +68,11 @@ const handleProviderBtnClick = () => {
   }
 }
 
+const handleSearch = () => {
+  if (isErc20Contract(searchInput.value)) Bus.emit('success')
+  else Bus.emit('error')
+}
+
 watch(
   () => provider.value.selectedAddress,
   () => {
@@ -114,7 +126,12 @@ init()
         scheme="secondary"
       >
         <template #nodeRight>
-          <icon class="app-navbar__search-icon" :name="$icons.searchFilled" />
+          <app-button
+            scheme="default"
+            class="app-navbar__search-icon"
+            :icon-right="$icons.searchFilled"
+            @click="handleSearch"
+          />
         </template>
       </input-field>
       <dropdown class="app-navbar__chain">
@@ -277,6 +294,7 @@ init()
   max-height: toRem(14);
   min-height: toRem(14);
   min-width: toRem(14);
+  padding: 0;
 
   &--tablet {
     display: none;

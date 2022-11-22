@@ -144,7 +144,7 @@ init()
         @click="
           router.push({
             name: $routes.product,
-            params: { id: PRODUCT_IDS.ERC20 },
+            params: { id: PRODUCT_IDS.ERC721 },
           })
         "
       />

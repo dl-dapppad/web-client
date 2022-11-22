@@ -1,37 +1,14 @@
+<script lang="ts" setup>
+import Animation from '@/common/loader/Animation.vue'
+
+import loader from '@/assets/animations/loader.json'
+</script>
+
 <template>
   <div class="loader">
-    <template v-if="scheme === SCHEMES.spinner">
-      <spinner />
-    </template>
+    <animation :animation-data="loader" :loop="true" :speed="0.75" />
   </div>
 </template>
-
-<script lang="ts">
-/* create skeletons */
-import Spinner from '@/common/loader/Spinner.vue'
-
-import { defineComponent } from 'vue'
-
-const SCHEMES = {
-  spinner: 'spinner',
-}
-
-export default defineComponent({
-  name: 'loader',
-  components: { Spinner },
-  props: {
-    scheme: {
-      type: String,
-      default: SCHEMES.spinner,
-    },
-  },
-  setup() {
-    return {
-      SCHEMES,
-    }
-  },
-})
-</script>
 
 <style lang="scss" scoped>
 .loader {
