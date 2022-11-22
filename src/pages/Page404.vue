@@ -15,7 +15,7 @@ const router = useRouter()
       color="tertiary"
       @click="
         router.push({
-          name: $routes.categories,
+          name: $routes.main,
           params: { id: `tokens` },
         })
       "
@@ -23,7 +23,7 @@ const router = useRouter()
     <div class="page-404__content">
       <img
         class="page-404__image"
-        src="static/images/404.png"
+        src="/static/images/404.png"
         alt="404 Image"
       />
       <span class="page-404__sorry-text">

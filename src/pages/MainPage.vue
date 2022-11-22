@@ -76,7 +76,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
               />
             </div>
           </app-block>
-          <img class="main-page__row-img" src="static/images/MainPage_2.png" />
+          <img class="main-page__row-img" src="/static/images/MainPage_2.png" />
         </div>
         <div class="main-page__row">
           <app-block class="main-page__row-block">
@@ -101,7 +101,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
           </app-block>
           <img
             class="main-page__row-img main-page__row-img--mobile-up"
-            src="static/images/MainPage_3.png"
+            src="/static/images/MainPage_3.png"
           />
         </div>
         <div class="main-page__row main-page__row--inverted">
@@ -122,7 +122,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
           </div>
           <img
             class="main-page__row-img main-page__row-img--low-translate"
-            src="static/images/MainPage_4.png"
+            src="/static/images/MainPage_4.png"
           />
         </div>
       </div>
@@ -131,7 +131,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
           <div class="main-page__people-item">
             <img
               class="main-page__people-img"
-              src="static/images/MainPage_People1.png"
+              src="/static/images/MainPage_People1.png"
             />
             <div class="main-page__people-description">
               <div class="main-page__people-title">
@@ -152,7 +152,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
           <div class="main-page__people-item">
             <img
               class="main-page__people-img"
-              src="static/images/MainPage_People2.png"
+              src="/static/images/MainPage_People2.png"
             />
             <div class="main-page__people-description">
               <div class="main-page__people-title">
@@ -173,7 +173,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
           <div class="main-page__people-item">
             <img
               class="main-page__people-img"
-              src="static/images/MainPage_People3.png"
+              src="/static/images/MainPage_People3.png"
             />
             <div class="main-page__people-description">
               <div class="main-page__people-title">
@@ -194,7 +194,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
       <span class="main-page__under-people-description">
         {{ $t('main-page.people-description') }}
       </span>
-      <img class="main-page__sphere-logo" src="static/images/MainPage_5.svg" />
+      <img class="main-page__sphere-logo" src="/static/images/MainPage_5.svg" />
     </div>
   </div>
 </template>
