@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore, useAccountStore } from '@/store'
+
 import { AppButton, Icon, AppBlock, Modal, FarmingHistory } from '@/common'
 import { InputField } from '@/fields'
 import { cropAddress, getMaxUint256, txWrapper } from '@/helpers'
@@ -19,6 +20,7 @@ import { required, numeric } from '@/validators'
 import { BN } from '@/utils'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
+const { account } = storeToRefs(useAccountStore())
 const { t } = i18n.global
 
 const router = useRouter()
@@ -36,6 +38,8 @@ const investInfo = ref<InvestInfo>({
   rewards: '0',
 })
 
+const rewardBalance = ref('0')
+
 const stakingForm = reactive({ amount: '' })
 const stakingValidation = useFormValidation(stakingForm, {
   amount: { required, numeric },
@@ -51,7 +55,15 @@ const init = async () => {
 
   investmentToken.init(farming.investmentToken.value)
   rewardToken.init(farming.rewardToken.value)
-  await Promise.all([investmentToken.loadDetails(), rewardToken.loadDetails()])
+  await Promise.all([
+    investmentToken.loadDetails(),
+    rewardToken.loadDetails(),
+    rewardToken.balanceOf(provider?.value.selectedAddress as string),
+  ]).then(res => {
+    rewardBalance.value = res[2]
+
+    return
+  })
   await updateBalanceState()
 }
 
@@ -171,6 +183,30 @@ init()
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
+              <icon
+                class="farming-page__table-icon farming-page__dark-icon"
+                :name="ICON_NAMES.circleFilled"
+              />
+              {{ t('farming-page.dapp-balance-lbl') }}
+            </div>
+            <div class="farming-page__table-body">
+              <span class="farming-page__table-count">
+                {{
+                  formatAmount(
+                    account.dappBalance,
+                    investmentToken?.decimals.value,
+                  )
+                }}
+              </span>
+              <span class="farming-page__table-currency">
+                {{ investmentToken.symbol.value }}
+              </span>
+            </div>
+          </div>
+        </app-block>
+        <app-block>
+          <div class="farming-page__table-item">
+            <div class="farming-page__table-title">
               <icon class="farming-page__table-icon" :name="ICON_NAMES.coins" />
               {{ t('farming-page.total-stake-lbl') }}
             </div>
@@ -233,28 +269,45 @@ init()
             </app-button>
           </div>
         </app-block>
-        <div class="farming-page__table-desc">
-          <span class="farming-page__table-desc-text">
-            {{
-              `${$t('farming-page.stake-address-lbl')} (${
-                investmentToken.symbol.value
-              })`
-            }}
-          </span>
-          <span
-            class="farming-page__table-desc-address"
-            :title="investmentToken.address.value"
-            @click="copyToClipboard(investmentToken.address.value)"
-          >
-            {{ cropAddress(investmentToken.address.value) }}
-            <icon
-              class="farming-page__under-table-icon"
-              :name="$icons.duplicateFilled"
-            />
-          </span>
-        </div>
+        <span class="farming-page__table-desc-text">
+          {{
+            `${$t('farming-page.stake-address-lbl')} (${
+              investmentToken.symbol.value
+            })`
+          }}
+        </span>
+        <span
+          class="farming-page__table-desc-address"
+          :title="investmentToken.address.value"
+          @click="copyToClipboard(investmentToken.address.value)"
+        >
+          {{ cropAddress(investmentToken.address.value) }}
+          <icon
+            class="farming-page__under-table-icon"
+            :name="$icons.duplicateFilled"
+          />
+        </span>
       </div>
       <div class="farming-page__table">
+        <app-block>
+          <div class="farming-page__table-item">
+            <div class="farming-page__table-title">
+              <icon
+                class="farming-page__table-icon farming-page__dark-icon"
+                :name="ICON_NAMES.daiCoin"
+              />
+              {{ t('farming-page.dai-balance-lbl') }}
+            </div>
+            <div class="farming-page__table-body">
+              <span class="farming-page__table-count">
+                {{ formatAmount(rewardBalance, rewardToken?.decimals.value) }}
+              </span>
+              <span class="farming-page__table-currency">
+                {{ rewardToken.symbol.value }}
+              </span>
+            </div>
+          </div>
+        </app-block>
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
@@ -310,26 +363,24 @@ init()
             {{ $t('farming-page.claim-btn') }}
           </app-button>
         </app-block>
-        <div class="farming-page__table-desc">
-          <span class="farming-page__table-desc-text">
-            {{
-              `${$t('farming-page.reward-address-lbl')} (${
-                rewardToken.symbol.value
-              })`
-            }}
-          </span>
-          <span
-            class="farming-page__table-desc-address"
-            :title="rewardToken.address.value"
-            @click="copyToClipboard(rewardToken.address.value)"
-          >
-            {{ cropAddress(rewardToken.address.value) }}
-            <icon
-              class="farming-page__under-table-icon"
-              :name="$icons.duplicateFilled"
-            />
-          </span>
-        </div>
+        <span class="farming-page__table-desc-text">
+          {{
+            `${$t('farming-page.reward-address-lbl')} (${
+              rewardToken.symbol.value
+            })`
+          }}
+        </span>
+        <span
+          class="farming-page__table-desc-address"
+          :title="rewardToken.address.value"
+          @click="copyToClipboard(rewardToken.address.value)"
+        >
+          {{ cropAddress(rewardToken.address.value) }}
+          <icon
+            class="farming-page__under-table-icon"
+            :name="$icons.duplicateFilled"
+          />
+        </span>
       </div>
       <farming-history class="farming-page__history-grid" />
     </div>
@@ -557,7 +608,7 @@ init()
 
 .farming-page__table {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .farming-page__table-title {
@@ -582,6 +633,10 @@ init()
   max-width: toRem(12);
   max-height: toRem(12);
   color: var(--text-primary-main);
+}
+
+.farming-page__dark-icon {
+  color: var(--primary-main);
 }
 
 .farming-page__table-item {
@@ -634,25 +689,21 @@ init()
   padding: toRem(1);
 }
 
-.farming-page__table-desc {
-  padding: toRem(14) 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .farming-page__table-desc-text {
+  padding: toRem(14) 0;
   font-size: toRem(12);
   color: var(--text-secondary-main);
   font-weight: 700;
 }
 
 .farming-page__table-desc-address {
+  padding: toRem(14) 0;
   display: flex;
   gap: toRem(10);
   color: var(--secondary-main);
   font-weight: 700;
   cursor: pointer;
+  justify-self: end;
 }
 
 .farming-page__charts-history-wrp {
