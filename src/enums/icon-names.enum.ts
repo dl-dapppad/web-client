@@ -83,6 +83,7 @@ export enum ICON_NAMES {
   currencyRupee = 'currency-rupee',
   currencyYen = 'currency-yen',
   cursorClick = 'cursor-click',
+  daiCoin = 'dai-coin',
   database = 'database',
   desktopComputer = 'desktop-computer',
   deviceMobile = 'device-mobile',
