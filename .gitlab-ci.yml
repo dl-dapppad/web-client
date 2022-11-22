@@ -6,7 +6,7 @@ services:
 
 variables:
   #DOCKER_DRIVER: overlay2
-  #DOMAIN: dapppad.com
+  DOMAIN: dapppad.com
   GITHUB_REF: $CI_COMMIT_SHA
   DH_IMAGE_NAME: $CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME
   SERVICE: $CI_PROJECT_NAME
