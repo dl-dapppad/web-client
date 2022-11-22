@@ -92,7 +92,7 @@ Deploy to Staging:
     - mkdir ~/.kube/
     - echo ${k8sconfig} | base64 -d > config
     - mv config ~/.kube/
-    - helm upgrade -i "webclient2" ".helm" --set global.IngressDomain=stage2.${DOMAIN} --set "image.repository=${REGISTRY}" --set "image.tag=${CI_COMMIT_SHA}" --create-namespace --namespace web-client-dappad-stage
+    - helm upgrade -i "webclient2" ".helm" --set global.IngressDomain=stage-onchain.${DOMAIN} --set "image.repository=${REGISTRY}" --set "image.tag=${CI_COMMIT_SHA}" --create-namespace --namespace web-client-dappad-stage
   interruptible: true
 
 # Deploy to Production:
