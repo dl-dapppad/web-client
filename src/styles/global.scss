@@ -219,6 +219,10 @@ a {
   }
 }
 
+.app__link-icon-wrp:not([disabled]) {
+  padding: 0;
+}
+
 .app__link-icon {
   color: var(--primary-main);
   max-width: toRem(16) !important;

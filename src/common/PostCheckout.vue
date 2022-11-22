@@ -205,9 +205,13 @@ init()
                 >
                   {{ cropAddress(product.implementation) }}
                 </a>
-                <div @click="copyToClipboard(product.implementation)">
+                <app-button
+                  class="app__link-icon-wrp"
+                  scheme="default"
+                  @click="copyToClipboard(product.implementation)"
+                >
                   <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-                </div>
+                </app-button>
               </span>
             </div>
             <div class="app__metadata-row">
@@ -222,9 +226,13 @@ init()
                 >
                   {{ cropAddress(factory.address.value) }}
                 </a>
-                <div @click="copyToClipboard(factory.address.value)">
+                <app-button
+                  class="app__link-icon-wrp"
+                  scheme="default"
+                  @click="copyToClipboard(factory.address.value)"
+                >
                   <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-                </div>
+                </app-button>
               </span>
             </div>
           </div>

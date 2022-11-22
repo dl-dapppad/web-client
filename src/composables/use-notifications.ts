@@ -15,6 +15,9 @@ export const useNotifications = (): void => {
   Bus.on(Bus.eventList.warning, payload => showToast(TYPE.WARNING, payload))
   Bus.on(Bus.eventList.error, payload => showToast(TYPE.ERROR, payload))
   Bus.on(Bus.eventList.info, payload => showToast(TYPE.INFO, payload))
+  Bus.on(Bus.eventList.processing, payload =>
+    showToast('processing' as TYPE, payload),
+  )
   Bus.on(Bus.eventList.default, payload => showToast(TYPE.DEFAULT, payload))
 
   const showToast = (
@@ -35,6 +38,7 @@ export const useNotifications = (): void => {
       [TYPE.WARNING]: t('notification.default-title-warning'),
       [TYPE.INFO]: t('notification.default-title-info'),
       [TYPE.DEFAULT]: t('notification.default-title-default'),
+      ['processing' as TYPE]: t('notification.default-title-processing'),
     }
     const defaultMessages = {
       [TYPE.DEFAULT]: t('notification.default-message-default'),
@@ -42,6 +46,7 @@ export const useNotifications = (): void => {
       [TYPE.SUCCESS]: t('notification.default-message-success'),
       [TYPE.ERROR]: t('notification.default-message-error'),
       [TYPE.WARNING]: t('notification.default-message-warning'),
+      ['processing' as TYPE]: t('notification.default-message-processing'),
     }
     const defaultIconNames = {
       [TYPE.DEFAULT]: ICON_NAMES.informationCircle,
@@ -49,6 +54,7 @@ export const useNotifications = (): void => {
       [TYPE.SUCCESS]: ICON_NAMES.checkCircleFilled,
       [TYPE.ERROR]: ICON_NAMES.exclamationCircle,
       [TYPE.WARNING]: ICON_NAMES.exclamationFilled,
+      ['processing' as TYPE]: ICON_NAMES.clockFilled,
     }
 
     if (isObject(payload)) {
@@ -81,12 +87,12 @@ export const useNotifications = (): void => {
           ...(title && { title }),
           message,
           ...(iconName && { iconName }),
-          ...(link && { link }),
+          ...(!!link.label && { link }),
         },
       },
       {
         icon: false,
-        type: messageType,
+        type: messageType === ('processing' as TYPE) ? TYPE.INFO : messageType,
         timeout: 10000,
       },
     )

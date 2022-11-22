@@ -62,6 +62,7 @@ export enum ICON_NAMES {
   clipboardCopy = 'clipboard-copy',
   clipboardList = 'clipboard-list',
   clipboard = 'clipboard',
+  clockFilled = 'clock-filled',
   clock = 'clock',
   cloudDownload = 'cloud-download',
   cloudUpload = 'cloud-upload',
