@@ -30,7 +30,7 @@ stages:
   - build-and-publish
   - lint-and-test
   #- publish
-  #- deploy
+  - deploy
   - cleanup
 
 Build:
@@ -86,7 +86,7 @@ Deploy to Staging:
       - docker:18-dind
   image: dtzar/helm-kubectl:latest
   tags:
-    - tokend-deploy
+    - tokend
   stage: deploy
   script:
     - mkdir ~/.kube/
