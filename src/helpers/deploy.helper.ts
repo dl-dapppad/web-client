@@ -23,7 +23,8 @@ export const deploy = async (
   initializeDataValues: any[],
 ): Promise<string> => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
-  if (!provider.value.chainId) throw new Error('Provider is not set')
+  if (!provider.value.chainId || !provider.value.selectedAddress)
+    throw new Error('Provider is not set')
 
   const alias = config.PRODUCT_ALIASES[productId as string]
   const initializeData = getInitializeData(productId, initializeDataValues)
@@ -31,31 +32,34 @@ export const deploy = async (
   let product = factory.getEmptyProduct()
 
   let paymentContractAddress = ''
-  let potentialContractAddress = ''
-  await Promise.all([
-    factory.products(alias),
-    factory.payment(),
-    factory.getPotentialContractAddress(alias, initializeData),
-  ]).then(res => {
+  await Promise.all([factory.products(alias), factory.payment()]).then(res => {
     product = res[0]
     paymentContractAddress = res[1]
-    potentialContractAddress = res[2]
     return
   })
 
   const paymentTokenContract = useErc20(paymentTokenAddress)
-  await approve(
+  const isApproved = await approve(
     paymentTokenContract,
     provider.value.selectedAddress as string,
     paymentContractAddress,
     product.currentPrice,
   )
+  if (!isApproved) return ''
 
-  await txWrapper(factory.deploy, {
+  const potentialContractAddress = await factory.getPotentialContractAddress(
+    alias,
+    initializeData,
+    provider.value.selectedAddress,
+  )
+
+  const txSucces = await txWrapper(factory.deploy, {
     alias,
     paymentToken: paymentTokenAddress,
     initializeData,
   })
+
+  if (!txSucces) return ''
 
   await useAccountStore().updateDappBalance()
 
@@ -67,15 +71,15 @@ const approve = async (
   address: string,
   paymentContractAddress: string,
   productPrice: string,
-) => {
+): Promise<boolean> => {
   const allowance = await paymentTokenContract.allowance(
     address,
     paymentContractAddress,
   )
 
-  if (new BN(allowance).compare(productPrice) >= 0) return
+  if (new BN(allowance).compare(productPrice) >= 0) return true
 
-  await txWrapper(paymentTokenContract.approve, {
+  return txWrapper(paymentTokenContract.approve, {
     spender: paymentContractAddress,
     amount: getMaxUint256(),
   })

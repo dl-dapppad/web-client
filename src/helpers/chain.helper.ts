@@ -17,20 +17,11 @@ export const getChain = (id?: ChainId): Chain => {
   id = String(id)
 
   switch (id) {
-    case ETHEREUM_CHAINS.mainnet:
-      return {
-        id,
-        name: 'Ethereum',
-        explorerUrl: 'https://etherscan.io/',
-        rpcUrl: '',
-        symbol: 'ETH',
-        decimals: 18,
-      }
     case ETHEREUM_CHAINS.goerli:
       return {
         id,
         name: 'Goerli',
-        explorerUrl: 'https://goerli.etherscan.io/',
+        explorerUrl: 'https://goerli.etherscan.io',
         rpcUrl: '',
         symbol: 'GoerliETH',
         decimals: 18,
@@ -39,7 +30,7 @@ export const getChain = (id?: ChainId): Chain => {
       return {
         id,
         name: 'Local Network',
-        explorerUrl: '',
+        explorerUrl: 'https://goerli.etherscan.io',
         rpcUrl: '',
         symbol: 'LocalETH',
         decimals: 18,
@@ -53,5 +44,5 @@ export const getChain = (id?: ChainId): Chain => {
 export const isChainAvailable = (id: ChainId): boolean => {
   const chainIds = config.AVAILABLE_CHAINS
 
-  return chainIds.includes(id as string)
+  return chainIds.includes(String(id))
 }

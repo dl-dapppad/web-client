@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue'
-import { animate } from 'motion'
 import { useRoute, useRouter } from '@/router'
 import { AppBlock, AppButton, PostCard } from '@/common'
 import { Post } from '@/types'
@@ -33,10 +32,6 @@ onMounted(() => {
   if (!bannerDescription.value) return
 
   defaultBannerDescriptionHeight.value = bannerDescription.value.clientHeight
-
-  animate(bannerDescription.value, {
-    height: '120px',
-  })
 })
 
 const handleShowMore = () => {
@@ -143,7 +138,6 @@ updatePosts(route.params.id as string)
 }
 
 .posts-page__banner-desc {
-  overflow: hidden;
   grid-column: 1 / 2;
   margin: toRem(30) 0 toRem(20);
   font-size: toRem(20);

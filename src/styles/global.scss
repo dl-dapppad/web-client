@@ -149,7 +149,7 @@ a {
 .app__metadata-lbl {
   display: flex;
   align-items: center;
-  gap: toRem(16);
+  gap: toRem(10);
   font-size: toRem(14);
   line-height: 1.3;
   font-weight: 700;
@@ -167,10 +167,6 @@ a {
   &--accent {
     color: var(--secondary-main);
   }
-
-  &--big {
-    font-size: toRem(20);
-  }
 }
 
 .app__price {
@@ -182,10 +178,57 @@ a {
   line-height: 130%;
   color: var(--text-primary-main);
 
-  &-asset {
-    text-transform: uppercase;
-    font-size: 0.7em;
+  &--big {
+    font-size: toRem(20);
   }
+}
+
+.app__price-asset {
+  font-size: 0.75em;
+}
+
+.app__link-wrp {
+  display: flex;
+  align-items: center;
+  gap: toRem(10);
+  cursor: pointer;
+
+  &--big {
+    gap: toRem(20);
+  }
+}
+
+.app__link {
+  font-weight: 700;
+  color: var(--primary-main);
+
+  &--secondary {
+    font-family: var(--app-font-family-secondary);
+  }
+
+  &:hover {
+    color: var(--secondary-main);
+  }
+
+  &--accented {
+    color: var(--secondary-main);
+  }
+
+  &--big {
+    font-size: toRem(30);
+  }
+}
+
+.app__link-icon-wrp:not([disabled]) {
+  padding: 0;
+}
+
+.app__link-icon {
+  color: var(--primary-main);
+  max-width: toRem(16) !important;
+  max-height: toRem(16) !important;
+  min-width: toRem(16);
+  min-height: toRem(16);
 }
 
 .app__form-control {
@@ -244,7 +287,7 @@ a {
   transform: translateY(-50%);
   width: toRem(54);
   height: toRem(54);
-  right: calc(100% + #{toRem(56)});
+  right: calc(100% + #{toRem(36)});
   padding: 0;
 }
 
@@ -391,8 +434,12 @@ a {
 .app__field-tooltip {
   position: absolute;
   right: 0;
-  top: toRem(20);
+  top: toRem(28);
   transform: translateY(-50%);
+
+  &--select {
+    top: toRem(20);
+  }
 }
 
 .app__title-icon {

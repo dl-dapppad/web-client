@@ -42,6 +42,8 @@ const init = async () => {
 const trySwitchChain = async (chainId: string | number) => {
   try {
     await provider.value.switchChain(chainId)
+    await useAccountStore().updateDappBalance()
+    await useAccountStore().updateNativeBalance()
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -121,7 +123,8 @@ init()
             class="app-navbar__chain-btn"
             :class="{ 'app-navbar__chain-btn--active': dropdown.isOpen }"
             size="small"
-            :text="localizeChain(provider.chainId)"
+            scheme="borderless"
+            :text="localizeChain(provider.chainId as string)"
             :icon-left="$icons.circleFilled"
             :icon-right="
               dropdown.isOpen ? $icons.chevronUp : $icons.chevronDown
@@ -131,15 +134,21 @@ init()
         </template>
         <template #default>
           <div class="app-navbar__dropdown-body">
-            <app-button
+            <div
+              class="app-navbar__chain-item-wrp"
               v-for="chainName in ETHEREUM_CHAINS"
               :key="chainName"
-              class="app-navbar__chain-item"
-              color="tertiary"
-              :text="localizeChain(chainName)"
-              :icon-left="$icons.circleFilled"
-              @click="trySwitchChain(chainName)"
-            />
+            >
+              <app-button
+                v-if="config.AVAILABLE_CHAINS.includes(chainName)"
+                class="app-navbar__chain-item"
+                color="tertiary"
+                scheme="borderless"
+                :text="localizeChain(chainName)"
+                :icon-left="$icons.circleFilled"
+                @click="trySwitchChain(chainName)"
+              />
+            </div>
           </div>
         </template>
       </dropdown>
@@ -209,10 +218,15 @@ init()
 }
 
 .app-navbar__search-icon-mobile {
+  display: none;
   max-width: toRem(14);
   max-height: toRem(14);
   min-width: toRem(14);
   min-height: toRem(14);
+
+  @include respond-to(xmedium) {
+    display: block;
+  }
 }
 
 .app-navbar__farm-farm-balance {
@@ -246,8 +260,12 @@ init()
 }
 
 .app-navbar__search {
-  height: 100%;
   display: grid;
+  height: 100%;
+
+  :not([disabled]) {
+    height: 100%;
+  }
 
   @include respond-to(xmedium) {
     display: none;
@@ -270,7 +288,9 @@ init()
 }
 
 .app-navbar__chain {
+  display: grid;
   min-width: toRem(200);
+  height: 100%;
 
   @include respond-to(medium) {
     display: none;
@@ -294,17 +314,27 @@ init()
 .app-navbar__dropdown-body {
   top: 0;
   left: 0;
-
-  &--search {
-    background-color: var(--secondary-main);
-    width: 100vw;
-  }
 }
 
 .app-navbar__chain-item {
   justify-content: start;
   width: 100%;
-  padding: toRem(16) toRem(24);
+  padding: toRem(12) toRem(24);
+  border: toRem(1) solid var(--primary-main);
+  border-bottom: 0;
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus,
+  &:not([disabled]):active {
+    border: toRem(1) solid var(--primary-main);
+    border-bottom: 0;
+  }
+}
+
+.app-navbar__chain-item-wrp {
+  &:last-child {
+    border-bottom: toRem(1) solid var(--primary-main);
+  }
 }
 
 .app-navbar__wallet {
@@ -357,6 +387,7 @@ init()
 
 .app-navbar__menu-farming-wrp {
   display: none;
+  align-items: center;
   gap: toRem(35);
 
   @include respond-to(medium) {

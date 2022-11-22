@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore } from '@/store'
-import { AppButton, Icon, AppBlock, Modal } from '@/common'
+import { useWeb3ProvidersStore, useAccountStore } from '@/store'
+
+import { AppButton, Icon, AppBlock, Modal, FarmingHistory } from '@/common'
 import { InputField } from '@/fields'
 import { cropAddress, getMaxUint256, txWrapper } from '@/helpers'
 import { useRouter } from '@/router'
@@ -19,6 +20,7 @@ import { required, numeric } from '@/validators'
 import { BN } from '@/utils'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
+const { account } = storeToRefs(useAccountStore())
 const { t } = i18n.global
 
 const router = useRouter()
@@ -36,6 +38,8 @@ const investInfo = ref<InvestInfo>({
   rewards: '0',
 })
 
+const rewardBalance = ref('0')
+
 const stakingForm = reactive({ amount: '' })
 const stakingValidation = useFormValidation(stakingForm, {
   amount: { required, numeric },
@@ -51,7 +55,15 @@ const init = async () => {
 
   investmentToken.init(farming.investmentToken.value)
   rewardToken.init(farming.rewardToken.value)
-  await Promise.all([investmentToken.loadDetails(), rewardToken.loadDetails()])
+  await Promise.all([
+    investmentToken.loadDetails(),
+    rewardToken.loadDetails(),
+    rewardToken.balanceOf(provider?.value.selectedAddress as string),
+  ]).then(res => {
+    rewardBalance.value = res[2]
+
+    return
+  })
   await updateBalanceState()
 }
 
@@ -142,7 +154,7 @@ init()
       <div class="farming-page__title-wrp">
         <div class="farming-page__title">
           <app-button
-            class="app__module-back-btn"
+            class="farming-page__back-btn"
             :icon-left="$icons.arrowLeft"
             modification="border-circle"
             color="tertiary"
@@ -157,7 +169,10 @@ init()
             @click="copyToClipboard(farming.address.value)"
           >
             {{ cropAddress(farming.address.value) }}
-            <icon class="farming-page__title-icon" :name="$icons.duplicate" />
+            <icon
+              class="farming-page__title-icon"
+              :name="$icons.duplicateFilled"
+            />
           </div>
         </div>
         <div class="farming-page__subtitle">
@@ -169,9 +184,30 @@ init()
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
               <icon
-                class="farming-page__table-icon"
-                :name="ICON_NAMES.database"
+                class="farming-page__table-icon farming-page__dark-icon"
+                :name="ICON_NAMES.circleFilled"
               />
+              {{ t('farming-page.dapp-balance-lbl') }}
+            </div>
+            <div class="farming-page__table-body">
+              <span class="farming-page__table-count">
+                {{
+                  formatAmount(
+                    account.dappBalance,
+                    investmentToken?.decimals.value,
+                  )
+                }}
+              </span>
+              <span class="farming-page__table-currency">
+                {{ investmentToken.symbol.value }}
+              </span>
+            </div>
+          </div>
+        </app-block>
+        <app-block>
+          <div class="farming-page__table-item">
+            <div class="farming-page__table-title">
+              <icon class="farming-page__table-icon" :name="ICON_NAMES.coins" />
               {{ t('farming-page.total-stake-lbl') }}
             </div>
             <div class="farming-page__table-body">
@@ -192,7 +228,7 @@ init()
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="ICON_NAMES.cube" />
+              <icon class="farming-page__table-icon" :name="ICON_NAMES.coin" />
               {{ t('farming-page.my-stake-lbl') }}
             </div>
             <div class="farming-page__table-body">
@@ -216,6 +252,8 @@ init()
               class="farming-page__table-btn"
               size="large"
               color="tertiary"
+              scheme="borderless"
+              modification="border-rounded"
               @click="isModalWithdrawingShown = true"
             >
               {{ $t('farming-page.withdraw-btn') }}
@@ -223,31 +261,53 @@ init()
             <app-button
               class="farming-page__table-btn"
               size="large"
+              scheme="borderless"
+              modification="border-rounded"
               @click="isModalStakingShown = true"
             >
               {{ $t('farming-page.stake-btn') }}
             </app-button>
           </div>
         </app-block>
-        <div class="farming-page__table-desc">
-          <span class="farming-page__table-desc-text">
-            {{
-              `${$t('farming-page.stake-address-lbl')} (${
-                investmentToken.symbol.value
-              })`
-            }}
-          </span>
-          <span
-            class="farming-page__table-desc-address"
-            :title="investmentToken.address.value"
-            @click="copyToClipboard(investmentToken.address.value)"
-          >
-            {{ cropAddress(investmentToken.address.value) }}
-            <icon class="farming-page__table-icon" :name="$icons.duplicate" />
-          </span>
-        </div>
+        <span class="farming-page__table-desc-text">
+          {{
+            `${$t('farming-page.stake-address-lbl')} (${
+              investmentToken.symbol.value
+            })`
+          }}
+        </span>
+        <span
+          class="farming-page__table-desc-address"
+          :title="investmentToken.address.value"
+          @click="copyToClipboard(investmentToken.address.value)"
+        >
+          {{ cropAddress(investmentToken.address.value) }}
+          <icon
+            class="farming-page__under-table-icon"
+            :name="$icons.duplicateFilled"
+          />
+        </span>
       </div>
       <div class="farming-page__table">
+        <app-block>
+          <div class="farming-page__table-item">
+            <div class="farming-page__table-title">
+              <icon
+                class="farming-page__table-icon farming-page__dark-icon"
+                :name="ICON_NAMES.daiCoin"
+              />
+              {{ t('farming-page.dai-balance-lbl') }}
+            </div>
+            <div class="farming-page__table-body">
+              <span class="farming-page__table-count">
+                {{ formatAmount(rewardBalance, rewardToken?.decimals.value) }}
+              </span>
+              <span class="farming-page__table-currency">
+                {{ rewardToken.symbol.value }}
+              </span>
+            </div>
+          </div>
+        </app-block>
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
@@ -274,7 +334,10 @@ init()
             class="farming-page__table-item farming-page__table-item--secondary"
           >
             <div class="farming-page__table-title">
-              <icon class="farming-page__table-icon" :name="ICON_NAMES.gift" />
+              <icon
+                class="farming-page__table-icon"
+                :name="ICON_NAMES.checkCircleFilled"
+              />
               {{ t('farming-page.current-rewards-lbl') }}
             </div>
             <div class="farming-page__table-body">
@@ -293,29 +356,33 @@ init()
           <app-button
             class="farming-page__table-btn"
             size="large"
+            scheme="borderless"
+            modification="border-rounded"
             @click="isModalClaimingShown = true"
           >
             {{ $t('farming-page.claim-btn') }}
           </app-button>
         </app-block>
-        <div class="farming-page__table-desc">
-          <span class="farming-page__table-desc-text">
-            {{
-              `${$t('farming-page.reward-address-lbl')} (${
-                rewardToken.symbol.value
-              })`
-            }}
-          </span>
-          <span
-            class="farming-page__table-desc-address"
-            :title="rewardToken.address.value"
-            @click="copyToClipboard(rewardToken.address.value)"
-          >
-            {{ cropAddress(rewardToken.address.value) }}
-            <icon class="farming-page__table-icon" :name="$icons.duplicate" />
-          </span>
-        </div>
+        <span class="farming-page__table-desc-text">
+          {{
+            `${$t('farming-page.reward-address-lbl')} (${
+              rewardToken.symbol.value
+            })`
+          }}
+        </span>
+        <span
+          class="farming-page__table-desc-address"
+          :title="rewardToken.address.value"
+          @click="copyToClipboard(rewardToken.address.value)"
+        >
+          {{ cropAddress(rewardToken.address.value) }}
+          <icon
+            class="farming-page__under-table-icon"
+            :name="$icons.duplicateFilled"
+          />
+        </span>
       </div>
+      <farming-history class="farming-page__history-grid" />
     </div>
     <modal v-model:is-shown="isModalWithdrawingShown">
       <template #default="{ modal }">
@@ -358,6 +425,7 @@ init()
               @blur="withdrawValidation.touchField('amount')"
             />
             <app-button
+              class="farming-page__modal-max-btn"
               :text="t('farming-page.withdrawing-modal-input-btn-lbl')"
               @click="clickMaxWithdrawAmount"
             />
@@ -366,7 +434,7 @@ init()
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.withdrawing-page-btn-lbl')"
-            :disabled="!withdrawValidation.isFieldsValid"
+            :disabled="!withdrawValidation.isFieldsValid.value"
             @click="submitWithdraw"
           />
         </div>
@@ -416,6 +484,7 @@ init()
               @blur="stakingValidation.touchField('amount')"
             />
             <app-button
+              class="farming-page__modal-max-btn"
               :text="t('farming-page.staking-modal-input-btn-lbl')"
               @click="clickMaxStakingAmount"
             />
@@ -424,7 +493,7 @@ init()
             class="farming-page__modal-btn"
             size="large"
             :text="t('farming-page.staking-page-btn-lbl')"
-            :disabled="!stakingValidation.isFieldsValid"
+            :disabled="!stakingValidation.isFieldsValid.value"
             @click="submitStaking"
           />
         </div>
@@ -488,6 +557,16 @@ init()
   gap: toRem(40);
 }
 
+.farming-page__back-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: toRem(54);
+  height: toRem(54);
+  left: -#{toRem(79)};
+  padding: 0;
+}
+
 .farming-page__title-wrp {
   display: flex;
   flex-direction: column;
@@ -529,7 +608,7 @@ init()
 
 .farming-page__table {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .farming-page__table-title {
@@ -542,9 +621,22 @@ init()
 }
 
 .farming-page__table-icon {
-  width: toRem(16);
-  height: toRem(16);
+  min-width: toRem(16);
+  min-height: toRem(16);
+  max-width: toRem(16);
+  max-height: toRem(16);
+}
+
+.farming-page__under-table-icon {
+  min-width: toRem(12);
+  min-height: toRem(12);
+  max-width: toRem(12);
+  max-height: toRem(12);
   color: var(--text-primary-main);
+}
+
+.farming-page__dark-icon {
+  color: var(--primary-main);
 }
 
 .farming-page__table-item {
@@ -586,34 +678,32 @@ init()
 
 .farming-page__table-buttons {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   height: 100%;
+  background-color: var(--primary-main);
 }
 
 .farming-page__table-btn {
   width: 100%;
   height: 100%;
-}
-
-.farming-page__table-desc {
-  padding: toRem(14) 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: toRem(1);
 }
 
 .farming-page__table-desc-text {
+  padding: toRem(14) 0;
   font-size: toRem(12);
   color: var(--text-secondary-main);
   font-weight: 700;
 }
 
 .farming-page__table-desc-address {
+  padding: toRem(14) 0;
   display: flex;
   gap: toRem(10);
   color: var(--secondary-main);
   font-weight: 700;
   cursor: pointer;
+  justify-self: end;
 }
 
 .farming-page__charts-history-wrp {
@@ -771,9 +861,19 @@ init()
   gap: toRem(10);
 }
 
+.farming-page__modal-max-btn {
+  padding: 0 toRem(20);
+  font-size: toRem(14);
+  max-height: toRem(56);
+}
+
 .farming-page__modal-btn {
   width: 100%;
   padding-top: toRem(16);
   padding-bottom: toRem(16);
+}
+
+.farming-page__history-grid {
+  padding-top: toRem(30);
 }
 </style>

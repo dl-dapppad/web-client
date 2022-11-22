@@ -27,7 +27,7 @@ export default defineComponent({
     },
     isCloseByClickOutside: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   setup(props, { emit }) {
@@ -57,6 +57,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+$modal-z-index: 10;
+
 .modal {
   display: flex;
   justify-content: center;
@@ -67,6 +69,7 @@ export default defineComponent({
   width: 100vw;
   height: vh(100);
   background: rgba(var(--black-rgb), 0.5);
+  z-index: $modal-z-index;
 }
 
 .modal__pane {

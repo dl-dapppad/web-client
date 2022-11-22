@@ -26,6 +26,7 @@ export interface ProductFactoryContract {
   getPotentialContractAddress: (
     alias: string,
     initializeData: string,
+    from: string,
   ) => Promise<string>
   deploy: (args: Record<string, string>) => Promise<ContractTransaction>
 }
@@ -102,10 +103,13 @@ export const useProductFactory = (): ProductFactoryContract => {
   const getPotentialContractAddress = async (
     alias: string,
     initializeData: string,
+    from: string,
   ): Promise<string> => {
     if (!_instance.value) return '0'
 
-    return _instance.value.getPotentialContractAddress(alias, initializeData)
+    return _instance.value.getPotentialContractAddress(alias, initializeData, {
+      from,
+    })
   }
 
   const deploy = async (

@@ -6,6 +6,7 @@ enum EVENTS {
   warning = 'warning',
   success = 'success',
   info = 'info',
+  processing = 'processing',
   default = 'default',
 }
 
@@ -42,6 +43,10 @@ export class EventBus {
 
   info(payload: string | NotificationObjectPayload): void {
     this.emit(this.eventList.info, payload)
+  }
+
+  processing(payload: string | NotificationObjectPayload): void {
+    this.emit(this.eventList.processing, payload)
   }
 }
 

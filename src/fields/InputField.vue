@@ -257,7 +257,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
   padding: var(--field-padding);
   transition-property: box-shadow;
   background: var(--field-bg);
-  height: 100%;
+  height: toRem(56);
 
   @include field-text;
 
@@ -343,6 +343,8 @@ const setHeightCSSVar = (element: HTMLElement) => {
 }
 
 .input-field__node-right-wrp {
+  display: flex;
+  align-items: center;
   position: absolute;
   top: 50%;
   right: var(--field-padding-right);

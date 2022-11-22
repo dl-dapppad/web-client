@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppBlock, AppButton, Tabs, EditOverview } from '@/common'
+import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
 import { cropAddress, copyToClipboard } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
 import { OverviewRow } from '@/common/EditOverview.vue'
@@ -25,9 +25,8 @@ const { t } = useI18n({
   messages: {
     en: {
       'erc721.title': 'Editing',
-      'erc721.contract-address': 'Contract {address}',
       'erc721.subtitle':
-        'ERC721 is a standard for representing ownership of non-fungible tokens, that is, where each token is unique.',
+        'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
       'erc721.tracker': 'Token tracker',
       'erc721.owner': 'Owner address',
       'erc721.balance': 'Your balance',
@@ -106,25 +105,27 @@ init()
         <h2 class="app__module-title">
           {{ t('erc721.title') }}
         </h2>
-        <app-button
-          type="button"
-          class="app__module-title-address"
-          :text="
-            t('erc721.contract-address', {
-              address: cropAddress(erc721.address.value),
-            })
-          "
-          :icon-right="$icons.duplicate"
-          scheme="default"
-          size="default"
-          @click="copyToClipboard(erc721.address.value)"
-        />
+        <div
+          class="app__link-wrp app__link-wrp--big"
+          :title="erc721.address.value"
+        >
+          <a
+            class="app__link app__link--big"
+            :href="provider.getAddressUrl(erc721.address.value)"
+            target="_blank"
+          >
+            {{ cropAddress(erc721.address.value) }}
+          </a>
+          <div @click="copyToClipboard(erc721.address.value)">
+            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
+          </div>
+        </div>
       </div>
       <span class="app__module-subtitle">
         {{ t('erc721.subtitle') }}
       </span>
     </div>
-    <edit-overview :rows="overviewRows"></edit-overview>
+    <edit-overview :rows="overviewRows" />
     <div>
       <h3 class="app__module-block-title">
         {{ t('erc721.interaction') }}
@@ -144,8 +145,8 @@ init()
         >
           <approve-form :token="erc721"></approve-form>
           <approve-all-form :token="erc721"></approve-all-form>
-          <mint-form :token="erc721"></mint-form>
-          <safe-transfer-form :token="erc721"></safe-transfer-form>
+          <mint-form :token="erc721" @change-balance="init" />
+          <safe-transfer-form :token="erc721" />
         </div>
       </app-block>
     </div>

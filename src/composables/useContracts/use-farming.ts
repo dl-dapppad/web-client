@@ -139,7 +139,7 @@ export const useFarming = (): FarmingContract => {
   ): Promise<ContractTransaction> => {
     if (!_instance_rw.value) throw new Error('Undefined instance')
 
-    return _instance_rw.value.withdraw(args.receiver)
+    return _instance_rw.value.withdraw(args.amount, args.receiver)
   }
 
   init()

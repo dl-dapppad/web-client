@@ -13,7 +13,7 @@ import {
 import { InputField, SelectField } from '@/fields'
 import { useFormValidation } from '@/composables'
 import { required, isAddress, numeric } from '@/validators'
-import { ErrorHandler, formatAmount } from '@/helpers'
+import { formatAmount } from '@/helpers'
 import {
   deploy,
   getAvailableTokenList,
@@ -24,6 +24,8 @@ import { BN } from '@/utils'
 import DeploySuccessMessage, {
   DeployERC20Metadata,
 } from '../../common/DeploySuccessMessage.vue'
+import { storeToRefs } from 'pinia'
+import { useWeb3ProvidersStore } from '@/store'
 
 const { t } = useI18n({
   locale: 'en',
@@ -31,7 +33,7 @@ const { t } = useI18n({
     en: {
       'erc20.title': 'Deploy',
       'erc20.subtitle':
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+        'Deploy your product on chain. You should deploy product smart contract only one time with a transaction.',
       'erc20.payment-group': 'Payment info',
       'erc20.payment-lbl': 'Payment token',
       'erc20.payment-info': 'Select the token you want to pay with',
@@ -71,8 +73,11 @@ const isSuccessModalShown = ref(false)
 const router = useRouter()
 const route = useRoute()
 
+const { provider } = storeToRefs(useWeb3ProvidersStore())
+
 const deployMetadata = ref<DeployERC20Metadata>()
 const potentialContractAddress = ref('')
+const txProcessing = ref(false)
 const form = reactive({
   paymentToken: '',
   name: '',
@@ -99,6 +104,8 @@ const init = async () => {
 
   paymentTokens.value.symbols = symbols
   paymentTokens.value.addresses = addresses
+
+  form.mintReceiver = provider.value.selectedAddress as string
 }
 
 const getSelectedPaymentAddress = () => {
@@ -120,34 +127,32 @@ const onPaymentChange = async () => {
 }
 
 const submit = async () => {
-  try {
-    const paymentTokenAddress = getSelectedPaymentAddress()
+  const paymentTokenAddress = getSelectedPaymentAddress()
 
-    potentialContractAddress.value = await deploy(
-      route.params.id as string,
-      paymentTokenAddress,
-      [
-        form.name,
-        form.symbol,
-        new BN(form.mintAmount).toFraction(Number(form.decimals)).toString(),
-        form.mintReceiver,
-        form.decimals,
-      ],
-    )
+  txProcessing.value = true
+  potentialContractAddress.value = await deploy(
+    route.params.id as string,
+    paymentTokenAddress,
+    [
+      form.name,
+      form.symbol,
+      new BN(form.mintAmount).toFraction(Number(form.decimals)).toString(),
+      form.mintReceiver,
+      form.decimals,
+    ],
+  )
 
-    deployMetadata.value = {
-      name: form.name,
-      symbol: form.symbol,
-      decimals: form.decimals,
-      mintAmount: form.mintAmount,
-      mintReceiver: form.mintReceiver,
-      contract: potentialContractAddress.value,
-    }
-
-    isSuccessModalShown.value = true
-  } catch (error) {
-    ErrorHandler.process(error)
+  deployMetadata.value = {
+    name: form.name,
+    symbol: form.symbol,
+    decimals: form.decimals,
+    mintAmount: form.mintAmount,
+    mintReceiver: form.mintReceiver,
+    contract: potentialContractAddress.value,
   }
+
+  isSuccessModalShown.value = true
+  txProcessing.value = false
 }
 
 init()
@@ -212,10 +217,9 @@ init()
                       :value-options="paymentTokens.symbols"
                       @update:model-value="onPaymentChange"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.payment-info')"
-                    />
+                    <div class="app__field-tooltip app__field-tooltip--select">
+                      <info-tooltip :text="t('erc20.payment-info')" />
+                    </div>
                   </div>
                   <div v-if="selectedPaymentToken.balance" class="app__row">
                     <span class="app__row-title">
@@ -270,10 +274,9 @@ init()
                       :error-message="getFieldErrorMessage('name')"
                       @blur="touchField('name')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.name-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.name-info')" />
+                    </div>
                   </div>
                   <div class="app__field-row">
                     <input-field
@@ -283,10 +286,9 @@ init()
                       :error-message="getFieldErrorMessage('symbol')"
                       @blur="touchField('symbol')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.symbol-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.symbol-info')" />
+                    </div>
                   </div>
                   <div class="app__field-row">
                     <input-field
@@ -296,10 +298,9 @@ init()
                       :error-message="getFieldErrorMessage('decimals')"
                       @blur="touchField('decimals')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.decimals-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.decimals-info')" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -340,10 +341,9 @@ init()
                       :error-message="getFieldErrorMessage('mintReceiver')"
                       @blur="touchField('mintReceiver')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.mint-receiver-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.mint-receiver-info')" />
+                    </div>
                   </div>
                   <div class="app__field-row">
                     <input-field
@@ -353,10 +353,9 @@ init()
                       :error-message="getFieldErrorMessage('mintAmount')"
                       @blur="touchField('mintAmount')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc20.mint-amount-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc20.mint-amount-info')" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -367,7 +366,7 @@ init()
             type="submit"
             :text="t('erc20.btn-lbl')"
             size="small"
-            :disabled="!isFieldsValid"
+            :disabled="!isFieldsValid || txProcessing"
           />
         </div>
       </div>

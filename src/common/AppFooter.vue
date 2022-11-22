@@ -33,7 +33,7 @@ const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
   align-items: center;
   justify-content: space-between;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: toRem(50) var(--app-padding-right) toRem(50) var(--app-padding-left);
+  padding: toRem(30) var(--app-padding-right) toRem(30) var(--app-padding-left);
 
   @include respond-to(small) {
     padding: toRem(20) var(--app-padding-right) toRem(20)
@@ -72,5 +72,9 @@ const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
   font-weight: 700;
   padding-left: 0;
   padding-right: 0;
+
+  @include respond-to(small) {
+    font-size: toRem(12);
+  }
 }
 </style>

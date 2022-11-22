@@ -92,6 +92,7 @@ $local-z-index: 1;
 
 .dropdown__head {
   width: 100%;
+  display: grid;
 }
 
 .dropdown__body {

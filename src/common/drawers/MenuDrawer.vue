@@ -87,6 +87,7 @@ const handleProviderBtnClick = () => {
           <template #head="{ dropdown }">
             <app-button
               class="menu-drawer__chain-dropdown-btn"
+              scheme="borderless"
               :class="{
                 'menu-drawer__chain-dropdown-btn--active': dropdown.isOpen,
               }"
@@ -105,6 +106,7 @@ const handleProviderBtnClick = () => {
                 :key="chainName"
                 class="menu-drawer__chain-dropdown-item"
                 color="tertiary"
+                scheme="borderless"
                 :text="localizeChain(chainName)"
                 :icon-left="$icons.circleFilled"
                 @click="trySwitchChain(chainName)"
@@ -126,6 +128,15 @@ const handleProviderBtnClick = () => {
 </template>
 
 <style lang="scss" scoped>
+.menu-drawer__trigger {
+  font-size: toRem(17);
+}
+
+.menu-drawer__trigger-icon {
+  max-width: toRem(22);
+  max-height: toRem(22);
+}
+
 .menu-drawer__content {
   display: flex;
   flex-direction: column;
@@ -171,6 +182,23 @@ const handleProviderBtnClick = () => {
 .menu-drawer__chain-dropdown-item {
   width: 100%;
   justify-content: start;
+  border: toRem(1) solid var(--primary-main);
+  border-bottom: 0;
+
+  &:last-child {
+    border-bottom: toRem(1) solid var(--primary-main);
+  }
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus,
+  &:not([disabled]):active {
+    border: toRem(1) solid var(--primary-main);
+    border-bottom: 0;
+
+    &:last-child {
+      border-bottom: toRem(1) solid var(--primary-main);
+    }
+  }
 }
 
 .menu-drawer__chain-dropdown-btn {

@@ -13,7 +13,7 @@ import {
 import { InputField, SelectField } from '@/fields'
 import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
-import { ErrorHandler, formatAmount } from '@/helpers'
+import { formatAmount } from '@/helpers'
 import {
   deploy,
   getAvailableTokenList,
@@ -30,7 +30,7 @@ const { t } = useI18n({
     en: {
       'erc721.title': 'Deploy',
       'erc721.subtitle':
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+        'Deploy your product on chain. You should deploy product smart contract only one time with a transaction.',
       'erc721.payment-group': 'Payment info',
       'erc721.payment-lbl': 'Payment token',
       'erc721.payment-info': 'Select the token you want to pay with',
@@ -64,6 +64,7 @@ const route = useRoute()
 
 const deployMetadata = ref<DeployERC721Metadata>()
 const potentialContractAddress = ref('')
+const txProcessing = ref(false)
 const form = reactive({
   paymentToken: '',
   name: '',
@@ -105,25 +106,28 @@ const onPaymentChange = async () => {
 }
 
 const submit = async () => {
-  try {
-    const paymentTokenAddress = getSelectedPaymentAddress()
+  const paymentTokenAddress = getSelectedPaymentAddress()
 
-    potentialContractAddress.value = await deploy(
-      route.params.id as string,
-      paymentTokenAddress,
-      [form.name, form.symbol],
-    )
+  txProcessing.value = true
+  potentialContractAddress.value = await deploy(
+    route.params.id as string,
+    paymentTokenAddress,
+    [form.name, form.symbol],
+  )
 
-    deployMetadata.value = {
-      name: form.name,
-      symbol: form.symbol,
-      contract: potentialContractAddress.value,
-    }
-
-    isSuccessModalShown.value = true
-  } catch (error) {
-    ErrorHandler.process(error)
+  if (!potentialContractAddress.value) {
+    txProcessing.value = false
+    return
   }
+
+  deployMetadata.value = {
+    name: form.name,
+    symbol: form.symbol,
+    contract: potentialContractAddress.value,
+  }
+
+  isSuccessModalShown.value = true
+  txProcessing.value = false
 }
 
 init()
@@ -188,10 +192,9 @@ init()
                       :value-options="paymentTokens.symbols"
                       @update:model-value="onPaymentChange"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc721.payment-info')"
-                    />
+                    <div class="app__field-tooltip app__field-tooltip--select">
+                      <info-tooltip :text="t('erc721.payment-info')" />
+                    </div>
                   </div>
                   <div v-if="selectedPaymentToken.balance" class="app__row">
                     <span class="app__row-title">
@@ -246,10 +249,9 @@ init()
                       :error-message="getFieldErrorMessage('name')"
                       @blur="touchField('name')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc721.name-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc721.name-info')" />
+                    </div>
                   </div>
                   <div class="app__field-row">
                     <input-field
@@ -259,10 +261,9 @@ init()
                       :error-message="getFieldErrorMessage('symbol')"
                       @blur="touchField('symbol')"
                     />
-                    <info-tooltip
-                      class="app__field-tooltip"
-                      :text="t('erc721.symbol-info')"
-                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip :text="t('erc721.symbol-info')" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -273,7 +274,7 @@ init()
             type="submit"
             :text="t('erc721.btn-lbl')"
             size="small"
-            :disabled="!isFieldsValid"
+            :disabled="!isFieldsValid || txProcessing"
           />
         </div>
       </div>

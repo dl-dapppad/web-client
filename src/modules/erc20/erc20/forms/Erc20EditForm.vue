@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppBlock, AppButton, Tabs, EditOverview } from '@/common'
+import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
 import { cropAddress, copyToClipboard, formatAmount } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
 import { OverviewRow } from '@/common/EditOverview.vue'
@@ -24,9 +24,8 @@ const { t } = useI18n({
   messages: {
     en: {
       'erc20.title': 'Editing',
-      'erc20.contract-address': 'Contract {address}',
       'erc20.subtitle':
-        'ERC-20 is the technical standard for fungible tokens created using the EVM blockchain.',
+        'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
       'erc20.total': 'Total supply',
       'erc20.tracker': 'Token tracker',
       'erc20.owner': 'Owner address',
@@ -123,19 +122,21 @@ init()
         <h2 class="app__module-title">
           {{ t('erc20.title') }}
         </h2>
-        <app-button
-          type="button"
-          class="app__module-title-address"
-          :text="
-            t('erc20.contract-address', {
-              address: cropAddress(erc20.address.value),
-            })
-          "
-          :icon-right="$icons.duplicate"
-          scheme="default"
-          size="default"
-          @click="copyToClipboard(erc20.address.value)"
-        />
+        <div
+          class="app__link-wrp app__link-wrp--big"
+          :title="erc20.address.value"
+        >
+          <a
+            class="app__link app__link--big app__link--secondary"
+            :href="provider.getAddressUrl(erc20.address.value)"
+            target="_blank"
+          >
+            {{ cropAddress(erc20.address.value) }}
+          </a>
+          <div @click="copyToClipboard(erc20.address.value)">
+            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
+          </div>
+        </div>
       </div>
       <span class="app__module-subtitle">
         {{ t('erc20.subtitle') }}
@@ -160,8 +161,8 @@ init()
           class="app__module-content"
         >
           <approve-form :token="erc20"></approve-form>
-          <transfer-form :token="erc20"></transfer-form>
-          <transfer-from-form :token="erc20"></transfer-from-form>
+          <transfer-form :token="erc20" @change-balance="init" />
+          <transfer-from-form :token="erc20" @change-balance="init" />
         </div>
       </app-block>
     </div>

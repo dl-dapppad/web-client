@@ -31,11 +31,13 @@
     "default-title-error": "Error",
     "default-title-warning": "Warning",
     "default-title-info": "Information",
+    "default-title-processing": "Processing",
     "default-title-default": "Just a message",
     "default-message-success": "Action successful",
     "default-message-error": "Something went wrong",
     "default-message-warning": "Something you are doing is not recommended",
     "default-message-info": "Something is happening. Just want you to know that",
+    "default-message-processing": "Something is happening. Just want you to know that",
     "default-message-default": "Just a message"
   },
   "filters": {
@@ -45,12 +47,13 @@
         "rinkeby": "rinkeby",
         "ropsten": "ropsten",
         "kovan": "kovan",
-        "goerli": "goerli",
+        "goerli": "Goerli Testnet",
         "polygon": "polygon",
         "optimism": "optimism",
         "binance": "binance",
         "arbitrum": "arbitrum",
-        "mumbai": "mumbai"
+        "mumbai": "mumbai",
+        "localhost": "Localhost"
       }
     }
   },
@@ -114,6 +117,10 @@
     "transfer-lbl": "Transfer",
     "mint-lbl": "Mint"
   },
+  "post-card": {
+    "subcategories-lbl": "SubCategories",
+    "price-lbl": "Price"
+  },
   "post-checkout": {
     "have-product-lbl": "Already have this product?",
     "have-product-input-lbl": "Contract address",
@@ -121,26 +128,33 @@
     "current-network-lbl": "Current network",
     "sales-lbl": "Number of sales",
     "decrease-percent-lbl": "Decrease percent",
+    "decrease-percent-tooltip": "Decrease percent tooltip",
     "cashback-percent-lbl": "Cashback percent",
+    "cashback-percent-tooltip": "Cashback percent tooltip",
     "implementation-address-lbl": "Implementation address",
     "factory-address-lbl": "Factory address",
     "minimal-price-lbl": "Minimal price",
+    "minimal-price-tooltip": "Minimal price tooltip",
     "reward-lbl": "Reward",
+    "reward-tooltip": "Reward tooltip",
     "distribution-lbl": "Distribution",
+    "distribution-tooltip": "Distribution tooltip",
     "current-price-lbl": "Current price",
     "buy-now-link": "Buy now",
     "buy-description-lbl": "First, the contract will be deployed, and then you can configure it"
   },
   "farming-page": {
     "title": "Farming",
-    "subtitle": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    "subtitle": "Stake your DAPP tokens and receive cashback rewards from each subsequent product sale.",
     "withdraw-btn": "Withdraw",
     "stake-btn": "Stake",
     "claim-btn": "Claim",
+    "dapp-balance-lbl": "My DAPP balance",
     "stake-address-lbl": "Stake token address",
     "reward-address-lbl": "Reward token address",
     "total-stake-lbl": "Total stake",
     "my-stake-lbl": "My stake",
+    "dai-balance-lbl": "My DAI balance",
     "total-reward-lbl": "Total reward",
     "current-rewards-lbl": "Current rewards",
     "staking-title": "History of staking",
@@ -154,22 +168,29 @@
     "rewards-history-second-lbl": "Claimed",
     "rewards-history-third-lbl": "Accured",
     "withdrawing-modal-title": "Withdrawing",
-    "withdrawing-modal-text": "You can withdraw the DAPP at any time and receive a reward. But you can also increase the amount of staked DAPP to get a larger amount of rewards just claiming it at any time.",
+    "withdrawing-modal-text": "Withdraw, claim and unstake your DAPP tokens.",
     "withdrawing-modal-raw-key": "Aviable to withdraw",
     "withdrawing-modal-input-label": "Amount",
     "withdrawing-modal-input-btn-lbl": "Max",
     "withdrawing-page-btn-lbl": "Withdraw",
     "staking-modal-title": "Staking DAPP",
-    "staking-modal-text-first": "In order to take part in the rewards distribution and claim it, you need to stake some amount of DAPP. 1 DAPP is equivalent to 1% of Pending rewards (DAI).",
-    "staking-modal-text-second": "You can withdraw the DAPP at any time and receive a reward. But you can also increase the amount of staked DAPP to get a larger amount of rewards just claiming it at any time.",
+    "staking-modal-text-first": "Stake your DAPP tokens and receive cashback rewards from each subsequent product sale.",
     "staking-modal-raw-key": "Aviable to stake",
     "staking-modal-input-label": "Amount",
     "staking-modal-input-btn-lbl": "Max",
     "staking-page-btn-lbl": "Stake",
     "claiming-modal-title": "Claiming",
-    "claiming-modal-text": "To claim your rewards you need to stake DAPP first. 1 DAPP is equivalent to 1% of Pending rewards (DAI).",
+    "claiming-modal-text": "Claim your rewards.",
     "claiming-modal-raw-key": "Aviable to claim",
     "claiming-page-btn-lbl": "Claim"
+  },
+  "farming-history": {
+    "title": "History",
+    "switch-left-lbl": "Global",
+    "switch-right-lbl": "My",
+    "grid-address-lbl": "Address",
+    "grid-date-lbl": "Date and time",
+    "grid-amount-lbl": "Amount (DAPP)"
   },
   "edit": {
     "overview": "Overview"

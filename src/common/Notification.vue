@@ -39,6 +39,7 @@ defineProps<{
 @import 'vue-toastification/src/scss/index';
 
 .Vue-Toastification__toast {
+  max-width: toRem(400);
   border-radius: 0;
   background: var(--background-secondary);
 
@@ -96,11 +97,15 @@ defineProps<{
 }
 
 .notification__message {
-  font-size: toRem(14);
+  font-size: toRem(12);
   color: var(--text-primary-main);
+  margin-top: toRem(10);
+  line-height: toRem(16);
 }
 
 .notification__link {
+  font-size: toRem(12);
   color: var(--secondary-main);
+  margin-top: toRem(10);
 }
 </style>

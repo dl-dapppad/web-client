@@ -99,7 +99,10 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
               />
             </div>
           </app-block>
-          <img class="main-page__row-img" src="static/images/MainPage_3.png" />
+          <img
+            class="main-page__row-img main-page__row-img--mobile-up"
+            src="static/images/MainPage_3.png"
+          />
         </div>
         <div class="main-page__row main-page__row--inverted">
           <div class="main-page__row-block">
@@ -292,7 +295,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
   }
 
   @include respond-to(xsmall) {
-    font-size: toRem(54);
+    font-size: toRem(52);
   }
 }
 
@@ -364,7 +367,8 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
 }
 
 .main-page__sphere-logo {
-  max-width: toRem(295);
+  max-width: toRem(375);
   width: 100%;
+  padding: 0 toRem(40);
 }
 </style>
