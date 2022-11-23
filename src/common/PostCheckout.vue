@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import { useWeb3ProvidersStore } from '@/store'
@@ -17,6 +17,8 @@ import {
 import { Chain, Post } from '@/types'
 import { useErc20, useProductFactory, useFarming, Product } from '@/composables'
 import { AppButton, AppBlock, Icon, LineChart, InfoTooltip } from '@/common'
+import { isErc20Contract, isErc721Contract, Bus } from '@/helpers'
+import { ROUTE_NAMES, PRODUCT_IDS } from '@/enums'
 import { BN } from '@/utils'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
@@ -30,18 +32,42 @@ defineProps<{
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const route = useRoute()
+const router = useRouter()
 const dapp = useErc20()
 const paymentToken = useErc20()
 const factory = useProductFactory()
 const farming = useFarming()
 const { t } = useI18n()
 
-const contactAddress = ref('')
+const contractAddress = ref('')
 const alias = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const product = ref<Product>(factory.getEmptyProduct())
 const cashback = ref('0')
 const chartData = ref<number[]>([])
+
+const handleContractAddress = async () => {
+  if (
+    (await isErc20Contract(contractAddress.value)) &&
+    route.params.id === PRODUCT_IDS.ERC20
+  ) {
+    router.push({
+      name: ROUTE_NAMES.productEdit,
+      params: { id: PRODUCT_IDS.ERC20, contractAddress: contractAddress.value },
+    })
+  } else if (
+    (await isErc721Contract(contractAddress.value)) &&
+    route.params.id === PRODUCT_IDS.ERC721
+  ) {
+    router.push({
+      name: ROUTE_NAMES.productEdit,
+      params: {
+        id: PRODUCT_IDS.ERC721,
+        contractAddress: contractAddress.value,
+      },
+    })
+  } else Bus.warning(t('errors.navbar-address-not-found'))
+}
 
 const getChartData = (product: Product, decimals: number) => {
   let chartData = [] as number[]
@@ -141,12 +167,13 @@ init()
               />
               <input-field
                 scheme="secondary"
-                v-model="contactAddress"
+                v-model="contractAddress"
                 :label="t('post-checkout.have-product-input-lbl')"
               />
               <app-button
                 class="post-checkout__block-search-btn"
                 :icon-right="$icons.searchFilled"
+                @click="handleContractAddress"
               />
             </div>
           </div>

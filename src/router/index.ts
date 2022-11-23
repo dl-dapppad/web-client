@@ -7,7 +7,7 @@ import {
 } from 'vue-router'
 
 import { ROUTE_NAMES } from '@/enums'
-import { existGuard } from '@/router/guards'
+import { existGuard, contractGuard } from '@/router/guards'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -42,7 +42,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/product/:id/edit/:contractAddress',
     name: ROUTE_NAMES.productEdit,
-    beforeEnter: existGuard,
+    beforeEnter: contractGuard,
     component: () => import('@/forms/EditForm.vue'),
   },
   {

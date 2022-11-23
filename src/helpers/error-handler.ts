@@ -6,7 +6,7 @@ import { errors } from '@/errors'
 export class ErrorHandler {
   static process(error: Error | unknown, errorMessage = ''): void {
     const msgTranslation = errorMessage || ErrorHandler._getErrorMessage(error)
-    Bus.error(msgTranslation)
+    Bus.warning(msgTranslation)
 
     ErrorHandler.processWithoutFeedback(error)
   }

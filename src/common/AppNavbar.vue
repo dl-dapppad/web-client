@@ -2,6 +2,9 @@
 import { ref, watch, computed } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20 } from '@/composables'
 import {
@@ -10,13 +13,20 @@ import {
   getEmptyChain,
   cropAddress,
   isErc20Contract,
+  isErc721Contract,
   Bus,
 } from '@/helpers'
 import { Chain } from '@/types'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { ErrorHandler, isChainAvailable } from '@/helpers'
-import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
+import {
+  CONTRACT_NAMES,
+  ETHEREUM_CHAINS,
+  WINDOW_BREAKPOINTS,
+  ROUTE_NAMES,
+  PRODUCT_IDS,
+} from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
@@ -24,8 +34,10 @@ const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
 const { width: windowWidth } = useWindowSize()
+const { t } = useI18n()
 
 const dapp = useErc20()
+const router = useRouter()
 
 const searchInput = ref('')
 const chain = ref<Chain>(getEmptyChain())
@@ -68,9 +80,18 @@ const handleProviderBtnClick = () => {
   }
 }
 
-const handleSearch = () => {
-  if (isErc20Contract(searchInput.value)) Bus.emit('success')
-  else Bus.emit('error')
+const handleSearch = async () => {
+  if (await isErc20Contract(searchInput.value)) {
+    router.push({
+      name: ROUTE_NAMES.productEdit,
+      params: { id: PRODUCT_IDS.ERC20, contractAddress: searchInput.value },
+    })
+  } else if (await isErc721Contract(searchInput.value)) {
+    router.push({
+      name: ROUTE_NAMES.productEdit,
+      params: { id: PRODUCT_IDS.ERC721, contractAddress: searchInput.value },
+    })
+  } else Bus.warning(t('errors.navbar-address-not-found'))
 }
 
 watch(
@@ -277,6 +298,7 @@ init()
 }
 
 .app-navbar__search {
+  padding: 0;
   display: grid;
   height: 100%;
 

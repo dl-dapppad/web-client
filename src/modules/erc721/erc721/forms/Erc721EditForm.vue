@@ -76,7 +76,7 @@ const init = async () => {
     },
     {
       name: t('erc721.owner'),
-      value: cropAddress(erc721.owner.value),
+      value: erc721.owner.value,
       type: OVERVIEW_ROW.address,
     },
     {
