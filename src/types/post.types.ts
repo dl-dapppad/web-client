@@ -1,6 +1,6 @@
 export type Post = {
   id: string
-  type: string
+  type: 'category' | 'product'
   subPosts: string[]
   bannerUrl: string
   imageUrl: string

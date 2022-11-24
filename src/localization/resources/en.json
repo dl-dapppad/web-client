@@ -118,7 +118,7 @@
     "mint-lbl": "Mint"
   },
   "post-card": {
-    "subcategories-lbl": "SubCategories",
+    "subcategories-lbl": "{amount} SubCategories",
     "price-lbl": "Price"
   },
   "post-checkout": {

@@ -2,11 +2,11 @@ import { BN } from '../utils'
 
 export const formatAmount = (
   amount: number | string,
-  decimals: number | string,
+  decimals = 0,
   symbol?: string,
   decimalPlaces = 4,
 ): string => {
-  let str = new BN(amount).fromFraction(decimals as number).format({
+  let str = new BN(amount).fromFraction(decimals).format({
     decimals: decimalPlaces,
   })
 
