@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-
 import { Icon, AppBlock } from '@/common'
 import { cropAddress, copyToClipboard } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'

@@ -2,8 +2,7 @@
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-
-import { AppButton, Icon, AppBlock, Modal, FarmingHistory } from '@/common'
+import { AppButton, Icon, AppBlock, Modal } from '@/common'
 import { InputField } from '@/fields'
 import { cropAddress, getMaxUint256, txWrapper } from '@/helpers'
 import { useRouter } from '@/router'
@@ -74,10 +73,13 @@ const updateBalanceState = async () => {
     farming.accountInvestInfo(provider.value.selectedAddress),
     farming.getRewards(provider.value.selectedAddress),
     investmentToken.balanceOf(provider.value.selectedAddress),
+    rewardToken.balanceOf(provider.value.selectedAddress),
+    farming.loadDetails(),
   ]).then(res => {
     investInfo.value.amount = res[0].amount
     investInfo.value.rewards = res[1]
     investmentBalance.value = res[2]
+    rewardBalance.value = res[3]
 
     return
   })
@@ -132,12 +134,12 @@ const submitStaking = async () => {
 const submitWithdraw = async () => {
   if (!provider.value.selectedAddress) return
 
-  // TODO: add amount to tx after adding feature to SC
-  // const amount = new BN(withdrawForm.amount)
-  //   .toFraction(investmentToken.decimals.value)
-  //   .toString()
+  const amount = new BN(withdrawForm.amount)
+    .toFraction(investmentToken.decimals.value)
+    .toString()
 
   await txWrapper(farming.withdraw, {
+    amount,
     receiver: provider.value.selectedAddress,
   })
   await updateBalanceState()
@@ -382,7 +384,6 @@ init()
           />
         </span>
       </div>
-      <farming-history class="farming-page__history-grid" />
     </div>
     <modal v-model:is-shown="isModalWithdrawingShown">
       <template #default="{ modal }">
@@ -458,9 +459,6 @@ init()
           </div>
           <p class="farming-page__modal-paragraph">
             {{ $t('farming-page.staking-modal-text-first') }}
-          </p>
-          <p class="farming-page__modal-paragraph">
-            {{ $t('farming-page.staking-modal-text-second') }}
           </p>
           <div class="farming-page__modal-raw">
             <span class="farming-page__modal-raw-key">

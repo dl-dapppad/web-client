@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { i18n } from '@/localization'
 import { EthProviderRpcError } from '@/types'
 import { errors } from '@/errors'
 import { EIP1193, EIP1474 } from '@/enums'
@@ -140,7 +141,9 @@ export const handleTxError = (e: any) => {
   if (txMessage) msg = txMessage
   if (!msg) msg = 'Failed to complete the transaction'
 
-  Bus.error(msg)
+  const { t } = i18n.global
+  // eslint-disable-next-line vue-i18n/no-dynamic-keys
+  Bus.error(t(msg))
 }
 
 export const handleErrorMessage = (msg: string): string => {

@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
 import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
+import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
 import { cropAddress, copyToClipboard, formatAmount } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
 import { OverviewRow } from '@/common/EditOverview.vue'
@@ -104,6 +105,21 @@ const init = async () => {
   ]
 }
 
+const updateBalance = async () => {
+  if (!overviewRows.value || !provider.value.selectedAddress) return
+
+  overviewRows.value[4].value = await erc20.balanceOf(
+    provider.value.selectedAddress,
+  )
+}
+
+const updateOwner = async () => {
+  if (!overviewRows.value) return
+
+  await erc20.updateOwner()
+  overviewRows.value[3].value = erc20.owner.value
+}
+
 init()
 </script>
 
@@ -161,8 +177,10 @@ init()
           class="app__module-content"
         >
           <approve-form :token="erc20"></approve-form>
-          <transfer-form :token="erc20" @change-balance="init" />
-          <transfer-from-form :token="erc20" @change-balance="init" />
+          <transfer-form :token="erc20" @change-balance="updateBalance" />
+          <transfer-from-form :token="erc20" @change-balance="updateBalance" />
+          <transfer-ownership-form :token="erc20" @change-owner="updateOwner" />
+          <upgrade-to-form :token="erc20" />
         </div>
       </app-block>
     </div>

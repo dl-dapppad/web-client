@@ -328,12 +328,25 @@ a {
 }
 
 .app__balance {
-  font-weight: 800;
+  font-weight: 700;
   font-size: toRem(20);
   margin-right: 28px;
 
+  &-small {
+    font-size: toRem(12);
+  }
+
+  &-insufficient {
+    color: var(--warning-main);
+
+    span {
+      color: var(--warning-main);
+    }
+  }
+
   span {
     font-size: toRem(12);
+    font-weight: 700;
   }
 }
 
@@ -413,7 +426,7 @@ a {
   margin-right: 30px;
 
   & > div:last-child {
-    font-weight: 800;
+    font-weight: 700;
     font-size: toRem(20);
 
     & > span {

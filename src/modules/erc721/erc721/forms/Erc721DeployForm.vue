@@ -11,15 +11,18 @@ import {
   InfoTooltip,
 } from '@/common'
 import { InputField, SelectField } from '@/fields'
-import { useFormValidation } from '@/composables'
+import { useFormValidation, Product } from '@/composables'
 import { required } from '@/validators'
 import { formatAmount } from '@/helpers'
 import {
   deploy,
   getAvailableTokenList,
   getSelectedTokenInfo,
+  getProduct,
 } from '@/helpers/deploy.helper'
 import { PRODUCT_IDS } from '@/enums'
+import { config } from '@/config'
+import { BN } from '@/utils'
 import DeploySuccessMessage, {
   DeployERC721Metadata,
 } from '../../common/DeploySuccessMessage.vue'
@@ -34,7 +37,8 @@ const { t } = useI18n({
       'erc721.payment-group': 'Payment info',
       'erc721.payment-lbl': 'Payment token',
       'erc721.payment-info': 'Select the token you want to pay with',
-      'erc721.payment-balance': 'Balance',
+      'erc721.payment-balance': 'Your balance',
+      'erc721.product-price': 'Product price',
 
       'erc721.token-group': 'NFT info',
       'erc721.name-lbl': 'NFT name',
@@ -51,11 +55,17 @@ const paymentTokens = ref<Record<string, Array<string>>>({
   symbols: [],
   addresses: [],
 })
+const productPaymentToken = ref({
+  balance: '',
+  symbol: '',
+  decimals: 0,
+})
 const selectedPaymentToken = ref({
   balance: '',
   symbol: '',
   decimals: 0,
 })
+const product = ref<Product>()
 
 const isSuccessModalShown = ref(false)
 
@@ -85,6 +95,16 @@ const init = async () => {
 
   paymentTokens.value.symbols = symbols
   paymentTokens.value.addresses = addresses
+
+  const alias = config.PRODUCT_ALIASES[route.params.id as string]
+  product.value = await getProduct(alias)
+
+  if (!addresses.length) return
+
+  const { symbol, decimals, balance } = await getSelectedTokenInfo(addresses[0])
+  productPaymentToken.value.symbol = symbol
+  productPaymentToken.value.decimals = Number(decimals)
+  productPaymentToken.value.balance = balance
 }
 
 const getSelectedPaymentAddress = () => {
@@ -144,7 +164,7 @@ init()
         @click="
           router.push({
             name: $routes.product,
-            params: { id: PRODUCT_IDS.ERC20 },
+            params: { id: PRODUCT_IDS.ERC721 },
           })
         "
       />
@@ -196,20 +216,46 @@ init()
                       <info-tooltip :text="t('erc721.payment-info')" />
                     </div>
                   </div>
-                  <div v-if="selectedPaymentToken.balance" class="app__row">
-                    <span class="app__row-title">
-                      {{ t('erc721.payment-balance') }}
-                    </span>
-                    <div class="app__balance">
-                      {{
-                        formatAmount(
-                          selectedPaymentToken.balance,
-                          selectedPaymentToken.decimals,
-                        )
-                      }}
-                      <span>{{ selectedPaymentToken.symbol }}</span>
+                  <template
+                    v-if="selectedPaymentToken.balance && product?.currentPrice"
+                  >
+                    <div class="app__row">
+                      <span class="app__row-title">
+                        {{ t('erc721.product-price') }}
+                      </span>
+                      <div class="app__balance">
+                        {{
+                          formatAmount(
+                            product.currentPrice,
+                            productPaymentToken.decimals,
+                          )
+                        }}
+                        <span>{{ productPaymentToken.symbol }}</span>
+                      </div>
                     </div>
-                  </div>
+                    <div v-if="selectedPaymentToken.balance" class="app__row">
+                      <span class="app__row-title">
+                        {{ t('erc721.payment-balance') }}
+                      </span>
+                      <div
+                        class="app__balance app__balance-small"
+                        :class="{
+                          'app__balance-insufficient':
+                            new BN(product.currentPrice).compare(
+                              selectedPaymentToken.balance,
+                            ) === 1,
+                        }"
+                      >
+                        {{
+                          formatAmount(
+                            selectedPaymentToken.balance,
+                            selectedPaymentToken.decimals,
+                          )
+                        }}
+                        <span>{{ selectedPaymentToken.symbol }}</span>
+                      </div>
+                    </div>
+                  </template>
                 </div>
               </div>
             </template>

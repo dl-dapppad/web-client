@@ -61,12 +61,12 @@ export const useProductFactory = (): ProductFactoryContract => {
 
   const getEmptyProduct = (): Product => {
     return {
-      cashbackPercent: '',
-      decreasePercent: '',
-      currentPrice: '',
-      minPrice: '',
+      cashbackPercent: '0',
+      decreasePercent: '0',
+      currentPrice: '0',
+      minPrice: '0',
       implementation: '',
-      salesCount: '',
+      salesCount: '0',
       isActive: false,
     }
   }

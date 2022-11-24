@@ -23,6 +23,10 @@ export interface ProductErc20Contract {
   approve: (args: Record<string, string>) => Promise<ContractTransaction>
   transfer: (args: Record<string, string>) => Promise<ContractTransaction>
   transferFrom: (args: Record<string, string>) => Promise<ContractTransaction>
+  transferOwnership: (
+    args: Record<string, string>,
+  ) => Promise<ContractTransaction>
+  upgradeTo: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
 export const useProductErc20 = (
@@ -139,6 +143,22 @@ export const useProductErc20 = (
     )
   }
 
+  const transferOwnership = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.transferOwnership(args.newOwner)
+  }
+
+  const upgradeTo = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.upgradeTo(args.implementation)
+  }
+
   if (contractAddress) init(contractAddress)
 
   return {
@@ -162,5 +182,7 @@ export const useProductErc20 = (
     approve,
     transfer,
     transferFrom,
+    transferOwnership,
+    upgradeTo,
   }
 }
