@@ -5,12 +5,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { Icon, AppButton } from '@/common'
 import { copyToClipboard, cropAddress } from '@/helpers'
 import { useI18n } from 'vue-i18n'
-
-export interface DeployERC721Metadata {
-  name: string
-  symbol: string
-  contract: string
-}
+import { DeployERC721Metadata } from '@/modules/erc721/common/index'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 

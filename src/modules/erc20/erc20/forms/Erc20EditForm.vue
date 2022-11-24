@@ -8,14 +8,14 @@ import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
 import { cropAddress, copyToClipboard, formatAmount } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
-import { OverviewRow } from '@/common/EditOverview.vue'
+import { OverviewRow } from '@/types'
 import {
   BalanceForm,
   ApproveForm,
   AllowanceForm,
   TransferForm,
   TransferFromForm,
-} from '../../forms'
+} from '@/modules/erc20/forms'
 import { useProductErc20 } from '../composables/use-product-erc20'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())

@@ -4,12 +4,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { Icon, AppBlock } from '@/common'
 import { cropAddress, copyToClipboard } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
-
-export interface OverviewRow {
-  name: string
-  value: string
-  type: OVERVIEW_ROW
-}
+import { OverviewRow } from '@/types'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 

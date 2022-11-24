@@ -25,7 +25,7 @@ import { config } from '@/config'
 import { BN } from '@/utils'
 import DeploySuccessMessage, {
   DeployERC721Metadata,
-} from '../../common/DeploySuccessMessage.vue'
+} from '@/modules/erc721/common/DeploySuccessMessage.vue'
 
 const { t } = useI18n({
   locale: 'en',

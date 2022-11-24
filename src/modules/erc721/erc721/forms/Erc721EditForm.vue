@@ -8,7 +8,7 @@ import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
 import { cropAddress, copyToClipboard } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
-import { OverviewRow } from '@/common/EditOverview.vue'
+import { OverviewRow } from '@/types'
 import {
   BalanceForm,
   MintForm,
