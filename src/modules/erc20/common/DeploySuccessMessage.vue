@@ -1,13 +1,7 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-
-import { useWeb3ProvidersStore } from '@/store'
-import { Icon, AppButton } from '@/common'
-import { copyToClipboard, cropAddress } from '@/helpers'
+import { Icon, AppButton, AppAddress } from '@/common'
 import { useI18n } from 'vue-i18n'
 import { DeployERC20Metadata } from '@/modules/erc20/common'
-
-const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const props = defineProps<{
   deployMetadata?: DeployERC20Metadata
@@ -103,43 +97,19 @@ const { t } = useI18n({
         <span class="app__metadata-lbl">
           {{ t('deploy-erc20.mint-receiver-lbl') }}
         </span>
-        <span :title="props.deployMetadata.mintReceiver" class="app__link-wrp">
-          <a
-            class="app__link app__link--accented"
-            :href="provider.getAddressUrl(props.deployMetadata.mintReceiver)"
-            target="_blank"
-          >
-            {{ cropAddress(props.deployMetadata.mintReceiver) }}
-          </a>
-          <app-button
-            class="app__link-icon-wrp"
-            scheme="default"
-            @click="copyToClipboard(props.deployMetadata?.mintReceiver ?? '')"
-          >
-            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-          </app-button>
-        </span>
+        <app-address
+          :address="props.deployMetadata.mintReceiver"
+          class="app__link--accented"
+        />
       </div>
       <div class="app__metadata-row">
         <span class="app__metadata-lbl">
           {{ t('deploy-erc20.contract-lbl') }}
         </span>
-        <span :title="props.deployMetadata.contract" class="app__link-wrp">
-          <a
-            class="app__link app__link--accented"
-            :href="provider.getAddressUrl(props.deployMetadata.contract)"
-            target="_blank"
-          >
-            {{ cropAddress(props.deployMetadata.contract) }}
-          </a>
-          <app-button
-            class="app__link-icon-wrp"
-            scheme="default"
-            @click="copyToClipboard(props.deployMetadata?.contract ?? '')"
-          >
-            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-          </app-button>
-        </span>
+        <app-address
+          :address="props.deployMetadata.contract"
+          class="app__link--accented"
+        />
       </div>
     </div>
     <app-button

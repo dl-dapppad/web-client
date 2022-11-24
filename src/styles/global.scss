@@ -192,10 +192,6 @@ a {
   align-items: center;
   gap: toRem(10);
   cursor: pointer;
-
-  &--big {
-    gap: toRem(20);
-  }
 }
 
 .app__link {
@@ -217,10 +213,6 @@ a {
   &--big {
     font-size: toRem(30);
   }
-}
-
-.app__link-icon-wrp:not([disabled]) {
-  padding: 0;
 }
 
 .app__link-icon {

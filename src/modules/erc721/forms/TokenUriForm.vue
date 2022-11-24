@@ -2,8 +2,8 @@
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { InputField } from '@/fields'
-import { InfoTooltip, AppButton } from '@/common'
-import { copyToClipboard, handleTxError } from '@/helpers'
+import { InfoTooltip, AppButton, AppAddress } from '@/common'
+import { handleTxError } from '@/helpers'
 import { useFormValidation } from '@/composables'
 import { required, numeric } from '@/validators'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
@@ -76,13 +76,10 @@ const submit = async () => {
           @click="submit"
         />
         <div v-if="result">
-          <app-button
-            scheme="default"
-            color="secondary"
-            size="default"
-            :text="result"
-            :icon-right="$icons.duplicate"
-            @click="copyToClipboard(result)"
+          <app-address
+            class="app__link--accented"
+            :address="result"
+            :is-cropped="false"
           />
         </div>
       </div>

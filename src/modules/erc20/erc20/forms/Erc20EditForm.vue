@@ -4,9 +4,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
+import { AppBlock, AppButton, Tabs, EditOverview, AppAddress } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
-import { cropAddress, copyToClipboard, formatAmount } from '@/helpers'
+import { formatAmount } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
 import { OverviewRow } from '@/types'
 import {
@@ -94,7 +94,7 @@ const init = async () => {
     },
     {
       name: t('erc20.owner'),
-      value: cropAddress(erc20.owner.value),
+      value: erc20.owner.value,
       type: OVERVIEW_ROW.address,
     },
     {
@@ -138,21 +138,10 @@ init()
         <h2 class="app__module-title">
           {{ t('erc20.title') }}
         </h2>
-        <div
-          class="app__link-wrp app__link-wrp--big"
-          :title="erc20.address.value"
-        >
-          <a
-            class="app__link app__link--big app__link--secondary"
-            :href="provider.getAddressUrl(erc20.address.value)"
-            target="_blank"
-          >
-            {{ cropAddress(erc20.address.value) }}
-          </a>
-          <div @click="copyToClipboard(erc20.address.value)">
-            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-          </div>
-        </div>
+        <app-address
+          :address="erc20.address.value"
+          class="app__link--big app__link--secondary"
+        />
       </div>
       <span class="app__module-subtitle">
         {{ t('erc20.subtitle') }}

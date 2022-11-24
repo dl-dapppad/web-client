@@ -4,9 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
+import { AppBlock, AppButton, Tabs, EditOverview, AppAddress } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
-import { cropAddress, copyToClipboard } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
 import { OverviewRow } from '@/types'
 import {
@@ -140,21 +139,7 @@ init()
         <h2 class="app__module-title">
           {{ t('erc721.title') }}
         </h2>
-        <div
-          class="app__link-wrp app__link-wrp--big"
-          :title="erc721.address.value"
-        >
-          <a
-            class="app__link app__link--big"
-            :href="provider.getAddressUrl(erc721.address.value)"
-            target="_blank"
-          >
-            {{ cropAddress(erc721.address.value) }}
-          </a>
-          <div @click="copyToClipboard(erc721.address.value)">
-            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-          </div>
-        </div>
+        <app-address :address="erc721.address.value" class="app__link--big" />
       </div>
       <span class="app__module-subtitle">
         {{ t('erc721.subtitle') }}

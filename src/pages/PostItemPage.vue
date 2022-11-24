@@ -323,6 +323,7 @@ $page-padding-right: toRem(165);
 .post-item-page__unordered-list-text {
   font-size: toRem(20);
   line-height: toRem(26);
+  word-break: break-all;
 }
 
 .post-item-page__unordered-list-icon {

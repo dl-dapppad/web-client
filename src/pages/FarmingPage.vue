@@ -2,11 +2,11 @@
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { AppButton, Icon, AppBlock, Modal } from '@/common'
+import { AppButton, Icon, AppBlock, Modal, AppAddress } from '@/common'
 import { InputField } from '@/fields'
-import { cropAddress, getMaxUint256, txWrapper } from '@/helpers'
+import { getMaxUint256, txWrapper } from '@/helpers'
 import { useRouter } from '@/router'
-import { copyToClipboard, formatAmount } from '@/helpers'
+import { formatAmount } from '@/helpers'
 import { ICON_NAMES } from '@/enums'
 import { i18n } from '@/localization'
 import {
@@ -165,17 +165,10 @@ init()
           <div class="farming-page__heading">
             {{ $t('farming-page.title') }}
           </div>
-          <div
-            class="farming-page__title-address"
-            :title="farming.address.value"
-            @click="copyToClipboard(farming.address.value)"
-          >
-            {{ cropAddress(farming.address.value) }}
-            <icon
-              class="farming-page__title-icon"
-              :name="$icons.duplicateFilled"
-            />
-          </div>
+          <app-address
+            class="app__link--big app__link--secondary"
+            :address="farming.address.value"
+          />
         </div>
         <div class="farming-page__subtitle">
           {{ $t('farming-page.subtitle') }}
@@ -189,7 +182,11 @@ init()
                 class="farming-page__table-icon farming-page__dark-icon"
                 :name="ICON_NAMES.circleFilled"
               />
-              {{ t('farming-page.dapp-balance-lbl') }}
+              <i18n-t keypath="farming-page.balance-lbl" tag="span">
+                <template #curr>
+                  {{ investmentToken.symbol.value }}
+                </template>
+              </i18n-t>
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
@@ -278,17 +275,10 @@ init()
             })`
           }}
         </span>
-        <span
-          class="farming-page__table-desc-address"
-          :title="investmentToken.address.value"
-          @click="copyToClipboard(investmentToken.address.value)"
-        >
-          {{ cropAddress(investmentToken.address.value) }}
-          <icon
-            class="farming-page__under-table-icon"
-            :name="$icons.duplicateFilled"
-          />
-        </span>
+        <app-address
+          class="app__link--accented farming-page__table-desc-address"
+          :address="investmentToken.address.value"
+        />
       </div>
       <div class="farming-page__table">
         <app-block>
@@ -298,7 +288,11 @@ init()
                 class="farming-page__table-icon farming-page__dark-icon"
                 :name="ICON_NAMES.daiCoin"
               />
-              {{ t('farming-page.dai-balance-lbl') }}
+              <i18n-t keypath="farming-page.balance-lbl" tag="span">
+                <template #curr>
+                  {{ rewardToken.symbol.value }}
+                </template>
+              </i18n-t>
             </div>
             <div class="farming-page__table-body">
               <span class="farming-page__table-count">
@@ -372,17 +366,10 @@ init()
             })`
           }}
         </span>
-        <span
-          class="farming-page__table-desc-address"
-          :title="rewardToken.address.value"
-          @click="copyToClipboard(rewardToken.address.value)"
-        >
-          {{ cropAddress(rewardToken.address.value) }}
-          <icon
-            class="farming-page__under-table-icon"
-            :name="$icons.duplicateFilled"
-          />
-        </span>
+        <app-address
+          class="app__link--accented farming-page__table-desc-address"
+          :address="rewardToken.address.value"
+        />
       </div>
     </div>
     <modal v-model:is-shown="isModalWithdrawingShown">
@@ -695,12 +682,6 @@ init()
 }
 
 .farming-page__table-desc-address {
-  padding: toRem(14) 0;
-  display: flex;
-  gap: toRem(10);
-  color: var(--secondary-main);
-  font-weight: 700;
-  cursor: pointer;
   justify-self: end;
 }
 
