@@ -8,12 +8,18 @@ metadata:
 data:
   {{ .Values.config.name  }}: |
                               document.ENV = {
-                                {{ if  .Values.global.localstorage }}
-                                FILE_STORAGE: 'https://storage.{{ .Values.global.IngressDomain  }}/{{ .Values.config.data.BUCKET  }}',
-                                {{ else }}
-                                FILE_STORAGE: 'https://s3.{{ .Values.global.aws.Region  }}.amazonaws.com/{{ .Values.config.data.BUCKET  }}',
-                                {{ end }}
-                                WEB_CLIENT_URL: 'https://{{ .Values.global.IngressDomain  }}',
-                                VUE_APP_API_URL: '{{ .Values.config.data.VUE_APP_API_URL }}'
-                              }
+                                VITE_ENVIRONMENT: 'development',
+                                VITE_API_URL: 'http://localhost:8000/_/api/',
+                                VITE_APP_NAME: 'Dapppad On-Chain',
+
+                                VITE_APP_CONTRACT_LOCAL_DAPP: '',
+                                VITE_APP_CONTRACT_LOCAL_PRODUCT_FACTORY: '',
+                                VITE_APP_CONTRACT_LOCAL_FARMING: '',
+
+                                VITE_APP_CONTRACT_GOERLI_DAPP: '0x353C50AB9E10b62D75aD057327acdB39C0dB8a0B',
+                                VITE_APP_CONTRACT_GOERLI_PRODUCT_FACTORY: '0xa5af85f98066DA249997d41E6233Aa82D3e3c9bc',
+                                VITE_APP_CONTRACT_GOERLI_FARMING: '0xDda6906636F681853665Ae155C9771119D51AdF4',
+
+                                VITE_APP_CONTRACT_PRODUCT_ERC20_ALIAS: '0x8ae85d849167ff996c04040c44924fd364217285e4cad818292c7ac37c0a345b',
+                                VITE_APP_CONTRACT_PRODUCT_ERC721_ALIAS: '0x73ad2146b3d3a286642c794379d750360a2d53a3459a11b3e5d6cc900f55f44a',
 {{- end }}
