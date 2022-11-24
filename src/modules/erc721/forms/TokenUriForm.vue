@@ -79,6 +79,7 @@ const submit = async () => {
           <app-address
             class="app__link--accented"
             :address="result"
+            :href="result"
             :is-cropped="false"
           />
         </div>
