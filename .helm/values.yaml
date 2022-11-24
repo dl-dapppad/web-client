@@ -13,7 +13,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "1.10.3"
 
-imagePullSecrets: 
+imagePullSecrets:
     - name: "registry.gitlab.com"
 nameOverride: ""
 fullnameOverride: ""
@@ -74,7 +74,7 @@ service:
 ingress:
   enabled: true
   className: ""
-  annotations: 
+  annotations:
       cert-manager.io/cluster-issuer: letsencrypt
       kubernetes.io/ingress.class: nginx
       kubernetes.io/tls-acme: "true"
@@ -86,7 +86,7 @@ ingress:
   tls:
     - hosts:
       - storage
-      secretName: web-tls
+      secretName: web2-tls
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
