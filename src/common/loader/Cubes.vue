@@ -2,7 +2,7 @@
   <div class="animation">
     <lottie-animation
       class="no-data-message__animation"
-      :animation-data="animationData"
+      :animation-data="cubes"
       v-bind="$attrs"
     />
   </div>
@@ -10,17 +10,17 @@
 
 <script lang="ts">
 import { LottieAnimation } from 'lottie-web-vue'
+import cubes from '@/assets/animations/loader.json'
 
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'animation',
+  name: 'cubes',
   components: { LottieAnimation },
-  props: {
-    animationData: {
-      type: Object as PropType<JSON>,
-      required: true,
-    },
+  setup() {
+    return {
+      cubes,
+    }
   },
 })
 </script>
