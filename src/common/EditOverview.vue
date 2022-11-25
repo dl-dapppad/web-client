@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppBlock, AppAddress } from '@/common'
+import { AppBlock, LinkCopy } from '@/common'
 import { OVERVIEW_ROW } from '@/enums'
 import { OverviewRow } from '@/types'
 
@@ -34,7 +34,7 @@ const props = defineProps<{
                 </span>
               </template>
               <template v-else-if="row.type === OVERVIEW_ROW.address">
-                <app-address :address="row.value" class="app__link--accented" />
+                <link-copy :address="row.value" class="app__link--accented" />
               </template>
               <template v-else>
                 {{ row.value }}

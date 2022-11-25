@@ -22,7 +22,7 @@ withDefaults(
 </script>
 
 <template>
-  <div class="app-address app__link-wrp" :title="address">
+  <div class="link-copy app__link-wrp" :title="address">
     <a
       class="app__link"
       :href="href ? href : provider.getAddressUrl(address)"

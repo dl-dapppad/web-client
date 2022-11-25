@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { AppButton, Icon, AppBlock, Modal, AppAddress } from '@/common'
+import { AppButton, Icon, AppBlock, Modal, LinkCopy } from '@/common'
 import { InputField } from '@/fields'
 import { getMaxUint256, txWrapper } from '@/helpers'
 import { useRouter } from '@/router'
@@ -165,7 +165,7 @@ init()
           <div class="farming-page__heading">
             {{ $t('farming-page.title') }}
           </div>
-          <app-address
+          <link-copy
             class="app__link--big app__link--secondary"
             :address="farming.address.value"
           />
@@ -275,7 +275,7 @@ init()
             })`
           }}
         </span>
-        <app-address
+        <link-copy
           class="app__link--accented farming-page__table-desc-address"
           :address="investmentToken.address.value"
         />
@@ -366,7 +366,7 @@ init()
             })`
           }}
         </span>
-        <app-address
+        <link-copy
           class="app__link--accented farming-page__table-desc-address"
           :address="rewardToken.address.value"
         />

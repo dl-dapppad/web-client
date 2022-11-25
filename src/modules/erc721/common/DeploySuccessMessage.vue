@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Icon, AppButton, AppAddress } from '@/common'
+import { Icon, AppButton, LinkCopy } from '@/common'
 import { useI18n } from 'vue-i18n'
 import { DeployERC721Metadata } from '@/modules/erc721/common/index'
 
@@ -75,7 +75,7 @@ const { t } = useI18n({
         <span class="app__metadata-lbl">
           {{ t('deploy-erc721.contract-lbl') }}
         </span>
-        <app-address
+        <link-copy
           :address="props.deployMetadata.contract"
           class="app__link--accented"
         />

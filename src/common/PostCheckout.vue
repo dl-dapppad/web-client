@@ -19,7 +19,7 @@ import {
   Icon,
   LineChart,
   InfoTooltip,
-  AppAddress,
+  LinkCopy,
 } from '@/common'
 import { BN } from '@/utils'
 import { CONTRACT_NAMES } from '@/enums'
@@ -201,7 +201,7 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.implementation-address-lbl') }}
               </span>
-              <app-address
+              <link-copy
                 :address="product.implementation"
                 class="app__link--accented"
               />
@@ -210,7 +210,7 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.factory-address-lbl') }}
               </span>
-              <app-address
+              <link-copy
                 :address="factory.address.value"
                 class="app__link--accented"
               />

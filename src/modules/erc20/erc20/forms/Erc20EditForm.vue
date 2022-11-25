@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppBlock, AppButton, Tabs, EditOverview, AppAddress } from '@/common'
+import { AppBlock, AppButton, Tabs, EditOverview, LinkCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
 import { formatAmount } from '@/helpers'
 import { OVERVIEW_ROW } from '@/enums'
@@ -138,7 +138,7 @@ init()
         <h2 class="app__module-title">
           {{ t('erc20.title') }}
         </h2>
-        <app-address
+        <link-copy
           :address="erc20.address.value"
           class="app__link--big app__link--secondary"
         />

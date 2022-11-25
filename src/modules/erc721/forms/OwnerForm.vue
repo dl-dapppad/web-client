@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { InputField } from '@/fields'
-import { InfoTooltip, AppButton, AppAddress } from '@/common'
+import { InfoTooltip, AppButton, LinkCopy } from '@/common'
 import { handleTxError } from '@/helpers'
 import { useFormValidation } from '@/composables'
 import { required, numeric } from '@/validators'
@@ -75,7 +75,7 @@ const submit = async () => {
           @click="submit"
         />
         <div v-if="result">
-          <app-address :address="result" class="app__link--accented" />
+          <link-copy :address="result" class="app__link--accented" />
         </div>
       </div>
     </div>
