@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -23,9 +23,8 @@ import {
 import { PRODUCT_IDS } from '@/enums'
 import { config } from '@/config'
 import { BN } from '@/utils'
-import DeploySuccessMessage, {
-  DeployERC721Metadata,
-} from '@/modules/erc721/common/DeploySuccessMessage.vue'
+import DeploySuccessMessage from '@/modules/erc721/common/DeploySuccessMessage.vue'
+import { DeployERC721Metadata } from '@/modules/erc721/common/index'
 
 const { t } = useI18n({
   locale: 'en',
@@ -88,6 +87,14 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
     name: { required },
     symbol: { required },
   },
+)
+
+const isBalanceInsuficient = computed(() =>
+  product.value?.currentPrice
+    ? new BN(product.value?.currentPrice).compare(
+        selectedPaymentToken.value.balance,
+      ) === 1
+    : false,
 )
 
 const init = async () => {
@@ -240,10 +247,7 @@ init()
                       <div
                         class="app__balance app__balance-small"
                         :class="{
-                          'app__balance-insufficient':
-                            new BN(product.currentPrice).compare(
-                              selectedPaymentToken.balance,
-                            ) === 1,
+                          'app__balance-insufficient': isBalanceInsuficient,
                         }"
                       >
                         {{

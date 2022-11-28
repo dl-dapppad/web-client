@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { AppButton, Icon, AppBlock, Modal, LinkCopy } from '@/common'
@@ -65,6 +65,12 @@ const init = async () => {
   })
   await updateBalanceState()
 }
+
+const isClaimAvailable = computed(() =>
+  investInfo.value?.rewards
+    ? new BN(investInfo.value?.rewards).compare(0) === 1
+    : false,
+)
 
 const updateBalanceState = async () => {
   if (!provider.value.selectedAddress) return
@@ -268,19 +274,26 @@ init()
             </app-button>
           </div>
         </app-block>
-        <span class="farming-page__table-desc-text">
-          {{
-            `${$t('farming-page.stake-address-lbl')} (${
-              investmentToken.symbol.value
-            })`
-          }}
-        </span>
-        <link-copy
-          class="app__link--accented farming-page__table-desc-address"
-          :address="investmentToken.address.value"
-        />
+        <div class="farming-page__token-info">
+          <span class="farming-page__table-desc-text">
+            {{
+              `${$t('farming-page.stake-address-lbl')} (${
+                investmentToken.symbol.value
+              })`
+            }}
+          </span>
+          <link-copy
+            class="app__link--accented farming-page__table-desc-address"
+            :address="investmentToken.address.value"
+          />
+        </div>
       </div>
-      <div class="farming-page__table">
+      <div
+        class="farming-page__table"
+        :class="{
+          'farming-page__claim-not-available': !isClaimAvailable,
+        }"
+      >
         <app-block>
           <div class="farming-page__table-item">
             <div class="farming-page__table-title">
@@ -348,28 +361,32 @@ init()
             </div>
           </div>
         </app-block>
-        <app-block>
-          <app-button
-            class="farming-page__table-btn"
-            size="large"
-            scheme="borderless"
-            modification="border-rounded"
-            @click="isModalClaimingShown = true"
-          >
-            {{ $t('farming-page.claim-btn') }}
-          </app-button>
-        </app-block>
-        <span class="farming-page__table-desc-text">
-          {{
-            `${$t('farming-page.reward-address-lbl')} (${
-              rewardToken.symbol.value
-            })`
-          }}
-        </span>
-        <link-copy
-          class="app__link--accented farming-page__table-desc-address"
-          :address="rewardToken.address.value"
-        />
+        <template v-if="isClaimAvailable">
+          <app-block>
+            <app-button
+              class="farming-page__table-btn"
+              size="large"
+              scheme="borderless"
+              modification="border-rounded"
+              @click="isModalClaimingShown = true"
+            >
+              {{ $t('farming-page.claim-btn') }}
+            </app-button>
+          </app-block>
+        </template>
+        <div class="farming-page__token-info">
+          <span class="farming-page__table-desc-text">
+            {{
+              `${$t('farming-page.reward-address-lbl')} (${
+                rewardToken.symbol.value
+              })`
+            }}
+          </span>
+          <link-copy
+            class="app__link--accented farming-page__table-desc-address"
+            :address="rewardToken.address.value"
+          />
+        </div>
       </div>
     </div>
     <modal v-model:is-shown="isModalWithdrawingShown">
@@ -854,5 +871,15 @@ init()
 
 .farming-page__history-grid {
   padding-top: toRem(30);
+}
+
+.farming-page__claim-not-available {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.farming-page__token-info {
+  display: flex;
+  justify-content: space-between;
+  grid-column: 1 3;
 }
 </style>

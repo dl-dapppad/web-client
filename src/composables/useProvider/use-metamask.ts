@@ -51,9 +51,11 @@ export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
 
     tempProviderStub.on('accountsChanged', () => {
       _updateProviderState()
+      location.reload()
     })
     tempProviderStub.on('chainChanged', () => {
       _updateProviderState()
+      location.reload()
     })
     tempProviderStub.on('disconnect', () => {
       selectedAddress.value = ''

@@ -2,6 +2,8 @@
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useWeb3ProvidersStore } from '@/store'
 import {
   AppBlock,
   AppButton,
@@ -26,8 +28,7 @@ import {
   DeploySuccessMessage,
   DeployERC20Metadata,
 } from '@/modules/erc20/common'
-import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore } from '@/store'
+import { PRODUCT_IDS } from '@/enums'
 
 const { t } = useI18n({
   locale: 'en',
