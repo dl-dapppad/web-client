@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AppBlock, LinkCopy } from '@/common'
-import { OVERVIEW_ROW } from '@/enums'
-import { OverviewRow } from '@/types'
+import { OVERVIEW_ROW } from '@/modules/enums'
+import { OverviewRow } from '@/modules/types'
 
 const props = defineProps<{
   rows?: Array<OverviewRow>
