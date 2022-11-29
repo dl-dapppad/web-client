@@ -4,17 +4,19 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
-import { cropAddress, copyToClipboard, formatAmount } from '@/helpers'
-import { OVERVIEW_ROW } from '@/enums'
-import { OverviewRow } from '@/common/EditOverview.vue'
+import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
+import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
+import { formatAmount } from '@/helpers'
+import { OVERVIEW_ROW } from '@/modules/enums'
+import { OverviewRow } from '@/modules/types'
 import {
   BalanceForm,
   ApproveForm,
   AllowanceForm,
   TransferForm,
   TransferFromForm,
-} from '../../forms'
+} from '@/modules/erc20/forms'
+import { EditOverview } from '@/modules/common'
 import { useProductErc20 } from '../composables/use-product-erc20'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -93,7 +95,7 @@ const init = async () => {
     },
     {
       name: t('erc20.owner'),
-      value: cropAddress(erc20.owner.value),
+      value: erc20.owner.value,
       type: OVERVIEW_ROW.address,
     },
     {
@@ -102,6 +104,21 @@ const init = async () => {
       type: OVERVIEW_ROW.amount,
     },
   ]
+}
+
+const updateBalance = async () => {
+  if (!overviewRows.value || !provider.value.selectedAddress) return
+
+  overviewRows.value[4].value = await erc20.balanceOf(
+    provider.value.selectedAddress,
+  )
+}
+
+const updateOwner = async () => {
+  if (!overviewRows.value) return
+
+  await erc20.updateOwner()
+  overviewRows.value[3].value = erc20.owner.value
 }
 
 init()
@@ -122,21 +139,10 @@ init()
         <h2 class="app__module-title">
           {{ t('erc20.title') }}
         </h2>
-        <div
-          class="app__link-wrp app__link-wrp--big"
-          :title="erc20.address.value"
-        >
-          <a
-            class="app__link app__link--big app__link--secondary"
-            :href="provider.getAddressUrl(erc20.address.value)"
-            target="_blank"
-          >
-            {{ cropAddress(erc20.address.value) }}
-          </a>
-          <div @click="copyToClipboard(erc20.address.value)">
-            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-          </div>
-        </div>
+        <link-copy
+          :address="erc20.address.value"
+          class="app__link--big app__link--secondary"
+        />
       </div>
       <span class="app__module-subtitle">
         {{ t('erc20.subtitle') }}
@@ -161,8 +167,10 @@ init()
           class="app__module-content"
         >
           <approve-form :token="erc20"></approve-form>
-          <transfer-form :token="erc20" @change-balance="init" />
-          <transfer-from-form :token="erc20" @change-balance="init" />
+          <transfer-form :token="erc20" @change-balance="updateBalance" />
+          <transfer-from-form :token="erc20" @change-balance="updateBalance" />
+          <transfer-ownership-form :token="erc20" @change-owner="updateOwner" />
+          <upgrade-to-form :token="erc20" />
         </div>
       </app-block>
     </div>

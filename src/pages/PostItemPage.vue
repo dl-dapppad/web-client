@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { Icon, AppBlock, AppButton, PostCheckout } from '@/common'
+import { Icon, AppBlock, AppButton } from '@/common'
 import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
+import PostItemPageCheckout from '@/pages/PostItemPage/PostItemPageCheckout.vue'
 import postsData from '@/assets/posts.json'
 
 const route = useRoute()
@@ -34,7 +35,7 @@ const post = posts.find(el => el.id === route.params.id)
         </div>
       </div>
     </app-block>
-    <post-checkout v-if="post" :post="post" />
+    <post-item-page-checkout v-if="post" :post="post" />
     <app-block class="post-item-page__content-wrp">
       <div v-if="post" class="post-item-page__content">
         <template v-for="([key, value], idx) in post.content">
@@ -323,6 +324,7 @@ $page-padding-right: toRem(165);
 .post-item-page__unordered-list-text {
   font-size: toRem(20);
   line-height: toRem(26);
+  word-break: break-all;
 }
 
 .post-item-page__unordered-list-icon {

@@ -4,10 +4,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { Icon, AppBlock, AppButton, Tabs, EditOverview } from '@/common'
-import { cropAddress, copyToClipboard } from '@/helpers'
-import { OVERVIEW_ROW } from '@/enums'
-import { OverviewRow } from '@/common/EditOverview.vue'
+import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
+import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
+import { OVERVIEW_ROW } from '@/modules/enums'
+import { OverviewRow } from '@/modules/types'
 import {
   BalanceForm,
   MintForm,
@@ -15,7 +15,10 @@ import {
   ApproveAllForm,
   SafeTransferForm,
   OwnerForm,
+  SetBaseUriForm,
+  TokenUriForm,
 } from '../../forms'
+import { EditOverview } from '@/modules/common'
 import { useProductErc721 } from '../composables/use-product-erc721'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -31,6 +34,8 @@ const { t } = useI18n({
       'erc721.owner': 'Owner address',
       'erc721.balance': 'Your balance',
       'erc721.interaction': 'Interaction',
+      'erc721.baseURI': 'Base URI',
+      'erc721.baseURI-default-value': 'Not set yet',
     },
   },
 })
@@ -76,8 +81,16 @@ const init = async () => {
     },
     {
       name: t('erc721.owner'),
-      value: cropAddress(erc721.owner.value),
+      value: erc721.owner.value,
       type: OVERVIEW_ROW.address,
+    },
+    {
+      name: t('erc721.baseURI'),
+      value:
+        erc721.baseURI.value === ''
+          ? t('erc721.baseURI-default-value')
+          : erc721.baseURI.value,
+      type: OVERVIEW_ROW.default,
     },
     {
       name: t('erc721.balance'),
@@ -85,6 +98,28 @@ const init = async () => {
       type: OVERVIEW_ROW.default,
     },
   ]
+}
+
+const updateBalance = async () => {
+  if (!overviewRows.value || !provider.value.selectedAddress) return
+
+  overviewRows.value[3].value = await erc721.balanceOf(
+    provider.value.selectedAddress,
+  )
+}
+
+const updateOwner = async () => {
+  if (!overviewRows.value) return
+
+  await erc721.updateOwner()
+  overviewRows.value[1].value = erc721.owner.value
+}
+
+const updateBaseURI = async () => {
+  if (!overviewRows.value) return
+
+  await erc721.updateBaseURI()
+  overviewRows.value[2].value = erc721.baseURI.value
 }
 
 init()
@@ -105,21 +140,7 @@ init()
         <h2 class="app__module-title">
           {{ t('erc721.title') }}
         </h2>
-        <div
-          class="app__link-wrp app__link-wrp--big"
-          :title="erc721.address.value"
-        >
-          <a
-            class="app__link app__link--big"
-            :href="provider.getAddressUrl(erc721.address.value)"
-            target="_blank"
-          >
-            {{ cropAddress(erc721.address.value) }}
-          </a>
-          <div @click="copyToClipboard(erc721.address.value)">
-            <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-          </div>
-        </div>
+        <link-copy :address="erc721.address.value" class="app__link--big" />
       </div>
       <span class="app__module-subtitle">
         {{ t('erc721.subtitle') }}
@@ -136,17 +157,24 @@ init()
           v-if="currentTabNumber === FORM_TABS[0].number"
           class="app__module-content"
         >
-          <balance-form :token="erc721"></balance-form>
-          <owner-form :token="erc721"></owner-form>
+          <balance-form :token="erc721" />
+          <owner-form :token="erc721" />
+          <token-uri-form :token="erc721" />
         </div>
         <div
           v-if="currentTabNumber === FORM_TABS[1].number"
           class="app__module-content"
         >
-          <approve-form :token="erc721"></approve-form>
-          <approve-all-form :token="erc721"></approve-all-form>
-          <mint-form :token="erc721" @change-balance="init" />
+          <set-base-uri-form :token="erc721" @change-base-uri="updateBaseURI" />
+          <approve-form :token="erc721" />
+          <approve-all-form :token="erc721" />
+          <mint-form :token="erc721" @change-balance="updateBalance" />
           <safe-transfer-form :token="erc721" />
+          <transfer-ownership-form
+            :token="erc721"
+            @change-owner="updateOwner"
+          />
+          <upgrade-to-form :token="erc721" />
         </div>
       </app-block>
     </div>

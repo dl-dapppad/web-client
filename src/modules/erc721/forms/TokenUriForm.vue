@@ -16,11 +16,12 @@ const { t } = useI18n({
   locale: 'en',
   messages: {
     en: {
-      'balance-form.title-lbl': 'Owner',
-      'balance-form.title-info': 'Returns the owner of the `tokenId` token',
-      'balance-form.token-lbl': 'Token Id',
-      'balance-form.token-info': 'Enter the token ID',
-      'balance-form.btn-lbl': 'Read',
+      'token-uri.title-lbl': 'Token URI',
+      'token-uri.title-info':
+        'Returns the Uniform Resource Identifier (URI) for `tokenId` token.',
+      'token-uri.token-lbl': 'Token Id',
+      'token-uri.token-info': 'Enter the token ID',
+      'token-uri.btn-lbl': 'Read',
     },
   },
 })
@@ -40,7 +41,7 @@ const result = ref('')
 
 const submit = async () => {
   try {
-    result.value = await props.token.ownerOf(form.tokenId)
+    result.value = await props.token.tokenURI(form.tokenId)
   } catch (e) {
     handleTxError(e)
   }
@@ -51,31 +52,36 @@ const submit = async () => {
   <div class="app__common-form">
     <div class="app__form-control">
       <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('balance-form.title-info')" />
-        {{ t('balance-form.title-lbl') }}
+        <info-tooltip :text="t('token-uri.title-info')" />
+        {{ t('token-uri.title-lbl') }}
       </span>
       <div class="app__field-row">
         <input-field
           v-model="form.tokenId"
           scheme="secondary"
-          :label="t('balance-form.token-lbl')"
+          :label="t('token-uri.token-lbl')"
           :error-message="getFieldErrorMessage('tokenId')"
           @blur="touchField('tokenId')"
         />
         <div class="app__field-tooltip">
-          <info-tooltip :text="t('balance-form.token-info')" />
+          <info-tooltip :text="t('token-uri.token-info')" />
         </div>
       </div>
       <div class="app__common-form__button-wrp">
         <app-button
           type="button"
           size="small"
-          :text="t('balance-form.btn-lbl')"
+          :text="t('token-uri.btn-lbl')"
           :disabled="!isFieldsValid"
           @click="submit"
         />
         <div v-if="result">
-          <link-copy :address="result" class="app__link--accented" />
+          <link-copy
+            class="app__link--accented"
+            :address="result"
+            :href="result"
+            :is-cropped="false"
+          />
         </div>
       </div>
     </div>

@@ -68,5 +68,8 @@ export default defineConfig(({ command, mode }) => {
         '@static': `${root}/../static`,
       },
     },
+    build: {
+      sourcemap: true,
+    },
   }
 })

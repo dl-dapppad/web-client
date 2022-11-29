@@ -7,6 +7,7 @@ import {
   useProductFactory,
   Erc20Contract,
   useFarming,
+  Product,
 } from '@/composables'
 import { getMaxUint256, txWrapper } from '@/helpers'
 import { BN } from '@/utils'
@@ -29,14 +30,8 @@ export const deploy = async (
   const alias = config.PRODUCT_ALIASES[productId as string]
   const initializeData = getInitializeData(productId, initializeDataValues)
   const factory = useProductFactory()
-  let product = factory.getEmptyProduct()
-
-  let paymentContractAddress = ''
-  await Promise.all([factory.products(alias), factory.payment()]).then(res => {
-    product = res[0]
-    paymentContractAddress = res[1]
-    return
-  })
+  const product = await getProduct(alias)
+  const paymentContractAddress = await factory.payment()
 
   const paymentTokenContract = useErc20(paymentTokenAddress)
   const isApproved = await approve(
@@ -64,6 +59,12 @@ export const deploy = async (
   await useAccountStore().updateDappBalance()
 
   return potentialContractAddress
+}
+
+export const getProduct = async (alias: string): Promise<Product> => {
+  const factory = useProductFactory()
+
+  return factory.products(alias)
 }
 
 const approve = async (
