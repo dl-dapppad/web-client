@@ -74,7 +74,7 @@ const isClaimAvailable = computed(() =>
 
 const isWithdrawAvailable = computed(() =>
   investInfo.value.amount
-    ? new BN(investInfo.value?.rewards).compare(0) === 1
+    ? new BN(investInfo.value?.amount).compare(0) === 1
     : false,
 )
 
