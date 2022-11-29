@@ -1,4 +1,4 @@
-import { ICON_NAMES, OVERVIEW_ROW } from '@/enums'
+import { ICON_NAMES } from '@/enums'
 
 export type NotificationObjectPayload = {
   title?: string
@@ -8,10 +8,4 @@ export type NotificationObjectPayload = {
     label: string
     href: string
   }
-}
-
-export interface OverviewRow {
-  name: string
-  value: string
-  type: OVERVIEW_ROW
 }

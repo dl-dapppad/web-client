@@ -4,10 +4,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppBlock, AppButton, Tabs, EditOverview, LinkCopy } from '@/common'
+import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
-import { OVERVIEW_ROW } from '@/enums'
-import { OverviewRow } from '@/types'
+import { OVERVIEW_ROW } from '@/modules/enums'
+import { OverviewRow } from '@/modules/types'
 import {
   BalanceForm,
   MintForm,
@@ -18,6 +18,7 @@ import {
   SetBaseUriForm,
   TokenUriForm,
 } from '../../forms'
+import { EditOverview } from '@/modules/common'
 import { useProductErc721 } from '../composables/use-product-erc721'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())

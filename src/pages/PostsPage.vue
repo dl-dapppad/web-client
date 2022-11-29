@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from '@/router'
-import { AppBlock, AppButton, PostCard } from '@/common'
+import { AppBlock, AppButton } from '@/common'
+import PostsPageCard from '@/pages/PostsPage/PostsPageCard.vue'
 import { Post } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import Loader from '@/common/Loader.vue'
@@ -97,7 +98,7 @@ loadPosts()
           :key="idx"
           class="posts-page__card"
         >
-          <post-card :post="subPost" />
+          <posts-page-card :post="subPost" />
         </app-block>
       </template>
       <template v-else>
