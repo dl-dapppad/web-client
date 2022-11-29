@@ -68,7 +68,7 @@ const submit = async () => {
       </span>
       <div class="app__field-row">
         <input-field
-          v-model="form.to"
+          v-model="form.from"
           scheme="secondary"
           :label="t('mint-form.from-lbl')"
           :error-message="getFieldErrorMessage('from')"

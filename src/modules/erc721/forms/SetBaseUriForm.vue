@@ -5,7 +5,7 @@ import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
 import { InfoTooltip, AppButton } from '@/common'
 import { useFormValidation } from '@/composables'
-import { required } from '@/validators'
+import { required, url } from '@/validators'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 enum EMITS {
@@ -43,7 +43,7 @@ const form = reactive({
 const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
   form,
   {
-    baseURI: { required },
+    baseURI: { required, url },
   },
 )
 

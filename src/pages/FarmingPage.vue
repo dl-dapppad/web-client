@@ -172,7 +172,11 @@ init()
             :icon-left="$icons.arrowLeft"
             modification="border-circle"
             color="tertiary"
-            @click="router.go(-1)"
+            @click="
+              router.push({
+                name: $routes.main,
+              })
+            "
           />
           <div class="farming-page__heading">
             {{ $t('farming-page.title') }}

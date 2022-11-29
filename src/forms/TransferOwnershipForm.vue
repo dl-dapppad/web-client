@@ -5,7 +5,7 @@ import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
 import { InfoTooltip, AppButton } from '@/common'
 import { useFormValidation } from '@/composables'
-import { required } from '@/validators'
+import { required, isAddress } from '@/validators'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 
@@ -44,7 +44,7 @@ const form = reactive({
 const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
   form,
   {
-    newOwner: { required },
+    newOwner: { required, isAddress },
   },
 )
 

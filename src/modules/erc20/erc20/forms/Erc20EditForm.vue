@@ -51,6 +51,7 @@ const FORM_TABS = [
 
 const currentTabNumber = ref(FORM_TABS[0].number)
 const overviewRows = ref<Array<OverviewRow>>()
+const balance = ref(0)
 
 const router = useRouter()
 const route = useRoute()
@@ -61,13 +62,12 @@ const init = async () => {
 
   await erc20.loadDetails()
 
-  let balance = '0'
   if (provider.value.selectedAddress) {
     await Promise.all([
       erc20.loadDetails(),
       erc20.balanceOf(provider.value.selectedAddress),
     ]).then(res => {
-      balance = res[1]
+      balance.value = Number(res[1])
 
       return
     })
@@ -100,7 +100,11 @@ const init = async () => {
     },
     {
       name: t('erc20.balance'),
-      value: formatAmount(balance, erc20.decimals.value, erc20.symbol.value),
+      value: formatAmount(
+        balance.value,
+        erc20.decimals.value,
+        erc20.symbol.value,
+      ),
       type: OVERVIEW_ROW.amount,
     },
   ]
@@ -167,7 +171,11 @@ init()
           class="app__module-content"
         >
           <approve-form :token="erc20"></approve-form>
-          <transfer-form :token="erc20" @change-balance="updateBalance" />
+          <transfer-form
+            :token="erc20"
+            :balance="Number(formatAmount(balance, erc20.decimals.value))"
+            @change-balance="updateBalance"
+          />
           <transfer-from-form :token="erc20" @change-balance="updateBalance" />
           <transfer-ownership-form :token="erc20" @change-owner="updateOwner" />
           <upgrade-to-form :token="erc20" />

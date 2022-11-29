@@ -86,7 +86,7 @@ const submit = async () => {
           scheme="secondary"
           :label="t('transfer-from-form.sender-lbl')"
           :error-message="getFieldErrorMessage('sender')"
-          @blur="touchField('spender')"
+          @blur="touchField('sender')"
         />
         <div class="app__field-tooltip">
           <info-tooltip :text="t('transfer-from-form.sender-info')" />
@@ -98,7 +98,7 @@ const submit = async () => {
           scheme="secondary"
           :label="t('transfer-from-form.recipient-lbl')"
           :error-message="getFieldErrorMessage('recipient')"
-          @blur="touchField('spender')"
+          @blur="touchField('recipient')"
         />
         <div class="app__field-tooltip">
           <info-tooltip :text="t('transfer-from-form.recipient-info')" />

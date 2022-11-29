@@ -1,10 +1,14 @@
 import {
   required as _required,
   email as _email,
+  integer as _integer,
   numeric as _numeric,
   minLength as _minLength,
   maxLength as _maxLength,
+  minValue as _minValue,
+  maxValue as _maxValue,
   sameAs as _sameAs,
+  url as _url,
 } from '@vuelidate/validators'
 import { ValidationRule } from '@vuelidate/core'
 import { Ref } from 'vue'
@@ -24,6 +28,8 @@ export const required = <ValidationRule>withI18nMessage(_required)
 
 export const email = <ValidationRule>withI18nMessage(_email)
 
+export const integer = <ValidationRule>withI18nMessage(_integer)
+
 export const isAddress = <ValidationRule>withI18nMessage({
   $validator: (address: string) => ethers.utils.isAddress(address),
   $params: {
@@ -39,6 +45,14 @@ export const minLength = (length: number): ValidationRule =>
 export const maxLength = (length: number): ValidationRule =>
   <ValidationRule>withI18nMessage(_maxLength(length))
 
+export const minValue = (num: number): ValidationRule =>
+  <ValidationRule>withI18nMessage(_minValue(num))
+
+export const maxValue = (num: number): ValidationRule =>
+  <ValidationRule>withI18nMessage(_maxValue(num))
+
 export const sameAs = (field: Ref): ValidationRule => {
   return <ValidationRule>withI18nMessage(_sameAs(field, get(field, '_key')))
 }
+
+export const url = <ValidationRule>withI18nMessage(_url)

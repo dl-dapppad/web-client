@@ -5,7 +5,7 @@ import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
 import { InfoTooltip, AppButton } from '@/common'
 import { useFormValidation } from '@/composables'
-import { required, isAddress, numeric } from '@/validators'
+import { required, isAddress, numeric, maxValue } from '@/validators'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 import { BN } from '@/utils'
 
@@ -19,6 +19,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   token: ProductErc20Contract
+  balance: number
 }>()
 
 const { t } = useI18n({
@@ -48,7 +49,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
   form,
   {
     recipient: { required, isAddress },
-    amount: { required, numeric },
+    amount: { required, numeric, maxValue: maxValue(props.balance) },
   },
 )
 
@@ -81,7 +82,7 @@ const submit = async () => {
           scheme="secondary"
           :label="t('transfer-form.recipient-lbl')"
           :error-message="getFieldErrorMessage('recipient')"
-          @blur="touchField('spender')"
+          @blur="touchField('recipient')"
         />
         <div class="app__field-tooltip">
           <info-tooltip :text="t('transfer-form.recipient-info')" />
