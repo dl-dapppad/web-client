@@ -7,7 +7,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
 import { formatAmount } from '@/helpers'
-import { OVERVIEW_ROW } from '@/enums'
+import { OVERVIEW_ROW } from '@/modules/enums'
 import { OverviewRow } from '@/modules/types'
 import {
   BalanceForm,
