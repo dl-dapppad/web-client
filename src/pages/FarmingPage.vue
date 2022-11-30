@@ -87,6 +87,7 @@ const updateBalanceState = async () => {
     investmentToken.balanceOf(provider.value.selectedAddress),
     rewardToken.balanceOf(provider.value.selectedAddress),
     farming.loadDetails(),
+    account.value.updateDappBalance(),
   ]).then(res => {
     investInfo.value.amount = res[0].amount
     investInfo.value.rewards = res[1]
