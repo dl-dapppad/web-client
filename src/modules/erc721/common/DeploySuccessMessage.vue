@@ -18,8 +18,7 @@ const { t } = useI18n({
     en: {
       'deploy-erc721.title': 'Success',
       'deploy-erc721.description':
-        // eslint-disable-next-line quotes
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took.",
+        'Congratulations! You’ve just minted your NFT!',
       'deploy-erc721.name-lbl': 'Name',
       'deploy-erc721.symbol-lbl': 'Symbol',
       'deploy-erc721.decimals-lbl': 'Decimals',

@@ -113,8 +113,10 @@ const init = async () => {
 const updateBalance = async () => {
   if (!overviewRows.value || !provider.value.selectedAddress) return
 
-  overviewRows.value[4].value = await erc20.balanceOf(
-    provider.value.selectedAddress,
+  overviewRows.value[4].value = formatAmount(
+    await erc20.balanceOf(provider.value.selectedAddress),
+    erc20.decimals.value,
+    erc20.symbol.value,
   )
 }
 

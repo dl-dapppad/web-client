@@ -5,7 +5,6 @@ import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { AppButton, Icon, AppBlock, Modal, LinkCopy } from '@/common'
 import { InputField } from '@/fields'
 import { getMaxUint256, txWrapper } from '@/helpers'
-import { useRouter } from '@/router'
 import { formatAmount } from '@/helpers'
 import { ICON_NAMES } from '@/enums'
 import { i18n } from '@/localization'
@@ -22,7 +21,6 @@ const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 const { t } = i18n.global
 
-const router = useRouter()
 const farming = useFarming()
 const investmentToken = useErc20()
 const rewardToken = useErc20()
@@ -173,11 +171,7 @@ init()
             :icon-left="$icons.arrowLeft"
             modification="border-circle"
             color="tertiary"
-            @click="
-              router.push({
-                name: $routes.main,
-              })
-            "
+            :route="{ name: $routes.main }"
           />
           <div class="farming-page__heading">
             {{ $t('farming-page.title') }}

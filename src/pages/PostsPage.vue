@@ -2,13 +2,13 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from '@/router'
 import { AppBlock, AppButton } from '@/common'
-import { ROUTE_NAMES, CATEGORIES_IDS } from '@/enums'
 import { Post } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import PostsPageCard from '@/pages/PostsPage/PostsPageCard.vue'
 import Loader from '@/common/Loader.vue'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 import NoDataMessage from '@/common/NoDataMessage.vue'
+import { postsBackMap } from '@/assets/postsStructure'
 
 const route = useRoute()
 const router = useRouter()
@@ -37,24 +37,7 @@ const subPosts = computed<Post[]>(() => {
 })
 
 const handleBackBtn = () => {
-  switch (route.params.id) {
-    case CATEGORIES_IDS.erc20Tokens || CATEGORIES_IDS.erc721Tokens:
-      router.push({
-        name: ROUTE_NAMES.categories,
-        params: {
-          id: CATEGORIES_IDS.tokens,
-        },
-      })
-      break
-    case CATEGORIES_IDS.tokens:
-      router.push({
-        name: ROUTE_NAMES.main,
-      })
-      break
-    default:
-      router.go(-1)
-      break
-  }
+  router.push(postsBackMap[route.params.id])
 }
 
 const loadPosts = async () => {

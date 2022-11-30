@@ -17,10 +17,8 @@ const { t } = useI18n({
   messages: {
     en: {
       'deploy-erc20.title': 'Success',
-      /* eslint-disable quotes */
       'deploy-erc20.description':
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took.",
-      /* eslint-enable */
+        'Congratulations! You’ve just minted your token!',
       'deploy-erc20.name-lbl': 'Name',
       'deploy-erc20.symbol-lbl': 'Symbol',
       'deploy-erc20.decimals-lbl': 'Decimals',
