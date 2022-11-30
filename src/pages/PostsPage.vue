@@ -64,31 +64,33 @@ loadPosts()
       <template v-else-if="posts.length">
         <app-block class="posts-page__banner-wrp">
           <div class="posts-page__banner">
-            <div class="posts-page__banner-title-wrp">
-              <h2 class="posts-page__banner-title">
-                {{ currentPost.title }}
-              </h2>
+            <div class="posts-page__banner-text-wrp">
+              <div class="posts-page__banner-title-wrp">
+                <h2 class="posts-page__banner-title">
+                  {{ currentPost.title }}
+                </h2>
+                <app-button
+                  class="posts-page__back-btn"
+                  :icon-right="$icons.arrowLeft"
+                  modification="border-circle"
+                  color="tertiary"
+                  @click="handleBackBtn"
+                />
+              </div>
+              <p ref="bannerDescription" class="posts-page__banner-desc">
+                {{ currentPost?.description }}
+              </p>
               <app-button
-                class="posts-page__back-btn"
-                :icon-right="$icons.arrowLeft"
-                modification="border-circle"
+                class="posts-page__banner-show-more-btn"
                 color="tertiary"
-                @click="handleBackBtn"
+                size="small"
+                :text="$t('posts-page.show-more-btn')"
+                :route="{
+                  name: $routes.category,
+                  params: { id: currentPost.id },
+                }"
               />
             </div>
-            <p ref="bannerDescription" class="posts-page__banner-desc">
-              {{ currentPost?.description }}
-            </p>
-            <app-button
-              class="posts-page__banner-show-more-btn"
-              color="tertiary"
-              size="small"
-              :text="$t('posts-page.show-more-btn')"
-              :route="{
-                name: $routes.category,
-                params: { id: currentPost.id },
-              }"
-            />
             <div class="posts-page__banner-img-wrp">
               <img
                 class="posts-page__banner-img"
@@ -117,6 +119,8 @@ loadPosts()
 </template>
 
 <style lang="scss" scoped>
+$back-btn-z: 1;
+
 .posts-page {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -125,6 +129,10 @@ loadPosts()
     &:first-child {
       grid-column: 1 / -1;
     }
+  }
+
+  @include respond-to(medium) {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -136,6 +144,13 @@ loadPosts()
   padding: toRem(50) toRem(56) toRem(56) toRem(165);
   width: 100%;
   height: 100%;
+
+  @include respond-to(medium) {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: toRem(30) toRem(20);
+    gap: toRem(20);
+  }
 }
 
 .posts-page__banner-title-wrp {
@@ -148,6 +163,10 @@ loadPosts()
   font-size: toRem(70);
   line-height: 1.2;
   letter-spacing: 0.1em;
+
+  @include respond-to(medium) {
+    font-size: toRem(36);
+  }
 }
 
 .posts-page__back-btn {
@@ -158,6 +177,12 @@ loadPosts()
   height: toRem(54);
   right: calc(100% + #{toRem(56)});
   padding: 0;
+
+  @include respond-to(medium) {
+    top: calc(-#{toRem(170)});
+    left: -#{toRem(15)};
+    z-index: $back-btn-z;
+  }
 }
 
 .posts-page__banner-desc {
@@ -167,17 +192,30 @@ loadPosts()
   line-height: 1.3;
   letter-spacing: 0.1em;
   transition: height 0.35s ease-in-out;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .posts-page__banner-show-more-btn {
   align-self: center;
   grid-column: 1 / 2;
+
+  @include respond-to(medium) {
+    width: 100%;
+  }
 }
 
 .posts-page__banner-img-wrp {
   position: relative;
   grid-column: 2 / 3;
   grid-row: 1 / -1;
+
+  @include respond-to(medium) {
+    width: 100%;
+    min-height: toRem(160);
+  }
 }
 
 .posts-page__banner-img {
