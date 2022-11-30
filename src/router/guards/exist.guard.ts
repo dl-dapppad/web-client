@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
 import { Post } from '@/types'
 import postsData from '@/assets/posts.json'
-import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 
 export const existGuard = (
   to: RouteLocationNormalized,

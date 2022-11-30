@@ -23,7 +23,7 @@ defineProps<{
   font-weight: 400;
   padding: toRem(12) toRem(24);
   position: absolute;
-  bottom: 150%;
+  bottom: 175%;
   left: 50%;
   min-width: toRem(200);
   display: none;

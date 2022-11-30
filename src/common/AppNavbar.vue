@@ -3,7 +3,7 @@ import { ref, watch, computed } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
-import { useErc20 } from '@/composables'
+import { useErc20, useProduct } from '@/composables'
 import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
 import { Chain } from '@/types'
 import { InputField } from '@/fields'
@@ -19,8 +19,9 @@ const { account } = storeToRefs(useAccountStore())
 const { width: windowWidth } = useWindowSize()
 
 const dapp = useErc20()
+const composableProduct = useProduct()
 
-const searchInput = ref('')
+const addressSearchInput = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const accountAddress = ref()
 
@@ -59,6 +60,10 @@ const handleProviderBtnClick = () => {
   } catch (error) {
     ErrorHandler.process(error)
   }
+}
+
+const clickContractSearch = async () => {
+  composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
 watch(
@@ -109,12 +114,17 @@ init()
       </div>
       <input-field
         class="app-navbar__search"
-        v-model="searchInput"
+        v-model="addressSearchInput"
         :placeholder="$t('app-navbar.search-placeholder')"
         scheme="secondary"
       >
         <template #nodeRight>
-          <icon class="app-navbar__search-icon" :name="$icons.searchFilled" />
+          <app-button
+            scheme="default"
+            class="app-navbar__search-icon"
+            :icon-right="$icons.searchFilled"
+            @click="clickContractSearch"
+          />
         </template>
       </input-field>
       <dropdown class="app-navbar__chain">
@@ -261,6 +271,7 @@ init()
 }
 
 .app-navbar__search {
+  padding: 0;
   display: grid;
   height: 100%;
 
@@ -278,6 +289,7 @@ init()
   max-height: toRem(14);
   min-height: toRem(14);
   min-width: toRem(14);
+  padding: 0;
 
   &--tablet {
     display: none;

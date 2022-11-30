@@ -143,7 +143,7 @@ export const handleTxError = (e: any) => {
 
   const { t } = i18n.global
   // eslint-disable-next-line vue-i18n/no-dynamic-keys
-  Bus.error(t(msg))
+  Bus.warning(t(msg))
 }
 
 export const handleErrorMessage = (msg: string): string => {

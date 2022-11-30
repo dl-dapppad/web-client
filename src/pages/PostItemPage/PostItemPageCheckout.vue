@@ -12,7 +12,13 @@ import {
   ErrorHandler,
 } from '@/helpers'
 import { Chain, Post } from '@/types'
-import { useErc20, useProductFactory, useFarming, Product } from '@/composables'
+import {
+  useErc20,
+  useProductFactory,
+  useFarming,
+  Product,
+  useProduct,
+} from '@/composables'
 import {
   AppButton,
   AppBlock,
@@ -38,14 +44,19 @@ const dapp = useErc20()
 const paymentToken = useErc20()
 const factory = useProductFactory()
 const farming = useFarming()
+const composableProduct = useProduct()
 const { t } = useI18n()
 
-const contactAddress = ref('')
+const addressSearchInput = ref('')
 const alias = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const product = ref<Product>(factory.getEmptyProduct())
 const cashback = ref('0')
 const chartData = ref<number[]>([])
+
+const clickContractSearch = async () => {
+  composableProduct.handleContractSearch(addressSearchInput.value)
+}
 
 const getChartData = (product: Product, decimals: number) => {
   let chartData = [] as number[]
@@ -139,9 +150,14 @@ init()
               {{ $t('post-checkout.have-product-lbl') }}
             </div>
             <div class="post-checkout__block-input-value">
+              <app-button
+                class="post-checkout__block-search-btn"
+                :icon-right="$icons.searchFilled"
+                @click="clickContractSearch"
+              />
               <input-field
                 scheme="secondary"
-                v-model="contactAddress"
+                v-model="addressSearchInput"
                 :label="t('post-checkout.have-product-input-lbl')"
               />
               <info-tooltip
@@ -359,6 +375,7 @@ init()
   width: 100%;
   max-width: toRem(430);
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: toRem(10);
 }
@@ -366,6 +383,12 @@ init()
 .post-checkout__block-lbl-icon {
   height: toRem(20);
   width: toRem(20);
+}
+
+.post-checkout__block-search-btn {
+  padding: toRem(17);
+  height: 100%;
+  font-size: toRem(15);
 }
 
 .post-checkout__buy-wrp {
