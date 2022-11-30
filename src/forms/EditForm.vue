@@ -1,14 +1,34 @@
 <script lang="ts" setup>
+import { computed, ref } from 'vue'
 import { Erc20EditForm, Erc721EditForm } from '@/modules'
-import { useRoute } from '@/router'
+import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
-import { PRODUCT_IDS } from '@/enums'
+import { PRODUCT_IDS, ROUTE_NAMES } from '@/enums'
+import { useProduct } from '@/composables'
 import postsData from '@/assets/posts.json'
 
 const route = useRoute()
+const router = useRouter()
+const composableProduct = useProduct()
 
-const posts = postsData as unknown as Post[]
-const post = posts.find(el => el.id === route.params.id)
+const posts = ref<Post[]>([])
+const post = computed(() => {
+  return posts.value.find(el => el.id === route.params.id)
+})
+
+const init = async () => {
+  posts.value = postsData as unknown as Post[]
+
+  const prouctType = await composableProduct.getProductTypeByAddress(
+    route.params.contractAddress as string,
+  )
+
+  if (prouctType !== route.params.id) {
+    router.push({ name: ROUTE_NAMES.notFound })
+  }
+}
+
+init()
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
 import {
@@ -10,12 +10,15 @@ import {
   getEmptyChain,
   isChainAvailable,
   ErrorHandler,
-  isErc20Contract,
-  isErc721Contract,
-  Bus,
 } from '@/helpers'
 import { Chain, Post } from '@/types'
-import { useErc20, useProductFactory, useFarming, Product } from '@/composables'
+import {
+  useErc20,
+  useProductFactory,
+  useFarming,
+  Product,
+  useProduct,
+} from '@/composables'
 import {
   AppButton,
   AppBlock,
@@ -25,7 +28,7 @@ import {
   LinkCopy,
 } from '@/common'
 import { BN } from '@/utils'
-import { CONTRACT_NAMES, PRODUCT_IDS, ROUTE_NAMES } from '@/enums'
+import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
 import { InputField } from '@/fields'
 import { useI18n } from 'vue-i18n'
@@ -37,41 +40,22 @@ defineProps<{
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const route = useRoute()
-const router = useRouter()
 const dapp = useErc20()
 const paymentToken = useErc20()
 const factory = useProductFactory()
 const farming = useFarming()
+const composableProduct = useProduct()
 const { t } = useI18n()
 
-const contractAddress = ref('')
+const addressSearchInput = ref('')
 const alias = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const product = ref<Product>(factory.getEmptyProduct())
 const cashback = ref('0')
 const chartData = ref<number[]>([])
 
-const handleContractAddress = async () => {
-  if (
-    (await isErc20Contract(contractAddress.value)) &&
-    route.params.id === PRODUCT_IDS.ERC20
-  ) {
-    router.push({
-      name: ROUTE_NAMES.productEdit,
-      params: { id: PRODUCT_IDS.ERC20, contractAddress: contractAddress.value },
-    })
-  } else if (
-    (await isErc721Contract(contractAddress.value)) &&
-    route.params.id === PRODUCT_IDS.ERC721
-  ) {
-    router.push({
-      name: ROUTE_NAMES.productEdit,
-      params: {
-        id: PRODUCT_IDS.ERC721,
-        contractAddress: contractAddress.value,
-      },
-    })
-  } else Bus.warning(t('errors.navbar-address-not-found'))
+const clickContractSearch = async () => {
+  composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
 const getChartData = (product: Product, decimals: number) => {
@@ -173,7 +157,7 @@ init()
               />
               <input-field
                 scheme="secondary"
-                v-model="contractAddress"
+                v-model="addressSearchInput"
                 :label="t('post-checkout.have-product-input-lbl')"
               />
               <info-tooltip

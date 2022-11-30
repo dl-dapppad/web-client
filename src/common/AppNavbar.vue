@@ -2,31 +2,14 @@
 import { ref, watch, computed } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
-import { useErc20 } from '@/composables'
-import {
-  formatAmount,
-  getChain,
-  getEmptyChain,
-  cropAddress,
-  isErc20Contract,
-  isErc721Contract,
-  Bus,
-} from '@/helpers'
+import { useErc20, useProduct } from '@/composables'
+import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
 import { Chain } from '@/types'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { ErrorHandler, isChainAvailable } from '@/helpers'
-import {
-  CONTRACT_NAMES,
-  ETHEREUM_CHAINS,
-  WINDOW_BREAKPOINTS,
-  ROUTE_NAMES,
-  PRODUCT_IDS,
-} from '@/enums'
+import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
@@ -34,12 +17,11 @@ const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
 const { width: windowWidth } = useWindowSize()
-const { t } = useI18n()
 
 const dapp = useErc20()
-const router = useRouter()
+const composableProduct = useProduct()
 
-const searchInput = ref('')
+const addressSearchInput = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const accountAddress = ref()
 
@@ -80,18 +62,8 @@ const handleProviderBtnClick = () => {
   }
 }
 
-const handleSearch = async () => {
-  if (await isErc20Contract(searchInput.value)) {
-    router.push({
-      name: ROUTE_NAMES.productEdit,
-      params: { id: PRODUCT_IDS.ERC20, contractAddress: searchInput.value },
-    })
-  } else if (await isErc721Contract(searchInput.value)) {
-    router.push({
-      name: ROUTE_NAMES.productEdit,
-      params: { id: PRODUCT_IDS.ERC721, contractAddress: searchInput.value },
-    })
-  } else Bus.warning(t('errors.navbar-address-not-found'))
+const clickContractSearch = async () => {
+  composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
 watch(
@@ -142,7 +114,7 @@ init()
       </div>
       <input-field
         class="app-navbar__search"
-        v-model="searchInput"
+        v-model="addressSearchInput"
         :placeholder="$t('app-navbar.search-placeholder')"
         scheme="secondary"
       >
@@ -151,7 +123,7 @@ init()
             scheme="default"
             class="app-navbar__search-icon"
             :icon-right="$icons.searchFilled"
-            @click="handleSearch"
+            @click="clickContractSearch"
           />
         </template>
       </input-field>

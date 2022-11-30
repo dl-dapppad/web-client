@@ -5,8 +5,6 @@ import { EIP1193, EIP1474 } from '@/enums'
 import { BN } from '@/utils'
 import { Bus } from '@/helpers'
 import { useAccountStore, useWeb3ProvidersStore } from '@/store'
-import { useProductErc20 } from '@/modules/erc20/erc20/composables/use-product-erc20'
-import { useProductErc721 } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 export const connectEthAccounts = async (
   provider: ethers.providers.Web3Provider,
@@ -160,32 +158,4 @@ export const handleTxErrorMessage = (msg: string): string => {
   if (!arr) return ''
   // eslint-disable-next-line quotes
   return arr[0].replaceAll("'", '')
-}
-
-export const isErc20Contract = async (addr: string): Promise<boolean> => {
-  if (!ethers.utils.isAddress(addr)) return false
-
-  try {
-    const erc20 = useProductErc20(addr)
-
-    await erc20.loadDetails()
-
-    return erc20.decimals.value !== 0
-  } catch {
-    return false
-  }
-}
-
-export const isErc721Contract = async (addr: string): Promise<boolean> => {
-  if (!ethers.utils.isAddress(addr)) return false
-
-  try {
-    const erc721 = useProductErc721(addr)
-
-    await erc721.loadDetails()
-
-    return !!erc721.baseURI && erc721.owner.value !== ''
-  } catch {
-    return false
-  }
 }
