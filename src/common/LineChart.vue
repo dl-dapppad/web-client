@@ -59,6 +59,13 @@ const init = () => {
       legend: {
         enabled: false,
       },
+      tooltip: {
+        formatter: function () {
+          return `<b>${this.x}</b>: ${
+            Math.round(Number(this.y) * 10000) / 10000
+          }`
+        },
+      },
       plotOptions: {
         series: {
           marker: {
