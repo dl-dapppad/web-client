@@ -2,6 +2,7 @@
 import { Icon, AppBlock, AppButton } from '@/common'
 import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
+import { ROUTE_NAMES, PRODUCT_IDS, CATEGORIES_IDS } from '@/enums'
 import PostItemPageCheckout from '@/pages/PostItemPage/PostItemPageCheckout.vue'
 import postsData from '@/assets/posts.json'
 
@@ -10,6 +11,30 @@ const router = useRouter()
 
 const posts = postsData as unknown as Post[]
 const post = posts.find(el => el.id === route.params.id)
+
+const handleBackBtn = () => {
+  switch (route.params.id) {
+    case PRODUCT_IDS.ERC20:
+      router.push({
+        name: ROUTE_NAMES.categories,
+        params: {
+          id: CATEGORIES_IDS.erc20Tokens,
+        },
+      })
+      break
+    case PRODUCT_IDS.ERC721:
+      router.push({
+        name: ROUTE_NAMES.categories,
+        params: {
+          id: CATEGORIES_IDS.erc721Tokens,
+        },
+      })
+      break
+    default:
+      router.go(-1)
+      break
+  }
+}
 </script>
 
 <template>
@@ -29,7 +54,7 @@ const post = posts.find(el => el.id === route.params.id)
               :icon-left="$icons.arrowLeft"
               modification="border-circle"
               color="tertiary"
-              @click="router.go(-1)"
+              @click="handleBackBtn"
             />
           </div>
         </div>

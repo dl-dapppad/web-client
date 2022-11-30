@@ -2,9 +2,10 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from '@/router'
 import { AppBlock, AppButton } from '@/common'
-import PostsPageCard from '@/pages/PostsPage/PostsPageCard.vue'
+import { ROUTE_NAMES, CATEGORIES_IDS } from '@/enums'
 import { Post } from '@/types'
 import { ErrorHandler } from '@/helpers'
+import PostsPageCard from '@/pages/PostsPage/PostsPageCard.vue'
 import Loader from '@/common/Loader.vue'
 import ErrorMessage from '@/common/ErrorMessage.vue'
 import NoDataMessage from '@/common/NoDataMessage.vue'
@@ -34,6 +35,27 @@ const subPosts = computed<Post[]>(() => {
     }, []) || []
   )
 })
+
+const handleBackBtn = () => {
+  switch (route.params.id) {
+    case CATEGORIES_IDS.erc20Tokens || CATEGORIES_IDS.erc721Tokens:
+      router.push({
+        name: ROUTE_NAMES.categories,
+        params: {
+          id: CATEGORIES_IDS.tokens,
+        },
+      })
+      break
+    case CATEGORIES_IDS.tokens:
+      router.push({
+        name: ROUTE_NAMES.main,
+      })
+      break
+    default:
+      router.go(-1)
+      break
+  }
+}
 
 const loadPosts = async () => {
   try {
@@ -68,7 +90,7 @@ loadPosts()
                 :icon-right="$icons.arrowLeft"
                 modification="border-circle"
                 color="tertiary"
-                @click="router.go(-1)"
+                @click="handleBackBtn"
               />
             </div>
             <p ref="bannerDescription" class="posts-page__banner-desc">
