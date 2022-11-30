@@ -158,7 +158,6 @@ $page-padding-right: toRem(165);
 }
 
 .post-item-page__banner-darker {
-  min-height: toRem(200);
   padding: toRem(50) $page-padding-right toRem(60) $page-padding-left;
   background: linear-gradient(
     90deg,
@@ -169,6 +168,10 @@ $page-padding-right: toRem(165);
   );
   border-radius: toRem(12);
   overflow: hidden;
+
+  @include respond-to(medium) {
+    padding: toRem(30) toRem(0) toRem(30) toRem(74);
+  }
 }
 
 .post-item-page__banner-title-wrp {
@@ -181,6 +184,10 @@ $page-padding-right: toRem(165);
   font-weight: 900;
   letter-spacing: 0.1em;
   color: var(--text-primary-invert-main);
+
+  @include respond-to(medium) {
+    font-size: toRem(36);
+  }
 }
 
 .post-item-page__back-btn {
@@ -191,6 +198,10 @@ $page-padding-right: toRem(165);
   height: toRem(54);
   right: calc(100% + #{toRem(56)});
   padding: 0;
+
+  @include respond-to(medium) {
+    left: -#{toRem(64)};
+  }
 }
 
 .post-item-page__content-wrp {
@@ -218,6 +229,10 @@ $page-padding-right: toRem(165);
       left: 0;
       bottom: toRem(1);
     }
+  }
+
+  @include respond-to(medium) {
+    padding: toRem(30) toRem(20);
   }
 }
 
@@ -308,12 +323,17 @@ $page-padding-right: toRem(165);
   gap: toRem(35);
 }
 
-.post-item-page__img-links-item {
+a.post-item-page__img-links-item {
   display: flex;
   align-items: center;
   gap: toRem(10);
   color: var(--secondary-main);
   font-size: toRem(16);
+  font-weight: 700;
+
+  &:after {
+    height: 0;
+  }
 }
 
 .post-item-page__img-links-icon {
