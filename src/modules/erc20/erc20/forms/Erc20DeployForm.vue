@@ -14,8 +14,8 @@ import {
 } from '@/common'
 import { InputField, SelectField } from '@/fields'
 import { useFormValidation, Product } from '@/composables'
-import { required, isAddress, numeric, maxValue } from '@/validators'
-import { formatAmount, getMaxUint256 } from '@/helpers'
+import { required, isAddress, numeric } from '@/validators'
+import { formatAmount } from '@/helpers'
 import {
   deploy,
   getAvailableTokenList,
@@ -62,10 +62,6 @@ const { t } = useI18n({
   },
 })
 
-const maxMintValue = computed(() =>
-  Number(new BN(getMaxUint256()).div(new BN(10).pow(form.decimals)).toString()),
-)
-
 const paymentTokens = ref<Record<string, Array<string>>>({
   symbols: [],
   addresses: [],
@@ -107,7 +103,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
     paymentToken: { required },
     name: { required },
     symbol: { required },
-    mintAmount: { required, numeric, maxValue: maxValue(maxMintValue.value) },
+    mintAmount: { required, numeric },
     mintReceiver: { required, isAddress },
     decimals: { required, numeric },
   },
