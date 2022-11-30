@@ -153,7 +153,7 @@ init()
               <app-button
                 class="post-checkout__block-search-btn"
                 :icon-right="$icons.searchFilled"
-                @click="handleContractAddress"
+                @click="clickContractSearch"
               />
               <input-field
                 scheme="secondary"
