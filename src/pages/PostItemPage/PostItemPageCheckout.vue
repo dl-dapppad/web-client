@@ -166,19 +166,19 @@ init()
               {{ $t('post-checkout.have-product-lbl') }}
             </div>
             <div class="post-checkout__block-input-value">
-              <info-tooltip
-                class="post-checkout__block-tooltip"
-                :text="t('post-checkout.have-product-input-tooltip-txt')"
+              <app-button
+                class="post-checkout__block-search-btn"
+                :icon-right="$icons.searchFilled"
+                @click="handleContractAddress"
               />
               <input-field
                 scheme="secondary"
                 v-model="contractAddress"
                 :label="t('post-checkout.have-product-input-lbl')"
               />
-              <app-button
-                class="post-checkout__block-search-btn"
-                :icon-right="$icons.searchFilled"
-                @click="handleContractAddress"
+              <info-tooltip
+                class="post-checkout__block-tooltip"
+                :text="t('post-checkout.have-product-input-tooltip-txt')"
               />
             </div>
           </div>
@@ -391,6 +391,7 @@ init()
   width: 100%;
   max-width: toRem(430);
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: toRem(10);
 }
