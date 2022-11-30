@@ -32,7 +32,6 @@ export const config = {
     [PRODUCT_IDS.ERC721]: import.meta.env
       .VITE_APP_CONTRACT_PRODUCT_ERC721_ALIAS,
   } as Record<string, string>,
-  MODULES: ['ERC20'],
 } as const
 
 Object.assign(config, _mapEnvCfg(import.meta.env))

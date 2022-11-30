@@ -8,7 +8,7 @@ export interface ProductErc721Contract {
   address: Ref<string>
   name: Ref<string>
   symbol: Ref<string>
-  baseURI: Ref<number>
+  baseURI: Ref<string>
   owner: Ref<string>
   init: (address: string) => void
   loadDetails: () => Promise<void>
@@ -18,6 +18,7 @@ export interface ProductErc721Contract {
   updateOwner: () => Promise<void>
   balanceOf: (owner: string) => Promise<string>
   ownerOf: (tokenId: string) => Promise<string>
+  tokenURI: (tokenId: string) => Promise<string>
   isApprovedForAll: (owner: string, operator: string) => Promise<boolean>
   getApproved: (tokenId: string) => Promise<string>
   approve: (args: Record<string, string>) => Promise<ContractTransaction>
@@ -28,6 +29,11 @@ export interface ProductErc721Contract {
     args: Record<string, string>,
   ) => Promise<ContractTransaction>
   safeMint: (args: Record<string, string>) => Promise<ContractTransaction>
+  setBaseURI: (args: Record<string, string>) => Promise<ContractTransaction>
+  transferOwnership: (
+    args: Record<string, string>,
+  ) => Promise<ContractTransaction>
+  upgradeTo: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
 export const useProductErc721 = (
@@ -41,7 +47,7 @@ export const useProductErc721 = (
   const address = ref('')
   const name = ref('')
   const symbol = ref('')
-  const baseURI = ref(0)
+  const baseURI = ref('')
   const owner = ref('')
 
   const init = (contractAddress: string): void => {
@@ -87,7 +93,7 @@ export const useProductErc721 = (
   const updateBaseURI = async (): Promise<void> => {
     if (!_instance.value) return
 
-    baseURI.value = Number(await _instance.value.baseURI())
+    baseURI.value = await _instance.value.baseURI()
   }
 
   const updateOwner = async (): Promise<void> => {
@@ -106,6 +112,12 @@ export const useProductErc721 = (
     if (!_instance.value) return ''
 
     return _instance.value.ownerOf(tokenId)
+  }
+
+  const tokenURI = async (tokenId: string): Promise<string> => {
+    if (!_instance.value) return ''
+
+    return await _instance.value.tokenURI(tokenId)
   }
 
   const isApprovedForAll = async (
@@ -162,6 +174,30 @@ export const useProductErc721 = (
     return _instance_rw.value.safeMint(args.to, args.tokenId)
   }
 
+  const setBaseURI = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.setBaseURI(args.baseURI)
+  }
+
+  const transferOwnership = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.transferOwnership(args.newOwner)
+  }
+
+  const upgradeTo = async (
+    args: Record<string, string>,
+  ): Promise<ContractTransaction> => {
+    if (!_instance_rw.value) throw new Error('Undefined instance')
+
+    return _instance_rw.value.upgradeTo(args.implementation)
+  }
+
   if (contractAddress) init(contractAddress)
 
   return {
@@ -180,11 +216,15 @@ export const useProductErc721 = (
     updateOwner,
     balanceOf,
     ownerOf,
+    tokenURI,
     isApprovedForAll,
     getApproved,
     approve,
     setApprovalForAll,
     safeTransferFrom,
     safeMint,
+    setBaseURI,
+    transferOwnership,
+    upgradeTo,
   }
 }

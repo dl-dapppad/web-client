@@ -284,6 +284,7 @@ init()
   gap: toRem(12);
   background: var(--background-secondary);
   border: toRem(1) solid var(--border-secondary-main);
+  border-right: 0;
   padding: toRem(10);
   font-size: toRem(12);
   line-height: 1;

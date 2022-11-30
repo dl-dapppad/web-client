@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { Icon, AppBlock, AppButton, PostCheckout } from '@/common'
+import { Icon, AppBlock, AppButton } from '@/common'
 import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
+import PostItemPageCheckout from '@/pages/PostItemPage/PostItemPageCheckout.vue'
 import postsData from '@/assets/posts.json'
 
 const route = useRoute()
@@ -34,7 +35,7 @@ const post = posts.find(el => el.id === route.params.id)
         </div>
       </div>
     </app-block>
-    <post-checkout v-if="post" :post="post" />
+    <post-item-page-checkout v-if="post" :post="post" />
     <app-block class="post-item-page__content-wrp">
       <div v-if="post" class="post-item-page__content">
         <template v-for="([key, value], idx) in post.content">
@@ -51,6 +52,11 @@ const post = posts.find(el => el.id === route.params.id)
               {{ value }}
             </h4>
           </template>
+          <template v-if="key === 'subtitle-accented'">
+            <h5 class="post-item-page__subtitle-accented" :key="idx">
+              {{ value }}
+            </h5>
+          </template>
           <template v-if="key === 'subtitle-low'">
             <h5
               class="post-item-page__subtitle post-item-page__subtitle--low"
@@ -65,8 +71,15 @@ const post = posts.find(el => el.id === route.params.id)
             </h5>
           </template>
           <template v-if="key === 'paragraph'">
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <p :key="idx" class="post-item-page__paragarph" v-html="value" />
+            <!-- eslint-disable vue/no-v-html -->
+            <p :key="idx" class="post-item-page__paragraph" v-html="value" />
+          </template>
+          <template v-if="key === 'paragraph-secondary'">
+            <p
+              :key="idx"
+              class="post-item-page__paragraph-secondary"
+              v-html="value"
+            />
           </template>
           <template v-if="key === 'image'">
             <img :key="idx" class="post-item-page__img" :src="value" alt="" />
@@ -176,6 +189,28 @@ $page-padding-right: toRem(165);
   flex-direction: column;
   gap: toRem(30);
   padding: toRem(70) $page-padding-right toRem(40) $page-padding-left;
+
+  & a {
+    color: var(--secondary-main);
+    font-size: 1em;
+    font-weight: 400;
+    position: relative;
+
+    &:after {
+      content: '';
+      width: 100%;
+      height: toRem(1);
+      background-color: var(--secondary-main);
+      position: absolute;
+      left: 0;
+      bottom: toRem(1);
+    }
+  }
+}
+
+.post-item-page__accented {
+  color: var(--secondary-main);
+  font-size: 1em;
 }
 
 .post-item-page__bold {
@@ -193,7 +228,23 @@ $page-padding-right: toRem(165);
   font-weight: 700;
 }
 
-.post-item-page__paragarph {
+.post-item-page__paragraph {
+  font-size: toRem(20);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+}
+
+.post-item-page__paragraph-secondary {
+  color: var(--text-secondary-main);
+  font-size: toRem(20);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+}
+
+.post-item-page__code-row {
+  font-family: var(--app-font-family-tertiary);
+  color: var(--text-secondary-main);
+  font-weight: 700;
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
@@ -220,9 +271,16 @@ $page-padding-right: toRem(165);
   color: var(--text-primary-main);
 
   &--low {
-    font-size: toRem(22);
-    font-weight: 500;
+    font-size: toRem(20);
   }
+}
+
+.post-item-page__subtitle-accented {
+  font-size: toRem(24);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--secondary-main);
 }
 
 .post-item-page__img {
@@ -266,6 +324,7 @@ $page-padding-right: toRem(165);
 .post-item-page__unordered-list-text {
   font-size: toRem(20);
   line-height: toRem(26);
+  word-break: break-all;
 }
 
 .post-item-page__unordered-list-icon {
@@ -276,19 +335,5 @@ $page-padding-right: toRem(165);
   position: absolute;
   top: toRem(11);
   left: -#{toRem(16)};
-}
-
-.post-item-page__code-row {
-  font-family: var(--app-font-family-tertiary);
-  font-size: toRem(20);
-  line-height: 1.3;
-  letter-spacing: 0.1em;
-  font-weight: 400;
-  padding-left: 5%;
-
-  &--bold {
-    font-size: toRem(20);
-    font-weight: 700;
-  }
 }
 </style>

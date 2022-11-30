@@ -1,95 +1,113 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from '@/router'
-import { AppBlock, AppButton, PostCard } from '@/common'
+import { AppBlock, AppButton } from '@/common'
+import PostsPageCard from '@/pages/PostsPage/PostsPageCard.vue'
 import { Post } from '@/types'
-import { ROUTE_NAMES } from '@/enums'
-import postsData from '@/assets/posts.json'
+import { ErrorHandler } from '@/helpers'
+import Loader from '@/common/Loader.vue'
+import ErrorMessage from '@/common/ErrorMessage.vue'
+import NoDataMessage from '@/common/NoDataMessage.vue'
 
 const route = useRoute()
 const router = useRouter()
 
+const isLoaded = ref(false)
+const isLoadFailed = ref(false)
+
 const bannerDescription = ref<HTMLParagraphElement | null>(null)
-const defaultBannerDescriptionHeight = ref(0)
 
-const postsAll = postsData as Post[]
-const post = ref<Post>()
-const subPosts = ref<Post[]>([])
+const posts = ref<Post[]>([])
 
-const updatePosts = (routeId: string) => {
-  subPosts.value = []
-  post.value = postsAll.find(post => routeId === post.id)
-
-  if (!post.value) return
-
-  post.value.subPosts.forEach(id => {
-    const subPost = postsAll.find(post => id === post.id)
-    if (subPost) subPosts.value.push(subPost)
-  })
-}
-
-onMounted(() => {
-  if (!bannerDescription.value) return
-
-  defaultBannerDescriptionHeight.value = bannerDescription.value.clientHeight
+const currentPost = computed(() => {
+  return posts.value.find(el => el.id === route.params.id)
 })
 
-const handleShowMore = () => {
-  router.push({ name: ROUTE_NAMES.category, params: { id: post.value?.id } })
+const subPosts = computed<Post[]>(() => {
+  if (!currentPost.value?.subPosts.length) return []
+
+  return (
+    posts.value.reduce<Post[]>((acc, curr) => {
+      return currentPost.value?.subPosts.includes(curr.id)
+        ? [...acc, curr]
+        : [...acc]
+    }, []) || []
+  )
+})
+
+const loadPosts = async () => {
+  try {
+    const fetchPosts = () => import('@/assets/posts.json')
+
+    posts.value = (await fetchPosts()).default as Post[]
+  } catch (error) {
+    ErrorHandler.processWithoutFeedback(error)
+    isLoadFailed.value = true
+  }
+  isLoaded.value = true
 }
 
-watch(
-  () => route.params.id,
-  id => {
-    updatePosts(id as string)
-  },
-)
-
-updatePosts(route.params.id as string)
+loadPosts()
 </script>
 
 <template>
   <div class="posts-page">
-    <app-block class="posts-page__banner-wrp">
-      <div class="posts-page__banner">
-        <div class="posts-page__banner-title-wrp">
-          <h2 class="posts-page__banner-title">
-            {{ post?.title }}
-          </h2>
-          <app-button
-            class="posts-page__back-btn"
-            :icon-right="$icons.arrowLeft"
-            modification="border-circle"
-            color="tertiary"
-            @click="router.go(-1)"
-          />
-        </div>
-        <p ref="bannerDescription" class="posts-page__banner-desc">
-          {{ post?.description }}
-        </p>
-        <app-button
-          class="posts-page__banner-show-more-btn"
-          color="tertiary"
-          size="small"
-          :text="$t('posts-page.show-more-btn')"
-          @click="handleShowMore"
-        />
-        <div class="posts-page__banner-img-wrp">
-          <img
-            class="posts-page__banner-img"
-            :src="post?.imageUrl"
-            :alt="post?.title"
-          />
-        </div>
-      </div>
-    </app-block>
-    <app-block
-      v-for="subPost in subPosts"
-      :key="subPost.id"
-      class="posts-page__card"
-    >
-      <post-card :post="subPost" />
-    </app-block>
+    <template v-if="isLoaded">
+      <template v-if="isLoadFailed">
+        <error-message :message="$t('posts-page.loading-error-msg')" />
+      </template>
+      <template v-else-if="posts.length">
+        <app-block class="posts-page__banner-wrp">
+          <div class="posts-page__banner">
+            <div class="posts-page__banner-title-wrp">
+              <h2 class="posts-page__banner-title">
+                {{ currentPost.title }}
+              </h2>
+              <app-button
+                class="posts-page__back-btn"
+                :icon-right="$icons.arrowLeft"
+                modification="border-circle"
+                color="tertiary"
+                @click="router.go(-1)"
+              />
+            </div>
+            <p ref="bannerDescription" class="posts-page__banner-desc">
+              {{ currentPost?.description }}
+            </p>
+            <app-button
+              class="posts-page__banner-show-more-btn"
+              color="tertiary"
+              size="small"
+              :text="$t('posts-page.show-more-btn')"
+              :route="{
+                name: $routes.category,
+                params: { id: currentPost.id },
+              }"
+            />
+            <div class="posts-page__banner-img-wrp">
+              <img
+                class="posts-page__banner-img"
+                :src="currentPost?.imageUrl"
+                :alt="currentPost?.title"
+              />
+            </div>
+          </div>
+        </app-block>
+        <app-block
+          v-for="(subPost, idx) in subPosts"
+          :key="idx"
+          class="posts-page__card"
+        >
+          <posts-page-card :post="subPost" />
+        </app-block>
+      </template>
+      <template v-else>
+        <no-data-message :message="$t('posts-page.no-data-msg')" />
+      </template>
+    </template>
+    <template v-else>
+      <loader />
+    </template>
   </div>
 </template>
 

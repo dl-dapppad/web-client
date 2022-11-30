@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useWeb3ProvidersStore } from '@/store'
 import {
   AppBlock,
   AppButton,
@@ -11,21 +13,22 @@ import {
   InfoTooltip,
 } from '@/common'
 import { InputField, SelectField } from '@/fields'
-import { useFormValidation } from '@/composables'
+import { useFormValidation, Product } from '@/composables'
 import { required, isAddress, numeric } from '@/validators'
 import { formatAmount } from '@/helpers'
 import {
   deploy,
   getAvailableTokenList,
   getSelectedTokenInfo,
+  getProduct,
 } from '@/helpers/deploy.helper'
-import { PRODUCT_IDS } from '@/enums'
+import { config } from '@/config'
 import { BN } from '@/utils'
-import DeploySuccessMessage, {
+import {
+  DeploySuccessMessage,
   DeployERC20Metadata,
-} from '../../common/DeploySuccessMessage.vue'
-import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore } from '@/store'
+} from '@/modules/erc20/common'
+import { PRODUCT_IDS } from '@/enums'
 
 const { t } = useI18n({
   locale: 'en',
@@ -37,7 +40,8 @@ const { t } = useI18n({
       'erc20.payment-group': 'Payment info',
       'erc20.payment-lbl': 'Payment token',
       'erc20.payment-info': 'Select the token you want to pay with',
-      'erc20.payment-balance': 'Balance',
+      'erc20.payment-balance': 'Your balance',
+      'erc20.product-price': 'Product price',
 
       'erc20.token-group': 'Token info',
       'erc20.name-lbl': 'Token name',
@@ -62,11 +66,17 @@ const paymentTokens = ref<Record<string, Array<string>>>({
   symbols: [],
   addresses: [],
 })
+const productPaymentToken = ref({
+  balance: '',
+  symbol: '',
+  decimals: 0,
+})
 const selectedPaymentToken = ref({
   balance: '',
   symbol: '',
   decimals: 0,
 })
+const product = ref<Product>()
 
 const isSuccessModalShown = ref(false)
 
@@ -99,6 +109,14 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
   },
 )
 
+const isBalanceInsuficient = computed(() =>
+  product.value?.currentPrice
+    ? new BN(product.value?.currentPrice).compare(
+        selectedPaymentToken.value.balance,
+      ) === 1
+    : false,
+)
+
 const init = async () => {
   const { symbols, addresses } = await getAvailableTokenList()
 
@@ -106,6 +124,16 @@ const init = async () => {
   paymentTokens.value.addresses = addresses
 
   form.mintReceiver = provider.value.selectedAddress as string
+
+  const alias = config.PRODUCT_ALIASES[route.params.id as string]
+  product.value = await getProduct(alias)
+
+  if (!addresses.length) return
+
+  const { symbol, decimals, balance } = await getSelectedTokenInfo(addresses[0])
+  productPaymentToken.value.symbol = symbol
+  productPaymentToken.value.decimals = Number(decimals)
+  productPaymentToken.value.balance = balance
 }
 
 const getSelectedPaymentAddress = () => {
@@ -121,9 +149,12 @@ const onPaymentChange = async () => {
     getSelectedPaymentAddress(),
   )
 
-  selectedPaymentToken.value.symbol = symbol
-  selectedPaymentToken.value.decimals = Number(decimals)
-  selectedPaymentToken.value.balance = balance
+  selectedPaymentToken.value = {
+    ...selectedPaymentToken.value,
+    symbol,
+    decimals: Number(decimals),
+    balance,
+  }
 }
 
 const submit = async () => {
@@ -221,20 +252,43 @@ init()
                       <info-tooltip :text="t('erc20.payment-info')" />
                     </div>
                   </div>
-                  <div v-if="selectedPaymentToken.balance" class="app__row">
-                    <span class="app__row-title">
-                      {{ t('erc20.payment-balance') }}
-                    </span>
-                    <div class="app__balance">
-                      {{
-                        formatAmount(
-                          selectedPaymentToken.balance,
-                          selectedPaymentToken.decimals,
-                        )
-                      }}
-                      <span>{{ selectedPaymentToken.symbol }}</span>
+                  <template
+                    v-if="selectedPaymentToken.balance && product?.currentPrice"
+                  >
+                    <div class="app__row">
+                      <span class="app__row-title">
+                        {{ t('erc20.product-price') }}
+                      </span>
+                      <div class="app__balance">
+                        {{
+                          formatAmount(
+                            product.currentPrice,
+                            productPaymentToken.decimals,
+                          )
+                        }}
+                        <span>{{ productPaymentToken.symbol }}</span>
+                      </div>
                     </div>
-                  </div>
+                    <div v-if="selectedPaymentToken.balance" class="app__row">
+                      <span class="app__row-title">
+                        {{ t('erc20.payment-balance') }}
+                      </span>
+                      <div
+                        class="app__balance app__balance-small"
+                        :class="{
+                          'app__balance-insufficient': isBalanceInsuficient,
+                        }"
+                      >
+                        {{
+                          formatAmount(
+                            selectedPaymentToken.balance,
+                            selectedPaymentToken.decimals,
+                          )
+                        }}
+                        <span>{{ selectedPaymentToken.symbol }}</span>
+                      </div>
+                    </div>
+                  </template>
                 </div>
               </div>
             </template>

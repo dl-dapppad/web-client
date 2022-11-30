@@ -24,12 +24,22 @@ const props = defineProps<{
 }>()
 
 const subPostsCount = computed(() => props.post.subPosts.length)
-const nextRouteName =
-  props.post.type === 'category'
-    ? subPostsCount.value
+
+const postCardRoute = computed(() => {
+  const routeName = {
+    category: subPostsCount.value
       ? ROUTE_NAMES.categories
-      : ROUTE_NAMES.category
-    : ROUTE_NAMES.product
+      : ROUTE_NAMES.category,
+    product: ROUTE_NAMES.product,
+  }[props.post.type]
+
+  return {
+    name: routeName,
+    params: {
+      id: props.post.id,
+    },
+  }
+})
 
 const init = async () => {
   if (!provider.value.chainId || !isChainAvailable(provider.value.chainId))
@@ -39,13 +49,12 @@ const init = async () => {
     alias.value = config.PRODUCT_ALIASES[props.post.id as string]
     if (!alias.value) return
 
-    await Promise.all([
+    const [, productDetails] = await Promise.all([
       farming.loadDetails(),
       factory.products(alias.value),
-    ]).then(res => {
-      product.value = res[1]
-      return
-    })
+    ])
+
+    product.value = productDetails
 
     paymentToken.init(farming.rewardToken.value)
     await paymentToken.loadDetails()
@@ -59,7 +68,6 @@ init()
 
 <template>
   <div class="post-card">
-    <button></button>
     <img class="post-card__img" :src="post.imageUrl" :alt="post.title" />
     <h4 class="post-card__title">
       {{ post.title }}
@@ -69,7 +77,11 @@ init()
     </p>
     <p v-if="subPostsCount" class="post-card__subcategories">
       <icon class="post-card__subcategories-icon" :name="$icons.folder" />
-      {{ `${subPostsCount} ${$t('post-card.subcategories-lbl')}` }}
+      {{
+        $t('post-card.subcategories-lbl', {
+          amount: subPostsCount,
+        })
+      }}
     </p>
     <div v-else class="post-card__price">
       <div class="post-card__price-icon-wrp">
@@ -78,25 +90,14 @@ init()
       </div>
       <div class="post-card__price-lbl-wrp">
         <span class="app__price app__price--big">
-          {{
-            formatAmount(
-              product.currentPrice,
-              paymentToken?.decimals.value ?? '0',
-            )
-          }}
+          {{ formatAmount(product.currentPrice, paymentToken?.decimals.value) }}
           <span class="app__price-asset">
             {{ paymentToken?.symbol.value }}
           </span>
         </span>
       </div>
     </div>
-    <router-link
-      class="post-card__link"
-      :to="{
-        name: nextRouteName,
-        params: { id: post.id },
-      }"
-    />
+    <router-link class="post-card__link" :to="postCardRoute" />
   </div>
 </template>
 

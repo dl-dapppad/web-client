@@ -2,25 +2,30 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-
 import { useWeb3ProvidersStore } from '@/store'
 import {
   formatAmount,
   formatPercent,
-  cropAddress,
   getChain,
   getEmptyChain,
   isChainAvailable,
   ErrorHandler,
-  copyToClipboard,
+  isErc20Contract,
+  isErc721Contract,
+  Bus,
 } from '@/helpers'
 import { Chain, Post } from '@/types'
 import { useErc20, useProductFactory, useFarming, Product } from '@/composables'
-import { AppButton, AppBlock, Icon, LineChart, InfoTooltip } from '@/common'
-import { isErc20Contract, isErc721Contract, Bus } from '@/helpers'
-import { ROUTE_NAMES, PRODUCT_IDS } from '@/enums'
+import {
+  AppButton,
+  AppBlock,
+  Icon,
+  LineChart,
+  InfoTooltip,
+  LinkCopy,
+} from '@/common'
 import { BN } from '@/utils'
-import { CONTRACT_NAMES } from '@/enums'
+import { CONTRACT_NAMES, PRODUCT_IDS, ROUTE_NAMES } from '@/enums'
 import { config } from '@/config'
 import { InputField } from '@/fields'
 import { useI18n } from 'vue-i18n'
@@ -228,43 +233,19 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.implementation-address-lbl') }}
               </span>
-              <span :title="product.implementation" class="app__link-wrp">
-                <a
-                  class="app__link app__link--accented"
-                  :href="provider.getAddressUrl(product.implementation)"
-                  target="_blank"
-                >
-                  {{ cropAddress(product.implementation) }}
-                </a>
-                <app-button
-                  class="app__link-icon-wrp"
-                  scheme="default"
-                  @click="copyToClipboard(product.implementation)"
-                >
-                  <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-                </app-button>
-              </span>
+              <link-copy
+                :address="product.implementation"
+                class="app__link--accented"
+              />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.factory-address-lbl') }}
               </span>
-              <span :title="factory.address.value" class="app__link-wrp">
-                <a
-                  class="app__link app__link--accented"
-                  :href="provider.getAddressUrl(factory.address.value)"
-                  target="_blank"
-                >
-                  {{ cropAddress(factory.address.value) }}
-                </a>
-                <app-button
-                  class="app__link-icon-wrp"
-                  scheme="default"
-                  @click="copyToClipboard(factory.address.value)"
-                >
-                  <icon class="app__link-icon" :name="$icons.duplicateFilled" />
-                </app-button>
-              </span>
+              <link-copy
+                :address="factory.address.value"
+                class="app__link--accented"
+              />
             </div>
           </div>
         </div>

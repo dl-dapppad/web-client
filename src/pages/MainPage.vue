@@ -5,6 +5,10 @@ import { useWindowSize } from '@vueuse/core'
 
 import { AppBlock, AppButton } from '@/common'
 import { CATEGORIES_IDS, PRODUCT_IDS, WINDOW_BREAKPOINTS } from '@/enums'
+import ImgMainTitle from '/static/images/MainTitle.png'
+import ImgMainTitleMobile from '/static/images/MainTitleMobile.png'
+import ImgMainPage1 from '/static/images/MainPage_1.png'
+import ImgMainPage1Mobile from '/static/images/MainPage_1Mobile.png'
 
 const router = useRouter()
 const { width: windowWidth } = useWindowSize()
@@ -17,11 +21,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
   <div class="main-page">
     <img
       class="main-page__title-img"
-      :src="
-        isMobile
-          ? 'static/images/MainTitleMobile.png'
-          : 'static/images/MainTitle.png'
-      "
+      :src="isMobile ? ImgMainTitleMobile : ImgMainTitle"
     />
     <div class="main-page__content">
       <div class="main-page__rows">
@@ -48,11 +48,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
           </app-block>
           <img
             class="main-page__row-img"
-            :src="
-              isTablet
-                ? 'static/images/MainPage_1Mobile.png'
-                : 'static/images/MainPage_1.png'
-            "
+            :src="isTablet ? ImgMainPage1Mobile : ImgMainPage1"
           />
         </div>
         <div class="main-page__row main-page__row--inverted">

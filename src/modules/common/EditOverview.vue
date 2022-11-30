@@ -1,18 +1,7 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore } from '@/store'
-
-import { Icon, AppBlock } from '@/common'
-import { cropAddress, copyToClipboard } from '@/helpers'
-import { OVERVIEW_ROW } from '@/enums'
-
-export interface OverviewRow {
-  name: string
-  value: string
-  type: OVERVIEW_ROW
-}
-
-const { provider } = storeToRefs(useWeb3ProvidersStore())
+import { AppBlock, LinkCopy } from '@/common'
+import { OVERVIEW_ROW } from '@/modules/enums'
+import { OverviewRow } from '@/modules/types'
 
 const props = defineProps<{
   rows?: Array<OverviewRow>
@@ -45,21 +34,7 @@ const props = defineProps<{
                 </span>
               </template>
               <template v-else-if="row.type === OVERVIEW_ROW.address">
-                <div class="app__link-wrp" :title="row.value">
-                  <a
-                    class="app__link app__link--accented"
-                    :href="provider.getAddressUrl(row.value)"
-                    target="_blank"
-                  >
-                    {{ cropAddress(row.value) }}
-                  </a>
-                  <div @click="copyToClipboard(row.value)">
-                    <icon
-                      class="app__link-icon"
-                      :name="$icons.duplicateFilled"
-                    />
-                  </div>
-                </div>
+                <link-copy :address="row.value" class="app__link--accented" />
               </template>
               <template v-else>
                 {{ row.value }}
