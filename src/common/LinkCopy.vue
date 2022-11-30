@@ -12,11 +12,13 @@ withDefaults(
     href?: string
     isCropped?: boolean
     isCopyable?: boolean
+    showFirstCroppSymbols?: number
   }>(),
   {
     isCropped: true,
     isCopyable: true,
     href: '',
+    showFirstCroppSymbols: 5,
   },
 )
 </script>
@@ -29,7 +31,7 @@ withDefaults(
       target="_blank"
       v-bind="$attrs"
     >
-      {{ isCropped ? cropAddress(address) : address }}
+      {{ isCropped ? cropAddress(address, showFirstCroppSymbols) : address }}
     </a>
     <button
       v-if="isCopyable"

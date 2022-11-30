@@ -5,7 +5,7 @@ import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
 import { InfoTooltip, AppButton } from '@/common'
 import { useFormValidation } from '@/composables'
-import { required, isAddress, numeric } from '@/validators'
+import { required, isAddress, numeric, integer } from '@/validators'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 const props = defineProps<{
@@ -39,7 +39,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
   form,
   {
     to: { required, isAddress },
-    tokenId: { required, numeric },
+    tokenId: { required, numeric, integer },
   },
 )
 

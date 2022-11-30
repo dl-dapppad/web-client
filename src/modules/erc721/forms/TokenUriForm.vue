@@ -5,7 +5,7 @@ import { InputField } from '@/fields'
 import { InfoTooltip, AppButton, LinkCopy } from '@/common'
 import { handleTxError } from '@/helpers'
 import { useFormValidation } from '@/composables'
-import { required, numeric } from '@/validators'
+import { required, numeric, integer } from '@/validators'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 const props = defineProps<{
@@ -33,7 +33,7 @@ const form = reactive({
 const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
   form,
   {
-    tokenId: { required, numeric },
+    tokenId: { required, numeric, integer },
   },
 )
 

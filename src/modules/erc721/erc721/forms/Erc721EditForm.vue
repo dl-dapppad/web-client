@@ -90,7 +90,7 @@ const init = async () => {
         erc721.baseURI.value === ''
           ? t('erc721.baseURI-default-value')
           : erc721.baseURI.value,
-      type: OVERVIEW_ROW.default,
+      type: OVERVIEW_ROW.link,
     },
     {
       name: t('erc721.balance'),

@@ -173,6 +173,11 @@ const submit = async () => {
     ],
   )
 
+  if (!potentialContractAddress.value) {
+    txProcessing.value = false
+    return
+  }
+
   deployMetadata.value = {
     name: form.name,
     symbol: form.symbol,

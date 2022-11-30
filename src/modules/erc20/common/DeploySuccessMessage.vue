@@ -18,7 +18,7 @@ const { t } = useI18n({
     en: {
       'deploy-erc20.title': 'Success',
       'deploy-erc20.description':
-        'Congratulations! You’ve just minted your token!',
+        'Congratulations! You’ve just deployed your contract for Fungible Tokens!',
       'deploy-erc20.name-lbl': 'Name',
       'deploy-erc20.symbol-lbl': 'Symbol',
       'deploy-erc20.decimals-lbl': 'Decimals',

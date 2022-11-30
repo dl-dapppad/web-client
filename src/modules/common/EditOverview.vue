@@ -36,6 +36,14 @@ const props = defineProps<{
               <template v-else-if="row.type === OVERVIEW_ROW.address">
                 <link-copy :address="row.value" class="app__link--accented" />
               </template>
+              <template v-else-if="row.type === OVERVIEW_ROW.link">
+                <link-copy
+                  :address="row.value"
+                  :href="row.value"
+                  :show-first-cropp-symbols="20"
+                  class="app__link--accented"
+                />
+              </template>
               <template v-else>
                 {{ row.value }}
               </template>

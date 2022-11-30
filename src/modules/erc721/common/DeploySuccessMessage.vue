@@ -18,7 +18,7 @@ const { t } = useI18n({
     en: {
       'deploy-erc721.title': 'Success',
       'deploy-erc721.description':
-        'Congratulations! You’ve just minted your NFT!',
+        'Congratulations! You’ve just deployed your contract for Non-Fungible Tokens!',
       'deploy-erc721.name-lbl': 'Name',
       'deploy-erc721.symbol-lbl': 'Symbol',
       'deploy-erc721.decimals-lbl': 'Decimals',
