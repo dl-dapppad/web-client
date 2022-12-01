@@ -18,6 +18,7 @@ import {
   useFarming,
   Product,
   useProduct,
+  useChart,
 } from '@/composables'
 import {
   AppButton,
@@ -54,7 +55,9 @@ const alias = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const product = ref<Product>(factory.getEmptyProduct())
 const cashback = ref('0')
-const chartData = ref<number[]>([])
+// const chartData = ref<number[]>([])
+
+const chart = useChart()
 
 const isProductLoaded = ref(false)
 
@@ -62,50 +65,6 @@ const clickContractSearch = async () => {
   addressSearchButtonDisabled.value = true
   await composableProduct.handleContractSearch(addressSearchInput.value)
   addressSearchButtonDisabled.value = false
-}
-
-const getChartData = (product: Product, decimals: number) => {
-  let chartData = [] as number[]
-
-  const basePrice = Number(
-    new BN(product.currentPrice).fromFraction(decimals).toString(),
-  )
-
-  if (!basePrice) return []
-
-  const minPrice = Number(
-    new BN(product.minPrice).fromFraction(decimals).toString(),
-  )
-  let currentPrice = basePrice
-  const decreasePercent = Number(
-    new BN(product.decreasePercent).fromFraction(27).toString(),
-  )
-  const salesCount = Number(product.salesCount)
-  for (let i = salesCount; i > 0; i--) {
-    const price = currentPrice / (1 - decreasePercent)
-
-    chartData.push(price)
-    currentPrice = price
-  }
-
-  chartData = chartData.reverse()
-  chartData.push(basePrice)
-  currentPrice = basePrice
-
-  while (currentPrice > minPrice) {
-    const price = currentPrice * (1 - decreasePercent)
-    if (price < minPrice) {
-      for (let i = 0; i < 5; i++) {
-        chartData.push(minPrice)
-      }
-    } else {
-      chartData.push(price)
-    }
-
-    currentPrice = price
-  }
-
-  return chartData
 }
 
 const init = async () => {
@@ -135,7 +94,11 @@ const init = async () => {
 
     isProductLoaded.value = true
 
-    chartData.value = getChartData(product.value, paymentToken.decimals.value)
+    chart.updateChartData(
+      product.value,
+      paymentToken.decimals.value,
+      paymentToken.symbol.value,
+    )
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -358,9 +321,9 @@ init()
               {{ post.chartTitle }}
             </h2>
             <line-chart
-              v-if="chartData.length"
+              v-if="chart.chartData.value.values.length"
               class="post-checkout__block-chart"
-              :data="chartData"
+              :chart="chart.chartData.value"
             />
             <loader v-else />
             <span class="post-checkout__block-description">
