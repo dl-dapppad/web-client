@@ -246,6 +246,10 @@ $page-padding-right: toRem(165);
   line-height: 1.3;
   letter-spacing: 0.1em;
   font-weight: 700;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__consolas {
@@ -254,12 +258,21 @@ $page-padding-right: toRem(165);
   line-height: 1.3;
   letter-spacing: 0.1em;
   font-weight: 700;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__paragraph {
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
+  word-break: break-word;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__paragraph-secondary {
@@ -267,6 +280,10 @@ $page-padding-right: toRem(165);
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__code-row {
@@ -276,6 +293,10 @@ $page-padding-right: toRem(165);
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__title {
@@ -285,9 +306,17 @@ $page-padding-right: toRem(165);
   letter-spacing: 0.1em;
   color: var(--text-primary-main);
 
+  @include respond-to(medium) {
+    font-size: toRem(20);
+  }
+
   &--accent {
     font-size: toRem(36);
     font-weight: 900;
+
+    @include respond-to(medium) {
+      font-size: toRem(24);
+    }
   }
 }
 
@@ -300,6 +329,10 @@ $page-padding-right: toRem(165);
 
   &--low {
     font-size: toRem(20);
+
+    @include respond-to(medium) {
+      font-size: toRem(18);
+    }
   }
 }
 
@@ -320,6 +353,8 @@ $page-padding-right: toRem(165);
 .post-item-page__img-links {
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   gap: toRem(35);
 }
 
@@ -357,7 +392,10 @@ a.post-item-page__img-links-item {
 .post-item-page__unordered-list-text {
   font-size: toRem(20);
   line-height: toRem(26);
-  word-break: break-all;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__unordered-list-icon {

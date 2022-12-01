@@ -263,6 +263,11 @@ const setHeightCSSVar = (element: HTMLElement) => {
 
   @include field-border;
 
+  @include respond-to(medium) {
+    padding: 0;
+    padding-left: toRem(16);
+  }
+
   &::-webkit-input-placeholder {
     @include field-placeholder;
   }

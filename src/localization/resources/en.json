@@ -112,11 +112,11 @@
     "login-success-msg": "Access granted",
     "submit-btn": "Submit"
   },
-  "post-card": {
+  "posts-page-card": {
     "subcategories-lbl": "{amount} SubCategories",
     "price-lbl": "Price"
   },
-  "post-checkout": {
+  "post-item-page-checkout": {
     "have-product-lbl": "Already have this product?",
     "have-product-input-lbl": "Contract address",
     "have-product-input-tooltip-txt": "You can edit contracts that you already have",

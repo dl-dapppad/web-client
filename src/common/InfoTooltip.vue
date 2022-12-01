@@ -58,7 +58,9 @@ defineProps<{
 }
 
 .info-tooltip__icon {
-  height: toRem(12);
-  width: toRem(12);
+  min-height: toRem(12);
+  min-width: toRem(12);
+  max-height: toRem(12);
+  max-width: toRem(12);
 }
 </style>
