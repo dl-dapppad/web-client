@@ -11,7 +11,7 @@ import {
   Modal,
   Icon,
   InfoTooltip,
-  Loader
+  Loader,
 } from '@/common'
 import { InputField, SelectField } from '@/fields'
 import { useFormValidation, Product } from '@/composables'
