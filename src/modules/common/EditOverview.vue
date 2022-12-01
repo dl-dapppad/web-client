@@ -3,9 +3,16 @@ import { AppBlock, LinkCopy } from '@/common'
 import { OVERVIEW_ROW } from '@/modules/enums'
 import { OverviewRow } from '@/modules/types'
 
-const props = defineProps<{
-  rows?: Array<OverviewRow>
-}>()
+const props = withDefaults(
+  defineProps<{
+    isLoaded?: boolean
+    rows?: Array<OverviewRow>
+  }>(),
+  {
+    isLoaded: false,
+    rows: undefined,
+  },
+)
 </script>
 
 <template>
@@ -24,7 +31,7 @@ const props = defineProps<{
             <span class="app__metadata-lbl">
               {{ row.name }}
             </span>
-            <span class="app__metadata-value">
+            <span v-if="props.isLoaded" class="app__metadata-value">
               <template v-if="row.type === OVERVIEW_ROW.amount">
                 <span class="app__price">
                   {{ row.value.split(' ')[0] }}
@@ -48,6 +55,7 @@ const props = defineProps<{
                 {{ row.value }}
               </template>
             </span>
+            <skeletor v-else />
           </div>
         </div>
       </div>

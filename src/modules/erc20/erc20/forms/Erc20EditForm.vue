@@ -50,12 +50,40 @@ const FORM_TABS = [
 ]
 
 const currentTabNumber = ref(FORM_TABS[0].number)
-const overviewRows = ref<Array<OverviewRow>>()
+const overviewRows = ref<Array<OverviewRow>>([
+  {
+    name: t('erc20.tracker'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+  {
+    name: t('erc20.total'),
+    value: '',
+    type: OVERVIEW_ROW.amount,
+  },
+  {
+    name: t('erc20.decimals'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+  {
+    name: t('erc20.owner'),
+    value: '',
+    type: OVERVIEW_ROW.address,
+  },
+  {
+    name: t('erc20.balance'),
+    value: '',
+    type: OVERVIEW_ROW.amount,
+  },
+])
 const balance = ref(0)
 
 const router = useRouter()
 const route = useRoute()
 const erc20 = useProductErc20(route.params.contractAddress as string)
+
+const isLoaded = ref(false)
 
 const init = async () => {
   erc20.init(route.params.contractAddress as string)
@@ -73,41 +101,21 @@ const init = async () => {
     })
   }
 
-  overviewRows.value = [
-    {
-      name: t('erc20.tracker'),
-      value: `${erc20.name.value} (${erc20.symbol.value})`,
-      type: OVERVIEW_ROW.default,
-    },
-    {
-      name: t('erc20.total'),
-      value: formatAmount(
-        erc20.totalSupply.value,
-        erc20.decimals.value,
-        erc20.symbol.value,
-      ),
-      type: OVERVIEW_ROW.amount,
-    },
-    {
-      name: t('erc20.decimals'),
-      value: String(erc20.decimals.value),
-      type: OVERVIEW_ROW.default,
-    },
-    {
-      name: t('erc20.owner'),
-      value: erc20.owner.value,
-      type: OVERVIEW_ROW.address,
-    },
-    {
-      name: t('erc20.balance'),
-      value: formatAmount(
-        balance.value,
-        erc20.decimals.value,
-        erc20.symbol.value,
-      ),
-      type: OVERVIEW_ROW.amount,
-    },
-  ]
+  overviewRows.value[0].value = `${erc20.name.value} (${erc20.symbol.value})`
+  overviewRows.value[1].value = formatAmount(
+    erc20.totalSupply.value,
+    erc20.decimals.value,
+    erc20.symbol.value,
+  )
+  overviewRows.value[2].value = String(erc20.decimals.value)
+  overviewRows.value[3].value = erc20.owner.value
+  overviewRows.value[4].value = formatAmount(
+    balance.value,
+    erc20.decimals.value,
+    erc20.symbol.value,
+  )
+
+  isLoaded.value = true
 }
 
 const updateBalance = async () => {
@@ -154,7 +162,7 @@ init()
         {{ t('erc20.subtitle') }}
       </span>
     </div>
-    <edit-overview :rows="overviewRows"></edit-overview>
+    <edit-overview :is-loaded="isLoaded" :rows="overviewRows"></edit-overview>
     <div>
       <h3 class="app__module-block-title">
         {{ t('erc20.interaction') }}

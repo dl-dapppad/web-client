@@ -134,16 +134,28 @@ a {
   }
 }
 
+.vue-skeletor {
+  border-radius: toRem(12);
+}
+
 .app__metadata {
   display: flex;
   flex-direction: column;
   gap: toRem(24);
+
+  & > .vue-skeletor {
+    height: toRem(400);
+  }
 }
 
 .app__metadata-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  & > .vue-skeletor {
+    width: toRem(150);
+  }
 }
 
 .app__metadata-lbl {

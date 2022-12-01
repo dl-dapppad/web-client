@@ -1,14 +1,16 @@
+import 'vue-skeletor/dist/vue-skeletor.css'
 import '@/styles/app.scss'
 import 'virtual:svg-icons-register'
 
 import App from '@/App.vue'
 import log from 'loglevel'
 
-import VueToastificationPlugin from 'vue-toastification'
-import { MotionPlugin } from '@vueuse/motion'
-import { ICON_NAMES, ROUTE_NAMES } from '@/enums'
 import { createApp, getCurrentInstance, h } from 'vue'
 import { useI18n } from 'vue-i18n'
+import VueToastificationPlugin from 'vue-toastification'
+import { Skeletor } from 'vue-skeletor'
+import { MotionPlugin } from '@vueuse/motion'
+import { ICON_NAMES, ROUTE_NAMES } from '@/enums'
 import { initApi } from '@/api'
 import { i18n } from '@/localization'
 import { config } from '@config'
@@ -36,6 +38,7 @@ app
   .use(i18n)
   .use(VueToastificationPlugin)
   .use(MotionPlugin)
+  .component(Skeletor.name, Skeletor)
 
 app.config.globalProperties.$routes = ROUTE_NAMES
 app.config.globalProperties.$config = config

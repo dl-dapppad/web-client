@@ -89,12 +89,16 @@ init()
         {{ $t('post-card.price-lbl') }}
       </div>
       <div class="post-card__price-lbl-wrp">
-        <span class="app__price app__price--big">
+        <span
+          v-if="paymentToken?.decimals.value"
+          class="app__price app__price--big"
+        >
           {{ formatAmount(product.currentPrice, paymentToken?.decimals.value) }}
           <span class="app__price-asset">
             {{ paymentToken?.symbol.value }}
           </span>
         </span>
+        <skeletor v-else />
       </div>
     </div>
     <router-link class="post-card__link" :to="postCardRoute" />
@@ -163,8 +167,9 @@ init()
 
 .post-card__price-lbl-wrp {
   display: flex;
-  align-items: end;
+  justify-content: end;
   gap: toRem(6);
+  min-width: toRem(150);
 }
 
 .post-card__price-lbl {
