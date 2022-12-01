@@ -26,6 +26,7 @@ import {
   LineChart,
   InfoTooltip,
   LinkCopy,
+  Loader,
 } from '@/common'
 import { BN } from '@/utils'
 import { CONTRACT_NAMES } from '@/enums'
@@ -194,7 +195,7 @@ init()
               <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ product.salesCount }}
               </span>
-              <skeletor v-else />
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -207,7 +208,7 @@ init()
               <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ formatPercent(product.decreasePercent) }}
               </span>
-              <skeletor v-else />
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -220,7 +221,7 @@ init()
               <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ formatPercent(product.cashbackPercent) }}
               </span>
-              <skeletor v-else />
+              <loader v-else />
             </div>
           </div>
           <div class="app__metadata">
@@ -233,7 +234,7 @@ init()
                 :address="product.implementation"
                 class="app__link--accented"
               />
-              <skeletor v-else />
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -244,7 +245,7 @@ init()
                 :address="factory.address.value"
                 class="app__link--accented"
               />
-              <skeletor v-else />
+              <loader v-else />
             </div>
           </div>
         </div>
@@ -273,7 +274,7 @@ init()
                   </span>
                 </span>
               </span>
-              <skeletor v-else />
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -291,7 +292,7 @@ init()
                   </span>
                 </span>
               </span>
-              <skeletor v-else />
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -309,7 +310,7 @@ init()
                   </span>
                 </span>
               </span>
-              <skeletor v-else />
+              <loader v-else />
             </div>
           </div>
           <div class="post-checkout__buy-wrp">
@@ -333,7 +334,7 @@ init()
                   </span>
                 </span>
               </span>
-              <skeletor v-else />
+              <loader v-else />
             </div>
             <app-button
               class="post-checkout__buy-link"
@@ -361,7 +362,7 @@ init()
               class="post-checkout__block-chart"
               :data="chartData"
             />
-            <skeletor v-else />
+            <loader v-else />
             <span class="post-checkout__block-description">
               {{ post.chartDescription }}
             </span>
@@ -423,7 +424,7 @@ init()
   flex-direction: column;
   gap: toRem(10);
 
-  .vue-skeletor {
+  .loader {
     height: toRem(28);
   }
 }

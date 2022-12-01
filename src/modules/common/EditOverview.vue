@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppBlock, LinkCopy } from '@/common'
+import { AppBlock, LinkCopy, Loader } from '@/common'
 import { OVERVIEW_ROW } from '@/modules/enums'
 import { OverviewRow } from '@/modules/types'
 
@@ -55,7 +55,7 @@ const props = withDefaults(
                 {{ row.value }}
               </template>
             </span>
-            <skeletor v-else />
+            <loader v-else />
           </div>
         </div>
       </div>

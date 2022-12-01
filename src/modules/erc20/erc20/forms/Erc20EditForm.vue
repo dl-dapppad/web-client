@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
+import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
@@ -77,7 +78,7 @@ const overviewRows = ref<Array<OverviewRow>>([
     type: OVERVIEW_ROW.amount,
   },
 ])
-const balance = ref(0)
+const balance = ref('0')
 
 const router = useRouter()
 const route = useRoute()
@@ -95,7 +96,7 @@ const init = async () => {
       erc20.loadDetails(),
       erc20.balanceOf(provider.value.selectedAddress),
     ]).then(res => {
-      balance.value = Number(res[1])
+      balance.value = res[1]
 
       return
     })
@@ -148,7 +149,14 @@ init()
           :icon-right="$icons.arrowLeft"
           modification="border-circle"
           color="tertiary"
-          @click="router.go(-1)"
+          @click="
+            router.push({
+              name: ROUTE_NAMES.product,
+              params: {
+                id: route.params.id,
+              },
+            })
+          "
         />
         <h2 class="app__module-title">
           {{ t('erc20.title') }}

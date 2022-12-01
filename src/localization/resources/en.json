@@ -138,6 +138,10 @@
     "buy-now-link": "Buy now",
     "buy-description-lbl": "First, the contract will be deployed, and then you can configure it"
   },
+  "product-deploy": {
+    "tx-processing": "Transaction processing...",
+    "tx-processing-description": "It can takes a some time, please wait"
+  },
   "farming-page": {
     "title": "Farming",
     "subtitle": "Stake your DAPP tokens and receive cashback rewards from each subsequent product sale.",

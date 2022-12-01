@@ -134,16 +134,12 @@ a {
   }
 }
 
-.vue-skeletor {
-  border-radius: toRem(12);
-}
-
 .app__metadata {
   display: flex;
   flex-direction: column;
   gap: toRem(24);
 
-  & > .vue-skeletor {
+  & > .loader {
     height: toRem(400);
   }
 }
@@ -153,7 +149,7 @@ a {
   justify-content: space-between;
   align-items: center;
 
-  & > .vue-skeletor {
+  & > .loader {
     width: toRem(150);
   }
 }
@@ -523,4 +519,21 @@ a {
 .app__deploy-success-message__submit.app-button {
   width: 100%;
   margin-top: toRem(40);
+}
+
+.app__deploy-loader {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  p {
+    line-height: 1.3;
+    letter-spacing: 0.1em;
+    margin-top: toRem(10);
+  }
+
+  .loader {
+    width: toRem(75);
+    height: toRem(75);
+  }
 }

@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { Icon } from '@/common'
+import { Icon, Loader } from '@/common'
 import { Post } from '@/types'
 import { ROUTE_NAMES } from '@/enums'
 import { config } from '@/config'
@@ -98,7 +98,7 @@ init()
             {{ paymentToken?.symbol.value }}
           </span>
         </span>
-        <skeletor v-else />
+        <loader v-else />
       </div>
     </div>
     <router-link class="post-card__link" :to="postCardRoute" />

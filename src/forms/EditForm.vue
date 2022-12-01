@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { Erc20EditForm, Erc721EditForm } from '@/modules'
-import { useRoute } from '@/router'
+import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
-import { PRODUCT_IDS } from '@/enums'
+import { PRODUCT_IDS, ROUTE_NAMES } from '@/enums'
 import { useProduct } from '@/composables'
 import postsData from '@/assets/posts.json'
 
 const route = useRoute()
+const router = useRouter()
 const composableProduct = useProduct()
 
 const posts = ref<Post[]>([])
@@ -18,9 +19,19 @@ const post = computed(() => {
 const init = async () => {
   posts.value = postsData as unknown as Post[]
 
-  await composableProduct.getProductTypeByAddress(
+  const productType = await composableProduct.getProductTypeByAddress(
     route.params.contractAddress as string,
   )
+
+  if (productType !== route.params.id) {
+    router.push({
+      name: ROUTE_NAMES.productEdit,
+      params: {
+        id: productType,
+        contractAddress: route.params.contractAddress,
+      },
+    })
+  }
 }
 
 init()
