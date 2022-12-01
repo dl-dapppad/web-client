@@ -25,8 +25,6 @@ const chartInstanceElement = ref<HTMLElement | undefined>()
 const init = () => {
   if (!chartInstanceElement.value) return
 
-  console.log(props.chart)
-
   Highcharts.chart(
     chartInstanceElement.value,
     {

@@ -29,7 +29,6 @@ import {
   LinkCopy,
   Loader,
 } from '@/common'
-import { BN } from '@/utils'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
 import { InputField } from '@/fields'
