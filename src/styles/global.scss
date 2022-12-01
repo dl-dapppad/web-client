@@ -449,10 +449,6 @@ a {
   right: 0;
   top: toRem(28);
   transform: translateY(-50%);
-
-  &--select {
-    top: toRem(20);
-  }
 }
 
 .app__title-icon {
