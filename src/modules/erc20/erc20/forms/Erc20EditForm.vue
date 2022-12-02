@@ -7,18 +7,23 @@ import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
-import { formatAmount } from '@/helpers'
+import { formatAmount, txWrapper } from '@/helpers'
 import { OVERVIEW_ROW } from '@/modules/enums'
 import { OverviewRow } from '@/modules/types'
 import {
   BalanceForm,
-  ApproveForm,
-  AllowanceForm,
+  // ApproveForm,
+  // AllowanceForm,
   TransferForm,
   TransferFromForm,
 } from '@/modules/erc20/forms'
 import { EditOverview } from '@/modules/common'
 import { useProductErc20 } from '../composables/use-product-erc20'
+import { required, isAddress, numeric } from '@/validators'
+import { BN } from '@/utils'
+
+import { ModuleForm } from '@/modules/common'
+import { RESULT_TYPES } from '@/modules/enums'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -35,6 +40,24 @@ const { t } = useI18n({
       'erc20.decimals': 'Decimals',
       'erc20.balance': 'Your balance',
       'erc20.interaction': 'Interaction',
+
+      'allowance-form.title-lbl': 'Allowance',
+      'allowance-form.title-info':
+        'Returns the remaining number of tokens that `spender` will be allowed to spend on behalf of `owner` through transfer. This value changes when `approve` or `transferFrom` are called',
+      'allowance-form.owner-lbl': 'Owner',
+      'allowance-form.owner-info': 'Enter the token holder address',
+      'allowance-form.spender-lbl': 'Spender',
+      'allowance-form.spender-info': 'Enter the spender address',
+      'allowance-form.btn-lbl': 'Read',
+      'approve-form.title-lbl': 'Approve',
+      'approve-form.title-info':
+        // eslint-disable-next-line prettier/prettier
+        'Sets `amount` as the allowance of `spender` over the caller\'s tokens',
+      'approve-form.spender-lbl': 'Spender',
+      'approve-form.spender-info': 'Enter the spender address',
+      'approve-form.amount-lbl': 'Amount',
+      'approve-form.amount-info': 'Enter the approved amount',
+      'approve-form.btn-lbl': 'Write',
     },
   },
 })
@@ -137,6 +160,69 @@ const updateOwner = async () => {
 }
 
 init()
+
+const allowanceFormData = {
+  title: t('allowance-form.title-lbl'),
+  titleTooltip: t('allowance-form.title-info'),
+  inputs: [
+    {
+      label: t('allowance-form.owner-lbl'),
+      tooltip: t('allowance-form.owner-info'),
+      validators: [required, isAddress],
+    },
+    {
+      label: t('allowance-form.spender-lbl'),
+      tooltip: t('allowance-form.spender-info'),
+      validators: [required, isAddress],
+    },
+  ],
+  button: t('allowance-form.btn-lbl'),
+}
+
+const allowanceFormResult = {
+  type: RESULT_TYPES.balanceWithCurr,
+  data: ref(''),
+}
+
+const handleAllowanceForm = async ([owner, spender]: string[]) => {
+  allowanceFormResult.data.value = formatAmount(
+    await erc20.allowance(owner, spender),
+    erc20.decimals.value,
+    erc20.symbol.value,
+  )
+}
+
+const approveFormTxProcessing = ref(false)
+
+const approveFormData = {
+  title: t('approve-form.title-lbl'),
+  titleTooltip: t('approve-form.title-info'),
+  inputs: [
+    {
+      label: t('approve-form.spender-lbl'),
+      tooltip: t('approve-form.spender-info'),
+      validators: [required, isAddress],
+    },
+    {
+      label: t('approve-form.amount-lbl'),
+      tooltip: t('approve-form.amount-info'),
+      validators: [required, numeric],
+    },
+  ],
+  button: t('approve-form.btn-lbl'),
+  buttonDisabled: approveFormTxProcessing,
+}
+
+const handleApproveForm = async ([spender, amount]: string[]) => {
+  approveFormTxProcessing.value = true
+
+  await txWrapper(erc20.approve, {
+    spender: spender,
+    amount: new BN(amount).toFraction(erc20.decimals.value).toString(),
+  })
+
+  approveFormTxProcessing.value = false
+}
 </script>
 
 <template>
@@ -181,14 +267,23 @@ init()
           v-if="currentTabNumber === FORM_TABS[0].number"
           class="app__module-content"
         >
-          <allowance-form :token="erc20"></allowance-form>
+          <module-form
+            :form-data="allowanceFormData"
+            :result="allowanceFormResult"
+            @submit="handleAllowanceForm"
+          />
+          <!-- <allowance-form :token="erc20" /> -->
           <balance-form :token="erc20"></balance-form>
         </div>
         <div
           v-if="currentTabNumber === FORM_TABS[1].number"
           class="app__module-content"
         >
-          <approve-form :token="erc20"></approve-form>
+          <module-form
+            :form-data="approveFormData"
+            @submit="handleApproveForm"
+          />
+          <!-- <approve-form :token="erc20"></approve-form> -->
           <transfer-form
             :token="erc20"
             :balance="Number(formatAmount(balance, erc20.decimals.value))"
