@@ -37,7 +37,8 @@ const { t } = useI18n({
   messages: {
     en: {
       'erc20.title': 'Deploy',
-      'erc20.subtitle':
+      'erc20.subtitle': 'Token ERC-20',
+      'erc20.description':
         'Deploy your product on chain. You should deploy product smart contract only one time with a transaction.',
       'erc20.payment-group': 'Payment info',
       'erc20.payment-lbl': 'Payment token',
@@ -198,26 +199,31 @@ init()
 
 <template>
   <form class="app" @submit.prevent="submit">
-    <div class="app__module-title-wrp">
-      <app-button
-        class="app__module-back-btn"
-        :icon-right="$icons.arrowLeft"
-        modification="border-circle"
-        color="tertiary"
-        @click="
-          router.push({
-            name: $routes.product,
-            params: { id: PRODUCT_IDS.ERC20 },
-          })
-        "
-      />
-      <h2 class="app__module-title">
-        {{ t('erc20.title') }}
-      </h2>
+    <div class="app__module-heading">
+      <div class="app__module-title-wrp">
+        <app-button
+          class="app__module-back-btn"
+          :icon-right="$icons.arrowLeft"
+          modification="border-circle"
+          color="tertiary"
+          @click="
+            router.push({
+              name: $routes.product,
+              params: { id: PRODUCT_IDS.ERC20 },
+            })
+          "
+        />
+        <h2 class="app__module-title">
+          {{ t('erc20.title') }}
+        </h2>
+      </div>
+      <span class="app__module-subtitle">
+        {{ t('erc20.subtitle') }}
+      </span>
+      <span class="app__module-description">
+        {{ t('erc20.description') }}
+      </span>
     </div>
-    <span class="app__module-subtitle">
-      {{ t('erc20.subtitle') }}
-    </span>
     <app-block class="app__module-content-wrp">
       <div class="app__module-content">
         <div class="app__module-content-inner">
@@ -250,6 +256,7 @@ init()
                 <div class="app__select-wrp">
                   <div class="app__field-row">
                     <select-field
+                      class="app__module-field"
                       v-model="form.paymentToken"
                       :label="t('erc20.payment-lbl')"
                       :value-options="paymentTokens.symbols"
@@ -329,6 +336,7 @@ init()
                 <div class="app__form-control">
                   <div class="app__field-row">
                     <input-field
+                      class="app__module-field"
                       scheme="secondary"
                       v-model="form.name"
                       :label="t('erc20.name-lbl')"
@@ -341,6 +349,7 @@ init()
                   </div>
                   <div class="app__field-row">
                     <input-field
+                      class="app__module-field"
                       scheme="secondary"
                       v-model="form.symbol"
                       :label="t('erc20.symbol-lbl')"
@@ -353,6 +362,7 @@ init()
                   </div>
                   <div class="app__field-row">
                     <input-field
+                      class="app__module-field"
                       scheme="secondary"
                       v-model="form.decimals"
                       :label="t('erc20.decimals-lbl')"
@@ -396,6 +406,7 @@ init()
                 <div class="app__form-control">
                   <div class="app__field-row">
                     <input-field
+                      class="app__module-field"
                       scheme="secondary"
                       v-model="form.mintReceiver"
                       :label="t('erc20.mint-receiver-lbl')"
@@ -408,6 +419,7 @@ init()
                   </div>
                   <div class="app__field-row">
                     <input-field
+                      class="app__module-field"
                       scheme="secondary"
                       v-model="form.mintAmount"
                       :label="t('erc20.mint-amount-lbl')"
@@ -424,7 +436,7 @@ init()
           </collapse>
           <app-button
             v-if="!txProcessing"
-            class="app__submit-btn"
+            class="app__submit-btn app__submit-btn--cutted"
             type="submit"
             :text="t('erc20.btn-lbl')"
             size="small"

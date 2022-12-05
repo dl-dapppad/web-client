@@ -56,6 +56,7 @@ const submit = async () => {
       </span>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.account"
           scheme="secondary"
           :label="t('balance-form.account-lbl')"
@@ -68,6 +69,7 @@ const submit = async () => {
       </div>
       <div class="app__common-form__button-wrp">
         <app-button
+          class="app__submit-btn"
           type="button"
           size="small"
           :text="t('balance-form.btn-lbl')"

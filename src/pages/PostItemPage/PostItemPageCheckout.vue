@@ -127,7 +127,7 @@ init()
                 @click="clickContractSearch"
               />
               <input-field
-                class="post-item-page-checkout__block-input-field"
+                class="app__module-field"
                 scheme="secondary"
                 v-model="addressSearchInput"
                 :label="t('post-item-page-checkout.have-product-input-lbl')"
@@ -423,12 +423,6 @@ init()
 
   @include respond-to(xsmall) {
     justify-content: center;
-  }
-}
-
-.post-item-page-checkout__block-input-field {
-  @include respond-to(xsmall) {
-    max-width: toRem(190);
   }
 }
 

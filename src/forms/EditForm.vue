@@ -49,13 +49,20 @@ init()
 </template>
 
 <style lang="scss" scoped>
+.edit-form {
+  padding: toRem(50) toRem(225);
+
+  @include respond-to(medium) {
+    padding: toRem(24);
+  }
+}
+
 .edit-form__module {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
   max-width: toRem(990);
-  padding: toRem(50) 0 toRem(30);
   margin: 0 auto;
   gap: toRem(70);
 }

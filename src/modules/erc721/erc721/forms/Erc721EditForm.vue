@@ -29,7 +29,7 @@ const { t } = useI18n({
   messages: {
     en: {
       'erc721.title': 'Editing',
-      'erc721.subtitle':
+      'erc721.description':
         'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
       'erc721.tracker': 'Token tracker',
       'erc721.owner': 'Owner address',
@@ -133,7 +133,7 @@ init()
 
 <template>
   <div class="erc20-edit-form">
-    <div class="edit-form__titles-wrp">
+    <div class="app__module-heading">
       <div class="app__module-title-wrp">
         <app-button
           type="button"
@@ -153,10 +153,12 @@ init()
         <h2 class="app__module-title">
           {{ t('erc721.title') }}
         </h2>
-        <link-copy :address="erc721.address.value" class="app__link--big" />
       </div>
       <span class="app__module-subtitle">
-        {{ t('erc721.subtitle') }}
+        <link-copy :address="erc721.address.value" class="app__link--big" />
+      </span>
+      <span class="app__module-description">
+        {{ t('erc721.description') }}
       </span>
     </div>
     <edit-overview :is-loaded="isLoaded" :rows="overviewRows" />

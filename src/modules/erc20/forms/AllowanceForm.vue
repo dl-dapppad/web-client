@@ -57,6 +57,7 @@ const submit = async () => {
       </span>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.owner"
           scheme="secondary"
           :label="t('allowance-form.owner-lbl')"
@@ -69,6 +70,7 @@ const submit = async () => {
       </div>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.spender"
           scheme="secondary"
           :label="t('allowance-form.spender-lbl')"
@@ -81,6 +83,7 @@ const submit = async () => {
       </div>
       <div class="app__common-form__button-wrp">
         <app-button
+          class="app__submit-btn"
           type="button"
           size="small"
           :text="t('allowance-form.btn-lbl')"

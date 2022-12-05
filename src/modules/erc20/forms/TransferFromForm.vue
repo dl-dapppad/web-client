@@ -82,6 +82,7 @@ const submit = async () => {
       </span>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.sender"
           scheme="secondary"
           :label="t('transfer-from-form.sender-lbl')"
@@ -94,6 +95,7 @@ const submit = async () => {
       </div>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.recipient"
           scheme="secondary"
           :label="t('transfer-from-form.recipient-lbl')"
@@ -106,6 +108,7 @@ const submit = async () => {
       </div>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.amount"
           scheme="secondary"
           :label="t('transfer-from-form.amount-lbl')"
@@ -117,6 +120,7 @@ const submit = async () => {
         </div>
       </div>
       <app-button
+        class="app__submit-btn"
         type="button"
         size="small"
         :text="t('transfer-from-form.btn-lbl')"

@@ -188,7 +188,12 @@ init()
       @click="handleProviderBtnClick"
     />
     <div v-if="provider.selectedAddress" class="app-navbar__menu-farming-wrp">
-      <icon class="app-navbar__farming-btn-icon" :name="$icons.gift" />
+      <app-button
+        class="app-navbar__farming-btn-icon"
+        scheme="default"
+        :icon-right="$icons.gift"
+        :route="{ name: $routes.farming }"
+      />
       <menu-drawer
         class="app-navbar__menu-drawer"
         @try-switch-chain="trySwitchChain"
@@ -409,7 +414,7 @@ init()
 }
 
 .app-navbar__farming-btn-icon {
-  height: toRem(16);
-  width: toRem(16);
+  padding: 0;
+  font-size: toRem(14);
 }
 </style>

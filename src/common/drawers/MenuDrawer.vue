@@ -130,6 +130,7 @@ const handleProviderBtnClick = () => {
 <style lang="scss" scoped>
 .menu-drawer__trigger {
   font-size: toRem(17);
+  transform: translateY(10%);
 }
 
 .menu-drawer__trigger-icon {

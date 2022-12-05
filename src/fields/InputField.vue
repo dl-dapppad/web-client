@@ -219,6 +219,10 @@ const setHeightCSSVar = (element: HTMLElement) => {
     font-weight: 400;
     line-height: 1.3;
     letter-spacing: 0.1em;
+
+    @include respond-to(xsmall) {
+      font-size: toRem(14);
+    }
   }
 
   /* stylelint-disable-next-line */

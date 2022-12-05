@@ -33,7 +33,8 @@ const { t } = useI18n({
   messages: {
     en: {
       'erc721.title': 'Deploy',
-      'erc721.subtitle':
+      'erc721.subtitle': 'Token ERC-721',
+      'erc721.description':
         'Deploy your product on chain. You should deploy product smart contract only one time with a transaction.',
       'erc721.payment-group': 'Payment info',
       'erc721.payment-lbl': 'Payment token',
@@ -164,26 +165,31 @@ init()
 
 <template>
   <form @submit.prevent="submit">
-    <div class="app__module-title-wrp">
-      <app-button
-        class="app__module-back-btn"
-        :icon-right="$icons.arrowLeft"
-        modification="border-circle"
-        color="tertiary"
-        @click="
-          router.push({
-            name: $routes.product,
-            params: { id: PRODUCT_IDS.ERC721 },
-          })
-        "
-      />
-      <h2 class="app__module-title">
-        {{ t('erc721.title') }}
-      </h2>
+    <div class="app__module-heading">
+      <div class="app__module-title-wrp">
+        <app-button
+          class="app__module-back-btn"
+          :icon-right="$icons.arrowLeft"
+          modification="border-circle"
+          color="tertiary"
+          @click="
+            router.push({
+              name: $routes.product,
+              params: { id: PRODUCT_IDS.ERC721 },
+            })
+          "
+        />
+        <h2 class="app__module-title">
+          {{ t('erc721.title') }}
+        </h2>
+      </div>
+      <span class="app__module-subtitle">
+        {{ t('erc721.subtitle') }}
+      </span>
+      <span class="app__module-description">
+        {{ t('erc721.description') }}
+      </span>
     </div>
-    <span class="app__module-subtitle">
-      {{ t('erc721.subtitle') }}
-    </span>
     <app-block class="app__module-content-wrp">
       <div class="app__module-content">
         <div class="app__module-content-inner">
@@ -323,7 +329,7 @@ init()
           </collapse>
           <app-button
             v-if="!txProcessing"
-            class="app__submit-btn"
+            class="app__submit-btn app__submit-btn--cutted"
             type="submit"
             :text="t('erc721.btn-lbl')"
             size="small"

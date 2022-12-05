@@ -70,12 +70,19 @@ $modal-z-index: 10;
   height: vh(100);
   background: rgba(var(--black-rgb), 0.5);
   z-index: $modal-z-index;
+
+  @include respond-to(medium) {
+    padding: 0 toRem(24);
+  }
 }
 
 .modal__pane {
   position: relative;
   background: var(--background-primary);
-  border-radius: toRem(10);
+
+  @include respond-to(medium) {
+    width: 100%;
+  }
 }
 
 .modal-enter-active,

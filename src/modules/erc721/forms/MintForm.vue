@@ -73,6 +73,7 @@ const submit = async () => {
       </span>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.to"
           scheme="secondary"
           :label="t('mint-form.to-lbl')"
@@ -85,6 +86,7 @@ const submit = async () => {
       </div>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.tokenId"
           scheme="secondary"
           :label="t('mint-form.token-lbl')"
@@ -96,6 +98,7 @@ const submit = async () => {
         </div>
       </div>
       <app-button
+        class="app__submit-btn"
         type="button"
         size="small"
         :text="t('mint-form.btn-lbl')"

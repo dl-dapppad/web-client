@@ -59,6 +59,7 @@ const submit = async () => {
       </span>
       <div class="app__field-row">
         <input-field
+          class="app__module-field"
           v-model="form.to"
           scheme="secondary"
           :label="t('approve-form.to-lbl')"
@@ -70,6 +71,7 @@ const submit = async () => {
         </div>
       </div>
       <app-button
+        class="app__submit-btn"
         type="button"
         size="small"
         :text="t('approve-form.btn-lbl')"

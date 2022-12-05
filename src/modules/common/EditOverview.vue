@@ -26,7 +26,7 @@ const props = withDefaults(
           <div
             v-for="row in props.rows"
             :key="row.name"
-            class="app__metadata-row"
+            class="app__metadata-row app__metadata-row--mobile-changed"
           >
             <span class="app__metadata-lbl">
               {{ row.name }}
