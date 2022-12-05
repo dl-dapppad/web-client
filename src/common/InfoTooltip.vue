@@ -3,9 +3,11 @@ import { ref, onMounted } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 
 import { Icon } from '@/common'
+import { TOOLTIP_SIDES } from '@/enums'
 
-defineProps<{
+const props = defineProps<{
   text: string
+  moveSide?: TOOLTIP_SIDES
 }>()
 
 const { width: windowWidth } = useWindowSize()
@@ -24,11 +26,16 @@ onMounted(() => {
 <template>
   <div class="info-tooltip" ref="tooltipElem">
     <icon class="info-tooltip__icon" :name="$icons.informationCircleFilled" />
+    <!-- -->
     <div
       class="info-tooltip__message"
       :class="{
-        'info-tooltip__message--mobile-moving-right': isMobileMovingRight,
-        'info-tooltip__message--mobile-moving-left': !isMobileMovingRight,
+        'info-tooltip__message--mobile-moving-right':
+          (isMobileMovingRight && props.moveSide === undefined) ||
+          props.moveSide === TOOLTIP_SIDES.right,
+        'info-tooltip__message--mobile-moving-left':
+          (!isMobileMovingRight && props.moveSide === undefined) ||
+          props.moveSide === TOOLTIP_SIDES.left,
       }"
     >
       {{ text }}
