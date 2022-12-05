@@ -1,21 +1,34 @@
 <script lang="ts" setup>
+import { ref, onMounted } from 'vue'
+import { useWindowSize } from '@vueuse/core'
+
 import { Icon } from '@/common'
 
 defineProps<{
   text: string
-  mobileRight?: boolean
-  mobileLeft?: boolean
 }>()
+
+const { width: windowWidth } = useWindowSize()
+
+const tooltipElem = ref<HTMLElement | undefined>()
+const isMobileMovingRight = ref<boolean>(false)
+
+onMounted(() => {
+  if (!tooltipElem.value) return
+
+  isMobileMovingRight.value =
+    tooltipElem.value.getBoundingClientRect().left <= windowWidth.value / 2
+})
 </script>
 
 <template>
-  <div class="info-tooltip">
+  <div class="info-tooltip" ref="tooltipElem">
     <icon class="info-tooltip__icon" :name="$icons.informationCircleFilled" />
     <div
       class="info-tooltip__message"
       :class="{
-        'info-tooltip__message--mobile-right': mobileRight,
-        'info-tooltip__message--mobile-left': mobileLeft,
+        'info-tooltip__message--mobile-moving-right': isMobileMovingRight,
+        'info-tooltip__message--mobile-moving-left': !isMobileMovingRight,
       }"
     >
       {{ text }}
@@ -50,7 +63,7 @@ defineProps<{
   }
 
   @include respond-to(medium) {
-    &--mobile-right {
+    &--mobile-moving-right {
       transform: translateX(-20%);
 
       &:before {
@@ -58,7 +71,7 @@ defineProps<{
       }
     }
 
-    &--mobile-left {
+    &--mobile-moving-left {
       transform: translateX(-80%);
 
       &:before {

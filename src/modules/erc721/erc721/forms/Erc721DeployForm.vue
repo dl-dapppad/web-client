@@ -229,10 +229,7 @@ init()
                       @update:model-value="onPaymentChange"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc721.payment-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc721.payment-info')" />
                     </div>
                   </div>
                   <template
@@ -312,10 +309,7 @@ init()
                       @blur="touchField('name')"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc721.name-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc721.name-info')" />
                     </div>
                   </div>
                   <div class="app__field-row">
@@ -327,10 +321,7 @@ init()
                       @blur="touchField('symbol')"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc721.symbol-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc721.symbol-info')" />
                     </div>
                   </div>
                 </div>

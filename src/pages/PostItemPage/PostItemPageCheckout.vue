@@ -139,7 +139,6 @@ init()
                 :text="
                   t('post-item-page-checkout.have-product-input-tooltip-txt')
                 "
-                :mobile-right="true"
               />
               <app-button
                 class="post-checkout__block-search-btn"
@@ -175,7 +174,6 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.decrease-percent-tooltip')"
-                  :mobile-right="true"
                 />
                 {{ $t('post-item-page-checkout.decrease-percent-lbl') }}
               </span>
@@ -189,7 +187,6 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.cashback-percent-tooltip')"
-                  :mobile-right="true"
                 />
                 {{ $t('post-item-page-checkout.cashback-percent-lbl') }}
               </span>
@@ -233,7 +230,6 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.minimal-price-tooltip')"
-                  :mobile-right="true"
                 />
                 {{ $t('post-item-page-checkout.minimal-price-lbl') }}
               </span>
@@ -257,7 +253,6 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.reward-tooltip')"
-                  :mobile-right="true"
                 />
                 {{ $t('post-item-page-checkout.reward-lbl') }}
               </span>
@@ -276,7 +271,6 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.distribution-tooltip')"
-                  :mobile-right="true"
                 />
                 {{ $t('post-item-page-checkout.distribution-lbl') }}
               </span>

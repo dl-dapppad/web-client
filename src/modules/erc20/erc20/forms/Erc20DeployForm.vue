@@ -264,10 +264,7 @@ init()
                       @update:model-value="onPaymentChange"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc20.payment-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc20.payment-info')" />
                     </div>
                   </div>
                   <template
@@ -348,10 +345,7 @@ init()
                       @blur="touchField('name')"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc20.name-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc20.name-info')" />
                     </div>
                   </div>
                   <div class="app__field-row">
@@ -364,10 +358,7 @@ init()
                       @blur="touchField('symbol')"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc20.symbol-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc20.symbol-info')" />
                     </div>
                   </div>
                   <div class="app__field-row">
@@ -380,10 +371,7 @@ init()
                       @blur="touchField('decimals')"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc20.decimals-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc20.decimals-info')" />
                     </div>
                   </div>
                 </div>
@@ -427,10 +415,7 @@ init()
                       @blur="touchField('mintReceiver')"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc20.mint-receiver-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc20.mint-receiver-info')" />
                     </div>
                   </div>
                   <div class="app__field-row">
@@ -443,10 +428,7 @@ init()
                       @blur="touchField('mintAmount')"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="t('erc20.mint-amount-info')"
-                        :mobile-left="true"
-                      />
+                      <info-tooltip :text="t('erc20.mint-amount-info')" />
                     </div>
                   </div>
                 </div>
