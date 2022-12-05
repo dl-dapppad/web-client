@@ -2,7 +2,6 @@
 import { reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { useWindowSize } from '@vueuse/core'
 
 import {
   AppBlock,
@@ -23,7 +22,7 @@ import {
   getSelectedTokenInfo,
   getProduct,
 } from '@/helpers/deploy.helper'
-import { PRODUCT_IDS, WINDOW_BREAKPOINTS } from '@/enums'
+import { PRODUCT_IDS } from '@/enums'
 import { config } from '@/config'
 import { BN } from '@/utils'
 import DeploySuccessMessage from '@/modules/erc721/common/DeploySuccessMessage.vue'
@@ -54,8 +53,6 @@ const { t } = useI18n({
     },
   },
 })
-
-const { width: windowWidth } = useWindowSize()
 
 const paymentTokens = ref<Record<string, Array<string>>>({
   symbols: [],
@@ -164,8 +161,6 @@ const submit = async () => {
   txProcessing.value = false
 }
 
-const isTablet = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
-
 init()
 </script>
 
@@ -236,7 +231,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc721.payment-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>
@@ -319,7 +314,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc721.name-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>
@@ -334,7 +329,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc721.symbol-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>

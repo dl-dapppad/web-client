@@ -3,8 +3,8 @@ import { Icon } from '@/common'
 
 defineProps<{
   text: string
-  moveRight?: boolean
-  moveLeft?: boolean
+  mobileRight?: boolean
+  mobileLeft?: boolean
 }>()
 </script>
 
@@ -14,8 +14,8 @@ defineProps<{
     <div
       class="info-tooltip__message"
       :class="{
-        'info-tooltip__message--moved-right': moveRight,
-        'info-tooltip__message--moved-left': moveLeft,
+        'info-tooltip__message--mobile-right': mobileRight,
+        'info-tooltip__message--mobile-left': mobileLeft,
       }"
     >
       {{ text }}
@@ -49,19 +49,21 @@ defineProps<{
     transform: rotate(45deg);
   }
 
-  &--moved-right {
-    transform: translateX(-20%);
+  @include respond-to(medium) {
+    &--mobile-right {
+      transform: translateX(-20%);
 
-    &:before {
-      transform: translateX(-#{toRem(75)}) rotate(45deg);
+      &:before {
+        transform: translateX(-#{toRem(75)}) rotate(45deg);
+      }
     }
-  }
 
-  &--moved-left {
-    transform: translateX(-80%);
+    &--mobile-left {
+      transform: translateX(-80%);
 
-    &:before {
-      transform: translateX(#{toRem(75)}) rotate(45deg);
+      &:before {
+        transform: translateX(#{toRem(75)}) rotate(45deg);
+      }
     }
   }
 }

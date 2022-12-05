@@ -2,7 +2,6 @@
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 
 import { useWeb3ProvidersStore } from '@/store'
@@ -31,7 +30,7 @@ import {
   DeploySuccessMessage,
   DeployERC20Metadata,
 } from '@/modules/erc20/common'
-import { PRODUCT_IDS, WINDOW_BREAKPOINTS } from '@/enums'
+import { PRODUCT_IDS } from '@/enums'
 import { SCHEMES } from '@/common/Loader.vue'
 
 const { t } = useI18n({
@@ -66,8 +65,6 @@ const { t } = useI18n({
     },
   },
 })
-
-const { width: windowWidth } = useWindowSize()
 
 const paymentTokens = ref<Record<string, Array<string>>>({
   symbols: [],
@@ -198,8 +195,6 @@ const submit = async () => {
   txProcessing.value = false
 }
 
-const isTablet = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
-
 init()
 </script>
 
@@ -271,7 +266,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc20.payment-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>
@@ -355,7 +350,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc20.name-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>
@@ -371,7 +366,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc20.symbol-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>
@@ -387,7 +382,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc20.decimals-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>
@@ -434,7 +429,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc20.mint-receiver-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>
@@ -450,7 +445,7 @@ init()
                     <div class="app__field-tooltip">
                       <info-tooltip
                         :text="t('erc20.mint-amount-info')"
-                        :move-left="isTablet"
+                        :mobile-left="true"
                       />
                     </div>
                   </div>
