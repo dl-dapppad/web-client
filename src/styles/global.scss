@@ -165,7 +165,7 @@ button.app__submit-btn {
     width: toRem(150);
   }
 
-  &--mobile-changed {
+  &--mobile-break-line {
     flex-direction: column;
     align-items: start;
     gap: toRem(10);
