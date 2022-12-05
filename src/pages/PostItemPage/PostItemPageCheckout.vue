@@ -134,7 +134,7 @@ init()
                 @click="clickContractSearch"
               />
               <input-field
-                class="app__module-field"
+                class="app__module-field post-item-page-checkout__block-input"
                 scheme="secondary"
                 v-model="addressSearchInput"
                 :label="t('post-item-page-checkout.have-product-input-lbl')"
@@ -145,6 +145,11 @@ init()
                   t('post-item-page-checkout.have-product-input-tooltip-txt')
                 "
                 :move-right="isTablet"
+              />
+              <app-button
+                class="post-checkout__block-search-btn"
+                :icon-right="$icons.searchFilled"
+                @click="clickContractSearch"
               />
             </div>
           </div>
@@ -434,8 +439,33 @@ init()
   align-items: center;
   gap: toRem(10);
 
-  @include respond-to(xsmall) {
-    justify-content: center;
+  @include respond-to(small) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.post-item-page-checkout__block-input {
+  @include respond-to(small) {
+    grid-column: 1 / -1;
+  }
+}
+
+.post-item-page-checkout__block-tooltip {
+  @include respond-to(small) {
+    justify-self: start;
+  }
+}
+
+.post-checkout__block-search-btn {
+  padding: toRem(17);
+  height: 100%;
+  font-size: toRem(15);
+  order: -1;
+
+  @include respond-to(small) {
+    order: 0;
+    justify-self: end;
   }
 }
 
@@ -444,12 +474,6 @@ init()
   min-width: toRem(20);
   max-height: toRem(20);
   max-width: toRem(20);
-}
-
-.post-checkout__block-search-btn {
-  padding: toRem(17);
-  height: 100%;
-  font-size: toRem(15);
 }
 
 .post-item-page-checkout__buy-wrp {
