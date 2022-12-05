@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
-import { InfoTooltip, AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
 import { required, isAddress, numeric, integer } from '@/validators'
+import { ProductInteractionForm } from '@/modules/common'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 enum EMITS {
@@ -37,26 +35,30 @@ const { t } = useI18n({
 })
 
 const txProcessing = ref(false)
-const form = reactive({
-  to: '',
-  tokenId: '',
-})
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    to: { required, isAddress },
-    tokenId: { required, numeric, integer },
-  },
-)
+const mintFormData = {
+  title: t('mint-form.title-lbl'),
+  titleTooltip: t('mint-form.title-info'),
+  inputs: [
+    {
+      label: t('mint-form.to-lbl'),
+      tooltip: t('mint-form.to-info'),
+      validators: [required, isAddress],
+    },
+    {
+      label: t('mint-form.token-lbl'),
+      tooltip: t('mint-form.token-info'),
+      validators: [required, numeric, integer],
+    },
+  ],
+  button: t('mint-form.btn-lbl'),
+  buttonDisabled: txProcessing,
+}
 
-const submit = async () => {
+const submit = async ([to, tokenId]: string[]) => {
   txProcessing.value = true
 
-  await txWrapper(props.token.safeMint, {
-    to: form.to,
-    tokenId: form.tokenId,
-  })
+  await txWrapper(props.token.safeMint, { to, tokenId })
 
   emit(EMITS.changeBalance)
 
@@ -65,43 +67,5 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('mint-form.title-info')" />
-        {{ t('mint-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.to"
-          scheme="secondary"
-          :label="t('mint-form.to-lbl')"
-          :error-message="getFieldErrorMessage('to')"
-          @blur="touchField('to')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('mint-form.to-info')" />
-        </div>
-      </div>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.tokenId"
-          scheme="secondary"
-          :label="t('mint-form.token-lbl')"
-          :error-message="getFieldErrorMessage('tokenId')"
-          @blur="touchField('tokenId')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('mint-form.token-info')" />
-        </div>
-      </div>
-      <app-button
-        type="button"
-        size="small"
-        :text="t('mint-form.btn-lbl')"
-        :disabled="!isFieldsValid || txProcessing"
-        @click="submit"
-      />
-    </div>
-  </div>
+  <product-interaction-form :form-data="mintFormData" @submit="submit" />
 </template>

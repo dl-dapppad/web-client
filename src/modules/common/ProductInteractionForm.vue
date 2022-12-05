@@ -54,7 +54,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
 </script>
 
 <template>
-  <div class="module-form">
+  <div class="app__common-form">
     <div class="app__form-control">
       <span class="app__form-control-title app__common-form__title">
         <info-tooltip :text="formData.titleTooltip" />
@@ -90,11 +90,10 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
         />
         <!-- eslint-enable -->
         <div v-if="result && result?.data.value !== ''">
-          <div v-if="result.type === RESULT_TYPES.text">
+          <div v-if="result.type === RESULT_TYPES.amount">
             {{ result.data.value }}
           </div>
-          <div v-else-if="result.type === RESULT_TYPES.balanceWithCurr">
-            {{ `` }}
+          <div v-else-if="result.type === RESULT_TYPES.amountWithSymbol">
             <span class="app__price">
               {{ result.data.value.split(' ')[0] }}
               <span class="app__price-asset">
@@ -102,13 +101,13 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
               </span>
             </span>
           </div>
-          <div v-else-if="result.type === RESULT_TYPES.linkCopy">
+          <div v-else-if="result.type === RESULT_TYPES.address">
             <link-copy
               class="app__link--accented"
               :address="result.data.value"
             />
           </div>
-          <div v-else-if="result.type === RESULT_TYPES.linkCopyUrl">
+          <div v-else-if="result.type === RESULT_TYPES.link">
             <link-copy
               class="app__link--accented"
               :address="result.data.value"

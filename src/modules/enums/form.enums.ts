@@ -1,6 +1,6 @@
 export enum RESULT_TYPES {
-  text = 'text',
-  balanceWithCurr = 'balance-with-curr',
-  linkCopy = 'link-copy',
-  linkCopyUrl = 'link-copy-url',
+  amount = 'amount',
+  amountWithSymbol = 'amount-with-symbol',
+  address = 'address',
+  link = 'link',
 }

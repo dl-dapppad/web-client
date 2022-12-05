@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { required, isAddress } from '@/validators'
 import { formatAmount } from '@/helpers'
-import { ModuleForm } from '@/modules/common'
+import { ProductInteractionForm } from '@/modules/common'
 import { RESULT_TYPES } from '@/modules/enums'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 
@@ -28,7 +28,7 @@ const { t } = useI18n({
 })
 
 const allowanceFormResult = {
-  type: RESULT_TYPES.balanceWithCurr,
+  type: RESULT_TYPES.amountWithSymbol,
   data: ref(''),
 }
 
@@ -60,7 +60,7 @@ const submit = async ([owner, spender]: string[]) => {
 </script>
 
 <template>
-  <module-form
+  <product-interaction-form
     :form-data="allowanceFormData"
     :result="allowanceFormResult"
     @submit="submit"

@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
-import { InfoTooltip, AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
 import { required, isAddress } from '@/validators'
+import { ProductInteractionForm } from '@/modules/common'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 
@@ -37,23 +35,25 @@ const { t } = useI18n({
 })
 
 const txProcessing = ref(false)
-const form = reactive({
-  newOwner: '',
-})
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    newOwner: { required, isAddress },
-  },
-)
+const transferOwnershipFormData = {
+  title: t('transfer-owner-form.title-lbl'),
+  titleTooltip: t('transfer-owner-form.title-info'),
+  inputs: [
+    {
+      label: t('transfer-owner-form.owner-lbl'),
+      tooltip: t('transfer-owner-form.owner-info'),
+      validators: [required, isAddress],
+    },
+  ],
+  button: t('transfer-owner-form.btn-lbl'),
+  buttonDisabled: txProcessing,
+}
 
-const submit = async () => {
+const submit = async ([newOwner]: string[]) => {
   txProcessing.value = true
 
-  await txWrapper(props.token.transferOwnership, {
-    newOwner: form.newOwner,
-  })
+  await txWrapper(props.token.transferOwnership, { newOwner })
 
   emit(EMITS.changeOwner)
 
@@ -62,31 +62,8 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('transfer-owner-form.title-info')" />
-        {{ t('transfer-owner-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.newOwner"
-          scheme="secondary"
-          :label="t('transfer-owner-form.owner-lbl')"
-          :error-message="getFieldErrorMessage('newOwner')"
-          @blur="touchField('newOwner')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('transfer-owner-form.owner-info')" />
-        </div>
-      </div>
-      <app-button
-        type="button"
-        size="small"
-        :text="t('transfer-owner-form.btn-lbl')"
-        :disabled="!isFieldsValid || txProcessing"
-        @click="submit"
-      />
-    </div>
-  </div>
+  <product-interaction-form
+    :form-data="transferOwnershipFormData"
+    @submit="submit"
+  />
 </template>

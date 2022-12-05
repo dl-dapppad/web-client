@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, isAddress, numeric } from '@/validators'
-import { ModuleForm } from '@/modules/common'
+import { ProductInteractionForm } from '@/modules/common'
 import { BN } from '@/utils'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 
@@ -53,7 +53,7 @@ const submit = async ([spender, amount]: string[]) => {
   txProcessing.value = true
 
   await txWrapper(props.token.approve, {
-    spender: spender,
+    spender,
     amount: new BN(amount).toFraction(props.token.decimals.value).toString(),
   })
 
@@ -62,5 +62,5 @@ const submit = async ([spender, amount]: string[]) => {
 </script>
 
 <template>
-  <module-form :form-data="approveFormData" @submit="submit" />
+  <product-interaction-form :form-data="approveFormData" @submit="submit" />
 </template>
