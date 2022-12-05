@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+
 import { useWeb3ProvidersStore } from '@/store'
 import {
   formatAmount,
@@ -29,7 +31,8 @@ import {
   LinkCopy,
   Loader,
 } from '@/common'
-import { CONTRACT_NAMES } from '@/enums'
+import { BN } from '@/utils'
+import { CONTRACT_NAMES, WINDOW_BREAKPOINTS } from '@/enums'
 import { config } from '@/config'
 import { InputField } from '@/fields'
 import { useI18n } from 'vue-i18n'
@@ -37,6 +40,8 @@ import { useI18n } from 'vue-i18n'
 defineProps<{
   post: Post
 }>()
+
+const { width: windowWidth } = useWindowSize()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -65,6 +70,8 @@ const clickContractSearch = async () => {
   await composableProduct.handleContractSearch(addressSearchInput.value)
   addressSearchButtonDisabled.value = false
 }
+
+const isTablet = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
 
 const init = async () => {
   if (!provider.value.chainId || !isChainAvailable(provider.value.chainId))
@@ -137,6 +144,7 @@ init()
                 :text="
                   t('post-item-page-checkout.have-product-input-tooltip-txt')
                 "
+                :move-right="isTablet"
               />
             </div>
           </div>
@@ -167,6 +175,7 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.decrease-percent-tooltip')"
+                  :move-right="isTablet"
                 />
                 {{ $t('post-item-page-checkout.decrease-percent-lbl') }}
               </span>
@@ -180,6 +189,7 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.cashback-percent-tooltip')"
+                  :move-right="isTablet"
                 />
                 {{ $t('post-item-page-checkout.cashback-percent-lbl') }}
               </span>
@@ -223,6 +233,7 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.minimal-price-tooltip')"
+                  :move-right="isTablet"
                 />
                 {{ $t('post-item-page-checkout.minimal-price-lbl') }}
               </span>
@@ -246,6 +257,7 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.reward-tooltip')"
+                  :move-right="isTablet"
                 />
                 {{ $t('post-item-page-checkout.reward-lbl') }}
               </span>
@@ -264,6 +276,7 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.distribution-tooltip')"
+                  :move-right="isTablet"
                 />
                 {{ $t('post-item-page-checkout.distribution-lbl') }}
               </span>

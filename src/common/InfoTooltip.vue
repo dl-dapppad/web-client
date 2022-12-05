@@ -3,13 +3,21 @@ import { Icon } from '@/common'
 
 defineProps<{
   text: string
+  moveRight?: boolean
+  moveLeft?: boolean
 }>()
 </script>
 
 <template>
   <div class="info-tooltip">
     <icon class="info-tooltip__icon" :name="$icons.informationCircleFilled" />
-    <div class="info-tooltip__message">
+    <div
+      class="info-tooltip__message"
+      :class="{
+        'info-tooltip__message--moved-right': moveRight,
+        'info-tooltip__message--moved-left': moveLeft,
+      }"
+    >
       {{ text }}
     </div>
   </div>
@@ -25,7 +33,7 @@ defineProps<{
   position: absolute;
   bottom: 175%;
   left: 50%;
-  min-width: toRem(200);
+  width: toRem(250);
   display: none;
   justify-content: center;
   transform: translateX(-50%);
@@ -39,6 +47,22 @@ defineProps<{
     background-color: var(--secondary-main);
     bottom: -#{toRem(7)};
     transform: rotate(45deg);
+  }
+
+  &--moved-right {
+    transform: translateX(-20%);
+
+    &:before {
+      transform: translateX(-#{toRem(75)}) rotate(45deg);
+    }
+  }
+
+  &--moved-left {
+    transform: translateX(-80%);
+
+    &:before {
+      transform: translateX(#{toRem(75)}) rotate(45deg);
+    }
   }
 }
 
