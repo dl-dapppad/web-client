@@ -29,6 +29,8 @@ defineProps<{
   display: none;
   justify-content: center;
   transform: translateX(-50%);
+  letter-spacing: 0.1em;
+  line-height: 1.3;
 
   &:before {
     content: '';

@@ -19,12 +19,18 @@ const post = computed(() => {
 const init = async () => {
   posts.value = postsData as unknown as Post[]
 
-  const prouctType = await composableProduct.getProductTypeByAddress(
+  const productType = await composableProduct.getProductTypeByAddress(
     route.params.contractAddress as string,
   )
 
-  if (prouctType !== route.params.id) {
-    router.push({ name: ROUTE_NAMES.notFound })
+  if (productType !== route.params.id) {
+    router.push({
+      name: ROUTE_NAMES.productEdit,
+      params: {
+        id: productType,
+        contractAddress: route.params.contractAddress,
+      },
+    })
   }
 }
 

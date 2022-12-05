@@ -3,6 +3,8 @@
     <lottie-animation
       class="no-data-message__animation"
       :animation-data="cubes"
+      :loop="true"
+      :auto-play="true"
       v-bind="$attrs"
     />
   </div>

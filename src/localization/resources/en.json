@@ -29,8 +29,8 @@
     "provider-limit-exceeded": "Request exceeds defined limit non-standard",
     "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported non-standard",
     "provider-wrapper-method-not-found": "provider not exist or hasn't this method",
-    "address-invalid": "Address is not valid",
-    "address-not-found": "No product with this address was found"
+    "address-invalid": "The smart contract address is not correct.",
+    "address-not-found": "No product with this address was found."
   },
   "notification": {
     "default-title-success": "Success!",
@@ -123,20 +123,24 @@
     "current-network-lbl": "Current network",
     "sales-lbl": "Number of sales",
     "decrease-percent-lbl": "Decrease percent",
-    "decrease-percent-tooltip": "Decrease percent tooltip",
+    "decrease-percent-tooltip": "The price of the product is reduced by a specified amount after each purchase.",
     "cashback-percent-lbl": "Cashback percent",
-    "cashback-percent-tooltip": "Cashback percent tooltip",
+    "cashback-percent-tooltip": "A specified percentage of the current price translates into rewards.",
     "implementation-address-lbl": "Implementation address",
     "factory-address-lbl": "Factory address",
     "minimal-price-lbl": "Minimal price",
-    "minimal-price-tooltip": "Minimal price tooltip",
+    "minimal-price-tooltip": "The minimum price of the product, can not be lower than the specified value",
     "reward-lbl": "Reward",
-    "reward-tooltip": "Reward tooltip",
+    "reward-tooltip": "The specified number of tokens will be transferred to the buyer's address after the purchase",
     "distribution-lbl": "Distribution",
-    "distribution-tooltip": "Distribution tooltip",
+    "distribution-tooltip": "The specified number of tokens will be distributed among all participants of farming",
     "current-price-lbl": "Current price",
     "buy-now-link": "Buy now",
     "buy-description-lbl": "First, the contract will be deployed, and then you can configure it"
+  },
+  "product-deploy": {
+    "tx-processing": "Transaction processing...",
+    "tx-processing-description": "It can takes a some time, please wait"
   },
   "farming-page": {
     "title": "Farming",

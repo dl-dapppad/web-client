@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
+import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
@@ -52,52 +53,57 @@ const FORM_TABS = [
 ]
 
 const currentTabNumber = ref(FORM_TABS[0].number)
-const overviewRows = ref<Array<OverviewRow>>()
+const overviewRows = ref<Array<OverviewRow>>([
+  {
+    name: t('erc721.tracker'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+  {
+    name: t('erc721.owner'),
+    value: '',
+    type: OVERVIEW_ROW.address,
+  },
+  {
+    name: t('erc721.baseURI'),
+    value: '',
+    type: OVERVIEW_ROW.link,
+  },
+  {
+    name: t('erc721.balance'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+])
 
 const router = useRouter()
 const route = useRoute()
 const erc721 = useProductErc721(route.params.contractAddress as string)
 
+const isLoaded = ref(false)
+
 const init = async () => {
   erc721.init(route.params.contractAddress as string)
 
-  let balance = '0'
   if (provider.value.selectedAddress) {
     await Promise.all([
       erc721.loadDetails(),
       erc721.balanceOf(provider.value.selectedAddress),
     ]).then(res => {
-      balance = res[1]
+      overviewRows.value[3].value = res[1]
 
       return
     })
   }
 
-  overviewRows.value = [
-    {
-      name: t('erc721.tracker'),
-      value: `${erc721.name.value} (${erc721.symbol.value})`,
-      type: OVERVIEW_ROW.default,
-    },
-    {
-      name: t('erc721.owner'),
-      value: erc721.owner.value,
-      type: OVERVIEW_ROW.address,
-    },
-    {
-      name: t('erc721.baseURI'),
-      value:
-        erc721.baseURI.value === ''
-          ? t('erc721.baseURI-default-value')
-          : erc721.baseURI.value,
-      type: OVERVIEW_ROW.link,
-    },
-    {
-      name: t('erc721.balance'),
-      value: balance,
-      type: OVERVIEW_ROW.default,
-    },
-  ]
+  overviewRows.value[0].value = `${erc721.name.value} (${erc721.symbol.value})`
+  overviewRows.value[1].value = erc721.owner.value
+  overviewRows.value[2].value =
+    erc721.baseURI.value === ''
+      ? t('erc721.baseURI-default-value')
+      : erc721.baseURI.value
+
+  isLoaded.value = true
 }
 
 const updateBalance = async () => {
@@ -135,7 +141,14 @@ init()
           :icon-right="$icons.arrowLeft"
           modification="border-circle"
           color="tertiary"
-          @click="router.go(-1)"
+          @click="
+            router.push({
+              name: ROUTE_NAMES.product,
+              params: {
+                id: route.params.id,
+              },
+            })
+          "
         />
         <h2 class="app__module-title">
           {{ t('erc721.title') }}
@@ -146,7 +159,7 @@ init()
         {{ t('erc721.subtitle') }}
       </span>
     </div>
-    <edit-overview :rows="overviewRows" />
+    <edit-overview :is-loaded="isLoaded" :rows="overviewRows" />
     <div>
       <h3 class="app__module-block-title">
         {{ t('erc721.interaction') }}

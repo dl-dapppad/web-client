@@ -18,6 +18,7 @@ import {
   useFarming,
   Product,
   useProduct,
+  useChart,
 } from '@/composables'
 import {
   AppButton,
@@ -26,8 +27,8 @@ import {
   LineChart,
   InfoTooltip,
   LinkCopy,
+  Loader,
 } from '@/common'
-import { BN } from '@/utils'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
 import { InputField } from '@/fields'
@@ -48,58 +49,21 @@ const composableProduct = useProduct()
 const { t } = useI18n()
 
 const addressSearchInput = ref('')
+const addressSearchButtonDisabled = ref(false)
 const alias = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const product = ref<Product>(factory.getEmptyProduct())
 const cashback = ref('0')
-const chartData = ref<number[]>([])
+// const chartData = ref<number[]>([])
+
+const chart = useChart()
+
+const isProductLoaded = ref(false)
 
 const clickContractSearch = async () => {
-  composableProduct.handleContractSearch(addressSearchInput.value)
-}
-
-const getChartData = (product: Product, decimals: number) => {
-  let chartData = [] as number[]
-
-  const basePrice = Number(
-    new BN(product.currentPrice).fromFraction(decimals).toString(),
-  )
-
-  if (!basePrice) return []
-
-  const minPrice = Number(
-    new BN(product.minPrice).fromFraction(decimals).toString(),
-  )
-  let currentPrice = basePrice
-  const decreasePercent = Number(
-    new BN(product.decreasePercent).fromFraction(27).toString(),
-  )
-  const salesCount = Number(product.salesCount)
-  for (let i = salesCount; i > 0; i--) {
-    const price = currentPrice / (1 - decreasePercent)
-
-    chartData.push(price)
-    currentPrice = price
-  }
-
-  chartData = chartData.reverse()
-  chartData.push(basePrice)
-  currentPrice = basePrice
-
-  while (currentPrice > minPrice) {
-    const price = currentPrice * (1 - decreasePercent)
-    if (price < minPrice) {
-      for (let i = 0; i < 5; i++) {
-        chartData.push(minPrice)
-      }
-    } else {
-      chartData.push(price)
-    }
-
-    currentPrice = price
-  }
-
-  return chartData
+  addressSearchButtonDisabled.value = true
+  await composableProduct.handleContractSearch(addressSearchInput.value)
+  addressSearchButtonDisabled.value = false
 }
 
 const init = async () => {
@@ -127,7 +91,13 @@ const init = async () => {
     paymentToken.init(farming.rewardToken.value)
     await paymentToken.loadDetails()
 
-    chartData.value = getChartData(product.value, paymentToken.decimals.value)
+    isProductLoaded.value = true
+
+    chart.updateChartData(
+      product.value,
+      paymentToken.decimals.value,
+      paymentToken.symbol.value,
+    )
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -153,6 +123,7 @@ init()
               <app-button
                 class="post-checkout__block-search-btn"
                 :icon-right="$icons.searchFilled"
+                :disabled="addressSearchButtonDisabled"
                 @click="clickContractSearch"
               />
               <input-field
@@ -183,9 +154,10 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.sales-lbl') }}
               </span>
-              <span class="app__metadata-value">
+              <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ product.salesCount }}
               </span>
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -195,9 +167,10 @@ init()
                 />
                 {{ $t('post-checkout.decrease-percent-lbl') }}
               </span>
-              <span class="app__metadata-value">
+              <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ formatPercent(product.decreasePercent) }}
               </span>
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -207,9 +180,10 @@ init()
                 />
                 {{ $t('post-checkout.cashback-percent-lbl') }}
               </span>
-              <span class="app__metadata-value">
+              <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ formatPercent(product.cashbackPercent) }}
               </span>
+              <loader v-else />
             </div>
           </div>
           <div class="app__metadata">
@@ -218,18 +192,22 @@ init()
                 {{ $t('post-checkout.implementation-address-lbl') }}
               </span>
               <link-copy
+                v-if="isProductLoaded"
                 :address="product.implementation"
                 class="app__link--accented"
               />
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.factory-address-lbl') }}
               </span>
               <link-copy
+                v-if="isProductLoaded"
                 :address="factory.address.value"
                 class="app__link--accented"
               />
+              <loader v-else />
             </div>
           </div>
         </div>
@@ -245,7 +223,7 @@ init()
                 />
                 {{ $t('post-checkout.minimal-price-lbl') }}
               </span>
-              <span class="app__metadata-value">
+              <span v-if="isProductLoaded" class="app__metadata-value">
                 <span class="app__price">
                   {{
                     formatAmount(
@@ -258,6 +236,7 @@ init()
                   </span>
                 </span>
               </span>
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -267,7 +246,7 @@ init()
                 />
                 {{ $t('post-checkout.reward-lbl') }}
               </span>
-              <span class="app__metadata-value">
+              <span v-if="isProductLoaded" class="app__metadata-value">
                 <span class="app__price">
                   {{ formatAmount(cashback, dapp?.decimals.value ?? '0') }}
                   <span class="app__price-asset">
@@ -275,6 +254,7 @@ init()
                   </span>
                 </span>
               </span>
+              <loader v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -284,7 +264,7 @@ init()
                 />
                 {{ $t('post-checkout.distribution-lbl') }}
               </span>
-              <span class="app__metadata-value">
+              <span v-if="isProductLoaded" class="app__metadata-value">
                 <span class="app__price">
                   {{ formatAmount(cashback, paymentToken?.decimals.value) }}
                   <span class="app__price-asset">
@@ -292,6 +272,7 @@ init()
                   </span>
                 </span>
               </span>
+              <loader v-else />
             </div>
           </div>
           <div class="post-checkout__buy-wrp">
@@ -299,7 +280,10 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-checkout.current-price-lbl') }}
               </span>
-              <span class="app__metadata-value app__metadata-value--big">
+              <span
+                v-if="isProductLoaded"
+                class="app__metadata-value app__metadata-value--big"
+              >
                 <span class="app__price app__price--big">
                   {{
                     formatAmount(
@@ -312,6 +296,7 @@ init()
                   </span>
                 </span>
               </span>
+              <loader v-else />
             </div>
             <app-button
               class="post-checkout__buy-link"
@@ -334,7 +319,12 @@ init()
             <h2 class="post-checkout__block-title">
               {{ post.chartTitle }}
             </h2>
-            <line-chart class="post-checkout__block-chart" :data="chartData" />
+            <line-chart
+              v-if="chart.chartData.value.values.length"
+              class="post-checkout__block-chart"
+              :chart="chart.chartData.value"
+            />
+            <loader v-else />
             <span class="post-checkout__block-description">
               {{ post.chartDescription }}
             </span>
@@ -395,6 +385,10 @@ init()
   display: flex;
   flex-direction: column;
   gap: toRem(10);
+
+  .loader {
+    height: toRem(28);
+  }
 }
 
 .post-checkout__address {

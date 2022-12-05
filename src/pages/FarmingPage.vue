@@ -2,7 +2,7 @@
 import { ref, reactive, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { AppButton, Icon, AppBlock, Modal, LinkCopy } from '@/common'
+import { AppButton, Icon, AppBlock, Modal, LinkCopy, Loader } from '@/common'
 import { InputField } from '@/fields'
 import { getMaxUint256, txWrapper } from '@/helpers'
 import { formatAmount } from '@/helpers'
@@ -36,6 +36,7 @@ const investInfo = ref<InvestInfo>({
 })
 
 const rewardBalance = ref('0')
+const isLoaded = ref(false)
 
 const stakingForm = reactive({ amount: '' })
 const stakingValidation = useFormValidation(stakingForm, {
@@ -62,6 +63,8 @@ const init = async () => {
     return
   })
   await updateBalanceState()
+
+  isLoaded.value = true
 }
 
 const isClaimAvailable = computed(() =>
@@ -201,17 +204,20 @@ init()
                 </i18n-t>
               </div>
               <div class="farming-page__table-body">
-                <span class="farming-page__table-count">
-                  {{
-                    formatAmount(
-                      account.dappBalance,
-                      investmentToken?.decimals.value,
-                    )
-                  }}
-                </span>
-                <span class="farming-page__table-currency">
-                  {{ investmentToken.symbol.value }}
-                </span>
+                <template v-if="isLoaded">
+                  <span class="farming-page__table-count">
+                    {{
+                      formatAmount(
+                        account.dappBalance,
+                        investmentToken?.decimals.value,
+                      )
+                    }}
+                  </span>
+                  <span class="farming-page__table-currency">
+                    {{ investmentToken.symbol.value }}
+                  </span>
+                </template>
+                <loader v-else />
               </div>
             </div>
           </app-block>
@@ -225,17 +231,20 @@ init()
                 {{ t('farming-page.total-stake-lbl') }}
               </div>
               <div class="farming-page__table-body">
-                <span class="farming-page__table-count">
-                  {{
-                    formatAmount(
-                      farming.totalInvestedAmount.value,
-                      investmentToken.decimals.value,
-                    )
-                  }}
-                </span>
-                <span class="farming-page__table-currency">
-                  {{ investmentToken.symbol.value }}
-                </span>
+                <template v-if="isLoaded">
+                  <span class="farming-page__table-count">
+                    {{
+                      formatAmount(
+                        farming.totalInvestedAmount.value,
+                        investmentToken.decimals.value,
+                      )
+                    }}
+                  </span>
+                  <span class="farming-page__table-currency">
+                    {{ investmentToken.symbol.value }}
+                  </span>
+                </template>
+                <loader v-else />
               </div>
             </div>
           </app-block>
@@ -249,17 +258,20 @@ init()
                 {{ t('farming-page.my-stake-lbl') }}
               </div>
               <div class="farming-page__table-body">
-                <span class="farming-page__table-count">
-                  {{
-                    formatAmount(
-                      investInfo.amount,
-                      investmentToken.decimals.value,
-                    )
-                  }}
-                </span>
-                <span class="farming-page__table-currency">
-                  {{ investmentToken.symbol.value }}
-                </span>
+                <template v-if="isLoaded">
+                  <span class="farming-page__table-count">
+                    {{
+                      formatAmount(
+                        investInfo.amount,
+                        investmentToken.decimals.value,
+                      )
+                    }}
+                  </span>
+                  <span class="farming-page__table-currency">
+                    {{ investmentToken.symbol.value }}
+                  </span>
+                </template>
+                <loader v-else />
               </div>
             </div>
           </app-block>
@@ -268,11 +280,11 @@ init()
               class="farming-page__table-buttons"
               :class="{
                 'farming-page__table-buttons--no-withdraw':
-                  !isWithdrawAvailable,
+                  !isWithdrawAvailable || !isLoaded,
               }"
             >
               <app-button
-                v-if="isWithdrawAvailable"
+                v-if="isWithdrawAvailable && isLoaded"
                 class="farming-page__table-btn"
                 :text="t('farming-page.withdraw-btn')"
                 size="large"
@@ -294,17 +306,20 @@ init()
         </div>
         <div class="farming-page__token-info-wrp">
           <div class="farming-page__token-info">
-            <span class="farming-page__table-desc-text">
-              {{
-                `${$t('farming-page.stake-address-lbl')} (${
-                  investmentToken.symbol.value
-                })`
-              }}
-            </span>
-            <link-copy
-              class="app__link--accented farming-page__table-desc-address"
-              :address="investmentToken.address.value"
-            />
+            <template v-if="isLoaded">
+              <span class="farming-page__table-desc-text">
+                {{
+                  `${$t('farming-page.stake-address-lbl')} (${
+                    investmentToken.symbol.value
+                  })`
+                }}
+              </span>
+              <link-copy
+                class="app__link--accented farming-page__table-desc-address"
+                :address="investmentToken.address.value"
+              />
+            </template>
+            <loader v-else />
           </div>
         </div>
       </div>
@@ -312,7 +327,7 @@ init()
         <div
           class="farming-page__table"
           :class="{
-            'farming-page__claim-not-available': !isClaimAvailable,
+            'farming-page__claim-not-available': !isClaimAvailable || !isLoaded,
           }"
         >
           <app-block class="farming-page__table-block">
@@ -329,12 +344,17 @@ init()
                 </i18n-t>
               </div>
               <div class="farming-page__table-body">
-                <span class="farming-page__table-count">
-                  {{ formatAmount(rewardBalance, rewardToken?.decimals.value) }}
-                </span>
-                <span class="farming-page__table-currency">
-                  {{ rewardToken.symbol.value }}
-                </span>
+                <template v-if="isLoaded">
+                  <span class="farming-page__table-count">
+                    {{
+                      formatAmount(rewardBalance, rewardToken?.decimals.value)
+                    }}
+                  </span>
+                  <span class="farming-page__table-currency">
+                    {{ rewardToken.symbol.value }}
+                  </span>
+                </template>
+                <loader v-else />
               </div>
             </div>
           </app-block>
@@ -348,17 +368,20 @@ init()
                 {{ t('farming-page.total-reward-lbl') }}
               </div>
               <div class="farming-page__table-body">
-                <span class="farming-page__table-count">
-                  {{
-                    formatAmount(
-                      farming.totalRewardAmount.value,
-                      rewardToken.decimals.value,
-                    )
-                  }}
-                </span>
-                <span class="farming-page__table-currency">
-                  {{ rewardToken.symbol.value }}
-                </span>
+                <template v-if="isLoaded">
+                  <span class="farming-page__table-count">
+                    {{
+                      formatAmount(
+                        farming.totalRewardAmount.value,
+                        rewardToken.decimals.value,
+                      )
+                    }}
+                  </span>
+                  <span class="farming-page__table-currency">
+                    {{ rewardToken.symbol.value }}
+                  </span>
+                </template>
+                <loader v-else />
               </div>
             </div>
           </app-block>
@@ -374,18 +397,24 @@ init()
                 {{ t('farming-page.current-rewards-lbl') }}
               </div>
               <div class="farming-page__table-body">
-                <span class="farming-page__table-count">
-                  {{
-                    formatAmount(investInfo.rewards, rewardToken.decimals.value)
-                  }}
-                </span>
-                <span class="farming-page__table-currency">
-                  {{ rewardToken.symbol.value }}
-                </span>
+                <template v-if="isLoaded">
+                  <span class="farming-page__table-count">
+                    {{
+                      formatAmount(
+                        investInfo.rewards,
+                        rewardToken.decimals.value,
+                      )
+                    }}
+                  </span>
+                  <span class="farming-page__table-currency">
+                    {{ rewardToken.symbol.value }}
+                  </span>
+                </template>
+                <loader v-else />
               </div>
             </div>
           </app-block>
-          <template v-if="isClaimAvailable">
+          <template v-if="isClaimAvailable && isLoaded">
             <app-block>
               <app-button
                 class="farming-page__table-btn"
@@ -400,17 +429,20 @@ init()
         </div>
         <div class="farming-page__token-info-wrp">
           <div class="farming-page__token-info">
-            <span class="farming-page__table-desc-text">
-              {{
-                `${$t('farming-page.reward-address-lbl')} (${
-                  rewardToken.symbol.value
-                })`
-              }}
-            </span>
-            <link-copy
-              class="app__link--accented farming-page__table-desc-address"
-              :address="rewardToken.address.value"
-            />
+            <template v-if="isLoaded">
+              <span class="farming-page__table-desc-text">
+                {{
+                  `${$t('farming-page.reward-address-lbl')} (${
+                    rewardToken.symbol.value
+                  })`
+                }}
+              </span>
+              <link-copy
+                class="app__link--accented farming-page__table-desc-address"
+                :address="rewardToken.address.value"
+              />
+            </template>
+            <loader v-else />
           </div>
         </div>
       </div>
@@ -696,6 +728,10 @@ init()
   display: flex;
   align-items: flex-end;
   gap: toRem(6);
+
+  .vue-skeletor {
+    height: toRem(20);
+  }
 }
 
 .farming-page__table-count {
@@ -921,5 +957,13 @@ init()
   display: flex;
   justify-content: space-between;
   grid-column: 1 3;
+
+  .loader {
+    height: toRem(40);
+
+    .vue-skeletor {
+      border-radius: 0;
+    }
+  }
 }
 </style>

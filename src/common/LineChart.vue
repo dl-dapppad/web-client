@@ -1,13 +1,24 @@
 <script lang="ts" setup>
 import { ref, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useWindowSize } from '@vueuse/core'
+import { ChartData } from '@/composables'
 import Highcharts from 'highcharts'
 
 const props = defineProps<{
-  data: number[]
+  chart: ChartData
 }>()
 
 const { width, height } = useWindowSize()
+
+const { t } = useI18n({
+  locale: 'en',
+  messages: {
+    en: {
+      'сhart.sale-number': 'Sale #',
+    },
+  },
+})
 
 const chartInstanceElement = ref<HTMLElement | undefined>()
 
@@ -43,6 +54,14 @@ const init = () => {
         },
         gridLineColor: 'var(--border-primary-light)',
         gridLineWidth: 'toRem(1)',
+        plotLines: [
+          {
+            width: 2,
+            color: 'var(--secondary-main)',
+            dashStyle: 'shortdot',
+            value: props.chart.currentY,
+          },
+        ],
       },
       xAxis: {
         title: {
@@ -55,15 +74,26 @@ const init = () => {
         },
         gridLineColor: 'var(--border-primary-light)',
         gridLineWidth: 'toRem(1)',
+        plotLines: [
+          {
+            width: 2,
+            color: 'var(--secondary-main)',
+            dashStyle: 'shortdot',
+            value: props.chart.currentX,
+          },
+        ],
+        min: 1,
+        max: props.chart.values.length,
+        // tickPositions: [props.chart.currentX],
       },
       legend: {
         enabled: false,
       },
       tooltip: {
         formatter: function () {
-          return `<b>${this.x}</b>: ${
+          return `<b>${t('сhart.sale-number')}${this.x}</b>: ${
             Math.round(Number(this.y) * 10000) / 10000
-          }`
+          } ${props.chart.currencySymbol}`
         },
       },
       plotOptions: {
@@ -101,7 +131,7 @@ const init = () => {
       },
       series: [
         {
-          data: props.data,
+          data: props.chart.values,
           type: 'area',
           color: 'var(--secondary-main)',
         },
@@ -113,7 +143,7 @@ const init = () => {
 
 onMounted(() => init())
 
-watch([() => props.data, width, height], () => init())
+watch([() => props.chart.values, width, height], () => init())
 </script>
 
 <template>

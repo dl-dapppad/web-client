@@ -11,6 +11,7 @@ import {
   Modal,
   Icon,
   InfoTooltip,
+  Loader,
 } from '@/common'
 import { InputField, SelectField } from '@/fields'
 import { useFormValidation, Product } from '@/composables'
@@ -29,6 +30,7 @@ import {
   DeployERC20Metadata,
 } from '@/modules/erc20/common'
 import { PRODUCT_IDS } from '@/enums'
+import { SCHEMES } from '@/common/Loader.vue'
 
 const { t } = useI18n({
   locale: 'en',
@@ -253,7 +255,7 @@ init()
                       :value-options="paymentTokens.symbols"
                       @update:model-value="onPaymentChange"
                     />
-                    <div class="app__field-tooltip app__field-tooltip--select">
+                    <div class="app__field-tooltip">
                       <info-tooltip :text="t('erc20.payment-info')" />
                     </div>
                   </div>
@@ -421,12 +423,18 @@ init()
             </template>
           </collapse>
           <app-button
+            v-if="!txProcessing"
             class="app__submit-btn"
             type="submit"
             :text="t('erc20.btn-lbl')"
             size="small"
-            :disabled="!isFieldsValid || txProcessing"
+            :disabled="!isFieldsValid"
           />
+          <div v-else class="app__deploy-loader">
+            <loader :scheme="SCHEMES.cubes" />
+            <p>{{ t('product-deploy.tx-processing') }}</p>
+            <p>{{ t('product-deploy.tx-processing-description') }}</p>
+          </div>
         </div>
       </div>
     </app-block>

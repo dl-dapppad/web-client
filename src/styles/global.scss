@@ -138,12 +138,20 @@ a {
   display: flex;
   flex-direction: column;
   gap: toRem(24);
+
+  & > .loader {
+    height: toRem(400);
+  }
 }
 
 .app__metadata-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  & > .loader {
+    width: toRem(150);
+  }
 }
 
 .app__metadata-lbl {
@@ -441,10 +449,6 @@ a {
   right: 0;
   top: toRem(28);
   transform: translateY(-50%);
-
-  &--select {
-    top: toRem(20);
-  }
 }
 
 .app__title-icon {
@@ -511,4 +515,21 @@ a {
 .app__deploy-success-message__submit.app-button {
   width: 100%;
   margin-top: toRem(40);
+}
+
+.app__deploy-loader {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  p {
+    line-height: 1.3;
+    letter-spacing: 0.1em;
+    margin-top: toRem(10);
+  }
+
+  .loader {
+    width: toRem(75);
+    height: toRem(75);
+  }
 }
