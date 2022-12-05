@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
-import { InfoTooltip, AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
 import { required, isAddress } from '@/validators'
 import { formatAmount } from '@/helpers'
+import { ModuleForm } from '@/modules/common'
+import { RESULT_TYPES } from '@/modules/enums'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 
 const props = defineProps<{
@@ -28,70 +27,42 @@ const { t } = useI18n({
   },
 })
 
-const form = reactive({
-  owner: '',
-  spender: '',
-})
+const allowanceFormResult = {
+  type: RESULT_TYPES.balanceWithCurr,
+  data: ref(''),
+}
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    owner: { required, isAddress },
-    spender: { required, isAddress },
-  },
-)
+const allowanceFormData = {
+  title: t('allowance-form.title-lbl'),
+  titleTooltip: t('allowance-form.title-info'),
+  inputs: [
+    {
+      label: t('allowance-form.owner-lbl'),
+      tooltip: t('allowance-form.owner-info'),
+      validators: [required, isAddress],
+    },
+    {
+      label: t('allowance-form.spender-lbl'),
+      tooltip: t('allowance-form.spender-info'),
+      validators: [required, isAddress],
+    },
+  ],
+  button: t('allowance-form.btn-lbl'),
+}
 
-const result = ref('')
-
-const submit = async () => {
-  result.value = await props.token.allowance(form.owner, form.spender)
+const submit = async ([owner, spender]: string[]) => {
+  allowanceFormResult.data.value = formatAmount(
+    await props.token.allowance(owner, spender),
+    props.token.decimals.value,
+    props.token.symbol.value,
+  )
 }
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('allowance-form.title-info')" />
-        {{ t('allowance-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.owner"
-          scheme="secondary"
-          :label="t('allowance-form.owner-lbl')"
-          :error-message="getFieldErrorMessage('owner')"
-          @blur="touchField('owner')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('allowance-form.owner-info')" />
-        </div>
-      </div>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.spender"
-          scheme="secondary"
-          :label="t('allowance-form.spender-lbl')"
-          :error-message="getFieldErrorMessage('spender')"
-          @blur="touchField('spender')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('allowance-form.spender-info')" />
-        </div>
-      </div>
-      <div class="app__common-form__button-wrp">
-        <app-button
-          type="button"
-          size="small"
-          :text="t('allowance-form.btn-lbl')"
-          :disabled="!isFieldsValid"
-          @click="submit"
-        />
-        <div v-if="result">
-          {{ formatAmount(result, props.token.decimals.value) }}
-          <span>{{ props.token.symbol.value }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <module-form
+    :form-data="allowanceFormData"
+    :result="allowanceFormResult"
+    @submit="submit"
+  />
 </template>

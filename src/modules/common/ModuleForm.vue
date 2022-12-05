@@ -36,13 +36,13 @@ const form = reactive({
 })
 
 // filling useForm data
-for (const [ind, input] of props.formData.inputs.entries()) {
+for (const [i, input] of props.formData.inputs.entries()) {
   form.fields.push(input.value ? input.value : '')
 
   validators.push({})
   if (input.validators) {
     for (const validator of input.validators) {
-      validators[ind][validator?.$params?.type] = validator
+      validators[i][validator?.$params?.type] = validator
     }
   }
 }
