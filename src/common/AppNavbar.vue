@@ -21,9 +21,16 @@ const { width: windowWidth } = useWindowSize()
 const dapp = useErc20()
 const composableProduct = useProduct()
 
+const isMobileDrawerOpened = ref(false)
 const addressSearchInput = ref('')
 const chain = ref<Chain>(getEmptyChain())
 const accountAddress = ref()
+
+const switchIsOpenedMobileState = (value?: boolean) => {
+  value === false
+    ? (isMobileDrawerOpened.value = false)
+    : (isMobileDrawerOpened.value = !isMobileDrawerOpened.value)
+}
 
 const init = async () => {
   if (
@@ -79,138 +86,163 @@ const isProviderButtonShown = computed(
     !provider.value.selectedAddress,
 )
 
+const isNavbarFixed = computed(
+  () =>
+    isMobileDrawerOpened.value && windowWidth.value < WINDOW_BREAKPOINTS.medium,
+)
+
 init()
 </script>
 
 <template>
-  <div class="app-navbar">
-    <div class="app-navbar__logo-wrp">
-      <icon
-        class="app-navbar__search-icon-mobile"
-        :name="$icons.searchFilled"
-      />
-      <app-logo class="app-navbar__logo" />
-    </div>
-    <template v-if="provider.isConnected">
-      <div class="app-navbar__farm-farm-balance">
-        <span class="app-navbar__farm-farm-balance-amount">
-          <icon
-            class="app-navbar__farm-farm-balance-icon"
-            :name="$icons.gift"
+  <div class="app-navbar__wrp">
+    <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
+      <div class="app-navbar__logo-wrp">
+        <icon
+          class="app-navbar__search-icon-mobile"
+          :name="$icons.searchFilled"
+        />
+        <app-logo class="app-navbar__logo" />
+      </div>
+      <template v-if="provider.isConnected">
+        <div class="app-navbar__farm-farm-balance">
+          <span class="app-navbar__farm-farm-balance-amount">
+            <icon
+              class="app-navbar__farm-farm-balance-icon"
+              :name="$icons.gift"
+            />
+            {{
+              formatAmount(
+                account.dappBalance,
+                dapp?.decimals.value,
+                dapp?.symbol.value,
+              )
+            }}
+          </span>
+          <app-button
+            :text="$t('app-navbar.farm-link')"
+            size="small"
+            :route="{ name: $routes.farming }"
           />
-          {{
-            formatAmount(
-              account.dappBalance,
-              dapp?.decimals.value,
-              dapp?.symbol.value,
-            )
-          }}
-        </span>
+        </div>
+        <input-field
+          class="app-navbar__search"
+          v-model="addressSearchInput"
+          :placeholder="$t('app-navbar.search-placeholder')"
+          scheme="secondary"
+        >
+          <template #nodeRight>
+            <app-button
+              scheme="default"
+              class="app-navbar__search-icon"
+              :icon-right="$icons.searchFilled"
+              @click="clickContractSearch"
+            />
+          </template>
+        </input-field>
+        <dropdown class="app-navbar__chain">
+          <template #head="{ dropdown }">
+            <app-button
+              class="app-navbar__chain-btn"
+              :class="{ 'app-navbar__chain-btn--active': dropdown.isOpen }"
+              size="small"
+              scheme="borderless"
+              :text="localizeChain(provider.chainId as string)"
+              :icon-left="$icons.circleFilled"
+              :icon-right="
+                dropdown.isOpen ? $icons.chevronUp : $icons.chevronDown
+              "
+              @click="dropdown.toggle"
+            />
+          </template>
+          <template #default>
+            <div class="app-navbar__dropdown-body">
+              <div
+                class="app-navbar__chain-item-wrp"
+                v-for="chainName in ETHEREUM_CHAINS"
+                :key="chainName"
+              >
+                <app-button
+                  v-if="config.AVAILABLE_CHAINS.includes(chainName)"
+                  class="app-navbar__chain-item"
+                  color="tertiary"
+                  scheme="borderless"
+                  :text="localizeChain(chainName)"
+                  :icon-left="$icons.circleFilled"
+                  @click="trySwitchChain(chainName)"
+                />
+              </div>
+            </div>
+          </template>
+        </dropdown>
+        <div class="app-navbar__wallet">
+          <span class="app-navbar__wallet-balance">
+            {{
+              formatAmount(
+                account.nativeBalance,
+                chain?.decimals,
+                chain?.symbol,
+              )
+            }}
+          </span>
+          <span class="app-navbar__wallet-address">
+            {{ cropAddress(provider.selectedAddress ?? '') }}
+            <icon
+              class="app-navbar__wallet-address-icon"
+              :name="$icons.circleFilled"
+            />
+          </span>
+        </div>
+      </template>
+      <app-button
+        v-if="isProviderButtonShown"
+        class="app-navbar__provider-btn"
+        size="small"
+        :text="
+          !provider.selectedAddress ? $t('app-navbar.connect-btn') : undefined
+        "
+        :icon-right="provider.selectedAddress ? $icons.logout : undefined"
+        @click="handleProviderBtnClick"
+      />
+      <div v-if="provider.selectedAddress" class="app-navbar__menu-farming-wrp">
         <app-button
-          :text="$t('app-navbar.farm-link')"
-          size="small"
+          class="app-navbar__farming-btn-icon"
+          scheme="default"
+          :icon-right="$icons.gift"
           :route="{ name: $routes.farming }"
         />
+        <menu-drawer
+          class="app-navbar__menu-drawer"
+          :is-opened-state="isMobileDrawerOpened"
+          @switch-is-opened-state="switchIsOpenedMobileState"
+          @try-switch-chain="trySwitchChain"
+          @provider-btn-click="handleProviderBtnClick"
+        />
       </div>
-      <input-field
-        class="app-navbar__search"
-        v-model="addressSearchInput"
-        :placeholder="$t('app-navbar.search-placeholder')"
-        scheme="secondary"
-      >
-        <template #nodeRight>
-          <app-button
-            scheme="default"
-            class="app-navbar__search-icon"
-            :icon-right="$icons.searchFilled"
-            @click="clickContractSearch"
-          />
-        </template>
-      </input-field>
-      <dropdown class="app-navbar__chain">
-        <template #head="{ dropdown }">
-          <app-button
-            class="app-navbar__chain-btn"
-            :class="{ 'app-navbar__chain-btn--active': dropdown.isOpen }"
-            size="small"
-            scheme="borderless"
-            :text="localizeChain(provider.chainId as string)"
-            :icon-left="$icons.circleFilled"
-            :icon-right="
-              dropdown.isOpen ? $icons.chevronUp : $icons.chevronDown
-            "
-            @click="dropdown.toggle"
-          />
-        </template>
-        <template #default>
-          <div class="app-navbar__dropdown-body">
-            <div
-              class="app-navbar__chain-item-wrp"
-              v-for="chainName in ETHEREUM_CHAINS"
-              :key="chainName"
-            >
-              <app-button
-                v-if="config.AVAILABLE_CHAINS.includes(chainName)"
-                class="app-navbar__chain-item"
-                color="tertiary"
-                scheme="borderless"
-                :text="localizeChain(chainName)"
-                :icon-left="$icons.circleFilled"
-                @click="trySwitchChain(chainName)"
-              />
-            </div>
-          </div>
-        </template>
-      </dropdown>
-      <div class="app-navbar__wallet">
-        <span class="app-navbar__wallet-balance">
-          {{
-            formatAmount(account.nativeBalance, chain?.decimals, chain?.symbol)
-          }}
-        </span>
-        <span class="app-navbar__wallet-address">
-          {{ cropAddress(provider.selectedAddress ?? '') }}
-          <icon
-            class="app-navbar__wallet-address-icon"
-            :name="$icons.circleFilled"
-          />
-        </span>
-      </div>
-    </template>
-    <app-button
-      v-if="isProviderButtonShown"
-      class="app-navbar__provider-btn"
-      size="small"
-      :text="
-        !provider.selectedAddress ? $t('app-navbar.connect-btn') : undefined
-      "
-      :icon-right="provider.selectedAddress ? $icons.logout : undefined"
-      @click="handleProviderBtnClick"
-    />
-    <div v-if="provider.selectedAddress" class="app-navbar__menu-farming-wrp">
-      <app-button
-        class="app-navbar__farming-btn-icon"
-        scheme="default"
-        :icon-right="$icons.gift"
-        :route="{ name: $routes.farming }"
-      />
-      <menu-drawer
-        class="app-navbar__menu-drawer"
-        @try-switch-chain="trySwitchChain"
-        @provider-btn-click="handleProviderBtnClick"
-      />
     </div>
+    <div
+      class="app-navbar__mobile-filler"
+      :class="{ 'app-navbar__mobile-filler--visible': isNavbarFixed }"
+    />
   </div>
 </template>
 
 <style lang="scss" scoped>
+$navbar-z-index: 10;
+
 .app-navbar {
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  width: 100%;
   padding: toRem(10) var(--app-padding-right) toRem(10) var(--app-padding-left);
   background: var(--background-primary);
   border-bottom: toRem(1) solid var(--border-primary-main);
   gap: toRem(10);
+  z-index: $navbar-z-index;
+
+  &--fixed {
+    position: fixed;
+  }
 
   @include respond-to(xmedium) {
     justify-content: space-between;
@@ -246,7 +278,6 @@ init()
 
 .app-navbar__farm-farm-balance {
   display: flex;
-  height: 100%;
 
   @include respond-to(medium) {
     display: none;
@@ -278,7 +309,6 @@ init()
 .app-navbar__search {
   padding: 0;
   display: grid;
-  height: 100%;
 
   :not([disabled]) {
     height: 100%;
@@ -308,7 +338,6 @@ init()
 .app-navbar__chain {
   display: grid;
   min-width: toRem(200);
-  height: 100%;
 
   @include respond-to(medium) {
     display: none;
@@ -362,7 +391,6 @@ init()
   line-height: 1;
   font-weight: 700;
   border: toRem(1) solid var(--border-secondary-main);
-  height: 100%;
 
   @include respond-to(medium) {
     display: none;
@@ -416,5 +444,15 @@ init()
 .app-navbar__farming-btn-icon {
   padding: 0;
   font-size: toRem(14);
+}
+
+.app-navbar__mobile-filler {
+  height: toRem(71);
+  width: 100%;
+  display: none;
+
+  &--visible {
+    display: block;
+  }
 }
 </style>

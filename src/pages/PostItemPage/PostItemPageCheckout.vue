@@ -120,19 +120,21 @@ init()
               />
               {{ $t('post-item-page-checkout.have-product-lbl') }}
             </div>
-            <div class="post-item-page-checkout__block-input-value">
-              <input-field
-                class="app__module-field post-item-page-checkout__block-input"
-                scheme="secondary"
-                v-model="addressSearchInput"
-                :label="t('post-item-page-checkout.have-product-input-lbl')"
-              />
-              <info-tooltip
-                class="post-item-page-checkout__block-tooltip"
-                :text="
-                  t('post-item-page-checkout.have-product-input-tooltip-txt')
-                "
-              />
+            <div class="post-item-page-checkout__block-address-wrp">
+              <div class="post-item-page-checkout__block-input-wrp">
+                <input-field
+                  class="app__module-field post-item-page-checkout__block-input"
+                  scheme="secondary"
+                  v-model="addressSearchInput"
+                  :label="t('post-item-page-checkout.have-product-input-lbl')"
+                />
+                <info-tooltip
+                  class="post-item-page-checkout__block-tooltip"
+                  :text="
+                    t('post-item-page-checkout.have-product-input-tooltip-txt')
+                  "
+                />
+              </div>
               <app-button
                 class="post-checkout__block-search-btn"
                 :icon-right="$icons.searchFilled"
@@ -224,6 +226,7 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.minimal-price-tooltip')"
+                  :move-side="'right'"
                 />
                 {{ $t('post-item-page-checkout.minimal-price-lbl') }}
               </span>
@@ -247,6 +250,7 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.reward-tooltip')"
+                  :move-side="'right'"
                 />
                 {{ $t('post-item-page-checkout.reward-lbl') }}
               </span>
@@ -265,6 +269,7 @@ init()
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.distribution-tooltip')"
+                  :move-side="'right'"
                 />
                 {{ $t('post-item-page-checkout.distribution-lbl') }}
               </span>
@@ -417,7 +422,7 @@ init()
   }
 }
 
-.post-item-page-checkout__block-input-value {
+.post-item-page-checkout__block-address-wrp {
   width: 100%;
   max-width: toRem(430);
   display: flex;
@@ -426,14 +431,22 @@ init()
   gap: toRem(10);
 
   @include respond-to(small) {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    flex-direction: column;
   }
 }
 
-.post-item-page-checkout__block-input {
+.post-item-page-checkout__block-input-wrp {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  gap: toRem(10);
+
+  @include respond-to(medium) {
+    width: calc(100% - #{toRem(66)});
+  }
+
   @include respond-to(small) {
-    grid-column: 1 / -1;
+    width: 100%;
   }
 }
 
@@ -445,13 +458,12 @@ init()
 
 .post-checkout__block-search-btn {
   padding: toRem(17);
-  height: 100%;
   font-size: toRem(15);
   order: -1;
 
   @include respond-to(small) {
     order: 0;
-    justify-self: end;
+    width: 100%;
   }
 }
 
@@ -520,6 +532,7 @@ init()
 
 .post-item-page-checkout__block-description {
   font-size: toRem(20);
+  line-height: 1.3;
 
   @include respond-to(medium) {
     font-size: toRem(16);

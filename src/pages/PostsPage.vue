@@ -195,6 +195,7 @@ $back-btn-z: 1;
 
   @include respond-to(medium) {
     font-size: toRem(16);
+    margin: toRem(10) 0 toRem(20);
   }
 }
 
@@ -204,6 +205,7 @@ $back-btn-z: 1;
 
   @include respond-to(medium) {
     width: 100%;
+    padding: toRem(10) toRem(24);
   }
 }
 

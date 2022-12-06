@@ -181,7 +181,7 @@ init()
           </div>
         </div>
         <link-copy
-          class="app__link--big app__link--secondary farming-page__subtitle"
+          class="app__link--big app__link--secondary app__module-subtitle"
           :address="farming.address.value"
         />
         <div class="app__module-description">
@@ -685,18 +685,6 @@ init()
   height: toRem(16);
 }
 
-.farming-page__subtitle {
-  font-family: var(--app-font-family-secondary);
-  font-weight: 700;
-  justify-self: end;
-  align-self: center;
-
-  @include respond-to(medium) {
-    justify-self: start;
-    grid-row: 3;
-  }
-}
-
 .farming-page__table {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -914,6 +902,8 @@ init()
 
   @include respond-to(medium) {
     width: 100%;
+    padding: toRem(20);
+    gap: toRem(30);
   }
 }
 
@@ -1005,6 +995,7 @@ init()
 
 .farming-page__modal-btn {
   width: 100%;
+  height: toRem(52);
   padding-top: toRem(16);
   padding-bottom: toRem(16);
 }
@@ -1015,6 +1006,11 @@ init()
 
 .farming-page__claim-not-available {
   grid-template-columns: repeat(3, 1fr);
+
+  @include respond-to(medium) {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+  }
 }
 
 .farming-page__token-info-wrp {

@@ -35,6 +35,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
                 {{ $t('main-page.first-block-description') }}
               </span>
               <app-button
+                class="main-page__row-button"
                 :text="$t('main-page.first-block-btn')"
                 size="small"
                 @click="
@@ -61,6 +62,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
                 {{ $t('main-page.second-block-description') }}
               </span>
               <app-button
+                class="main-page__row-button"
                 :text="$t('main-page.second-block-btn')"
                 size="small"
                 @click="
@@ -84,6 +86,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
                 {{ $t('main-page.third-block-description') }}
               </span>
               <app-button
+                class="main-page__row-button"
                 :text="$t('main-page.third-block-btn')"
                 size="small"
                 @click="
@@ -110,6 +113,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
                 {{ $t('main-page.fourth-block-description') }}
               </span>
               <app-button
+                class="main-page__row-button"
                 :text="$t('main-page.fourth-block-btn')"
                 size="small"
                 :href="'https://distributedlab.com/'"
@@ -286,21 +290,24 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
   font-weight: 900;
   font-size: toRem(70);
 
-  @include respond-to(xmedium) {
-    font-size: toRem(56);
-  }
-
-  @include respond-to(xsmall) {
-    font-size: toRem(52);
+  @include respond-to(medium) {
+    font-size: toRem(36);
   }
 }
+
+$description-z-index: 5;
 
 .main-page__row-description {
   font-size: toRem(20);
   line-height: toRem(26);
+  z-index: $description-z-index;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
-.app-main__row-btn {
+.main-page__row-button {
   @include respond-to(medium) {
     width: 100%;
   }
@@ -360,6 +367,10 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
   text-align: center;
   font-size: toRem(20);
   line-height: toRem(26);
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .main-page__sphere-logo {
