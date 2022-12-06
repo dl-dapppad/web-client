@@ -405,12 +405,9 @@ init()
                     <span class="farming-page__table-count">
                       {{
                         formatAmount(
-
-                        investInfo.rewards,
-
-                        rewardToken.decimals.value,
-                      ,
-                      )
+                          investInfo.rewards,
+                          rewardToken.decimals.value,
+                        )
                       }}
                     </span>
                     <span class="farming-page__table-currency">

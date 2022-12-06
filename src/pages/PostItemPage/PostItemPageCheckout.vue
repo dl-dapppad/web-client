@@ -30,7 +30,6 @@ import {
   LinkCopy,
   Loader,
 } from '@/common'
-import { BN } from '@/utils'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
 import { InputField } from '@/fields'
@@ -122,12 +121,6 @@ init()
               {{ $t('post-item-page-checkout.have-product-lbl') }}
             </div>
             <div class="post-item-page-checkout__block-input-value">
-              <app-button
-                class="post-checkout__block-search-btn"
-                :icon-right="$icons.searchFilled"
-                :disabled="addressSearchButtonDisabled"
-                @click="clickContractSearch"
-              />
               <input-field
                 class="app__module-field post-item-page-checkout__block-input"
                 scheme="secondary"
@@ -143,6 +136,7 @@ init()
               <app-button
                 class="post-checkout__block-search-btn"
                 :icon-right="$icons.searchFilled"
+                :disabled="addressSearchButtonDisabled"
                 @click="clickContractSearch"
               />
             </div>
@@ -331,7 +325,6 @@ init()
             </h2>
             <line-chart
               v-if="chart.chartData.value.values.length"
-              class="post-item-page-checkout__block-chart"
               :chart="chart.chartData.value"
             />
             <loader v-else />
@@ -388,10 +381,14 @@ init()
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: toRem(30) toRem(20);
+  padding: toRem(70) toRem(165);
   gap: toRem(40);
   height: 100%;
   max-width: 100%;
+
+  @include respond-to(medium) {
+    padding: toRem(30) toRem(20);
+  }
 }
 
 .post-item-page-checkout__block-product {

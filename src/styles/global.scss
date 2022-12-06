@@ -644,20 +644,3 @@ button.app__submit-btn {
     height: toRem(75);
   }
 }
-
-.app__deploy-loader {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-
-  p {
-    line-height: 1.3;
-    letter-spacing: 0.1em;
-    margin-top: toRem(10);
-  }
-
-  .loader {
-    width: toRem(75);
-    height: toRem(75);
-  }
-}
