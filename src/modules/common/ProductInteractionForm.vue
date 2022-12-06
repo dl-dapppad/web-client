@@ -5,7 +5,7 @@ import { InfoTooltip, AppButton, LinkCopy } from '@/common'
 import { InputField } from '@/fields'
 import { useFormValidation } from '@/composables'
 import { Input } from '@/modules/types'
-import { RESULT_TYPES } from '@/modules/enums'
+import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
 
 const props = defineProps<{
   formData: {
@@ -16,7 +16,7 @@ const props = defineProps<{
     buttonDisabled?: Ref<boolean>
   }
   result?: {
-    type: RESULT_TYPES
+    type: PRODUCT_INT_FORM_RESULT_TYPES
     data: Ref<string>
   }
 }>()
@@ -90,10 +90,14 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
         />
         <!-- eslint-enable -->
         <div v-if="result && result?.data.value !== ''">
-          <div v-if="result.type === RESULT_TYPES.amount">
+          <div v-if="result.type === PRODUCT_INT_FORM_RESULT_TYPES.amount">
             {{ result.data.value }}
           </div>
-          <div v-else-if="result.type === RESULT_TYPES.amountWithSymbol">
+          <div
+            v-else-if="
+              result.type === PRODUCT_INT_FORM_RESULT_TYPES.amountWithSymbol
+            "
+          >
             <span class="app__price">
               {{ result.data.value.split(' ')[0] }}
               <span class="app__price-asset">
@@ -101,13 +105,15 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
               </span>
             </span>
           </div>
-          <div v-else-if="result.type === RESULT_TYPES.address">
+          <div
+            v-else-if="result.type === PRODUCT_INT_FORM_RESULT_TYPES.address"
+          >
             <link-copy
               class="app__link--accented"
               :address="result.data.value"
             />
           </div>
-          <div v-else-if="result.type === RESULT_TYPES.link">
+          <div v-else-if="result.type === PRODUCT_INT_FORM_RESULT_TYPES.link">
             <link-copy
               class="app__link--accented"
               :address="result.data.value"

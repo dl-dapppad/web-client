@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { required, isAddress } from '@/validators'
 import { formatAmount } from '@/helpers'
 import { ProductInteractionForm } from '@/modules/common'
-import { RESULT_TYPES } from '@/modules/enums'
+import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 
 const props = defineProps<{
@@ -27,12 +27,12 @@ const { t } = useI18n({
   },
 })
 
-const allowanceFormResult = {
-  type: RESULT_TYPES.amountWithSymbol,
+const formResult = {
+  type: PRODUCT_INT_FORM_RESULT_TYPES.amountWithSymbol,
   data: ref(''),
 }
 
-const allowanceFormData = {
+const formData = {
   title: t('allowance-form.title-lbl'),
   titleTooltip: t('allowance-form.title-info'),
   inputs: [
@@ -51,7 +51,7 @@ const allowanceFormData = {
 }
 
 const submit = async ([owner, spender]: string[]) => {
-  allowanceFormResult.data.value = formatAmount(
+  formResult.data.value = formatAmount(
     await props.token.allowance(owner, spender),
     props.token.decimals.value,
     props.token.symbol.value,
@@ -61,8 +61,8 @@ const submit = async ([owner, spender]: string[]) => {
 
 <template>
   <product-interaction-form
-    :form-data="allowanceFormData"
-    :result="allowanceFormResult"
+    :form-data="formData"
+    :result="formResult"
     @submit="submit"
   />
 </template>

@@ -40,7 +40,7 @@ const { t } = useI18n({
 
 const txProcessing = ref(false)
 
-const transferFromFormData = {
+const formData = {
   title: t('transfer-from-form.title-lbl'),
   titleTooltip: t('transfer-from-form.title-info'),
   inputs: [
@@ -80,8 +80,5 @@ const submit = async ([sender, recipient, amount]: string[]) => {
 </script>
 
 <template>
-  <product-interaction-form
-    :form-data="transferFromFormData"
-    @submit="submit"
-  />
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

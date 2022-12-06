@@ -36,7 +36,7 @@ const { t } = useI18n({
 
 const txProcessing = ref(false)
 
-const transferOwnershipFormData = {
+const formData = {
   title: t('transfer-owner-form.title-lbl'),
   titleTooltip: t('transfer-owner-form.title-info'),
   inputs: [
@@ -62,8 +62,5 @@ const submit = async ([newOwner]: string[]) => {
 </script>
 
 <template>
-  <product-interaction-form
-    :form-data="transferOwnershipFormData"
-    @submit="submit"
-  />
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

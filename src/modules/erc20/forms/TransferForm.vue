@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
-import { required, isAddress, numeric, maxValue } from '@/validators'
+import { required, isAddress, numeric, maxBNValue } from '@/validators'
 import { ProductInteractionForm } from '@/modules/common'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 import { BN } from '@/utils'
@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   token: ProductErc20Contract
-  balance: number
+  balance: BN | number | string
 }>()
 
 const { t } = useI18n({
@@ -39,7 +39,7 @@ const { t } = useI18n({
 
 const txProcessing = ref(false)
 
-const transferFormData = {
+const formData = {
   title: t('transfer-form.title-lbl'),
   titleTooltip: t('transfer-form.title-info'),
   inputs: [
@@ -51,7 +51,7 @@ const transferFormData = {
     {
       label: t('transfer-form.amount-lbl'),
       tooltip: t('transfer-form.amount-info'),
-      validators: [required, numeric, maxValue(props.balance)],
+      validators: [required, numeric, maxBNValue(props.balance)],
     },
   ],
   button: t('transfer-form.btn-lbl'),
@@ -73,5 +73,5 @@ const submit = async ([recipient, amount]: string[]) => {
 </script>
 
 <template>
-  <product-interaction-form :form-data="transferFormData" @submit="submit" />
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

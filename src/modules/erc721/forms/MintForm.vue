@@ -36,7 +36,7 @@ const { t } = useI18n({
 
 const txProcessing = ref(false)
 
-const mintFormData = {
+const formData = {
   title: t('mint-form.title-lbl'),
   titleTooltip: t('mint-form.title-info'),
   inputs: [
@@ -67,5 +67,5 @@ const submit = async ([to, tokenId]: string[]) => {
 </script>
 
 <template>
-  <product-interaction-form :form-data="mintFormData" @submit="submit" />
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

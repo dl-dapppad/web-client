@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { handleTxError } from '@/helpers'
 import { required, isAddress } from '@/validators'
 import { ProductInteractionForm } from '@/modules/common'
-import { RESULT_TYPES } from '@/modules/enums'
+import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 const props = defineProps<{
@@ -24,12 +24,12 @@ const { t } = useI18n({
   },
 })
 
-const balanceFormResult = {
-  type: RESULT_TYPES.amount,
+const formResult = {
+  type: PRODUCT_INT_FORM_RESULT_TYPES.amount,
   data: ref(''),
 }
 
-const balanceFormData = {
+const formData = {
   title: t('balance-form.title-lbl'),
   titleTooltip: t('balance-form.title-info'),
   inputs: [
@@ -44,7 +44,7 @@ const balanceFormData = {
 
 const submit = async ([account]: string[]) => {
   try {
-    balanceFormResult.data.value = await props.token.balanceOf(account)
+    formResult.data.value = await props.token.balanceOf(account)
   } catch (e) {
     handleTxError(e)
   }
@@ -53,8 +53,8 @@ const submit = async ([account]: string[]) => {
 
 <template>
   <product-interaction-form
-    :form-data="balanceFormData"
-    :result="balanceFormResult"
+    :form-data="formData"
+    :result="formResult"
     @submit="submit"
   />
 </template>

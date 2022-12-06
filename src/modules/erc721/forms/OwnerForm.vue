@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { handleTxError } from '@/helpers'
 import { required, numeric, integer } from '@/validators'
 import { ProductInteractionForm } from '@/modules/common'
-import { RESULT_TYPES } from '@/modules/enums'
+import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 const props = defineProps<{
@@ -24,12 +24,12 @@ const { t } = useI18n({
   },
 })
 
-const ownerFormResult = {
-  type: RESULT_TYPES.address,
+const formResult = {
+  type: PRODUCT_INT_FORM_RESULT_TYPES.address,
   data: ref(''),
 }
 
-const ownerFormData = {
+const formData = {
   title: t('owner-form.title-lbl'),
   titleTooltip: t('owner-form.title-info'),
   inputs: [
@@ -44,7 +44,7 @@ const ownerFormData = {
 
 const submit = async ([tokenId]: string[]) => {
   try {
-    ownerFormResult.data.value = await props.token.ownerOf(tokenId)
+    formResult.data.value = await props.token.ownerOf(tokenId)
   } catch (e) {
     handleTxError(e)
   }
@@ -53,8 +53,8 @@ const submit = async ([tokenId]: string[]) => {
 
 <template>
   <product-interaction-form
-    :form-data="ownerFormData"
-    :result="ownerFormResult"
+    :form-data="formData"
+    :result="formResult"
     @submit="submit"
   />
 </template>

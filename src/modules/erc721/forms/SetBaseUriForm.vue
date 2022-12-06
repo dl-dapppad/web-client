@@ -35,7 +35,7 @@ const { t } = useI18n({
 
 const txProcessing = ref(false)
 
-const baseUriFormData = {
+const formData = {
   title: t('base-uri-form.title-lbl'),
   titleTooltip: t('base-uri-form.title-info'),
   inputs: [
@@ -61,5 +61,5 @@ const submit = async ([baseURI]: string[]) => {
 </script>
 
 <template>
-  <product-interaction-form :form-data="baseUriFormData" @submit="submit" />
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

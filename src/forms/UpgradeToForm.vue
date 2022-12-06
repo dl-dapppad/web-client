@@ -36,7 +36,7 @@ const { t } = useI18n({
 
 const txProcessing = ref(false)
 
-const upgradeToFormData = {
+const formData = {
   title: t('upgrade-to-form.title-lbl'),
   titleTooltip: t('upgrade-to-form.title-info'),
   inputs: [
@@ -62,5 +62,5 @@ const submit = async ([implementation]: string[]) => {
 </script>
 
 <template>
-  <product-interaction-form :form-data="upgradeToFormData" @submit="submit" />
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

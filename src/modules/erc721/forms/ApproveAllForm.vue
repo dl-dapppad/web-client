@@ -27,7 +27,7 @@ const { t } = useI18n({
 
 const txProcessing = ref(false)
 
-const approveAllFormData = {
+const formData = {
   title: t('approve-form.title-lbl'),
   titleTooltip: t('approve-form.title-info'),
   inputs: [
@@ -53,5 +53,5 @@ const submit = async ([to]: string[]) => {
 </script>
 
 <template>
-  <product-interaction-form :form-data="approveAllFormData" @submit="submit" />
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>
