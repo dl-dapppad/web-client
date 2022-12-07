@@ -164,7 +164,10 @@ init()
         </h2>
       </div>
       <span class="app__module-subtitle">
-        <link-copy :address="erc20.address.value" class="app__link--big" />
+        <link-copy
+          :address="erc20.address.value"
+          class="app__module-subtitle"
+        />
       </span>
       <span class="app__module-description">
         {{ t('erc20.description') }}

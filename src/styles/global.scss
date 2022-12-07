@@ -234,10 +234,6 @@ a {
 
   &--big {
     font-size: toRem(30);
-
-    @include respond-to(medium) {
-      font-size: toRem(24);
-    }
   }
 
   &--medium {
@@ -376,6 +372,7 @@ button.app__submit-btn {
   @include respond-to(medium) {
     justify-self: start;
     grid-row: 3;
+    font-size: toRem(24);
   }
 }
 

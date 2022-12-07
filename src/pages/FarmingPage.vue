@@ -181,7 +181,7 @@ init()
           </div>
         </div>
         <link-copy
-          class="app__link--big app__link--secondary app__module-subtitle"
+          class="app__link--secondary app__module-subtitle"
           :address="farming.address.value"
         />
         <div class="app__module-description">
