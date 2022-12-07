@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
-import { InfoTooltip, AppButton, LinkCopy } from '@/common'
 import { handleTxError } from '@/helpers'
-import { useFormValidation } from '@/composables'
 import { required, numeric, integer } from '@/validators'
+import { ProductInteractionForm } from '@/modules/common'
+import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 const props = defineProps<{
@@ -16,31 +15,36 @@ const { t } = useI18n({
   locale: 'en',
   messages: {
     en: {
-      'balance-form.title-lbl': 'Owner',
-      'balance-form.title-info': 'Returns the owner of the `tokenId` token',
-      'balance-form.token-lbl': 'Token Id',
-      'balance-form.token-info': 'Enter the token ID',
-      'balance-form.btn-lbl': 'Read',
+      'owner-form.title-lbl': 'Owner',
+      'owner-form.title-info': 'Returns the owner of the `tokenId` token',
+      'owner-form.token-lbl': 'Token Id',
+      'owner-form.token-info': 'Enter the token ID',
+      'owner-form.btn-lbl': 'Read',
     },
   },
 })
 
-const form = reactive({
-  tokenId: '',
-})
+const formResult = {
+  type: PRODUCT_INT_FORM_RESULT_TYPES.address,
+  data: ref(''),
+}
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    tokenId: { required, numeric, integer },
-  },
-)
+const formData = {
+  title: t('owner-form.title-lbl'),
+  titleTooltip: t('owner-form.title-info'),
+  inputs: [
+    {
+      label: t('owner-form.token-lbl'),
+      tooltip: t('owner-form.token-info'),
+      validators: [required, numeric, integer],
+    },
+  ],
+  button: t('owner-form.btn-lbl'),
+}
 
-const result = ref('')
-
-const submit = async () => {
+const submit = async ([tokenId]: string[]) => {
   try {
-    result.value = await props.token.ownerOf(form.tokenId)
+    formResult.data.value = await props.token.ownerOf(tokenId)
   } catch (e) {
     handleTxError(e)
   }
@@ -48,38 +52,9 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('balance-form.title-info')" />
-        {{ t('balance-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          class="app__module-field"
-          v-model="form.tokenId"
-          scheme="secondary"
-          :label="t('balance-form.token-lbl')"
-          :error-message="getFieldErrorMessage('tokenId')"
-          @blur="touchField('tokenId')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('balance-form.token-info')" />
-        </div>
-      </div>
-      <div class="app__common-form__button-wrp">
-        <app-button
-          class="app__submit-btn"
-          type="button"
-          size="small"
-          :text="t('balance-form.btn-lbl')"
-          :disabled="!isFieldsValid"
-          @click="submit"
-        />
-        <div v-if="result">
-          <link-copy :address="result" class="app__link--accented" />
-        </div>
-      </div>
-    </div>
-  </div>
+  <product-interaction-form
+    :form-data="formData"
+    :result="formResult"
+    @submit="submit"
+  />
 </template>
