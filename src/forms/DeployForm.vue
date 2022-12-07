@@ -1,24 +1,20 @@
 <script lang="ts" setup>
-import { Erc20DeployForm, Erc721DeployForm } from '@/modules'
-import { PRODUCT_IDS } from '@/enums'
 import { useRoute } from '@/router'
-import { Post } from '@/types'
-import postsData from '@/assets/posts.json'
+import { defineAsyncComponent } from 'vue-demi'
 
 const route = useRoute()
 
-const posts = postsData as unknown as Post[]
-const post = posts.find(el => el.id === route.params.id)
+const DeployForm = defineAsyncComponent(
+  () =>
+    import(
+      `@/modules/${route.params.id}/${route.params.id}/forms/DeployForm.vue`
+    ),
+)
 </script>
 
 <template>
   <div class="deploy-form">
-    <template v-if="post?.id === PRODUCT_IDS.ERC20">
-      <erc20-deploy-form class="deploy-form__module" />
-    </template>
-    <template v-if="post?.id === PRODUCT_IDS.ERC721">
-      <erc721-deploy-form class="deploy-form__module" />
-    </template>
+    <deploy-form />
   </div>
 </template>
 
