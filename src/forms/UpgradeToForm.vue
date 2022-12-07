@@ -27,7 +27,7 @@ const { t } = useI18n({
       'upgrade-to-form.title-info':
         // eslint-disable-next-line prettier/prettier
         'Upgrade smart contract logic to new implementation',
-      'upgrade-to-form.impl-lbl': 'New implementation',
+      'upgrade-to-form.impl-lbl': 'Implementation',
       'upgrade-to-form.impl-info': 'Enter a new implementation address',
       'upgrade-to-form.btn-lbl': 'Write',
     },

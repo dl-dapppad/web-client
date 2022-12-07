@@ -427,6 +427,8 @@ button.app__submit-btn {
   display: flex;
   align-items: center;
   gap: toRem(12);
+  font-size: toRem(20);
+  font-family: var(--app-font-family-secondary);
 }
 
 .app__common-form__popup {

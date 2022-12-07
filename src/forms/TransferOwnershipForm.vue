@@ -27,7 +27,7 @@ const { t } = useI18n({
       'transfer-owner-form.title-info':
         // eslint-disable-next-line prettier/prettier
         'Transfers ownership of the contract to a new account (newOwner). Can only be called by the current owner',
-      'transfer-owner-form.owner-lbl': 'New contract owner',
+      'transfer-owner-form.owner-lbl': 'New owner',
       'transfer-owner-form.owner-info': 'Enter a new owner address',
       'transfer-owner-form.btn-lbl': 'Write',
     },
