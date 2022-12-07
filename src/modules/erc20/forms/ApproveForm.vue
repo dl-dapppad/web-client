@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
-import { InfoTooltip, AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
 import { required, isAddress, numeric } from '@/validators'
-import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
+import { ProductInteractionForm } from '@/modules/common'
 import { BN } from '@/utils'
+import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 
 const props = defineProps<{
   token: ProductErc20Contract
@@ -31,27 +29,32 @@ const { t } = useI18n({
 })
 
 const txProcessing = ref(false)
-const form = reactive({
-  spender: '',
-  amount: '',
-})
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    spender: { required, isAddress },
-    amount: { required, numeric },
-  },
-)
+const formData = {
+  title: t('approve-form.title-lbl'),
+  titleTooltip: t('approve-form.title-info'),
+  inputs: [
+    {
+      label: t('approve-form.spender-lbl'),
+      tooltip: t('approve-form.spender-info'),
+      validators: [required, isAddress],
+    },
+    {
+      label: t('approve-form.amount-lbl'),
+      tooltip: t('approve-form.amount-info'),
+      validators: [required, numeric],
+    },
+  ],
+  button: t('approve-form.btn-lbl'),
+  buttonDisabled: txProcessing,
+}
 
-const submit = async () => {
+const submit = async ([spender, amount]: string[]) => {
   txProcessing.value = true
 
   await txWrapper(props.token.approve, {
-    spender: form.spender,
-    amount: new BN(form.amount)
-      .toFraction(props.token.decimals.value)
-      .toString(),
+    spender,
+    amount: new BN(amount).toFraction(props.token.decimals.value).toString(),
   })
 
   txProcessing.value = false
@@ -59,43 +62,5 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('approve-form.title-info')" />
-        {{ t('approve-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.spender"
-          scheme="secondary"
-          :label="t('approve-form.spender-lbl')"
-          :error-message="getFieldErrorMessage('spender')"
-          @blur="touchField('spender')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('approve-form.spender-info')" />
-        </div>
-      </div>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.amount"
-          scheme="secondary"
-          :label="t('approve-form.amount-lbl')"
-          :error-message="getFieldErrorMessage('amount')"
-          @blur="touchField('amount')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('approve-form.amount-info')" />
-        </div>
-      </div>
-      <app-button
-        type="button"
-        size="small"
-        :text="t('approve-form.btn-lbl')"
-        :disabled="!isFieldsValid || txProcessing"
-        @click="submit"
-      />
-    </div>
-  </div>
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

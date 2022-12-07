@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
-import { InfoTooltip, AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
 import { required, url } from '@/validators'
+import { ProductInteractionForm } from '@/modules/common'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 enum EMITS {
@@ -36,23 +34,25 @@ const { t } = useI18n({
 })
 
 const txProcessing = ref(false)
-const form = reactive({
-  baseURI: '',
-})
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    baseURI: { required, url },
-  },
-)
+const formData = {
+  title: t('base-uri-form.title-lbl'),
+  titleTooltip: t('base-uri-form.title-info'),
+  inputs: [
+    {
+      label: t('base-uri-form.uri-lbl'),
+      tooltip: t('base-uri-form.uri-info'),
+      validators: [required, url],
+    },
+  ],
+  button: t('base-uri-form.btn-lbl'),
+  buttonDisabled: txProcessing,
+}
 
-const submit = async () => {
+const submit = async ([baseURI]: string[]) => {
   txProcessing.value = true
 
-  await txWrapper(props.token.setBaseURI, {
-    baseURI: form.baseURI,
-  })
+  await txWrapper(props.token.setBaseURI, { baseURI })
 
   emit(EMITS.changeBaseURI)
 
@@ -61,31 +61,5 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('base-uri-form.title-info')" />
-        {{ t('base-uri-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.baseURI"
-          scheme="secondary"
-          :label="t('base-uri-form.uri-lbl')"
-          :error-message="getFieldErrorMessage('baseURI')"
-          @blur="touchField('baseURI')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('base-uri-form.uri-info')" />
-        </div>
-      </div>
-      <app-button
-        type="button"
-        size="small"
-        :text="t('base-uri-form.btn-lbl')"
-        :disabled="!isFieldsValid || txProcessing"
-        @click="submit"
-      />
-    </div>
-  </div>
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

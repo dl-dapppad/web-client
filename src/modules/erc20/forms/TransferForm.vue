@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
-import { InfoTooltip, AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
-import { required, isAddress, numeric, maxValue } from '@/validators'
+import { required, isAddress, numeric, maxBNValue } from '@/validators'
+import { ProductInteractionForm } from '@/modules/common'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 import { BN } from '@/utils'
 
@@ -19,7 +17,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   token: ProductErc20Contract
-  balance: number
+  balance: BN | number | string
 }>()
 
 const { t } = useI18n({
@@ -40,27 +38,32 @@ const { t } = useI18n({
 })
 
 const txProcessing = ref(false)
-const form = reactive({
-  recipient: '',
-  amount: '',
-})
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    recipient: { required, isAddress },
-    amount: { required, numeric, maxValue: maxValue(props.balance) },
-  },
-)
+const formData = {
+  title: t('transfer-form.title-lbl'),
+  titleTooltip: t('transfer-form.title-info'),
+  inputs: [
+    {
+      label: t('transfer-form.recipient-lbl'),
+      tooltip: t('transfer-form.recipient-info'),
+      validators: [required, isAddress],
+    },
+    {
+      label: t('transfer-form.amount-lbl'),
+      tooltip: t('transfer-form.amount-info'),
+      validators: [required, numeric, maxBNValue(props.balance)],
+    },
+  ],
+  button: t('transfer-form.btn-lbl'),
+  buttonDisabled: txProcessing,
+}
 
-const submit = async () => {
+const submit = async ([recipient, amount]: string[]) => {
   txProcessing.value = true
 
   await txWrapper(props.token.transfer, {
-    recipient: form.recipient,
-    amount: new BN(form.amount)
-      .toFraction(props.token.decimals.value)
-      .toString(),
+    recipient,
+    amount: new BN(amount).toFraction(props.token.decimals.value).toString(),
   })
 
   emit(EMITS.changeBalance)
@@ -70,43 +73,5 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('transfer-form.title-info')" />
-        {{ t('transfer-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.recipient"
-          scheme="secondary"
-          :label="t('transfer-form.recipient-lbl')"
-          :error-message="getFieldErrorMessage('recipient')"
-          @blur="touchField('recipient')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('transfer-form.recipient-info')" />
-        </div>
-      </div>
-      <div class="app__field-row">
-        <input-field
-          v-model="form.amount"
-          scheme="secondary"
-          :label="t('transfer-form.amount-lbl')"
-          :error-message="getFieldErrorMessage('amount')"
-          @blur="touchField('amount')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('transfer-form.amount-info')" />
-        </div>
-      </div>
-      <app-button
-        type="button"
-        size="small"
-        :text="t('transfer-form.btn-lbl')"
-        :disabled="!isFieldsValid || txProcessing"
-        @click="submit"
-      />
-    </div>
-  </div>
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>
