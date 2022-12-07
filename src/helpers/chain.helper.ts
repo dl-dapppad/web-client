@@ -1,6 +1,6 @@
 import { config } from '@/config'
-import { ETHEREUM_CHAINS } from '@/enums'
 import { Chain, ChainId } from '@/types'
+import chainsData from '@/assets/chains.json'
 
 export const getEmptyChain = (): Chain => {
   return {
@@ -16,29 +16,9 @@ export const getEmptyChain = (): Chain => {
 export const getChain = (id?: ChainId): Chain => {
   id = String(id)
 
-  switch (id) {
-    case ETHEREUM_CHAINS.goerli:
-      return {
-        id,
-        name: 'Goerli',
-        explorerUrl: 'https://goerli.etherscan.io',
-        rpcUrl: '',
-        symbol: 'GoerliETH',
-        decimals: 18,
-      }
-    case ETHEREUM_CHAINS.localhost:
-      return {
-        id,
-        name: 'Local Network',
-        explorerUrl: 'https://goerli.etherscan.io',
-        rpcUrl: '',
-        symbol: 'LocalETH',
-        decimals: 18,
-      }
-    default: {
-      return getEmptyChain()
-    }
-  }
+  const chain = chainsData.filter(chain => chain.id === id) as Chain[]
+
+  return chain.length > 0 ? chain[0] : getEmptyChain()
 }
 
 export const isChainAvailable = (id: ChainId): boolean => {

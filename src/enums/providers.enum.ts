@@ -8,6 +8,7 @@ export enum PROVIDERS {
   ledger = 'ledger',
   phantom = 'phantom',
   solflare = 'solflare',
+  rpc = 'rpc',
 }
 
 export enum PROVIDERS_CHECKS {

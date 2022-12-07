@@ -1,4 +1,4 @@
-import { ref, Ref } from 'vue'
+import { ref, Ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -199,6 +199,13 @@ export const useProductErc721 = (
   }
 
   if (contractAddress) init(contractAddress)
+
+  watch(
+    () => provider.value.selectedAddress,
+    () => {
+      init(address.value)
+    },
+  )
 
   return {
     init,

@@ -4,6 +4,7 @@ import { ref, watch } from 'vue'
 import { useErc20 } from './useContracts'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
+import { isChainAvailable } from '@/helpers'
 
 export const useAccount = () => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -37,10 +38,13 @@ export const useAccount = () => {
   }
 
   watch(
-    () => provider.value.selectedAddress,
+    () => [provider.value.selectedAddress, provider.value.chainId],
     () => {
-      updateNativeBalance()
-      updateDappBalance()
+      const chainId = provider.value.chainId
+      if (chainId && isChainAvailable(chainId)) {
+        updateNativeBalance()
+        updateDappBalance()
+      }
     },
   )
 

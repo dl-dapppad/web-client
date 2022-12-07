@@ -25,7 +25,7 @@ export const deploy = async (
   initializeDataValues: any[],
 ): Promise<string> => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
-  if (!provider.value.chainId || !provider.value.selectedAddress) return ''
+  if (!provider.value.selectedAddress) return ''
 
   const alias = config.PRODUCT_ALIASES[productId as string]
   const initializeData = getInitializeData(productId, initializeDataValues)

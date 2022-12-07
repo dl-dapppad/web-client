@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, watch, reactive, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { AppButton, Icon, AppBlock, Modal, LinkCopy, Loader } from '@/common'
@@ -53,15 +53,8 @@ const init = async () => {
 
   investmentToken.init(farming.investmentToken.value)
   rewardToken.init(farming.rewardToken.value)
-  await Promise.all([
-    investmentToken.loadDetails(),
-    rewardToken.loadDetails(),
-    rewardToken.balanceOf(provider?.value.selectedAddress as string),
-  ]).then(res => {
-    rewardBalance.value = res[2]
+  await Promise.all([investmentToken.loadDetails(), rewardToken.loadDetails()])
 
-    return
-  })
   await updateBalanceState()
 
   isLoaded.value = true
@@ -160,6 +153,13 @@ const submitWithdraw = async () => {
 
   isModalWithdrawingShown.value = false
 }
+
+watch(
+  () => provider.value.selectedAddress,
+  () => {
+    updateBalanceState()
+  },
+)
 
 init()
 </script>

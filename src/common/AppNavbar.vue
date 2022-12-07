@@ -1,18 +1,30 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
-import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+import { useWindowSize } from '@vueuse/core'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20, useProduct } from '@/composables'
-import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
+import {
+  formatAmount,
+  getChain,
+  getEmptyChain,
+  cropAddress,
+  ErrorHandler,
+  isChainAvailable,
+} from '@/helpers'
 import { Chain } from '@/types'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { ErrorHandler, isChainAvailable } from '@/helpers'
 import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
+enum PROVIDER_TYPE {
+  browser = 'browser',
+  rpc = 'rpc',
+}
+
+const web3ProvidersStore = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
@@ -28,6 +40,7 @@ const addressSearchInput = ref('')
 
 const chain = ref<Chain>(getEmptyChain())
 const accountAddress = ref()
+const selectedProvider = ref()
 
 const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
@@ -48,16 +61,17 @@ const setWidthCSSVar = (element: HTMLElement) => {
 }
 
 const init = async () => {
-  if (
-    !provider.value.isConnected ||
-    !provider.value.chainId ||
-    !isChainAvailable(provider.value.chainId)
-  ) {
+  if (!provider.value.chainId || !isChainAvailable(provider.value.chainId)) {
     return
   }
+
   chain.value = getChain(provider.value.chainId)
   accountAddress.value = provider.value.selectedAddress
+  selectedProvider.value = accountAddress.value
+    ? PROVIDER_TYPE.browser
+    : PROVIDER_TYPE.rpc
 
+  if (!accountAddress.value) return
   dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
   await dapp.loadDetails()
 }
@@ -65,19 +79,19 @@ const init = async () => {
 const trySwitchChain = async (chainId: string | number) => {
   try {
     await provider.value.switchChain(chainId)
-    await useAccountStore().updateDappBalance()
-    await useAccountStore().updateNativeBalance()
   } catch (error) {
     ErrorHandler.process(error)
   }
 }
 
-const handleProviderBtnClick = () => {
+const handleProviderBtnClick = async () => {
   try {
+    await web3ProvidersStore.connect()
+
     if (provider.value.selectedAddress) {
-      provider.value.disconnect()
+      selectedProvider.value = PROVIDER_TYPE.browser
     } else {
-      provider.value.connect()
+      selectedProvider.value = PROVIDER_TYPE.rpc
     }
   } catch (error) {
     ErrorHandler.process(error)
@@ -88,13 +102,6 @@ const clickContractSearch = async () => {
   composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
-watch(
-  () => provider.value.selectedAddress,
-  () => {
-    init()
-  },
-)
-
 const isProviderButtonShown = computed(
   () =>
     windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
@@ -104,6 +111,13 @@ const isProviderButtonShown = computed(
 const isNavbarFixed = computed(
   () =>
     isMobileDrawerOpened.value && windowWidth.value < WINDOW_BREAKPOINTS.medium,
+)
+
+watch(
+  () => provider.value.selectedAddress,
+  () => {
+    init()
+  },
 )
 
 init()
@@ -118,7 +132,10 @@ const handleMobileSearchBtn = () => {
     <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
       <app-logo class="app-navbar__logo" />
       <template v-if="provider.isConnected">
-        <div class="app-navbar__farm-farm-balance">
+        <div
+          v-if="selectedProvider === PROVIDER_TYPE.browser"
+          class="app-navbar__farm-farm-balance"
+        >
           <span class="app-navbar__farm-farm-balance-amount">
             <icon
               class="app-navbar__farm-farm-balance-icon"
@@ -188,7 +205,7 @@ const handleMobileSearchBtn = () => {
             </div>
           </template>
         </dropdown>
-        <div class="app-navbar__wallet">
+        <div v-if="provider.selectedAddress" class="app-navbar__wallet">
           <span class="app-navbar__wallet-balance">
             {{
               formatAmount(

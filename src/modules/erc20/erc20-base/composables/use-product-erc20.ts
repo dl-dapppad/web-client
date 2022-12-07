@@ -1,4 +1,4 @@
-import { ref, Ref } from 'vue'
+import { ref, Ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -53,6 +53,7 @@ export const useProductErc20 = (
         provider.value.currentProvider,
       )
     }
+
     if (provider.value.currentSigner) {
       _instance_rw.value = ERC20__factory.connect(
         address.value,
@@ -160,6 +161,13 @@ export const useProductErc20 = (
   }
 
   if (contractAddress) init(contractAddress)
+
+  watch(
+    () => provider.value.selectedAddress,
+    () => {
+      init(address.value)
+    },
+  )
 
   return {
     init,
