@@ -1,14 +1,11 @@
 export interface DeployMetadata {
   name: string
   symbol: string
+  contract: string
   erc20Metadata?: {
     decimals: string
     mintAmount: string
     mintReceiver: string
-    contract: string
-  }
-  erc721Metadata?: {
-    contract: string
   }
 }
 

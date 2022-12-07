@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import {
@@ -9,6 +9,7 @@ import {
   Icon,
   InfoTooltip,
   Loader,
+  Modal,
 } from '@/common'
 import { SelectField } from '@/fields'
 import { Product } from '@/composables'
@@ -17,6 +18,7 @@ import { config } from '@/config'
 import { BN } from '@/utils'
 
 import { SCHEMES } from '@/common/Loader.vue'
+import { DeploySuccessMessage } from '@/modules/common'
 import { DeployMetadata } from '@/modules/common'
 import {
   getSelectedTokenInfo,
@@ -29,6 +31,7 @@ const route = useRoute()
 
 defineProps<{
   paymentValue: string | number
+  isSuccessModalShown?: boolean
   headingData?: {
     title?: string
     subtitle?: string
@@ -36,11 +39,11 @@ defineProps<{
   }
   button?: {
     label?: string
-    isDisabled?: boolean
-    isShown?: boolean
+    isEnabled?: Ref<boolean>
+    isShown?: Ref<boolean>
   }
-  modalMsg: {
-    isSuccessModalShown?: boolean
+  modal: {
+    metadata: DeployMetadata
     potentialContractAddress: string
   }
 }>()
@@ -72,7 +75,6 @@ const selectedPaymentToken = ref({
   decimals: 0,
 })
 const product = ref<Product>()
-const deployMetadata = ref<DeployERC20Metadata>()
 
 const isBalanceInsuficient = computed(() =>
   product.value?.currentPrice
@@ -116,6 +118,8 @@ const init = async () => {
   const alias = config.PRODUCT_ALIASES[route.params.id as string]
   product.value = await getProduct(alias)
 
+  if (!addresses.length) return
+
   const { symbol, decimals, balance } = await getSelectedTokenInfo(addresses[0])
 
   productPaymentToken.value.symbol = symbol
@@ -127,7 +131,7 @@ init()
 </script>
 
 <template>
-  <div>
+  <form @submit.prevent="submit">
     <div class="app__module-heading">
       <div class="app__module-title-wrp">
         <app-button
@@ -257,7 +261,7 @@ init()
               button?.label ? button.label : $t('deploy-form.default-btn-lbl')
             "
             size="small"
-            :disabled="button?.isDisabled"
+            :disabled="!button?.isEnabled?.value"
           />
           <div v-else class="app__deploy-loader">
             <loader :scheme="SCHEMES.cubes" />
@@ -268,29 +272,29 @@ init()
       </div>
     </app-block>
     <modal
-      :is-shown="modalMsg?.isSuccessModalShown"
+      :is-shown="isSuccessModalShown"
       @update:is-shown="updateIsShownModal"
     >
-      <template #default="{ modal }">
+      <template #default>
         <deploy-success-message
-          :deploy-metadata="DeployMetadata"
+          :deploy-metadata="modal.metadata"
           @submit="
             () => {
-              modal.close()
+              updateIsShownModal(false)
               router.push({
                 name: $routes.productEdit,
                 params: {
                   id: route.params.id,
-                  contractAddress: modalMsg.potentialContractAddress,
+                  contractAddress: modal.potentialContractAddress,
                 },
               })
             }
           "
-          @close="modal.close"
+          @close="updateIsShownModal(false)"
         />
       </template>
     </modal>
-  </div>
+  </form>
 </template>
 
 <style lang="scss" scoped></style>

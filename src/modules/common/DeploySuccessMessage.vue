@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { Icon, AppButton, LinkCopy } from '@/common'
 import { useI18n } from 'vue-i18n'
-import { DeployERC20Metadata } from '@/modules/erc20/common'
+import { DeployMetadata } from '@/modules/common'
 
-const props = defineProps<{
-  deployMetadata?: DeployERC20Metadata
+defineProps<{
+  deployMetadata: DeployMetadata
 }>()
 
 const emit = defineEmits<{
@@ -53,13 +53,13 @@ const { t } = useI18n({
       {{ t('deploy-erc20.description') }}
     </span>
 
-    <div v-if="props.deployMetadata" class="app__metadata">
+    <div v-if="deployMetadata" class="app__metadata">
       <div class="app__metadata-row">
         <span class="app__metadata-lbl">
           {{ t('deploy-erc20.name-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ props.deployMetadata.name }}
+          {{ deployMetadata.name }}
         </span>
       </div>
       <div class="app__metadata-row">
@@ -67,36 +67,36 @@ const { t } = useI18n({
           {{ t('deploy-erc20.symbol-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ props.deployMetadata.symbol }}
+          {{ deployMetadata.symbol }}
         </span>
       </div>
-      <div class="app__metadata-row">
+      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
         <span class="app__metadata-lbl">
           {{ t('deploy-erc20.decimals-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ props.deployMetadata.decimals }}
+          {{ deployMetadata.erc20Metadata.decimals }}
         </span>
       </div>
-      <div class="app__metadata-row">
+      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
         <span class="app__metadata-lbl">
           {{ t('deploy-erc20.mint-amount-lbl') }}
         </span>
         <span class="app__metadata-value">
           <span class="app__price">
-            {{ props.deployMetadata.mintAmount }}
+            {{ deployMetadata.erc20Metadata.mintAmount }}
             <span class="app__price-asset">
-              {{ props.deployMetadata.symbol }}
+              {{ deployMetadata.symbol }}
             </span>
           </span>
         </span>
       </div>
-      <div class="app__metadata-row">
+      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
         <span class="app__metadata-lbl">
           {{ t('deploy-erc20.mint-receiver-lbl') }}
         </span>
         <link-copy
-          :address="props.deployMetadata.mintReceiver"
+          :address="deployMetadata.erc20Metadata.mintReceiver"
           class="app__link--accented"
         />
       </div>
@@ -105,7 +105,7 @@ const { t } = useI18n({
           {{ t('deploy-erc20.contract-lbl') }}
         </span>
         <link-copy
-          :address="props.deployMetadata.contract"
+          :address="deployMetadata.contract"
           class="app__link--accented"
         />
       </div>
