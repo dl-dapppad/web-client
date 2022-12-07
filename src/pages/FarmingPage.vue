@@ -610,7 +610,7 @@ init()
 
 <style lang="scss" scoped>
 .farming-page {
-  padding: toRem(70) toRem(115) toRem(70) toRem(140);
+  padding: toRem(50) toRem(145) toRem(50) toRem(225);
   display: flex;
   gap: toRem(54);
   letter-spacing: 0.1em;
