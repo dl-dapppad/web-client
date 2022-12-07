@@ -133,6 +133,7 @@ init()
                   :text="
                     t('post-item-page-checkout.have-product-input-tooltip-txt')
                   "
+                  :move-side="right"
                 />
               </div>
               <app-button
