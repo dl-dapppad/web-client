@@ -197,7 +197,7 @@ a {
   color: var(--text-primary-main);
 
   &--big {
-    font-size: toRem(30);
+    font-size: toRem(20);
   }
 
   @include respond-to(medium) {
