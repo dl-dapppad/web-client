@@ -154,9 +154,11 @@ a {
   }
 
   &--mobile-break-line {
-    flex-direction: column;
-    align-items: start;
-    gap: toRem(10);
+    @include respond-to(medium) {
+      flex-direction: column;
+      align-items: start;
+      gap: toRem(10);
+    }
   }
 }
 
