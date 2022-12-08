@@ -1,14 +1,11 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
-import { AppButton, Collapse, Icon, InfoTooltip } from '@/common'
-import { InputField } from '@/fields'
-import { useFormValidation } from '@/composables'
 import { required } from '@/validators'
 import { deploy } from '@/helpers/deploy.helper'
-import { DeployForm } from '@/modules/forms'
+import { BaseDeployForm } from '@/modules/forms'
 import { DeployMetadata } from '@/modules/common/index'
 
 const { t } = useI18n({
@@ -27,13 +24,11 @@ const { t } = useI18n({
       'erc721.symbol-info': 'Enter the token symbol',
 
       'erc721.btn-lbl': 'Buy',
+
+      'erc721.deploy-success.message.description':
+        'Congratulations! You’ve just deployed your contract for Non Fungible Tokens!',
     },
   },
-})
-
-const paymentTokens = ref<Record<string, Array<string>>>({
-  symbols: [],
-  addresses: [],
 })
 
 const isSuccessModalShown = ref(false)
@@ -47,28 +42,6 @@ const deployMetadata = ref<DeployMetadata>({
 })
 const potentialContractAddress = ref('')
 const txProcessing = ref(false)
-const form = reactive({
-  paymentToken: '',
-  name: '',
-  symbol: '',
-})
-
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    paymentToken: { required },
-    name: { required },
-    symbol: { required },
-  },
-)
-
-const getSelectedPaymentAddress = () => {
-  return paymentTokens.value.addresses[
-    paymentTokens.value.symbols.findIndex(
-      symbol => symbol === form.paymentToken,
-    )
-  ]
-}
 
 const headingData = {
   title: t('erc721.title'),
@@ -78,18 +51,41 @@ const headingData = {
 
 const buttonData = {
   label: t('erc721.btn-lbl'),
-  isEnabled: isFieldsValid,
   isShown: txProcessing,
 }
 
-const submit = async () => {
-  const paymentTokenAddress = getSelectedPaymentAddress()
+const modalData = {
+  potentialContractAddress,
+  metadata: deployMetadata,
+  txt: {
+    description: t('erc721.deploy-success.message.description'),
+  },
+}
 
+const categoriesData = [
+  {
+    title: t('erc721.token-group'),
+    inputs: [
+      {
+        label: t('erc721.name-lbl'),
+        tooltip: t('erc721.name-info'),
+        validators: [required],
+      },
+      {
+        label: t('erc721.symbol-lbl'),
+        tooltip: t('erc721.symbol-info'),
+        validators: [required],
+      },
+    ],
+  },
+]
+
+const submit = async ([[paymentTokenAddress], [name, symbol]]: string[][]) => {
   txProcessing.value = true
   potentialContractAddress.value = await deploy(
     route.params.id as string,
     paymentTokenAddress,
-    [form.name, form.symbol],
+    [name, symbol],
   )
 
   if (!potentialContractAddress.value) {
@@ -98,8 +94,8 @@ const submit = async () => {
   }
 
   deployMetadata.value = {
-    name: form.name,
-    symbol: form.symbol,
+    name: name,
+    symbol: symbol,
     contract: potentialContractAddress.value,
   }
 
@@ -109,68 +105,12 @@ const submit = async () => {
 </script>
 
 <template>
-  <deploy-form
+  <base-deploy-form
     :heading-data="headingData"
     :button="buttonData"
-    :modal="{ potentialContractAddress, metadata: deployMetadata }"
-    v-model:paymentValue="form.paymentToken"
+    :modal="modalData"
+    :categories="categoriesData"
     v-model:is-success-modal-shown="isSuccessModalShown"
     @submit="submit"
-  >
-    <collapse
-      class="app__form-control"
-      is-opened-by-default
-      :is-close-by-click-outside="false"
-    >
-      <template #head="{ collapse }">
-        <app-button
-          class="app__module-content-title"
-          scheme="default"
-          color="default"
-          size="default"
-          @click="collapse.toggle"
-        >
-          <icon
-            class="app__title-icon"
-            :name="
-              collapse.isOpen
-                ? $icons.arrowUpTriangle
-                : $icons.arrowDownTriangle
-            "
-          />
-          {{ t('erc721.token-group') }}
-        </app-button>
-      </template>
-      <template #default>
-        <div class="app__form-control app__collapsed-fields">
-          <div class="app__form-control">
-            <div class="app__field-row">
-              <input-field
-                scheme="secondary"
-                v-model="form.name"
-                :label="t('erc721.name-lbl')"
-                :error-message="getFieldErrorMessage('name')"
-                @blur="touchField('name')"
-              />
-              <div class="app__field-tooltip">
-                <info-tooltip :text="t('erc721.name-info')" />
-              </div>
-            </div>
-            <div class="app__field-row">
-              <input-field
-                scheme="secondary"
-                v-model="form.symbol"
-                :label="t('erc721.symbol-lbl')"
-                :error-message="getFieldErrorMessage('symbol')"
-                @blur="touchField('symbol')"
-              />
-              <div class="app__field-tooltip">
-                <info-tooltip :text="t('erc721.symbol-info')" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </collapse>
-  </deploy-form>
+  />
 </template>

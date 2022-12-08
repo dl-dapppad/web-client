@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, Ref } from 'vue'
+import { ref, computed, Ref, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import {
@@ -11,15 +11,17 @@ import {
   Loader,
   Modal,
 } from '@/common'
-import { SelectField } from '@/fields'
-import { Product } from '@/composables'
+import { SelectField, InputField } from '@/fields'
+import { Product, useFormValidation } from '@/composables'
 import { formatAmount } from '@/helpers'
 import { config } from '@/config'
 import { BN } from '@/utils'
+import { required } from '@/validators'
 
 import { SCHEMES } from '@/common/Loader.vue'
 import { DeploySuccessMessage } from '@/modules/common'
 import { DeployMetadata } from '@/modules/common'
+import { Input, ModalText, UseForm } from '@/modules/types'
 import {
   getSelectedTokenInfo,
   getAvailableTokenList,
@@ -29,8 +31,7 @@ import {
 const router = useRouter()
 const route = useRoute()
 
-defineProps<{
-  paymentValue: string | number
+const props = defineProps<{
   isSuccessModalShown?: boolean
   headingData?: {
     title?: string
@@ -39,24 +40,26 @@ defineProps<{
   }
   button?: {
     label?: string
-    isEnabled?: Ref<boolean>
-    isShown?: Ref<boolean>
+    isHidden?: Ref<boolean>
   }
   modal: {
-    metadata: DeployMetadata
-    potentialContractAddress: string
+    metadata: Ref<DeployMetadata>
+    potentialContractAddress: Ref<string>
+    txt?: ModalText
   }
+  categories: {
+    title: string
+    inputs: Input[]
+  }[]
 }>()
 
 enum EVENTS {
   submit = 'submit',
-  updatePaymentValue = 'update:paymentValue',
   updateisSuccessModalShown = 'update:isSuccessModalShown',
 }
 
 const emits = defineEmits<{
-  (e: EVENTS.submit): void
-  (e: EVENTS.updatePaymentValue, val: string | number): void
+  (e: EVENTS.submit, data: string[][]): void
   (e: EVENTS.updateisSuccessModalShown, val: boolean): void
 }>()
 
@@ -76,6 +79,53 @@ const selectedPaymentToken = ref({
 })
 const product = ref<Product>()
 
+// data to useForm
+const form = reactive({
+  data: [['']] as string[][],
+})
+const validators = [[{ required }]]
+
+// filling useForm data
+for (const [ind, category] of props.categories.entries()) {
+  form.data.push([])
+  validators.push([])
+
+  for (const [i, input] of category.inputs.entries()) {
+    form.data[ind + 1].push(input.value ?? '')
+
+    validators[ind + 1].push({})
+
+    if (input.validators) {
+      for (const validator of input.validators) {
+        validators[ind + 1][i][validator?.$params?.type] = validator
+      }
+    }
+  }
+}
+
+// creating and filling useForm array
+const useFormArray = [] as UseForm[]
+for (const [i, category] of form.data.entries()) {
+  useFormArray.push({} as UseForm)
+
+  const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
+    category,
+    validators[i],
+  )
+
+  useFormArray[i].getFieldErrorMessage = getFieldErrorMessage
+  useFormArray[i].touchField = touchField
+  useFormArray[i].isFieldsValid = isFieldsValid
+}
+
+const isAllFieldsValid = computed(() => {
+  let result = true
+  useFormArray.forEach(
+    UseFormObj => (result &&= UseFormObj.isFieldsValid.value),
+  )
+  return result
+})
+
 const isBalanceInsuficient = computed(() =>
   product.value?.currentPrice
     ? new BN(product.value?.currentPrice).compare(
@@ -85,7 +135,14 @@ const isBalanceInsuficient = computed(() =>
 )
 
 const submit = () => {
-  emits(EVENTS.submit)
+  const result = JSON.parse(JSON.stringify(form.data))
+  result[0][0] =
+    paymentTokens.value.addresses[
+      paymentTokens.value.symbols.findIndex(
+        symbol => symbol === form.data[0][0],
+      )
+    ]
+  emits(EVENTS.submit, result)
 }
 
 const updateIsShownModal = (val: boolean) => {
@@ -93,7 +150,7 @@ const updateIsShownModal = (val: boolean) => {
 }
 
 const updatePayment = async (val: string | number) => {
-  emits(EVENTS.updatePaymentValue, val)
+  form.data[0][0] = val as string
 
   const { symbol, decimals, balance } = await getSelectedTokenInfo(
     paymentTokens.value.addresses[
@@ -202,7 +259,7 @@ init()
                   <div class="app__field-row">
                     <select-field
                       class="app__module-field"
-                      :model-value="paymentValue"
+                      :model-value="form.data[0][0]"
                       :label="$t('deploy-form.payment-lbl')"
                       :value-options="paymentTokens.symbols"
                       @update:model-value="updatePayment"
@@ -252,16 +309,73 @@ init()
               </div>
             </template>
           </collapse>
-          <slot />
+          <collapse
+            v-for="(category, categoryInd) of categories"
+            class="app__form-control"
+            is-opened-by-default
+            :is-close-by-click-outside="false"
+            :key="categoryInd"
+          >
+            <template #head="{ collapse }">
+              <app-button
+                class="app__module-content-title"
+                scheme="default"
+                color="default"
+                size="default"
+                @click="collapse.toggle"
+              >
+                <icon
+                  class="app__title-icon"
+                  :name="
+                    collapse.isOpen
+                      ? $icons.arrowUpTriangle
+                      : $icons.arrowDownTriangle
+                  "
+                />
+                {{ category.title }}
+              </app-button>
+            </template>
+            <template #default>
+              <div class="app__form-control app__collapsed-fields">
+                <div class="app__form-control">
+                  <div
+                    v-for="(input, inputInd) of category.inputs"
+                    class="app__field-row"
+                    :key="inputInd"
+                  >
+                    <input-field
+                      class="app__module-field"
+                      scheme="secondary"
+                      v-model="form.data[categoryInd + 1][inputInd]"
+                      :label="input.label"
+                      :error-message="
+                        useFormArray[categoryInd + 1].getFieldErrorMessage(
+                          `${inputInd}`,
+                        )
+                      "
+                      @blur="
+                        useFormArray[categoryInd + 1].touchField(`${inputInd}`)
+                      "
+                    />
+                    <div class="app__field-tooltip">
+                      <info-tooltip
+                        :text="input.tooltip ? input.tooltip : ''"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </collapse>
           <app-button
-            v-if="button?.isShown"
+            v-if="!button?.isHidden?.value"
             class="app__submit-btn app__submit-btn--cutted"
             type="submit"
             :text="
               button?.label ? button.label : $t('deploy-form.default-btn-lbl')
             "
             size="small"
-            :disabled="!button?.isEnabled?.value"
+            :disabled="!isAllFieldsValid"
           />
           <div v-else class="app__deploy-loader">
             <loader :scheme="SCHEMES.cubes" />
@@ -277,7 +391,8 @@ init()
     >
       <template #default>
         <deploy-success-message
-          :deploy-metadata="modal.metadata"
+          :deploy-metadata="modal.metadata.value"
+          :txt="modal.txt"
           @submit="
             () => {
               updateIsShownModal(false)
@@ -285,7 +400,7 @@ init()
                 name: $routes.productEdit,
                 params: {
                   id: route.params.id,
-                  contractAddress: modal.potentialContractAddress,
+                  contractAddress: modal.potentialContractAddress.value,
                 },
               })
             }

@@ -2,8 +2,10 @@
 import { Icon, AppButton, LinkCopy } from '@/common'
 import { useI18n } from 'vue-i18n'
 import { DeployMetadata } from '@/modules/common'
+import { ModalText } from '@/modules/types'
 
 defineProps<{
+  txt?: ModalText
   deployMetadata: DeployMetadata
 }>()
 
@@ -18,7 +20,7 @@ const { t } = useI18n({
     en: {
       'deploy-success-message.title': 'Success',
       'deploy-success-message.description':
-        'Congratulations! You’ve just deployed your contract for Fungible Tokens!',
+        'Congratulations! You’ve just deployed your contract!',
       'deploy-success-message.name-lbl': 'Name',
       'deploy-success-message.symbol-lbl': 'Symbol',
       'deploy-success-message.decimals-lbl': 'Decimals',
@@ -39,7 +41,7 @@ const { t } = useI18n({
         :name="$icons.checkCircle"
       />
       <h5 class="app__deploy-success-message__title">
-        {{ t('deploy-success-message.title') }}
+        {{ txt?.title ?? t('deploy-success-message.title') }}
       </h5>
       <app-button
         scheme="default"
@@ -50,7 +52,7 @@ const { t } = useI18n({
       />
     </div>
     <span class="app__deploy-success-message__description">
-      {{ t('deploy-success-message.description') }}
+      {{ txt?.description ?? t('deploy-success-message.description') }}
     </span>
 
     <div v-if="deployMetadata" class="app__metadata">
