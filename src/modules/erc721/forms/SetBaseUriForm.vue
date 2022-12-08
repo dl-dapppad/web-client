@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, url } from '@/validators'
-import { ProductInteractionForm } from '@/modules/common'
+import { ProductInteractionForm } from '@/modules/forms'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 enum EMITS {

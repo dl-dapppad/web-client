@@ -1,15 +1,23 @@
 <script lang="ts" setup>
 import { useRoute } from '@/router'
-import { defineAsyncComponent } from 'vue-demi'
+import { defineAsyncComponent, Component } from 'vue-demi'
+
+import { ErrorHandler } from '@/helpers'
 
 const route = useRoute()
 
-const DeployForm = defineAsyncComponent(
-  () =>
-    import(
-      `@/modules/${route.params.id}/${route.params.id}/forms/DeployForm.vue`
-    ),
-)
+let DeployForm: Component
+
+try {
+  DeployForm = defineAsyncComponent(
+    () =>
+      import(
+        `@/modules/${route.params.id}/${route.params.id}/forms/DeployForm.vue`
+      ),
+  )
+} catch (err) {
+  ErrorHandler.process(err)
+}
 </script>
 
 <template>

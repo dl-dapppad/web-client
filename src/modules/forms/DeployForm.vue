@@ -146,7 +146,7 @@ init()
             })
           "
         />
-        <h2 class="app__module-title" @click="updateIsShownModal(true)">
+        <h2 class="app__module-title">
           {{
             headingData?.title
               ? headingData.title

@@ -1,50 +1,28 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { Erc20EditForm, Erc721EditForm } from '@/modules'
-import { useRoute, useRouter } from '@/router'
-import { Post } from '@/types'
-import { PRODUCT_IDS, ROUTE_NAMES } from '@/enums'
-import { useProduct } from '@/composables'
-import postsData from '@/assets/posts.json'
+import { useRoute } from '@/router'
+import { defineAsyncComponent, Component } from 'vue-demi'
+
+import { ErrorHandler } from '@/helpers'
 
 const route = useRoute()
-const router = useRouter()
-const composableProduct = useProduct()
 
-const posts = ref<Post[]>([])
-const post = computed(() => {
-  return posts.value.find(el => el.id === route.params.id)
-})
+let EditForm: Component
 
-const init = async () => {
-  posts.value = postsData as unknown as Post[]
-
-  const productType = await composableProduct.getProductTypeByAddress(
-    route.params.contractAddress as string,
+try {
+  EditForm = defineAsyncComponent(
+    () =>
+      import(
+        `@/modules/${route.params.id}/${route.params.id}/forms/EditForm.vue`
+      ),
   )
-
-  if (productType !== route.params.id) {
-    router.push({
-      name: ROUTE_NAMES.productEdit,
-      params: {
-        id: productType,
-        contractAddress: route.params.contractAddress,
-      },
-    })
-  }
+} catch (err) {
+  ErrorHandler.process(err)
 }
-
-init()
 </script>
 
 <template>
   <div class="edit-form">
-    <template v-if="post?.id === PRODUCT_IDS.ERC20">
-      <erc20-edit-form class="edit-form__module" />
-    </template>
-    <template v-if="post?.id === PRODUCT_IDS.ERC721">
-      <erc721-edit-form class="edit-form__module" />
-    </template>
+    <edit-form />
   </div>
 </template>
 

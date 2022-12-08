@@ -11,4 +11,3 @@ export interface DeployMetadata {
 
 export { default as EditOverview } from '@/modules/common/EditOverview.vue'
 export { default as DeploySuccessMessage } from '@/modules/common/DeploySuccessMessage.vue'
-export { default as ProductInteractionForm } from '@/modules/common/ProductInteractionForm.vue'

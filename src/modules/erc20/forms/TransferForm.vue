@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, isAddress, numeric, maxBNValue } from '@/validators'
-import { ProductInteractionForm } from '@/modules/common'
+import { ProductInteractionForm } from '@/modules/forms'
 import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
 import { BN } from '@/utils'
 
