@@ -19,6 +19,7 @@ import {
 } from '@/modules/erc20/forms'
 import { EditOverview } from '@/modules/common'
 import { useProductErc20 } from '../composables/use-product-erc20'
+import { BN } from '@/utils'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -163,13 +164,16 @@ init()
         </h2>
       </div>
       <span class="app__module-subtitle">
-        <link-copy :address="erc20.address.value" class="app__link--big" />
+        <link-copy
+          :address="erc20.address.value"
+          class="app__module-subtitle"
+        />
       </span>
       <span class="app__module-description">
         {{ t('erc20.description') }}
       </span>
     </div>
-    <edit-overview :is-loaded="isLoaded" :rows="overviewRows"></edit-overview>
+    <edit-overview :is-loaded="isLoaded" :rows="overviewRows" />
     <div>
       <h3 class="app__module-block-title">
         {{ t('erc20.interaction') }}
@@ -180,17 +184,17 @@ init()
           v-if="currentTabNumber === FORM_TABS[0].number"
           class="app__module-content"
         >
-          <allowance-form :token="erc20"></allowance-form>
-          <balance-form :token="erc20"></balance-form>
+          <allowance-form :token="erc20" />
+          <balance-form :token="erc20" />
         </div>
         <div
           v-if="currentTabNumber === FORM_TABS[1].number"
           class="app__module-content"
         >
-          <approve-form :token="erc20"></approve-form>
+          <approve-form :token="erc20" />
           <transfer-form
             :token="erc20"
-            :balance="Number(formatAmount(balance, erc20.decimals.value))"
+            :balance="new BN(balance).fromFraction(erc20.decimals.value)"
             @change-balance="updateBalance"
           />
           <transfer-from-form :token="erc20" @change-balance="updateBalance" />

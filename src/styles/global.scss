@@ -154,9 +154,11 @@ a {
   }
 
   &--mobile-break-line {
-    flex-direction: column;
-    align-items: start;
-    gap: toRem(10);
+    @include respond-to(medium) {
+      flex-direction: column;
+      align-items: start;
+      gap: toRem(10);
+    }
   }
 }
 
@@ -234,10 +236,6 @@ a {
 
   &--big {
     font-size: toRem(30);
-
-    @include respond-to(medium) {
-      font-size: toRem(24);
-    }
   }
 
   &--medium {
@@ -376,6 +374,7 @@ button.app__submit-btn {
   @include respond-to(medium) {
     justify-self: start;
     grid-row: 3;
+    font-size: toRem(24);
   }
 }
 
@@ -430,6 +429,8 @@ button.app__submit-btn {
   display: flex;
   align-items: center;
   gap: toRem(12);
+  font-size: toRem(20);
+  font-family: var(--app-font-family-secondary);
 }
 
 .app__common-form__popup {

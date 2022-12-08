@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
-import { InfoTooltip, AppButton } from '@/common'
 import { handleTxError } from '@/helpers'
-import { useFormValidation } from '@/composables'
 import { required, isAddress } from '@/validators'
+import { ProductInteractionForm } from '@/modules/common'
+import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 const props = defineProps<{
@@ -25,22 +24,27 @@ const { t } = useI18n({
   },
 })
 
-const form = reactive({
-  account: '',
-})
+const formResult = {
+  type: PRODUCT_INT_FORM_RESULT_TYPES.amount,
+  data: ref(''),
+}
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    account: { required, isAddress },
-  },
-)
+const formData = {
+  title: t('balance-form.title-lbl'),
+  titleTooltip: t('balance-form.title-info'),
+  inputs: [
+    {
+      label: t('balance-form.account-lbl'),
+      tooltip: t('balance-form.account-info'),
+      validators: [required, isAddress],
+    },
+  ],
+  button: t('balance-form.btn-lbl'),
+}
 
-const result = ref('')
-
-const submit = async () => {
+const submit = async ([account]: string[]) => {
   try {
-    result.value = await props.token.balanceOf(form.account)
+    formResult.data.value = await props.token.balanceOf(account)
   } catch (e) {
     handleTxError(e)
   }
@@ -48,38 +52,9 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('balance-form.title-info')" />
-        {{ t('balance-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          class="app__module-field"
-          v-model="form.account"
-          scheme="secondary"
-          :label="t('balance-form.account-lbl')"
-          :error-message="getFieldErrorMessage('account')"
-          @blur="touchField('account')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('balance-form.account-info')" />
-        </div>
-      </div>
-      <div class="app__common-form__button-wrp">
-        <app-button
-          class="app__submit-btn"
-          type="button"
-          size="small"
-          :text="t('balance-form.btn-lbl')"
-          :disabled="!isFieldsValid"
-          @click="submit"
-        />
-        <div v-if="result">
-          {{ result }}
-        </div>
-      </div>
-    </div>
-  </div>
+  <product-interaction-form
+    :form-data="formData"
+    :result="formResult"
+    @submit="submit"
+  />
 </template>

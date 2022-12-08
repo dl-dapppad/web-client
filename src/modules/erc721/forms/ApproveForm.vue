@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { InputField } from '@/fields'
 import { txWrapper } from '@/helpers'
-import { InfoTooltip, AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
 import { required, isAddress, numeric, integer } from '@/validators'
+import { ProductInteractionForm } from '@/modules/common'
 import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
 
 const props = defineProps<{
@@ -30,72 +28,35 @@ const { t } = useI18n({
 })
 
 const txProcessing = ref(false)
-const form = reactive({
-  to: '',
-  tokenId: '',
-})
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    to: { required, isAddress },
-    tokenId: { required, numeric, integer },
-  },
-)
+const formData = {
+  title: t('approve-form.title-lbl'),
+  titleTooltip: t('approve-form.title-info'),
+  inputs: [
+    {
+      label: t('approve-form.to-lbl'),
+      tooltip: t('approve-form.to-info'),
+      validators: [required, isAddress],
+    },
+    {
+      label: t('approve-form.token-lbl'),
+      tooltip: t('approve-form.token-info'),
+      validators: [required, numeric, integer],
+    },
+  ],
+  button: t('approve-form.btn-lbl'),
+  buttonDisabled: txProcessing,
+}
 
-const submit = async () => {
+const submit = async ([to, tokenId]: string[]) => {
   txProcessing.value = true
 
-  await txWrapper(props.token.approve, {
-    to: form.to,
-    tokenId: form.tokenId,
-  })
+  await txWrapper(props.token.approve, { to, tokenId })
 
   txProcessing.value = false
 }
 </script>
 
 <template>
-  <div class="app__common-form">
-    <div class="app__form-control">
-      <span class="app__form-control-title app__common-form__title">
-        <info-tooltip :text="t('approve-form.title-info')" />
-        {{ t('approve-form.title-lbl') }}
-      </span>
-      <div class="app__field-row">
-        <input-field
-          class="app__module-field"
-          v-model="form.to"
-          scheme="secondary"
-          :label="t('approve-form.to-lbl')"
-          :error-message="getFieldErrorMessage('to')"
-          @blur="touchField('to')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('approve-form.to-info')" />
-        </div>
-      </div>
-      <div class="app__field-row">
-        <input-field
-          class="app__module-field"
-          v-model="form.tokenId"
-          scheme="secondary"
-          :label="t('approve-form.token-lbl')"
-          :error-message="getFieldErrorMessage('tokenId')"
-          @blur="touchField('tokenId')"
-        />
-        <div class="app__field-tooltip">
-          <info-tooltip :text="t('approve-form.token-info')" />
-        </div>
-      </div>
-      <app-button
-        class="app__submit-btn"
-        type="button"
-        size="small"
-        :text="t('approve-form.btn-lbl')"
-        :disabled="!isFieldsValid || txProcessing"
-        @click="submit"
-      />
-    </div>
-  </div>
+  <product-interaction-form :form-data="formData" @submit="submit" />
 </template>

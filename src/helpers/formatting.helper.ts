@@ -33,6 +33,8 @@ const formatFromBN = (str: string): string => {
   return str
 }
 
-export function cropAddress(address: string, showFirstSymbols = 5) {
-  return `${address.slice(0, showFirstSymbols)}...${address.slice(-4)}`
+export function cropAddress(address: string, showFirstSymbols = 5): string {
+  return address.length <= showFirstSymbols + 4
+    ? address
+    : `${address.slice(0, showFirstSymbols)}...${address.slice(-4)}`
 }

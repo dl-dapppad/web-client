@@ -16,6 +16,7 @@ import { createI18nMessage, MessageProps } from '@vuelidate/validators'
 import { get } from 'lodash-es'
 import { i18n } from '@/localization'
 import { ethers } from 'ethers'
+import { BN } from '@/utils'
 
 const { t } = i18n.global || i18n
 
@@ -50,6 +51,15 @@ export const minValue = (num: number): ValidationRule =>
 
 export const maxValue = (num: number): ValidationRule =>
   <ValidationRule>withI18nMessage(_maxValue(num))
+
+export const maxBNValue = (maxAmount: BN | number | string) =>
+  <ValidationRule>withI18nMessage({
+    $validator: (num: BN | number | string) =>
+      new BN(num).compare(maxAmount) !== 1,
+    $params: {
+      type: 'maxBNValue',
+    },
+  })
 
 export const sameAs = (field: Ref): ValidationRule => {
   return <ValidationRule>withI18nMessage(_sameAs(field, get(field, '_key')))

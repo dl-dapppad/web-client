@@ -376,6 +376,6 @@ $description-z-index: 5;
 .main-page__sphere-logo {
   max-width: toRem(375);
   width: 100%;
-  padding: 0 toRem(40);
+  padding: 0 toRem(40) toRem(70);
 }
 </style>

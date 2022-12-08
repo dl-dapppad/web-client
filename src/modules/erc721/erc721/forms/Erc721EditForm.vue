@@ -52,6 +52,12 @@ const FORM_TABS = [
   },
 ]
 
+const router = useRouter()
+const route = useRoute()
+const erc721 = useProductErc721(route.params.contractAddress as string)
+
+const isLoaded = ref(false)
+
 const currentTabNumber = ref(FORM_TABS[0].number)
 const overviewRows = ref<Array<OverviewRow>>([
   {
@@ -67,7 +73,8 @@ const overviewRows = ref<Array<OverviewRow>>([
   {
     name: t('erc721.baseURI'),
     value: '',
-    type: OVERVIEW_ROW.link,
+    type:
+      erc721.baseURI.value === '' ? OVERVIEW_ROW.default : OVERVIEW_ROW.link,
   },
   {
     name: t('erc721.balance'),
@@ -75,12 +82,6 @@ const overviewRows = ref<Array<OverviewRow>>([
     type: OVERVIEW_ROW.default,
   },
 ])
-
-const router = useRouter()
-const route = useRoute()
-const erc721 = useProductErc721(route.params.contractAddress as string)
-
-const isLoaded = ref(false)
 
 const init = async () => {
   erc721.init(route.params.contractAddress as string)
@@ -155,7 +156,10 @@ init()
         </h2>
       </div>
       <span class="app__module-subtitle">
-        <link-copy :address="erc721.address.value" class="app__link--big" />
+        <link-copy
+          :address="erc721.address.value"
+          class="app__module-subtitle"
+        />
       </span>
       <span class="app__module-description">
         {{ t('erc721.description') }}
