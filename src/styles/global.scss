@@ -330,6 +330,14 @@ button.app__submit-btn {
   }
 }
 
+.app__module-span {
+  font-size: toRem(20);
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
+}
+
 .app__module-heading {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

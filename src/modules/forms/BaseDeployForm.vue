@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, Ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { ValidationRule } from '@vuelidate/core'
 
 import {
@@ -14,10 +15,12 @@ import {
 } from '@/common'
 import { SelectField, InputField } from '@/fields'
 import { Product, useFormValidation } from '@/composables'
-import { formatAmount } from '@/helpers'
+import { formatAmount, getEmptyChain, getChain } from '@/helpers'
 import { config } from '@/config'
+import { Chain } from '@/types'
 import { BN } from '@/utils'
 import { required } from '@/validators'
+import { useWeb3ProvidersStore } from '@/store'
 
 import { SCHEMES } from '@/common/Loader.vue'
 import { DeploySuccessMessage } from '@/modules/common'
@@ -31,6 +34,8 @@ import {
 
 const router = useRouter()
 const route = useRoute()
+
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const props = defineProps<{
   isSuccessModalShown?: boolean
@@ -80,6 +85,8 @@ const selectedPaymentToken = ref({
 })
 const product = ref<Product>()
 const useFormArray = [] as UseForm[]
+const chain = ref<Chain>(getEmptyChain())
+chain.value = getChain(provider.value.chainId)
 
 // data to useForm
 const form = reactive({
@@ -227,7 +234,31 @@ onMounted(() => init())
         }}
       </span>
     </div>
-    <app-block class="app__module-content-wrp">
+    <app-block
+      v-if="chain?.id === '5' && isBalanceInsuficient"
+      :class="{
+        'app__module-content-wrp': chain?.id === '5' && isBalanceInsuficient,
+      }"
+    >
+      <div class="app__module-content">
+        <div class="app__module-content-inner">
+          <div class="app__metadata-row app__metadata-row--mobile-break-line">
+            <span class="app__module-span">
+              {{ $t('deploy-form.empty-balance-lbl') }}</span
+            >
+            <app-button
+              class="app__submit-btn"
+              :text="$t('deploy-form.mint-tokens-btn')"
+            />
+          </div>
+        </div>
+      </div>
+    </app-block>
+    <app-block
+      :class="{
+        'app__module-content-wrp': !(chain?.id === '5' && isBalanceInsuficient),
+      }"
+    >
       <div class="app__module-content">
         <div class="app__module-content-inner">
           <collapse
