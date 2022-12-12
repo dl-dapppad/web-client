@@ -8,17 +8,10 @@ const route = useRoute()
 
 let EditForm: Component
 
-const path = makeProductPath(route.params.id as string)
-
-const comps = import.meta.glob('@/modules/**/forms/EditForm.vue')
-
-let importPath = ''
-for (const comp in comps) {
-  if (comp.includes(path)) importPath = comp
-}
-
 try {
-  EditForm = defineAsyncComponent(() => import(importPath))
+  EditForm = defineAsyncComponent(
+    () => import(makeProductPath(route.params.id as string, 'edit')),
+  )
 } catch (err) {
   ErrorHandler.process(err)
 }

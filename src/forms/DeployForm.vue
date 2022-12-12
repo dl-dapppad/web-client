@@ -8,17 +8,10 @@ const route = useRoute()
 
 let DeployForm: Component
 
-const path = makeProductPath(route.params.id as string)
-
-const comps = import.meta.glob('@/modules/**/forms/DeployForm.vue')
-
-let importPath = ''
-for (const comp in comps) {
-  if (comp.includes(path)) importPath = comp
-}
-
 try {
-  DeployForm = defineAsyncComponent(() => import(importPath))
+  DeployForm = defineAsyncComponent(
+    () => import(makeProductPath(route.params.id as string, 'deploy')),
+  )
 } catch (err) {
   ErrorHandler.process(err)
 }
