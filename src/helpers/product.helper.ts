@@ -149,4 +149,4 @@ export const getSelectedTokenInfo = async (
 }
 
 export const makeProductPath = (product: string) =>
-  /-/.test(product) ? [product.split('-')[0], product] : [product]
+  /-/.test(product) ? `${product.split('-')[0]}/${product}` : product
