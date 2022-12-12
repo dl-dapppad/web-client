@@ -5,7 +5,7 @@ import { formatAmount } from '@/helpers'
 import { required, isAddress } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
 import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
-import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
+import { ProductErc20Contract } from '@/modules/erc20/erc20-base/composables/use-product-erc20'
 
 const props = defineProps<{
   token: ProductErc20Contract
