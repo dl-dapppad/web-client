@@ -50,7 +50,7 @@
     ]
   },
   {
-    "id": "erc20",
+    "id": "erc20-base",
     "type": "product",
     "subPosts": [],
     "bannerUrl": "/images/erc20.png",
@@ -130,7 +130,7 @@
     ]
   },
   {
-    "id": "erc721",
+    "id": "erc721-base",
     "type": "product",
     "subPosts": [],
     "bannerUrl": "/images/erc721.png",

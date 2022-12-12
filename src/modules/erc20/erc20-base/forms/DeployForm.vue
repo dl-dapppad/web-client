@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia'
 
 import { useWeb3ProvidersStore } from '@/store'
 import { required, isAddress, numeric } from '@/validators'
-import { deploy } from '@/helpers/deploy.helper'
+import { deploy } from '@/helpers'
 import { BN } from '@/utils'
 import { DeployMetadata } from '@/modules/common'
 import { BaseDeployForm } from '@/modules/forms'

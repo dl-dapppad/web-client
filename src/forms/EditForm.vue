@@ -2,18 +2,18 @@
 import { useRoute } from '@/router'
 import { defineAsyncComponent, Component } from 'vue-demi'
 
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, makeProductPath } from '@/helpers'
 
 const route = useRoute()
 
 let EditForm: Component
 
 try {
-  EditForm = defineAsyncComponent(
-    () =>
-      import(
-        `@/modules/${route.params.id}/${route.params.id}/forms/EditForm.vue`
-      ),
+  const path = makeProductPath(route.params.id as string)
+  EditForm = defineAsyncComponent(() =>
+    path.length === 1
+      ? import(`@/modules/${path[0]}/forms/EditForm.vue`)
+      : import(`@/modules/${path[0]}/${path[1]}/forms/EditForm.vue`),
   )
 } catch (err) {
   ErrorHandler.process(err)

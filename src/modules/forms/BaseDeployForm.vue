@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { ref, computed, Ref, reactive } from 'vue'
+import { ref, computed, Ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { ValidationRule } from '@vuelidate/core'
 
 import {
   AppBlock,
@@ -26,7 +27,7 @@ import {
   getSelectedTokenInfo,
   getAvailableTokenList,
   getProduct,
-} from '@/helpers/deploy.helper'
+} from '@/helpers'
 
 const router = useRouter()
 const route = useRoute()
@@ -78,34 +79,34 @@ const selectedPaymentToken = ref({
   decimals: 0,
 })
 const product = ref<Product>()
+const useFormArray = [] as UseForm[]
 
 // data to useForm
 const form = reactive({
   data: [['']] as string[][],
 })
-const validators = [[{ required }]]
+const validators: {
+  [key: string]: ValidationRule
+}[][] = [[{ required }]]
 
 // filling useForm data
-for (const [ind, category] of props.categories.entries()) {
+props.categories.forEach((category, i) => {
   form.data.push([])
   validators.push([])
 
-  for (const [i, input] of category.inputs.entries()) {
-    form.data[ind + 1].push(input.value ?? '')
+  category.inputs.forEach((input, k) => {
+    form.data[i + 1].push(input.value ?? '')
+    validators[i + 1].push({ required })
 
-    validators[ind + 1].push({})
+    if (!input.validators) return
+    input.validators.forEach(validator => {
+      validators[i + 1][k][validator?.$params?.type] = validator
+    })
+  })
+})
 
-    if (input.validators) {
-      for (const validator of input.validators) {
-        validators[ind + 1][i][validator?.$params?.type] = validator
-      }
-    }
-  }
-}
-
-// creating and filling useForm array
-const useFormArray = [] as UseForm[]
-for (const [i, category] of form.data.entries()) {
+// filling useForm array
+form.data.forEach((category, i) => {
   useFormArray.push({} as UseForm)
 
   const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
@@ -116,7 +117,7 @@ for (const [i, category] of form.data.entries()) {
   useFormArray[i].getFieldErrorMessage = getFieldErrorMessage
   useFormArray[i].touchField = touchField
   useFormArray[i].isFieldsValid = isFieldsValid
-}
+})
 
 const isAllFieldsValid = computed(() => {
   let result = true
@@ -184,7 +185,7 @@ const init = async () => {
   productPaymentToken.value.balance = balance
 }
 
-init()
+onMounted(() => init())
 </script>
 
 <template>
@@ -375,7 +376,7 @@ init()
               button?.label ? button.label : $t('deploy-form.default-btn-lbl')
             "
             size="small"
-            :disabled="!isAllFieldsValid"
+            :disabled="isBalanceInsuficient || !isAllFieldsValid"
           />
           <div v-else class="app__deploy-loader">
             <loader :scheme="SCHEMES.cubes" />

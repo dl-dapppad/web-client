@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { required } from '@/validators'
-import { deploy } from '@/helpers/deploy.helper'
+import { deploy } from '@/helpers'
 import { BaseDeployForm } from '@/modules/forms'
 import { DeployMetadata } from '@/modules/common/index'
 
