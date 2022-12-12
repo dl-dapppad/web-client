@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, isAddress, numeric } from '@/validators'
-import { ProductInteractionForm } from '@/modules/common'
-import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
+import { ProductInteractionForm } from '@/modules/forms'
+import { ProductErc20Contract } from '@/modules/erc20/erc20-base/composables/use-product-erc20'
 import { BN } from '@/utils'
 
 enum EMITS {

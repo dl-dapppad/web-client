@@ -192,5 +192,16 @@
   },
   "edit": {
     "overview": "Overview"
+  },
+  "deploy-form": {
+    "default-title": "Deploy",
+    "default-subtitle": "Token",
+    "default-description": "You are going to deploy some token.",
+    "default-btn-lbl": "Buy",
+    "payment-group": "Payment info",
+    "payment-lbl": "Payment token",
+    "payment-info": "Select the token you want to pay with",
+    "payment-balance": "Your balance",
+    "product-price": "Product price"
   }
 }

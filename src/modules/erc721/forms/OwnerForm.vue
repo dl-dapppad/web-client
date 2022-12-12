@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { handleTxError } from '@/helpers'
 import { required, numeric, integer } from '@/validators'
-import { ProductInteractionForm } from '@/modules/common'
+import { ProductInteractionForm } from '@/modules/forms'
 import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
-import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
+import { ProductErc721Contract } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
 
 const props = defineProps<{
   token: ProductErc721Contract

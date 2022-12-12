@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { Icon, AppButton, LinkCopy } from '@/common'
 import { useI18n } from 'vue-i18n'
-import { DeployERC20Metadata } from '@/modules/erc20/common'
+import { DeployMetadata } from '@/modules/common'
+import { ModalText } from '@/modules/types'
 
-const props = defineProps<{
-  deployMetadata?: DeployERC20Metadata
+defineProps<{
+  txt?: ModalText
+  deployMetadata: DeployMetadata
 }>()
 
 const emit = defineEmits<{
@@ -16,16 +18,16 @@ const { t } = useI18n({
   locale: 'en',
   messages: {
     en: {
-      'deploy-erc20.title': 'Success',
-      'deploy-erc20.description':
-        'Congratulations! You’ve just deployed your contract for Fungible Tokens!',
-      'deploy-erc20.name-lbl': 'Name',
-      'deploy-erc20.symbol-lbl': 'Symbol',
-      'deploy-erc20.decimals-lbl': 'Decimals',
-      'deploy-erc20.mint-amount-lbl': 'Minted',
-      'deploy-erc20.mint-receiver-lbl': 'Minted to',
-      'deploy-erc20.contract-lbl': 'Contract address',
-      'deploy-erc20.btn-lbl': 'Go to edit',
+      'deploy-success-message.title': 'Success',
+      'deploy-success-message.description':
+        'Congratulations! You’ve just deployed your contract!',
+      'deploy-success-message.name-lbl': 'Name',
+      'deploy-success-message.symbol-lbl': 'Symbol',
+      'deploy-success-message.decimals-lbl': 'Decimals',
+      'deploy-success-message.mint-amount-lbl': 'Minted',
+      'deploy-success-message.mint-receiver-lbl': 'Minted to',
+      'deploy-success-message.contract-lbl': 'Contract address',
+      'deploy-success-message.btn-lbl': 'Go to edit',
     },
   },
 })
@@ -39,7 +41,7 @@ const { t } = useI18n({
         :name="$icons.checkCircle"
       />
       <h5 class="app__deploy-success-message__title">
-        {{ t('deploy-erc20.title') }}
+        {{ txt?.title ?? t('deploy-success-message.title') }}
       </h5>
       <app-button
         scheme="default"
@@ -50,69 +52,69 @@ const { t } = useI18n({
       />
     </div>
     <span class="app__deploy-success-message__description">
-      {{ t('deploy-erc20.description') }}
+      {{ txt?.description ?? t('deploy-success-message.description') }}
     </span>
 
-    <div v-if="props.deployMetadata" class="app__metadata">
+    <div v-if="deployMetadata" class="app__metadata">
       <div class="app__metadata-row">
         <span class="app__metadata-lbl">
-          {{ t('deploy-erc20.name-lbl') }}
+          {{ t('deploy-success-message.name-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ props.deployMetadata.name }}
+          {{ deployMetadata.name }}
         </span>
       </div>
       <div class="app__metadata-row">
         <span class="app__metadata-lbl">
-          {{ t('deploy-erc20.symbol-lbl') }}
+          {{ t('deploy-success-message.symbol-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ props.deployMetadata.symbol }}
+          {{ deployMetadata.symbol }}
         </span>
       </div>
-      <div class="app__metadata-row">
+      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
         <span class="app__metadata-lbl">
-          {{ t('deploy-erc20.decimals-lbl') }}
+          {{ t('deploy-success-message.decimals-lbl') }}
         </span>
         <span class="app__metadata-value">
-          {{ props.deployMetadata.decimals }}
+          {{ deployMetadata.erc20Metadata.decimals }}
         </span>
       </div>
-      <div class="app__metadata-row">
+      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
         <span class="app__metadata-lbl">
-          {{ t('deploy-erc20.mint-amount-lbl') }}
+          {{ t('deploy-success-message.mint-amount-lbl') }}
         </span>
         <span class="app__metadata-value">
           <span class="app__price">
-            {{ props.deployMetadata.mintAmount }}
+            {{ deployMetadata.erc20Metadata.mintAmount }}
             <span class="app__price-asset">
-              {{ props.deployMetadata.symbol }}
+              {{ deployMetadata.symbol }}
             </span>
           </span>
         </span>
       </div>
-      <div class="app__metadata-row">
+      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
         <span class="app__metadata-lbl">
-          {{ t('deploy-erc20.mint-receiver-lbl') }}
+          {{ t('deploy-success-message.mint-receiver-lbl') }}
         </span>
         <link-copy
-          :address="props.deployMetadata.mintReceiver"
+          :address="deployMetadata.erc20Metadata.mintReceiver"
           class="app__link--accented"
         />
       </div>
       <div class="app__metadata-row">
         <span class="app__metadata-lbl">
-          {{ t('deploy-erc20.contract-lbl') }}
+          {{ t('deploy-success-message.contract-lbl') }}
         </span>
         <link-copy
-          :address="props.deployMetadata.contract"
+          :address="deployMetadata.contract"
           class="app__link--accented"
         />
       </div>
     </div>
     <app-button
       class="app__deploy-success-message__submit"
-      :text="t('deploy-erc20.btn-lbl')"
+      :text="t('deploy-success-message.btn-lbl')"
       size="small"
       @click="emit('submit')"
     />

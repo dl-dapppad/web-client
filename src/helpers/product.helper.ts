@@ -14,8 +14,8 @@ import { BN } from '@/utils'
 import { Interface } from 'ethers/lib/utils'
 import { config } from '@/config'
 
-import erc20Abi from '@/modules/erc20/erc20/abi/ERC20.json'
-import erc721Abi from '@/modules/erc721/erc721/abi/ERC721.json'
+import erc20Abi from '@/modules/erc20/erc20-base/abi/ERC20.json'
+import erc721Abi from '@/modules/erc721/erc721-base/abi/ERC721.json'
 import { PRODUCT_IDS } from '@/enums'
 
 export const deploy = async (
@@ -146,4 +146,22 @@ export const getSelectedTokenInfo = async (
   })
 
   return data
+}
+
+export const makeProductPath = (product: string, form: 'deploy' | 'edit') => {
+  const path = /-/.test(product)
+    ? `${product.split('-')[0]}/${product}`
+    : product
+
+  const comps =
+    form === 'deploy'
+      ? import.meta.glob('@/modules/**/forms/DeployForm.vue')
+      : import.meta.glob('@/modules/**/forms/EditForm.vue')
+
+  let importPath = ''
+  for (const comp in comps) {
+    if (comp.includes(path)) importPath = comp
+  }
+
+  return importPath
 }

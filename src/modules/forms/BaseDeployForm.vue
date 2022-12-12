@@ -1,58 +1,68 @@
 <script lang="ts" setup>
-import { reactive, ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { ref, computed, Ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { ValidationRule } from '@vuelidate/core'
 
 import {
   AppBlock,
   AppButton,
   Collapse,
-  Modal,
   Icon,
   InfoTooltip,
   Loader,
+  Modal,
 } from '@/common'
-import { InputField, SelectField } from '@/fields'
-import { useFormValidation, Product } from '@/composables'
-import { required } from '@/validators'
+import { SelectField, InputField } from '@/fields'
+import { Product, useFormValidation } from '@/composables'
 import { formatAmount } from '@/helpers'
-import {
-  deploy,
-  getAvailableTokenList,
-  getSelectedTokenInfo,
-  getProduct,
-} from '@/helpers/deploy.helper'
-import { PRODUCT_IDS } from '@/enums'
 import { config } from '@/config'
 import { BN } from '@/utils'
-import DeploySuccessMessage from '@/modules/erc721/common/DeploySuccessMessage.vue'
-import { DeployERC721Metadata } from '@/modules/erc721/common/index'
+import { required } from '@/validators'
+
 import { SCHEMES } from '@/common/Loader.vue'
+import { DeploySuccessMessage } from '@/modules/common'
+import { DeployMetadata } from '@/modules/common'
+import { Input, ModalText, UseForm } from '@/modules/types'
+import {
+  getSelectedTokenInfo,
+  getAvailableTokenList,
+  getProduct,
+} from '@/helpers'
 
-const { t } = useI18n({
-  locale: 'en',
-  messages: {
-    en: {
-      'erc721.title': 'Deploy',
-      'erc721.subtitle': 'Token ERC-721',
-      'erc721.description':
-        'Deploy your product on chain. You should deploy product smart contract only one time with a transaction.',
-      'erc721.payment-group': 'Payment info',
-      'erc721.payment-lbl': 'Payment token',
-      'erc721.payment-info': 'Select the token you want to pay with',
-      'erc721.payment-balance': 'Your balance',
-      'erc721.product-price': 'Product price',
+const router = useRouter()
+const route = useRoute()
 
-      'erc721.token-group': 'NFT info',
-      'erc721.name-lbl': 'NFT name',
-      'erc721.name-info': 'Enter the token name',
-      'erc721.symbol-lbl': 'Token symbol',
-      'erc721.symbol-info': 'Enter the token symbol',
+const props = defineProps<{
+  isSuccessModalShown?: boolean
+  headingData?: {
+    title?: string
+    subtitle?: string
+    description?: string
+  }
+  button?: {
+    label?: string
+    isHidden?: Ref<boolean>
+  }
+  modal: {
+    metadata: Ref<DeployMetadata>
+    potentialContractAddress: Ref<string>
+    txt?: ModalText
+  }
+  categories: {
+    title: string
+    inputs: Input[]
+  }[]
+}>()
 
-      'erc721.btn-lbl': 'Buy',
-    },
-  },
-})
+enum EVENTS {
+  submit = 'submit',
+  updateisSuccessModalShown = 'update:isSuccessModalShown',
+}
+
+const emits = defineEmits<{
+  (e: EVENTS.submit, data: string[][]): void
+  (e: EVENTS.updateisSuccessModalShown, val: boolean): void
+}>()
 
 const paymentTokens = ref<Record<string, Array<string>>>({
   symbols: [],
@@ -69,29 +79,53 @@ const selectedPaymentToken = ref({
   decimals: 0,
 })
 const product = ref<Product>()
+const useFormArray = [] as UseForm[]
 
-const isSuccessModalShown = ref(false)
-
-const router = useRouter()
-const route = useRoute()
-
-const deployMetadata = ref<DeployERC721Metadata>()
-const potentialContractAddress = ref('')
-const txProcessing = ref(false)
+// data to useForm
 const form = reactive({
-  paymentToken: '',
-  name: '',
-  symbol: '',
+  data: [['']] as string[][],
+})
+const validators: {
+  [key: string]: ValidationRule
+}[][] = [[{ required }]]
+
+// filling useForm data
+props.categories.forEach((category, i) => {
+  form.data.push([])
+  validators.push([])
+
+  category.inputs.forEach((input, k) => {
+    form.data[i + 1].push(input.value ?? '')
+    validators[i + 1].push({ required })
+
+    if (!input.validators) return
+    input.validators.forEach(validator => {
+      validators[i + 1][k][validator?.$params?.type] = validator
+    })
+  })
 })
 
-const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
-  form,
-  {
-    paymentToken: { required },
-    name: { required },
-    symbol: { required },
-  },
-)
+// filling useForm array
+form.data.forEach((category, i) => {
+  useFormArray.push({} as UseForm)
+
+  const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
+    category,
+    validators[i],
+  )
+
+  useFormArray[i].getFieldErrorMessage = getFieldErrorMessage
+  useFormArray[i].touchField = touchField
+  useFormArray[i].isFieldsValid = isFieldsValid
+})
+
+const isAllFieldsValid = computed(() => {
+  let result = true
+  useFormArray.forEach(
+    UseFormObj => (result &&= UseFormObj.isFieldsValid.value),
+  )
+  return result
+})
 
 const isBalanceInsuficient = computed(() =>
   product.value?.currentPrice
@@ -100,6 +134,38 @@ const isBalanceInsuficient = computed(() =>
       ) === 1
     : false,
 )
+
+const submit = () => {
+  const result = JSON.parse(JSON.stringify(form.data))
+  result[0][0] =
+    paymentTokens.value.addresses[
+      paymentTokens.value.symbols.findIndex(
+        symbol => symbol === form.data[0][0],
+      )
+    ]
+  emits(EVENTS.submit, result)
+}
+
+const updateIsShownModal = (val: boolean) => {
+  emits(EVENTS.updateisSuccessModalShown, val)
+}
+
+const updatePayment = async (val: string | number) => {
+  form.data[0][0] = val as string
+
+  const { symbol, decimals, balance } = await getSelectedTokenInfo(
+    paymentTokens.value.addresses[
+      paymentTokens.value.symbols.findIndex(symbol => symbol === val)
+    ],
+  )
+
+  selectedPaymentToken.value = {
+    ...selectedPaymentToken.value,
+    symbol,
+    decimals: Number(decimals),
+    balance,
+  }
+}
 
 const init = async () => {
   const { symbols, addresses } = await getAvailableTokenList()
@@ -113,55 +179,13 @@ const init = async () => {
   if (!addresses.length) return
 
   const { symbol, decimals, balance } = await getSelectedTokenInfo(addresses[0])
+
   productPaymentToken.value.symbol = symbol
   productPaymentToken.value.decimals = Number(decimals)
   productPaymentToken.value.balance = balance
 }
 
-const getSelectedPaymentAddress = () => {
-  return paymentTokens.value.addresses[
-    paymentTokens.value.symbols.findIndex(
-      symbol => symbol === form.paymentToken,
-    )
-  ]
-}
-
-const onPaymentChange = async () => {
-  const { symbol, decimals, balance } = await getSelectedTokenInfo(
-    getSelectedPaymentAddress(),
-  )
-
-  selectedPaymentToken.value.symbol = symbol
-  selectedPaymentToken.value.decimals = Number(decimals)
-  selectedPaymentToken.value.balance = balance
-}
-
-const submit = async () => {
-  const paymentTokenAddress = getSelectedPaymentAddress()
-
-  txProcessing.value = true
-  potentialContractAddress.value = await deploy(
-    route.params.id as string,
-    paymentTokenAddress,
-    [form.name, form.symbol],
-  )
-
-  if (!potentialContractAddress.value) {
-    txProcessing.value = false
-    return
-  }
-
-  deployMetadata.value = {
-    name: form.name,
-    symbol: form.symbol,
-    contract: potentialContractAddress.value,
-  }
-
-  isSuccessModalShown.value = true
-  txProcessing.value = false
-}
-
-init()
+onMounted(() => init())
 </script>
 
 <template>
@@ -176,19 +200,31 @@ init()
           @click="
             router.push({
               name: $routes.product,
-              params: { id: PRODUCT_IDS.ERC721 },
+              params: { id: route.params.id },
             })
           "
         />
         <h2 class="app__module-title">
-          {{ t('erc721.title') }}
+          {{
+            headingData?.title
+              ? headingData.title
+              : $t('deploy-form.default-title')
+          }}
         </h2>
       </div>
       <span class="app__module-subtitle">
-        {{ t('erc721.subtitle') }}
+        {{
+          headingData?.subtitle
+            ? headingData.subtitle
+            : $t('deploy-form.default-subtitle')
+        }}
       </span>
       <span class="app__module-description">
-        {{ t('erc721.description') }}
+        {{
+          headingData?.description
+            ? headingData.description
+            : $t('deploy-form.default-description')
+        }}
       </span>
     </div>
     <app-block class="app__module-content-wrp">
@@ -215,7 +251,7 @@ init()
                       : $icons.arrowDownTriangle
                   "
                 />
-                {{ t('erc721.payment-group') }}
+                {{ $t('deploy-form.payment-group') }}
               </app-button>
             </template>
             <template #default>
@@ -223,13 +259,14 @@ init()
                 <div class="app__select-wrp">
                   <div class="app__field-row">
                     <select-field
-                      v-model="form.paymentToken"
-                      :label="t('erc721.payment-lbl')"
+                      class="app__module-field"
+                      :model-value="form.data[0][0]"
+                      :label="$t('deploy-form.payment-lbl')"
                       :value-options="paymentTokens.symbols"
-                      @update:model-value="onPaymentChange"
+                      @update:model-value="updatePayment"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip :text="t('erc721.payment-info')" />
+                      <info-tooltip :text="$t('deploy-form.payment-info')" />
                     </div>
                   </div>
                   <template
@@ -237,7 +274,7 @@ init()
                   >
                     <div class="app__row">
                       <span class="app__row-title">
-                        {{ t('erc721.product-price') }}
+                        {{ $t('deploy-form.product-price') }}
                       </span>
                       <div class="app__balance">
                         {{
@@ -251,7 +288,7 @@ init()
                     </div>
                     <div v-if="selectedPaymentToken.balance" class="app__row">
                       <span class="app__row-title">
-                        {{ t('erc721.payment-balance') }}
+                        {{ $t('deploy-form.payment-balance') }}
                       </span>
                       <div
                         class="app__balance app__balance-small"
@@ -274,9 +311,11 @@ init()
             </template>
           </collapse>
           <collapse
+            v-for="(category, categoryInd) of categories"
             class="app__form-control"
             is-opened-by-default
             :is-close-by-click-outside="false"
+            :key="categoryInd"
           >
             <template #head="{ collapse }">
               <app-button
@@ -294,34 +333,35 @@ init()
                       : $icons.arrowDownTriangle
                   "
                 />
-                {{ t('erc721.token-group') }}
+                {{ category.title }}
               </app-button>
             </template>
             <template #default>
               <div class="app__form-control app__collapsed-fields">
                 <div class="app__form-control">
-                  <div class="app__field-row">
+                  <div
+                    v-for="(input, inputInd) of category.inputs"
+                    class="app__field-row"
+                    :key="inputInd"
+                  >
                     <input-field
+                      class="app__module-field"
                       scheme="secondary"
-                      v-model="form.name"
-                      :label="t('erc721.name-lbl')"
-                      :error-message="getFieldErrorMessage('name')"
-                      @blur="touchField('name')"
+                      v-model="form.data[categoryInd + 1][inputInd]"
+                      :label="input.label"
+                      :error-message="
+                        useFormArray[categoryInd + 1].getFieldErrorMessage(
+                          `${inputInd}`,
+                        )
+                      "
+                      @blur="
+                        useFormArray[categoryInd + 1].touchField(`${inputInd}`)
+                      "
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip :text="t('erc721.name-info')" />
-                    </div>
-                  </div>
-                  <div class="app__field-row">
-                    <input-field
-                      scheme="secondary"
-                      v-model="form.symbol"
-                      :label="t('erc721.symbol-lbl')"
-                      :error-message="getFieldErrorMessage('symbol')"
-                      @blur="touchField('symbol')"
-                    />
-                    <div class="app__field-tooltip">
-                      <info-tooltip :text="t('erc721.symbol-info')" />
+                      <info-tooltip
+                        :text="input.tooltip ? input.tooltip : ''"
+                      />
                     </div>
                   </div>
                 </div>
@@ -329,40 +369,48 @@ init()
             </template>
           </collapse>
           <app-button
-            v-if="!txProcessing"
+            v-if="!button?.isHidden?.value"
             class="app__submit-btn app__submit-btn--cutted"
             type="submit"
-            :text="t('erc721.btn-lbl')"
+            :text="
+              button?.label ? button.label : $t('deploy-form.default-btn-lbl')
+            "
             size="small"
-            :disabled="!isFieldsValid"
+            :disabled="isBalanceInsuficient || !isAllFieldsValid"
           />
           <div v-else class="app__deploy-loader">
             <loader :scheme="SCHEMES.cubes" />
-            <p>{{ t('product-deploy.tx-processing') }}</p>
-            <p>{{ t('product-deploy.tx-processing-description') }}</p>
+            <p>{{ $t('product-deploy.tx-processing') }}</p>
+            <p>{{ $t('product-deploy.tx-processing-description') }}</p>
           </div>
         </div>
       </div>
     </app-block>
-    <modal v-model:is-shown="isSuccessModalShown">
-      <template #default="{ modal }">
+    <modal
+      :is-shown="isSuccessModalShown"
+      @update:is-shown="updateIsShownModal"
+    >
+      <template #default>
         <deploy-success-message
-          :deploy-metadata="deployMetadata"
+          :deploy-metadata="modal.metadata.value"
+          :txt="modal.txt"
           @submit="
             () => {
-              modal.close()
+              updateIsShownModal(false)
               router.push({
                 name: $routes.productEdit,
                 params: {
-                  id: PRODUCT_IDS.ERC721,
-                  contractAddress: potentialContractAddress,
+                  id: route.params.id,
+                  contractAddress: modal.potentialContractAddress.value,
                 },
               })
             }
           "
-          @close="modal.close"
+          @close="updateIsShownModal(false)"
         />
       </template>
     </modal>
   </form>
 </template>
+
+<style lang="scss" scoped></style>

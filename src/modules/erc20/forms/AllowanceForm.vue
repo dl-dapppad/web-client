@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { required, isAddress } from '@/validators'
 import { formatAmount } from '@/helpers'
-import { ProductInteractionForm } from '@/modules/common'
+import { ProductInteractionForm } from '@/modules/forms'
 import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
-import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
+import { ProductErc20Contract } from '@/modules/erc20/erc20-base/composables/use-product-erc20'
 
 const props = defineProps<{
   token: ProductErc20Contract
