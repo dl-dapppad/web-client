@@ -196,8 +196,10 @@ const mintToken = async () => {
 
   await txWrapper(erc20Mock.mint, {
     to: provider.value.selectedAddress as string,
-    amount: '10000',
+    amount: '10000000000000000000000',
   })
+
+  await updatePayment(form.data[0][0])
 }
 
 const init = async () => {
