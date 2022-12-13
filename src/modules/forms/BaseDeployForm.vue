@@ -184,7 +184,8 @@ const updatePayment = async (val: string | number) => {
 const mintToken = async () => {
   if (chain.value?.id !== ETHEREUM_CHAINS.goerli) return
 
-  const tokenAddress = paymentTokens.value.addresses[
+  const tokenAddress =
+    paymentTokens.value.addresses[
       paymentTokens.value.symbols.findIndex(
         symbol => symbol === form.data[0][0],
       )
