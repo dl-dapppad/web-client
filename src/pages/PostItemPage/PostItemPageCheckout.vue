@@ -427,6 +427,7 @@ init()
 }
 
 .post-item-page-checkout__block-input-wrp {
+  flex: 1;
   display: flex;
   align-items: center;
   flex-direction: row-reverse;

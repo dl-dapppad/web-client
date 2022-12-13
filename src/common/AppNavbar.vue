@@ -292,6 +292,7 @@ $navbar-z-index: 10;
   display: flex;
   align-items: stretch;
   width: 100%;
+  min-height: toRem(65);
   padding: toRem(10) var(--app-padding-right) toRem(10) var(--app-padding-left);
   background: var(--background-primary);
   border-bottom: toRem(1) solid var(--border-primary-main);
@@ -303,7 +304,10 @@ $navbar-z-index: 10;
   }
 
   &--disconnected:not(.app-navbar--fixed) {
-    padding: toRem(5) var(--app-padding-right) toRem(5) var(--app-padding-left);
+    @include respond-to(medium) {
+      padding: toRem(5) var(--app-padding-right) toRem(5)
+        var(--app-padding-left);
+    }
   }
 
   @include respond-to(xmedium) {
@@ -511,10 +515,7 @@ $navbar-z-index: 10;
 
 .app-navbar__provider-btn {
   margin-left: auto;
-
-  &--disconnected {
-    padding: toRem(10) toRem(24);
-  }
+  padding: toRem(10) toRem(24);
 
   @include respond-to(xmedium) {
     margin: 0;
