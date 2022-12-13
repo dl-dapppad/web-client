@@ -23,8 +23,9 @@ const composableProduct = useProduct()
 
 const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
+
 const addressSearchInput = ref('')
-const mobileSearchElem = ref<HTMLElement | null>(null)
+
 const chain = ref<Chain>(getEmptyChain())
 const accountAddress = ref()
 
@@ -222,7 +223,6 @@ const handleMobileSearchBtn = () => {
         @before-leave="setWidthCSSVar"
       >
         <input-field
-          ref="mobileSearchElem"
           class="app-navbar__search-mobile"
           v-show="isMobileSearchOpened"
           v-model="addressSearchInput"
