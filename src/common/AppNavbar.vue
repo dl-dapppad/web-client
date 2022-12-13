@@ -22,7 +22,10 @@ const dapp = useErc20()
 const composableProduct = useProduct()
 
 const isMobileDrawerOpened = ref(false)
+const isMobileSearchOpened = ref(false)
+
 const addressSearchInput = ref('')
+
 const chain = ref<Chain>(getEmptyChain())
 const accountAddress = ref()
 
@@ -30,6 +33,18 @@ const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
     ? (isMobileDrawerOpened.value = false)
     : (isMobileDrawerOpened.value = !isMobileDrawerOpened.value)
+}
+
+const closeMobileSearch = () => {
+  isMobileSearchOpened.value = false
+}
+
+const openMobileSearch = () => {
+  isMobileSearchOpened.value = true
+}
+
+const setWidthCSSVar = (element: HTMLElement) => {
+  element.style.setProperty('--mobile-search-width', `${element.scrollWidth}px`)
 }
 
 const init = async () => {
@@ -92,18 +107,16 @@ const isNavbarFixed = computed(
 )
 
 init()
+
+const handleMobileSearchBtn = () => {
+  isMobileSearchOpened.value ? clickContractSearch() : openMobileSearch()
+}
 </script>
 
 <template>
   <div class="app-navbar__wrp">
     <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
-      <div class="app-navbar__logo-wrp">
-        <icon
-          class="app-navbar__search-icon-mobile"
-          :name="$icons.searchFilled"
-        />
-        <app-logo class="app-navbar__logo" />
-      </div>
+      <app-logo class="app-navbar__logo" />
       <template v-if="provider.isConnected">
         <div class="app-navbar__farm-farm-balance">
           <span class="app-navbar__farm-farm-balance-amount">
@@ -204,9 +217,37 @@ init()
         :icon-right="provider.selectedAddress ? $icons.logout : undefined"
         @click="handleProviderBtnClick"
       />
-      <div v-if="provider.selectedAddress" class="app-navbar__menu-farming-wrp">
+      <transition
+        name="app-navbar__mobile-search-transition"
+        @enter="setWidthCSSVar"
+        @before-leave="setWidthCSSVar"
+      >
+        <input-field
+          class="app-navbar__search-mobile"
+          v-show="isMobileSearchOpened"
+          v-model="addressSearchInput"
+          :placeholder="$t('app-navbar.search-placeholder')"
+          scheme="secondary"
+        >
+          <template #nodeLeft>
+            <app-button
+              class="app-navbar__search-mobile-close-btn"
+              scheme="default"
+              :icon-right="$icons.x"
+              @click="closeMobileSearch"
+            />
+          </template>
+        </input-field>
+      </transition>
+      <div v-if="provider.selectedAddress" class="app-navbar__menu-wrp">
         <app-button
-          class="app-navbar__farming-btn-icon"
+          class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
+          scheme="default"
+          :icon-right="$icons.searchFilled"
+          @click.stop="handleMobileSearchBtn"
+        />
+        <app-button
+          class="app-navbar__menu-wrp-item"
           scheme="default"
           :icon-right="$icons.gift"
           :route="{ name: $routes.farming }"
@@ -249,31 +290,13 @@ $navbar-z-index: 10;
   }
 
   @include respond-to(medium) {
-    padding: toRem(25) var(--app-padding-right) toRem(25)
+    padding: toRem(15) var(--app-padding-right) toRem(15)
       var(--app-padding-left);
   }
 }
 
-.app-navbar__logo-wrp {
-  display: flex;
-  align-items: center;
-  gap: toRem(20);
-}
-
 .app-navbar__logo {
   max-width: toRem(70);
-}
-
-.app-navbar__search-icon-mobile {
-  display: none;
-  max-width: toRem(14);
-  max-height: toRem(14);
-  min-width: toRem(14);
-  min-height: toRem(14);
-
-  @include respond-to(xmedium) {
-    display: block;
-  }
 }
 
 .app-navbar__farm-farm-balance {
@@ -319,6 +342,45 @@ $navbar-z-index: 10;
   }
 }
 
+.app-navbar__search-mobile {
+  padding: 0;
+  display: none;
+  position: absolute;
+  z-index: $navbar-z-index;
+  width: calc(100% - #{toRem(170)});
+  min-height: toRem(30);
+  transform: translateY(-#{toRem(5)});
+  overflow: hidden;
+
+  /* stylelint-disable */
+  &:not(.app-navbar__mobile-search-transition-enter-active)
+    :not(.app-navbar__mobile-search-transition-leave-active)
+    :deep(input) {
+    width: 100%;
+  }
+  /* stylelint-enable */
+
+  :not([disabled]) {
+    height: 100%;
+  }
+
+  @include respond-to(medium) {
+    display: grid;
+  }
+
+  @include respond-to(small) {
+    width: calc(100% - #{toRem(140)});
+  }
+}
+
+.app-navbar__search-mobile-close-btn {
+  padding: 0;
+  width: toRem(16);
+  height: toRem(16);
+  display: flex;
+  align-items: center;
+}
+
 .app-navbar__search-icon {
   max-width: toRem(14);
   max-height: toRem(14);
@@ -326,12 +388,11 @@ $navbar-z-index: 10;
   min-width: toRem(14);
   padding: 0;
 
-  &--tablet {
-    display: none;
-
-    @include respond-to(xmedium) {
-      display: block;
-    }
+  &--mobile {
+    max-width: toRem(15);
+    max-height: toRem(15);
+    min-height: toRem(15);
+    min-width: toRem(15);
   }
 }
 
@@ -431,7 +492,7 @@ $navbar-z-index: 10;
   }
 }
 
-.app-navbar__menu-farming-wrp {
+.app-navbar__menu-wrp {
   display: none;
   align-items: center;
   gap: toRem(35);
@@ -441,9 +502,13 @@ $navbar-z-index: 10;
   }
 }
 
-.app-navbar__farming-btn-icon {
+.app-navbar__menu-wrp-item {
   padding: 0;
   font-size: toRem(14);
+
+  &--search {
+    z-index: $navbar-z-index;
+  }
 }
 
 .app-navbar__mobile-filler {
@@ -453,6 +518,24 @@ $navbar-z-index: 10;
 
   &--visible {
     display: block;
+  }
+}
+
+.app-navbar__mobile-search-transition-enter-active {
+  animation: mobile-search-frame-keyframes 0.25s ease-in-out;
+}
+
+.app-navbar__mobile-search-transition-leave-active {
+  animation: mobile-search-frame-keyframes 0.25s ease-in-out reverse;
+}
+
+@keyframes mobile-search-frame-keyframes {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: var(--mobile-search-width);
   }
 }
 </style>
