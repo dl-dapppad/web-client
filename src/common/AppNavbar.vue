@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ref, watch, computed, onMounted } from 'vue'
-import { useWindowSize, onClickOutside } from '@vueuse/core'
+import { ref, watch, computed } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20, useProduct } from '@/composables'
@@ -107,13 +107,9 @@ const isNavbarFixed = computed(
 
 init()
 
-onMounted(() => {
-  if (mobileSearchElem.value) {
-    onClickOutside(mobileSearchElem, () => {
-      closeMobileSearch()
-    })
-  }
-})
+const handleMobileSearchBtn = () => {
+  isMobileSearchOpened.value ? clickContractSearch() : openMobileSearch()
+}
 </script>
 
 <template>
@@ -233,22 +229,22 @@ onMounted(() => {
           :placeholder="$t('app-navbar.search-placeholder')"
           scheme="secondary"
         >
-          <template #nodeRight>
+          <template #nodeLeft>
             <app-button
+              class="app-navbar__search-mobile-icon"
               scheme="default"
-              class="app-navbar__search-icon app-navbar__search-icon--mobile"
-              :icon-right="$icons.searchFilled"
-              @click="clickContractSearch"
+              :icon-right="$icons.x"
+              @click="closeMobileSearch"
             />
           </template>
         </input-field>
       </transition>
       <div v-if="provider.selectedAddress" class="app-navbar__menu-wrp">
         <app-button
-          class="app-navbar__menu-wrp-item"
+          class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
           scheme="default"
           :icon-right="$icons.searchFilled"
-          @click="openMobileSearch"
+          @click.stop="handleMobileSearchBtn"
         />
         <app-button
           class="app-navbar__menu-wrp-item"
@@ -294,7 +290,7 @@ $navbar-z-index: 10;
   }
 
   @include respond-to(medium) {
-    padding: toRem(25) var(--app-padding-right) toRem(25)
+    padding: toRem(15) var(--app-padding-right) toRem(15)
       var(--app-padding-left);
   }
 }
@@ -351,14 +347,15 @@ $navbar-z-index: 10;
   display: none;
   position: absolute;
   z-index: $navbar-z-index;
-  min-width: toRem(165);
   width: calc(100% - #{toRem(170)});
   min-height: toRem(30);
   transform: translateY(-#{toRem(5)});
   overflow: hidden;
 
   /* stylelint-disable */
-  &:deep(input) {
+  &:not(.app-navbar__mobile-search-transition-enter-active)
+    :not(.app-navbar__mobile-search-transition-leave-active)
+    :deep(input) {
     width: 100%;
   }
   /* stylelint-enable */
@@ -374,6 +371,14 @@ $navbar-z-index: 10;
   @include respond-to(small) {
     width: calc(100% - #{toRem(140)});
   }
+}
+
+.app-navbar__search-mobile-icon {
+  padding: 0;
+  width: toRem(16);
+  height: toRem(16);
+  display: flex;
+  align-items: center;
 }
 
 .app-navbar__search-icon {
@@ -500,6 +505,10 @@ $navbar-z-index: 10;
 .app-navbar__menu-wrp-item {
   padding: 0;
   font-size: toRem(14);
+
+  &--search {
+    z-index: $navbar-z-index;
+  }
 }
 
 .app-navbar__mobile-filler {
