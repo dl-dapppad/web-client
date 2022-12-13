@@ -20,9 +20,8 @@ import {
   useErc20Mock,
   useFarming,
 } from '@/composables'
-import { formatAmount, getEmptyChain, getChain, txWrapper } from '@/helpers'
+import { formatAmount, txWrapper } from '@/helpers'
 import { config } from '@/config'
-import { Chain } from '@/types'
 import { BN } from '@/utils'
 import { required } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
@@ -92,8 +91,6 @@ const selectedPaymentToken = ref({
 })
 const product = ref<Product>()
 const useFormArray = [] as UseForm[]
-const chain = ref<Chain>(getEmptyChain())
-chain.value = getChain(provider.value.chainId)
 
 // data to useForm
 const form = reactive({
@@ -182,7 +179,7 @@ const updatePayment = async (val: string | number) => {
 }
 
 const mintToken = async () => {
-  if (chain.value?.id !== ETHEREUM_CHAINS.goerli) return
+  if (provider.value.chainId != ETHEREUM_CHAINS.goerli) return
 
   const tokenAddress =
     paymentTokens.value.addresses[
@@ -265,10 +262,10 @@ onMounted(() => init())
       </span>
     </div>
     <app-block
-      v-if="chain?.id === ETHEREUM_CHAINS.goerli && isBalanceInsuficient"
+      v-if="provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient"
       :class="{
         'app__module-content-wrp':
-          chain?.id === ETHEREUM_CHAINS.goerli && isBalanceInsuficient,
+          provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient,
       }"
     >
       <div class="app__module-content">
@@ -289,7 +286,7 @@ onMounted(() => init())
     <app-block
       :class="{
         'app__module-content-wrp': !(
-          chain?.id === ETHEREUM_CHAINS.goerli && isBalanceInsuficient
+          provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient
         ),
       }"
     >
