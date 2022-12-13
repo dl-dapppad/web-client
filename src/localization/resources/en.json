@@ -202,6 +202,8 @@
     "payment-lbl": "Payment token",
     "payment-info": "Select the token you want to pay with",
     "payment-balance": "Your balance",
-    "product-price": "Product price"
+    "product-price": "Product price",
+    "empty-balance-lbl": "Your balance is empty",
+    "mint-tokens-btn": "Mint Tokens"
   }
 }

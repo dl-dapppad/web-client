@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, Ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { ValidationRule } from '@vuelidate/core'
 
 import {
@@ -13,11 +14,18 @@ import {
   Modal,
 } from '@/common'
 import { SelectField, InputField } from '@/fields'
-import { Product, useFormValidation } from '@/composables'
-import { formatAmount } from '@/helpers'
+import {
+  Product,
+  useFormValidation,
+  useErc20Mock,
+  useFarming,
+} from '@/composables'
+import { formatAmount, txWrapper } from '@/helpers'
 import { config } from '@/config'
 import { BN } from '@/utils'
 import { required } from '@/validators'
+import { useWeb3ProvidersStore } from '@/store'
+import { ETHEREUM_CHAINS } from '@/enums'
 
 import { SCHEMES } from '@/common/Loader.vue'
 import { DeploySuccessMessage } from '@/modules/common'
@@ -31,6 +39,9 @@ import {
 
 const router = useRouter()
 const route = useRoute()
+const farming = useFarming()
+
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const props = defineProps<{
   isSuccessModalShown?: boolean
@@ -167,6 +178,27 @@ const updatePayment = async (val: string | number) => {
   }
 }
 
+const mintToken = async () => {
+  if (provider.value.chainId != ETHEREUM_CHAINS.goerli) return
+
+  const tokenAddress =
+    paymentTokens.value.addresses[
+      paymentTokens.value.symbols.findIndex(
+        symbol => symbol === form.data[0][0],
+      )
+    ]
+
+  const erc20Mock = useErc20Mock()
+  erc20Mock.init(tokenAddress)
+
+  await txWrapper(erc20Mock.mint, {
+    to: provider.value.selectedAddress as string,
+    amount: '10000000000000000000000',
+  })
+
+  await updatePayment(form.data[0][0])
+}
+
 const init = async () => {
   const { symbols, addresses } = await getAvailableTokenList()
 
@@ -183,6 +215,8 @@ const init = async () => {
   productPaymentToken.value.symbol = symbol
   productPaymentToken.value.decimals = Number(decimals)
   productPaymentToken.value.balance = balance
+
+  await farming.loadDetails()
 }
 
 onMounted(() => init())
@@ -227,7 +261,35 @@ onMounted(() => init())
         }}
       </span>
     </div>
-    <app-block class="app__module-content-wrp">
+    <app-block
+      v-if="provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient"
+      :class="{
+        'app__module-content-wrp':
+          provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient,
+      }"
+    >
+      <div class="app__module-content">
+        <div class="app__module-content-inner">
+          <div class="app__metadata-row app__metadata-row--mobile-break-line">
+            <span class="app__module-span">
+              {{ $t('deploy-form.empty-balance-lbl') }}</span
+            >
+            <app-button
+              class="app__submit-btn"
+              :text="$t('deploy-form.mint-tokens-btn')"
+              @click="mintToken"
+            />
+          </div>
+        </div>
+      </div>
+    </app-block>
+    <app-block
+      :class="{
+        'app__module-content-wrp': !(
+          provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient
+        ),
+      }"
+    >
       <div class="app__module-content">
         <div class="app__module-content-inner">
           <collapse
