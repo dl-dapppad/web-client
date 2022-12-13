@@ -118,7 +118,13 @@ const handleMobileSearchBtn = () => {
 
 <template>
   <div class="app-navbar__wrp">
-    <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
+    <div
+      class="app-navbar"
+      :class="{
+        'app-navbar--fixed': isNavbarFixed,
+        'app-navbar--disconnected': !provider.selectedAddress,
+      }"
+    >
       <app-logo class="app-navbar__logo" />
       <div
         v-if="selectedProvider === PROVIDER_TYPE.browser"
@@ -228,6 +234,10 @@ const handleMobileSearchBtn = () => {
       >
         <input-field
           class="app-navbar__search-mobile"
+          :class="{
+            'app-navbar__search-mobile--disconnected':
+              !provider.selectedAddress,
+          }"
           v-show="isMobileSearchOpened"
           v-model="addressSearchInput"
           :placeholder="$t('app-navbar.search-placeholder')"
@@ -287,6 +297,10 @@ $navbar-z-index: 10;
 
   &--fixed {
     position: fixed;
+  }
+
+  &--disconnected:not(.app-navbar--fixed) {
+    padding: toRem(5) var(--app-padding-right) toRem(5) var(--app-padding-left);
   }
 
   @include respond-to(xmedium) {
@@ -356,17 +370,21 @@ $navbar-z-index: 10;
   transform: translateY(-#{toRem(5)});
   overflow: hidden;
 
+  :not([disabled]) {
+    height: 100%;
+  }
+
   /* stylelint-disable */
   &:not(.app-navbar__mobile-search-transition-enter-active)
     :not(.app-navbar__mobile-search-transition-leave-active)
     :deep(input) {
     width: 100%;
   }
-  /* stylelint-enable */
 
-  :not([disabled]) {
-    height: 100%;
+  &--disconnected {
+    display: none !important;
   }
+  /* stylelint-enable */
 
   @include respond-to(medium) {
     display: grid;
