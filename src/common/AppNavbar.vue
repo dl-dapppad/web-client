@@ -227,7 +227,7 @@ onMounted(() => {
       >
         <input-field
           ref="mobileSearchElem"
-          class="app-navbar__search app-navbar__search--mobile"
+          class="app-navbar__search-mobile"
           v-show="isMobileSearchOpened"
           v-model="addressSearchInput"
           :placeholder="$t('app-navbar.search-placeholder')"
@@ -341,21 +341,38 @@ $navbar-z-index: 10;
     height: 100%;
   }
 
-  &--mobile {
-    position: absolute;
-    z-index: $navbar-z-index;
-    width: calc(100% - #{toRem(140)});
-    min-height: toRem(30);
-    transform: translateY(-#{toRem(5)});
-    overflow: hidden;
-  }
-
   @include respond-to(xmedium) {
     display: none;
+  }
+}
 
-    &--mobile {
-      display: grid;
-    }
+.app-navbar__search-mobile {
+  padding: 0;
+  display: none;
+  position: absolute;
+  z-index: $navbar-z-index;
+  min-width: toRem(165);
+  width: calc(100% - #{toRem(170)});
+  min-height: toRem(30);
+  transform: translateY(-#{toRem(5)});
+  overflow: hidden;
+
+  /* stylelint-disable */
+  &:deep(input) {
+    width: 100%;
+  }
+  /* stylelint-enable */
+
+  :not([disabled]) {
+    height: 100%;
+  }
+
+  @include respond-to(medium) {
+    display: grid;
+  }
+
+  @include respond-to(small) {
+    width: calc(100% - #{toRem(140)});
   }
 }
 
