@@ -3,8 +3,8 @@ import { useRouter } from 'vue-router'
 import { i18n } from '@/localization'
 import { Bus } from '@/helpers'
 import { ROUTE_NAMES, PRODUCT_IDS } from '@/enums'
-import { useProductErc20 } from '@/modules/erc20/erc20/composables/use-product-erc20'
-import { useProductErc721 } from '@/modules/erc721/erc721/composables/use-product-erc721'
+import { useProductErc20 } from '@/modules/erc20/erc20-base/composables/use-product-erc20'
+import { useProductErc721 } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
 
 export const useProduct = () => {
   const router = useRouter()

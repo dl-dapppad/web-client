@@ -6,6 +6,7 @@ import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
 
 export const useAccount = () => {
+  const web3Store = useWeb3ProvidersStore()
   const { provider } = storeToRefs(useWeb3ProvidersStore())
 
   const nativeBalance = ref('0')
@@ -37,10 +38,12 @@ export const useAccount = () => {
   }
 
   watch(
-    () => provider.value.selectedAddress,
+    () => [provider.value.selectedAddress, provider.value.chainId],
     () => {
-      updateNativeBalance()
-      updateDappBalance()
+      if (web3Store.isCurrentChainAvailable) {
+        updateNativeBalance()
+        updateDappBalance()
+      }
     },
   )
 

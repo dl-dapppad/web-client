@@ -1,5 +1,7 @@
 export enum ETHEREUM_CHAINS {
   goerli = '5',
+  polygon = '137',
+  mumbai = '80001',
   localhost = '31337',
 }
 

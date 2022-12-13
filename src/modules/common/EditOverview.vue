@@ -16,7 +16,7 @@ const props = withDefaults(
 </script>
 
 <template>
-  <div>
+  <div class="edit-overview">
     <h3 class="app__module-block-title">
       {{ $t('edit.overview') }}
     </h3>
@@ -26,7 +26,7 @@ const props = withDefaults(
           <div
             v-for="row in props.rows"
             :key="row.name"
-            class="app__metadata-row"
+            class="app__metadata-row app__metadata-row--mobile-break-line"
           >
             <span class="app__metadata-lbl">
               {{ row.name }}
@@ -62,3 +62,13 @@ const props = withDefaults(
     </app-block>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.edit-overview {
+  padding: 0 0 toRem(70);
+
+  @include respond-to(medium) {
+    padding: toRem(40) 0;
+  }
+}
+</style>

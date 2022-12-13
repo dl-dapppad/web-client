@@ -66,6 +66,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
         class="app__field-row"
       >
         <input-field
+          class="app__module-field"
           v-model="form.fields[ind]"
           :label="input.label ? input.label : undefined"
           :error-message="getFieldErrorMessage(`${ind}`)"
@@ -126,5 +127,3 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped></style>

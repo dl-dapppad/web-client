@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, isAddress } from '@/validators'
-import { ProductInteractionForm } from '@/modules/common'
-import { ProductErc721Contract } from '@/modules/erc721/erc721/composables/use-product-erc721'
-import { ProductErc20Contract } from '@/modules/erc20/erc20/composables/use-product-erc20'
+import { ProductInteractionForm } from '@/modules/forms'
+import { ProductErc721Contract } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
+import { ProductErc20Contract } from '@/modules/erc20/erc20-base/composables/use-product-erc20'
 
 enum EMITS {
   changeOwner = 'change-owner',
@@ -27,7 +27,7 @@ const { t } = useI18n({
       'transfer-owner-form.title-info':
         // eslint-disable-next-line prettier/prettier
         'Transfers ownership of the contract to a new account (newOwner). Can only be called by the current owner',
-      'transfer-owner-form.owner-lbl': 'New contract owner',
+      'transfer-owner-form.owner-lbl': 'New owner',
       'transfer-owner-form.owner-info': 'Enter a new owner address',
       'transfer-owner-form.btn-lbl': 'Write',
     },

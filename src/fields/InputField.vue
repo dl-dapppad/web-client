@@ -219,6 +219,10 @@ const setHeightCSSVar = (element: HTMLElement) => {
     font-weight: 400;
     line-height: 1.3;
     letter-spacing: 0.1em;
+
+    @include respond-to(xsmall) {
+      font-size: toRem(14);
+    }
   }
 
   /* stylelint-disable-next-line */
@@ -262,6 +266,11 @@ const setHeightCSSVar = (element: HTMLElement) => {
   @include field-text;
 
   @include field-border;
+
+  @include respond-to(medium) {
+    padding: 0;
+    padding-left: toRem(16);
+  }
 
   &::-webkit-input-placeholder {
     @include field-placeholder;

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "5",
+    "name": "Goerli",
+    "explorerUrl": "https://mumbai.polygonscan.com/",
+    "symbol": "GoerliETH",
+    "decimals": 18
+  },
+  {
+    "id": "80001",
+    "name": "Mumbai",
+    "explorerUrl": "https://polygonscan.com/",
+    "symbol": "MATIC",
+    "decimals": 18
+  },
+  {
+    "id": "137",
+    "name": "Polygon",
+    "explorerUrl": "https://polygonscan.com/",
+    "symbol": "MATIC",
+    "decimals": 18
+  }
+]

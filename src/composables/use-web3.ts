@@ -38,8 +38,10 @@ export const useWeb3 = () => {
     }
 
     async function handleProviders() {
-      if (!_browserProviders.value.length) return
-      providers.value = designateBrowserProviders()
+      providers.value = [
+        ...designateBrowserProviders(),
+        ...designateRpcProviders(),
+      ]
     }
   }
 
@@ -58,6 +60,10 @@ export const useWeb3 = () => {
     return designatedProviders.filter(
       (el, idx, arr) => arr.findIndex(sec => sec.name === el.name) === idx,
     )
+  }
+
+  const designateRpcProviders = (): DesignatedProvider[] => {
+    return [{ name: PROVIDERS.rpc, instance: undefined } as DesignatedProvider]
   }
 
   const getAppropriateProviderName = (

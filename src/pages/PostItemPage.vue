@@ -158,7 +158,6 @@ $page-padding-right: toRem(165);
 }
 
 .post-item-page__banner-darker {
-  min-height: toRem(200);
   padding: toRem(50) $page-padding-right toRem(60) $page-padding-left;
   background: linear-gradient(
     90deg,
@@ -169,6 +168,10 @@ $page-padding-right: toRem(165);
   );
   border-radius: toRem(12);
   overflow: hidden;
+
+  @include respond-to(medium) {
+    padding: toRem(30) toRem(0) toRem(30) toRem(74);
+  }
 }
 
 .post-item-page__banner-title-wrp {
@@ -181,6 +184,10 @@ $page-padding-right: toRem(165);
   font-weight: 900;
   letter-spacing: 0.1em;
   color: var(--text-primary-invert-main);
+
+  @include respond-to(medium) {
+    font-size: toRem(36);
+  }
 }
 
 .post-item-page__back-btn {
@@ -191,6 +198,10 @@ $page-padding-right: toRem(165);
   height: toRem(54);
   right: calc(100% + #{toRem(56)});
   padding: 0;
+
+  @include respond-to(medium) {
+    left: -#{toRem(64)};
+  }
 }
 
 .post-item-page__content-wrp {
@@ -219,6 +230,10 @@ $page-padding-right: toRem(165);
       bottom: toRem(1);
     }
   }
+
+  @include respond-to(medium) {
+    padding: toRem(30) toRem(20);
+  }
 }
 
 .post-item-page__accented {
@@ -231,6 +246,10 @@ $page-padding-right: toRem(165);
   line-height: 1.3;
   letter-spacing: 0.1em;
   font-weight: 700;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__consolas {
@@ -239,12 +258,21 @@ $page-padding-right: toRem(165);
   line-height: 1.3;
   letter-spacing: 0.1em;
   font-weight: 700;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__paragraph {
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
+  word-break: break-word;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__paragraph-secondary {
@@ -252,6 +280,10 @@ $page-padding-right: toRem(165);
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__code-row {
@@ -261,6 +293,10 @@ $page-padding-right: toRem(165);
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__title {
@@ -270,9 +306,17 @@ $page-padding-right: toRem(165);
   letter-spacing: 0.1em;
   color: var(--text-primary-main);
 
+  @include respond-to(medium) {
+    font-size: toRem(20);
+  }
+
   &--accent {
     font-size: toRem(36);
     font-weight: 900;
+
+    @include respond-to(medium) {
+      font-size: toRem(24);
+    }
   }
 }
 
@@ -285,6 +329,10 @@ $page-padding-right: toRem(165);
 
   &--low {
     font-size: toRem(20);
+
+    @include respond-to(medium) {
+      font-size: toRem(18);
+    }
   }
 }
 
@@ -305,15 +353,22 @@ $page-padding-right: toRem(165);
 .post-item-page__img-links {
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   gap: toRem(35);
 }
 
-.post-item-page__img-links-item {
+a.post-item-page__img-links-item {
   display: flex;
   align-items: center;
   gap: toRem(10);
   color: var(--secondary-main);
   font-size: toRem(16);
+  font-weight: 700;
+
+  &:after {
+    height: 0;
+  }
 }
 
 .post-item-page__img-links-icon {
@@ -337,7 +392,10 @@ $page-padding-right: toRem(165);
 .post-item-page__unordered-list-text {
   font-size: toRem(20);
   line-height: toRem(26);
-  word-break: break-all;
+
+  @include respond-to(medium) {
+    font-size: toRem(16);
+  }
 }
 
 .post-item-page__unordered-list-icon {

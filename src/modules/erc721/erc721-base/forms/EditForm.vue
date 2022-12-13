@@ -6,20 +6,21 @@ import { storeToRefs } from 'pinia'
 import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
-import { TransferOwnershipForm, UpgradeToForm } from '@/forms'
-import { formatAmount } from '@/helpers'
+import { TransferOwnershipForm, UpgradeToForm } from '@/modules/forms'
 import { OVERVIEW_ROW } from '@/modules/enums'
 import { OverviewRow } from '@/modules/types'
 import {
   BalanceForm,
+  MintForm,
   ApproveForm,
-  AllowanceForm,
-  TransferForm,
-  TransferFromForm,
-} from '@/modules/erc20/forms'
+  ApproveAllForm,
+  SafeTransferForm,
+  OwnerForm,
+  SetBaseUriForm,
+  TokenUriForm,
+} from '../../forms'
 import { EditOverview } from '@/modules/common'
-import { useProductErc20 } from '../composables/use-product-erc20'
-import { BN } from '@/utils'
+import { useProductErc721 } from '../composables/use-product-erc721'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -27,15 +28,15 @@ const { t } = useI18n({
   locale: 'en',
   messages: {
     en: {
-      'erc20.title': 'Editing',
-      'erc20.subtitle':
+      'erc721.title': 'Editing',
+      'erc721.description':
         'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
-      'erc20.total': 'Total supply',
-      'erc20.tracker': 'Token tracker',
-      'erc20.owner': 'Owner address',
-      'erc20.decimals': 'Decimals',
-      'erc20.balance': 'Your balance',
-      'erc20.interaction': 'Interaction',
+      'erc721.tracker': 'Token tracker',
+      'erc721.owner': 'Owner address',
+      'erc721.balance': 'Your balance',
+      'erc721.interaction': 'Interaction',
+      'erc721.baseURI': 'Base URI',
+      'erc721.baseURI-default-value': 'Not set yet',
     },
   },
 })
@@ -51,71 +52,57 @@ const FORM_TABS = [
   },
 ]
 
+const router = useRouter()
+const route = useRoute()
+const erc721 = useProductErc721(route.params.contractAddress as string)
+
+const isLoaded = ref(false)
+
 const currentTabNumber = ref(FORM_TABS[0].number)
 const overviewRows = ref<Array<OverviewRow>>([
   {
-    name: t('erc20.tracker'),
+    name: t('erc721.tracker'),
     value: '',
     type: OVERVIEW_ROW.default,
   },
   {
-    name: t('erc20.total'),
-    value: '',
-    type: OVERVIEW_ROW.amount,
-  },
-  {
-    name: t('erc20.decimals'),
-    value: '',
-    type: OVERVIEW_ROW.default,
-  },
-  {
-    name: t('erc20.owner'),
+    name: t('erc721.owner'),
     value: '',
     type: OVERVIEW_ROW.address,
   },
   {
-    name: t('erc20.balance'),
+    name: t('erc721.baseURI'),
     value: '',
-    type: OVERVIEW_ROW.amount,
+    type:
+      erc721.baseURI.value === '' ? OVERVIEW_ROW.default : OVERVIEW_ROW.link,
+  },
+  {
+    name: t('erc721.balance'),
+    value: '',
+    type: OVERVIEW_ROW.default,
   },
 ])
-const balance = ref('0')
-
-const router = useRouter()
-const route = useRoute()
-const erc20 = useProductErc20(route.params.contractAddress as string)
-
-const isLoaded = ref(false)
 
 const init = async () => {
-  erc20.init(route.params.contractAddress as string)
-
-  await erc20.loadDetails()
+  erc721.init(route.params.contractAddress as string)
 
   if (provider.value.selectedAddress) {
     await Promise.all([
-      erc20.loadDetails(),
-      erc20.balanceOf(provider.value.selectedAddress),
+      erc721.loadDetails(),
+      erc721.balanceOf(provider.value.selectedAddress),
     ]).then(res => {
-      balance.value = res[1]
+      overviewRows.value[3].value = res[1]
 
       return
     })
   }
 
-  overviewRows.value[0].value = `${erc20.name.value} (${erc20.symbol.value})`
-  overviewRows.value[1].value = formatAmount(
-    erc20.totalSupply.value,
-    erc20.decimals.value,
-    erc20.symbol.value,
-  )
-  overviewRows.value[2].value = String(erc20.decimals.value)
-  overviewRows.value[3].value = erc20.owner.value
-  overviewRows.value[4].value = formatAmount(
-    balance.value,
-    erc20.decimals.value,
-    erc20.symbol.value,
-  )
+  overviewRows.value[0].value = `${erc721.name.value} (${erc721.symbol.value})`
+  overviewRows.value[1].value = erc721.owner.value
+  overviewRows.value[2].value =
+    erc721.baseURI.value === ''
+      ? t('erc721.baseURI-default-value')
+      : erc721.baseURI.value
 
   isLoaded.value = true
 }
@@ -123,18 +110,23 @@ const init = async () => {
 const updateBalance = async () => {
   if (!overviewRows.value || !provider.value.selectedAddress) return
 
-  overviewRows.value[4].value = formatAmount(
-    await erc20.balanceOf(provider.value.selectedAddress),
-    erc20.decimals.value,
-    erc20.symbol.value,
+  overviewRows.value[3].value = await erc721.balanceOf(
+    provider.value.selectedAddress,
   )
 }
 
 const updateOwner = async () => {
   if (!overviewRows.value) return
 
-  await erc20.updateOwner()
-  overviewRows.value[3].value = erc20.owner.value
+  await erc721.updateOwner()
+  overviewRows.value[1].value = erc721.owner.value
+}
+
+const updateBaseURI = async () => {
+  if (!overviewRows.value) return
+
+  await erc721.updateBaseURI()
+  overviewRows.value[2].value = erc721.baseURI.value
 }
 
 init()
@@ -142,7 +134,7 @@ init()
 
 <template>
   <div class="erc20-edit-form">
-    <div class="edit-form__titles-wrp">
+    <div class="app__module-heading">
       <div class="app__module-title-wrp">
         <app-button
           type="button"
@@ -160,21 +152,23 @@ init()
           "
         />
         <h2 class="app__module-title">
-          {{ t('erc20.title') }}
+          {{ t('erc721.title') }}
         </h2>
-        <link-copy
-          :address="erc20.address.value"
-          class="app__link--big app__link--secondary"
-        />
       </div>
       <span class="app__module-subtitle">
-        {{ t('erc20.subtitle') }}
+        <link-copy
+          :address="erc721.address.value"
+          class="app__module-subtitle"
+        />
+      </span>
+      <span class="app__module-description">
+        {{ t('erc721.description') }}
       </span>
     </div>
     <edit-overview :is-loaded="isLoaded" :rows="overviewRows" />
     <div>
       <h3 class="app__module-block-title">
-        {{ t('erc20.interaction') }}
+        {{ t('erc721.interaction') }}
       </h3>
       <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
       <app-block>
@@ -182,22 +176,24 @@ init()
           v-if="currentTabNumber === FORM_TABS[0].number"
           class="app__module-content"
         >
-          <allowance-form :token="erc20" />
-          <balance-form :token="erc20" />
+          <balance-form :token="erc721" />
+          <owner-form :token="erc721" />
+          <token-uri-form :token="erc721" />
         </div>
         <div
           v-if="currentTabNumber === FORM_TABS[1].number"
           class="app__module-content"
         >
-          <approve-form :token="erc20" />
-          <transfer-form
-            :token="erc20"
-            :balance="new BN(balance).fromFraction(erc20.decimals.value)"
-            @change-balance="updateBalance"
+          <set-base-uri-form :token="erc721" @change-base-uri="updateBaseURI" />
+          <approve-form :token="erc721" />
+          <approve-all-form :token="erc721" />
+          <mint-form :token="erc721" @change-balance="updateBalance" />
+          <safe-transfer-form :token="erc721" />
+          <transfer-ownership-form
+            :token="erc721"
+            @change-owner="updateOwner"
           />
-          <transfer-from-form :token="erc20" @change-balance="updateBalance" />
-          <transfer-ownership-form :token="erc20" @change-owner="updateOwner" />
-          <upgrade-to-form :token="erc20" />
+          <upgrade-to-form :token="erc721" />
         </div>
       </app-block>
     </div>

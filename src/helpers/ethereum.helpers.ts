@@ -4,7 +4,7 @@ import { EthProviderRpcError } from '@/types'
 import { errors } from '@/errors'
 import { EIP1193, EIP1474 } from '@/enums'
 import { BN } from '@/utils'
-import { Bus } from '@/helpers'
+import { Bus, ErrorHandler } from '@/helpers'
 import { useAccountStore, useWeb3ProvidersStore } from '@/store'
 
 export const connectEthAccounts = async (
@@ -96,8 +96,15 @@ export const txWrapper = async (
   args?: Record<string, string>,
 ): Promise<boolean> => {
   try {
-    const providerStore = useWeb3ProvidersStore()
+    const { t } = i18n.global
+
     const accountStore = useAccountStore()
+    const providerStore = useWeb3ProvidersStore()
+
+    if (!providerStore.provider.selectedAddress) {
+      ErrorHandler.process(new Error(t('errors.provider-unconnected')))
+      return false
+    }
 
     let tx
     if (args) tx = await callback(args)

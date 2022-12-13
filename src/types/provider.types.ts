@@ -9,12 +9,11 @@ import { ethers } from 'ethers'
 
 import { PROVIDERS } from '@/enums'
 import { EthereumProvider } from '@/types/ethereum.types'
-import { PhantomProvider } from '@/types/solana.types'
 
 /**
  * Non defined provider from browser
  */
-export type ProviderInstance = EthereumProvider | PhantomProvider | unknown
+export type ProviderInstance = EthereumProvider | unknown
 
 /**
  * provider, which we've designated, it has a name and instance
@@ -55,11 +54,13 @@ export type TransactionResponse =
  * which we can use to solve user needs
  */
 export interface ProviderWrapper {
-  currentProvider?: ComputedRef<ethers.providers.Web3Provider>
-  currentSigner?: ComputedRef<ethers.providers.JsonRpcSigner>
+  currentProvider?: ComputedRef<
+    ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider | undefined
+  >
+  currentSigner?: ComputedRef<ethers.providers.JsonRpcSigner | undefined>
 
-  chainId: Ref<ChainId>
-  selectedAddress: Ref<string>
+  chainId: Ref<ChainId | undefined>
+  selectedAddress: Ref<string | undefined>
   isConnected: ComputedRef<boolean>
 
   init: () => Promise<void>
@@ -70,13 +71,7 @@ export interface ProviderWrapper {
     chainName: string,
     chainRpcUrl: string,
   ) => Promise<void>
-  signAndSendTransaction: (
-    txRequestBody: TxRequestBody,
-  ) => Promise<TransactionResponse>
-  getHashFromTxResponse: (txResponse: TransactionResponse) => string
-  getTxUrl: (txHash: string) => string
-  getAddressUrl: (address: string) => string
-  disconnect?: () => void
+  disconnect: () => void
 }
 
 export type { UseProvider } from '@/composables/useProvider'

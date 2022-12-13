@@ -16,6 +16,7 @@
     "provider-unsupported-method": "The Provider does not support the requested method.",
     "provider-disconnected": "The Provider is disconnected from all chains.",
     "provider-chain-disconnected": "The Provider is not connected to the requested chain.",
+    "provider-chain-invalid": "This chain is not supported, please select an available chain.",
     "provider-parse-error": "Invalid JSON standard",
     "provider-invalid-request": "JSON is not a valid request object standard",
     "provider-method-not-found": "Method does not exist standard",
@@ -29,6 +30,7 @@
     "provider-limit-exceeded": "Request exceeds defined limit non-standard",
     "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported non-standard",
     "provider-wrapper-method-not-found": "provider not exist or hasn't this method",
+    "provider-unconnected": "Please, connect your MetaMask wallet.",
     "address-invalid": "The smart contract address is not correct.",
     "address-not-found": "No product with this address was found."
   },
@@ -49,16 +51,16 @@
   "filters": {
     "chains": {
       "ethereum": {
-        "mainet": "mainet",
-        "rinkeby": "rinkeby",
-        "ropsten": "ropsten",
-        "kovan": "kovan",
-        "goerli": "Goerli Testnet",
-        "polygon": "polygon",
-        "optimism": "optimism",
-        "binance": "binance",
-        "arbitrum": "arbitrum",
-        "mumbai": "mumbai",
+        "mainet": "Ethereum",
+        "rinkeby": "Rinkeby",
+        "ropsten": "Ropsten",
+        "kovan": "Kovan",
+        "goerli": "Goerli",
+        "polygon": "Polygon",
+        "optimism": "Optimism",
+        "binance": "Binance",
+        "arbitrum": "Arbitrum",
+        "mumbai": "Mumbai",
         "localhost": "Localhost"
       }
     }
@@ -112,11 +114,11 @@
     "login-success-msg": "Access granted",
     "submit-btn": "Submit"
   },
-  "post-card": {
+  "posts-page-card": {
     "subcategories-lbl": "{amount} SubCategories",
     "price-lbl": "Price"
   },
-  "post-checkout": {
+  "post-item-page-checkout": {
     "have-product-lbl": "Already have this product?",
     "have-product-input-lbl": "Contract address",
     "have-product-input-tooltip-txt": "You can edit contracts that you already have",
@@ -167,19 +169,19 @@
     "rewards-history-third-lbl": "Accured",
     "withdrawing-modal-title": "Withdrawing",
     "withdrawing-modal-text": "Withdraw, claim and unstake your DAPP tokens.",
-    "withdrawing-modal-raw-key": "Available to withdraw",
+    "withdrawing-modal-row-key": "Available to withdraw",
     "withdrawing-modal-input-label": "Amount",
     "withdrawing-modal-input-btn-lbl": "Max",
     "withdrawing-page-btn-lbl": "Withdraw",
     "staking-modal-title": "Staking DAPP",
     "staking-modal-text-first": "Stake your DAPP tokens and receive cashback rewards from each subsequent product sale.",
-    "staking-modal-raw-key": "Available to stake",
+    "staking-modal-row-key": "Available to stake",
     "staking-modal-input-label": "Amount",
     "staking-modal-input-btn-lbl": "Max",
     "staking-page-btn-lbl": "Stake",
     "claiming-modal-title": "Claiming",
     "claiming-modal-text": "Claim your rewards.",
-    "claiming-modal-raw-key": "Available to claim",
+    "claiming-modal-row-key": "Available to claim",
     "claiming-page-btn-lbl": "Claim"
   },
   "farming-history": {
@@ -192,5 +194,19 @@
   },
   "edit": {
     "overview": "Overview"
+  },
+  "deploy-form": {
+    "default-title": "Deploy",
+    "default-subtitle": "Token",
+    "default-description": "You are going to deploy some token.",
+    "default-btn-lbl": "Buy",
+    "payment-group": "Payment info",
+    "payment-lbl": "Payment token",
+    "payment-info": "Select the token you want to pay with",
+    "payment-balance": "Your balance",
+    "product-price": "Product price",
+    "empty-balance-lbl": "Your balance is empty",
+    "mint-tokens-btn": "Mint Tokens",
+    "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}"
   }
 }

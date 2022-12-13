@@ -6,10 +6,11 @@ import { Icon, Loader } from '@/common'
 import { Post } from '@/types'
 import { ROUTE_NAMES } from '@/enums'
 import { config } from '@/config'
-import { ErrorHandler, isChainAvailable, formatAmount } from '@/helpers'
+import { ErrorHandler, formatAmount } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { useErc20, useFarming, useProductFactory, Product } from '@/composables'
 
+const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const paymentToken = useErc20()
@@ -42,8 +43,7 @@ const postCardRoute = computed(() => {
 })
 
 const init = async () => {
-  if (!provider.value.chainId || !isChainAvailable(provider.value.chainId))
-    return
+  if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) return
 
   try {
     alias.value = config.PRODUCT_ALIASES[props.post.id as string]
@@ -67,28 +67,28 @@ init()
 </script>
 
 <template>
-  <div class="post-card">
-    <img class="post-card__img" :src="post.imageUrl" :alt="post.title" />
-    <h4 class="post-card__title">
+  <div class="posts-page-card">
+    <img class="posts-page-card__img" :src="post.imageUrl" :alt="post.title" />
+    <h4 class="posts-page-card__title">
       {{ post.title }}
     </h4>
-    <p class="post-card__desc">
+    <p class="posts-page-card__desc">
       {{ post.description }}
     </p>
-    <p v-if="subPostsCount" class="post-card__subcategories">
-      <icon class="post-card__subcategories-icon" :name="$icons.folder" />
+    <p v-if="subPostsCount" class="posts-page-card__subcategories">
+      <icon class="posts-page-card__subcategories-icon" :name="$icons.folder" />
       {{
-        $t('post-card.subcategories-lbl', {
+        $t('posts-page-card.subcategories-lbl', {
           amount: subPostsCount,
         })
       }}
     </p>
-    <div v-else class="post-card__price">
-      <div class="post-card__price-icon-wrp">
-        <icon class="post-card__price-icon" :name="$icons.tag" />
-        {{ $t('post-card.price-lbl') }}
+    <div v-else class="posts-page-card__price">
+      <div class="posts-page-card__price-icon-wrp">
+        <icon class="posts-page-card__price-icon" :name="$icons.tag" />
+        {{ $t('posts-page-card.price-lbl') }}
       </div>
-      <div class="post-card__price-lbl-wrp">
+      <div class="posts-page-card__price-lbl-wrp">
         <span
           v-if="paymentToken?.decimals.value"
           class="app__price app__price--big"
@@ -101,12 +101,12 @@ init()
         <loader v-else />
       </div>
     </div>
-    <router-link class="post-card__link" :to="postCardRoute" />
+    <router-link class="posts-page-card__link" :to="postCardRoute" />
   </div>
 </template>
 
 <style lang="scss" scoped>
-.post-card {
+.posts-page-card {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -115,7 +115,7 @@ init()
   height: 100%;
 }
 
-.post-card__img {
+.posts-page-card__img {
   object-fit: cover;
   object-position: center;
   width: 100%;
@@ -123,7 +123,7 @@ init()
   min-height: clamp(#{toRem(200)}, 25vw, #{toRem(350)});
 }
 
-.post-card__title {
+.posts-page-card__title {
   font-size: toRem(24);
   line-height: 1.3;
   font-weight: 700;
@@ -131,13 +131,13 @@ init()
   margin: toRem(20) 0 toRem(10);
 }
 
-.post-card__desc {
+.posts-page-card__desc {
   font-size: toRem(14);
   line-height: 1.3;
   letter-spacing: 0.1em;
 }
 
-.post-card__subcategories {
+.posts-page-card__subcategories {
   display: flex;
   align-items: center;
   gap: toRem(14);
@@ -145,7 +145,7 @@ init()
   font-weight: 700;
 }
 
-.post-card__price {
+.posts-page-card__price {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -153,32 +153,32 @@ init()
   font-weight: 700;
 }
 
-.post-card__price-icon-wrp {
+.posts-page-card__price-icon-wrp {
   display: flex;
   align-items: center;
   gap: toRem(14);
 }
 
-.post-card__subcategories-icon,
-.post-card__price-icon {
+.posts-page-card__subcategories-icon,
+.posts-page-card__price-icon {
   max-width: toRem(14);
   max-height: toRem(14);
 }
 
-.post-card__price-lbl-wrp {
+.posts-page-card__price-lbl-wrp {
   display: flex;
   justify-content: end;
   gap: toRem(6);
   min-width: toRem(150);
 }
 
-.post-card__price-lbl {
+.posts-page-card__price-lbl {
   &--small {
     font-size: toRem(12);
   }
 }
 
-.post-card__link {
+.posts-page-card__link {
   position: absolute;
   top: 0;
   left: 0;

@@ -1,15 +1,42 @@
 <script lang="ts" setup>
+import { ref, onMounted } from 'vue'
+import { useWindowSize } from '@vueuse/core'
+
 import { Icon } from '@/common'
 
-defineProps<{
+const props = defineProps<{
   text: string
+  moveSide?: 'left' | 'center' | 'right'
 }>()
+
+const { width: windowWidth } = useWindowSize()
+
+const tooltipElem = ref<HTMLElement | undefined>()
+const isMobileMovingRight = ref<boolean>(false)
+
+onMounted(() => {
+  if (!tooltipElem.value) return
+
+  isMobileMovingRight.value =
+    tooltipElem.value.getBoundingClientRect().left <= windowWidth.value / 2
+})
 </script>
 
 <template>
-  <div class="info-tooltip">
+  <div class="info-tooltip" ref="tooltipElem">
     <icon class="info-tooltip__icon" :name="$icons.informationCircleFilled" />
-    <div class="info-tooltip__message">
+    <!-- -->
+    <div
+      class="info-tooltip__message"
+      :class="{
+        'info-tooltip__message--mobile-moving-right':
+          (isMobileMovingRight && props.moveSide === undefined) ||
+          props.moveSide === 'right',
+        'info-tooltip__message--mobile-moving-left':
+          (!isMobileMovingRight && props.moveSide === undefined) ||
+          props.moveSide === 'left',
+      }"
+    >
       {{ text }}
     </div>
   </div>
@@ -25,7 +52,7 @@ defineProps<{
   position: absolute;
   bottom: 175%;
   left: 50%;
-  min-width: toRem(200);
+  width: toRem(250);
   display: none;
   justify-content: center;
   transform: translateX(-50%);
@@ -39,6 +66,24 @@ defineProps<{
     background-color: var(--secondary-main);
     bottom: -#{toRem(7)};
     transform: rotate(45deg);
+  }
+
+  @include respond-to(medium) {
+    &--mobile-moving-right {
+      transform: translateX(-20%);
+
+      &:before {
+        transform: translateX(-#{toRem(75)}) rotate(45deg);
+      }
+    }
+
+    &--mobile-moving-left {
+      transform: translateX(-80%);
+
+      &:before {
+        transform: translateX(#{toRem(75)}) rotate(45deg);
+      }
+    }
   }
 }
 
@@ -58,7 +103,9 @@ defineProps<{
 }
 
 .info-tooltip__icon {
-  height: toRem(12);
-  width: toRem(12);
+  min-height: toRem(12);
+  min-width: toRem(12);
+  max-height: toRem(12);
+  max-width: toRem(12);
 }
 </style>

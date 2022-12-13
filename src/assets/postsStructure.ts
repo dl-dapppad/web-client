@@ -10,11 +10,11 @@ export const postsBackMap = {
     name: ROUTE_NAMES.categories,
     params: { id: CATEGORIES_IDS.tokens },
   },
-  erc20: {
+  'erc20-base': {
     name: ROUTE_NAMES.categories,
     params: { id: CATEGORIES_IDS.erc20Tokens },
   },
-  erc721: {
+  'erc721-base': {
     name: ROUTE_NAMES.categories,
     params: { id: CATEGORIES_IDS.erc721Tokens },
   },

@@ -8,10 +8,10 @@ export const config = {
   APP_NAME: import.meta.env.VITE_APP_NAME,
   LOG_LEVEL: 'trace' as LogLevelDesc,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
-  AVAILABLE_CHAINS: [
-    ETHEREUM_CHAINS.goerli,
-    ETHEREUM_CHAINS.localhost,
-  ] as string[],
+  AVAILABLE_CHAINS: [ETHEREUM_CHAINS.goerli] as string[],
+  RPC_URL: {
+    [ETHEREUM_CHAINS.goerli as string]: import.meta.env.VITE_APP_RPC_URL_GOERLI,
+  },
   CONTRACTS: {
     [ETHEREUM_CHAINS.localhost as string]: {
       [CONTRACT_NAMES.DAPP]: import.meta.env.VITE_APP_CONTRACT_LOCAL_DAPP,

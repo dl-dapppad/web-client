@@ -1,18 +1,22 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
-import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+import { useWindowSize } from '@vueuse/core'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20, useProduct } from '@/composables'
-import { formatAmount, getChain, getEmptyChain, cropAddress } from '@/helpers'
-import { Chain } from '@/types'
+import { formatAmount, cropAddress, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { ErrorHandler, isChainAvailable } from '@/helpers'
 import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
+enum PROVIDER_TYPE {
+  browser = 'browser',
+  rpc = 'rpc',
+}
+
+const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
@@ -21,20 +25,41 @@ const { width: windowWidth } = useWindowSize()
 const dapp = useErc20()
 const composableProduct = useProduct()
 
+const isMobileDrawerOpened = ref(false)
+const isMobileSearchOpened = ref(false)
+
 const addressSearchInput = ref('')
-const chain = ref<Chain>(getEmptyChain())
-const accountAddress = ref()
+const selectedProvider = ref()
+
+const switchIsOpenedMobileState = (value?: boolean) => {
+  value === false
+    ? (isMobileDrawerOpened.value = false)
+    : (isMobileDrawerOpened.value = !isMobileDrawerOpened.value)
+}
+
+const closeMobileSearch = () => {
+  isMobileSearchOpened.value = false
+}
+
+const openMobileSearch = () => {
+  isMobileSearchOpened.value = true
+}
+
+const setWidthCSSVar = (element: HTMLElement) => {
+  element.style.setProperty('--mobile-search-width', `${element.scrollWidth}px`)
+}
 
 const init = async () => {
-  if (
-    !provider.value.isConnected ||
-    !provider.value.chainId ||
-    !isChainAvailable(provider.value.chainId)
-  ) {
+  if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) {
     return
   }
-  chain.value = getChain(provider.value.chainId)
-  accountAddress.value = provider.value.selectedAddress
+
+  const selectedAddress = provider.value.selectedAddress
+  selectedProvider.value = selectedAddress
+    ? PROVIDER_TYPE.browser
+    : PROVIDER_TYPE.rpc
+
+  if (!selectedAddress) return
 
   dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
   await dapp.loadDetails()
@@ -43,19 +68,19 @@ const init = async () => {
 const trySwitchChain = async (chainId: string | number) => {
   try {
     await provider.value.switchChain(chainId)
-    await useAccountStore().updateDappBalance()
-    await useAccountStore().updateNativeBalance()
   } catch (error) {
     ErrorHandler.process(error)
   }
 }
 
-const handleProviderBtnClick = () => {
+const handleProviderBtnClick = async () => {
   try {
+    await web3Store.connect()
+
     if (provider.value.selectedAddress) {
-      provider.value.disconnect()
+      selectedProvider.value = PROVIDER_TYPE.browser
     } else {
-      provider.value.connect()
+      selectedProvider.value = PROVIDER_TYPE.rpc
     }
   } catch (error) {
     ErrorHandler.process(error)
@@ -66,6 +91,17 @@ const clickContractSearch = async () => {
   composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
+const isProviderButtonShown = computed(
+  () =>
+    windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
+    !provider.value.selectedAddress,
+)
+
+const isNavbarFixed = computed(
+  () =>
+    isMobileDrawerOpened.value && windowWidth.value < WINDOW_BREAKPOINTS.medium,
+)
+
 watch(
   () => provider.value.selectedAddress,
   () => {
@@ -73,26 +109,21 @@ watch(
   },
 )
 
-const isProviderButtonShown = computed(
-  () =>
-    windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
-    !provider.value.selectedAddress,
-)
-
 init()
+
+const handleMobileSearchBtn = () => {
+  isMobileSearchOpened.value ? clickContractSearch() : openMobileSearch()
+}
 </script>
 
 <template>
-  <div class="app-navbar">
-    <div class="app-navbar__logo-wrp">
-      <icon
-        class="app-navbar__search-icon-mobile"
-        :name="$icons.searchFilled"
-      />
+  <div class="app-navbar__wrp">
+    <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
       <app-logo class="app-navbar__logo" />
-    </div>
-    <template v-if="provider.isConnected">
-      <div class="app-navbar__farm-farm-balance">
+      <div
+        v-if="selectedProvider === PROVIDER_TYPE.browser"
+        class="app-navbar__farm-farm-balance"
+      >
         <span class="app-navbar__farm-farm-balance-amount">
           <icon
             class="app-navbar__farm-farm-balance-icon"
@@ -162,10 +193,14 @@ init()
           </div>
         </template>
       </dropdown>
-      <div class="app-navbar__wallet">
+      <div v-if="provider.selectedAddress" class="app-navbar__wallet">
         <span class="app-navbar__wallet-balance">
           {{
-            formatAmount(account.nativeBalance, chain?.decimals, chain?.symbol)
+            formatAmount(
+              account.nativeBalance,
+              web3Store.currentChain.decimals,
+              web3Store.currentChain.symbol,
+            )
           }}
         </span>
         <span class="app-navbar__wallet-address">
@@ -176,72 +211,100 @@ init()
           />
         </span>
       </div>
-    </template>
-    <app-button
-      v-if="isProviderButtonShown"
-      class="app-navbar__provider-btn"
-      size="small"
-      :text="
-        !provider.selectedAddress ? $t('app-navbar.connect-btn') : undefined
-      "
-      :icon-right="provider.selectedAddress ? $icons.logout : undefined"
-      @click="handleProviderBtnClick"
-    />
-    <div v-if="provider.selectedAddress" class="app-navbar__menu-farming-wrp">
-      <icon class="app-navbar__farming-btn-icon" :name="$icons.gift" />
-      <menu-drawer
-        class="app-navbar__menu-drawer"
-        @try-switch-chain="trySwitchChain"
-        @provider-btn-click="handleProviderBtnClick"
+      <app-button
+        v-if="isProviderButtonShown"
+        class="app-navbar__provider-btn"
+        size="small"
+        :text="
+          !provider.selectedAddress ? $t('app-navbar.connect-btn') : undefined
+        "
+        :icon-right="provider.selectedAddress ? $icons.logout : undefined"
+        @click="handleProviderBtnClick"
       />
+      <transition
+        name="app-navbar__mobile-search-transition"
+        @enter="setWidthCSSVar"
+        @before-leave="setWidthCSSVar"
+      >
+        <input-field
+          class="app-navbar__search-mobile"
+          v-show="isMobileSearchOpened"
+          v-model="addressSearchInput"
+          :placeholder="$t('app-navbar.search-placeholder')"
+          scheme="secondary"
+        >
+          <template #nodeLeft>
+            <app-button
+              class="app-navbar__search-mobile-close-btn"
+              scheme="default"
+              :icon-right="$icons.x"
+              @click="closeMobileSearch"
+            />
+          </template>
+        </input-field>
+      </transition>
+      <div v-if="provider.selectedAddress" class="app-navbar__menu-wrp">
+        <app-button
+          class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
+          scheme="default"
+          :icon-right="$icons.searchFilled"
+          @click.stop="handleMobileSearchBtn"
+        />
+        <app-button
+          class="app-navbar__menu-wrp-item"
+          scheme="default"
+          :icon-right="$icons.gift"
+          :route="{ name: $routes.farming }"
+        />
+        <menu-drawer
+          class="app-navbar__menu-drawer"
+          :is-opened-state="isMobileDrawerOpened"
+          @switch-is-opened-state="switchIsOpenedMobileState"
+          @try-switch-chain="trySwitchChain"
+          @provider-btn-click="handleProviderBtnClick"
+        />
+      </div>
     </div>
+    <div
+      class="app-navbar__mobile-filler"
+      :class="{ 'app-navbar__mobile-filler--visible': isNavbarFixed }"
+    />
   </div>
 </template>
 
 <style lang="scss" scoped>
+$navbar-z-index: 10;
+
 .app-navbar {
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  width: 100%;
   padding: toRem(10) var(--app-padding-right) toRem(10) var(--app-padding-left);
   background: var(--background-primary);
   border-bottom: toRem(1) solid var(--border-primary-main);
   gap: toRem(10);
+  z-index: $navbar-z-index;
+
+  &--fixed {
+    position: fixed;
+  }
 
   @include respond-to(xmedium) {
     justify-content: space-between;
   }
 
   @include respond-to(medium) {
-    padding: toRem(25) var(--app-padding-right) toRem(25)
+    padding: toRem(15) var(--app-padding-right) toRem(15)
       var(--app-padding-left);
   }
-}
-
-.app-navbar__logo-wrp {
-  display: flex;
-  align-items: center;
-  gap: toRem(20);
 }
 
 .app-navbar__logo {
   max-width: toRem(70);
 }
 
-.app-navbar__search-icon-mobile {
-  display: none;
-  max-width: toRem(14);
-  max-height: toRem(14);
-  min-width: toRem(14);
-  min-height: toRem(14);
-
-  @include respond-to(xmedium) {
-    display: block;
-  }
-}
-
 .app-navbar__farm-farm-balance {
   display: flex;
-  height: 100%;
 
   @include respond-to(medium) {
     display: none;
@@ -273,7 +336,6 @@ init()
 .app-navbar__search {
   padding: 0;
   display: grid;
-  height: 100%;
 
   :not([disabled]) {
     height: 100%;
@@ -284,6 +346,45 @@ init()
   }
 }
 
+.app-navbar__search-mobile {
+  padding: 0;
+  display: none;
+  position: absolute;
+  z-index: $navbar-z-index;
+  width: calc(100% - #{toRem(170)});
+  min-height: toRem(30);
+  transform: translateY(-#{toRem(5)});
+  overflow: hidden;
+
+  /* stylelint-disable */
+  &:not(.app-navbar__mobile-search-transition-enter-active)
+    :not(.app-navbar__mobile-search-transition-leave-active)
+    :deep(input) {
+    width: 100%;
+  }
+  /* stylelint-enable */
+
+  :not([disabled]) {
+    height: 100%;
+  }
+
+  @include respond-to(medium) {
+    display: grid;
+  }
+
+  @include respond-to(small) {
+    width: calc(100% - #{toRem(140)});
+  }
+}
+
+.app-navbar__search-mobile-close-btn {
+  padding: 0;
+  width: toRem(16);
+  height: toRem(16);
+  display: flex;
+  align-items: center;
+}
+
 .app-navbar__search-icon {
   max-width: toRem(14);
   max-height: toRem(14);
@@ -291,19 +392,17 @@ init()
   min-width: toRem(14);
   padding: 0;
 
-  &--tablet {
-    display: none;
-
-    @include respond-to(xmedium) {
-      display: block;
-    }
+  &--mobile {
+    max-width: toRem(15);
+    max-height: toRem(15);
+    min-height: toRem(15);
+    min-width: toRem(15);
   }
 }
 
 .app-navbar__chain {
   display: grid;
   min-width: toRem(200);
-  height: 100%;
 
   @include respond-to(medium) {
     display: none;
@@ -357,7 +456,6 @@ init()
   line-height: 1;
   font-weight: 700;
   border: toRem(1) solid var(--border-secondary-main);
-  height: 100%;
 
   @include respond-to(medium) {
     display: none;
@@ -398,7 +496,7 @@ init()
   }
 }
 
-.app-navbar__menu-farming-wrp {
+.app-navbar__menu-wrp {
   display: none;
   align-items: center;
   gap: toRem(35);
@@ -408,8 +506,40 @@ init()
   }
 }
 
-.app-navbar__farming-btn-icon {
-  height: toRem(16);
-  width: toRem(16);
+.app-navbar__menu-wrp-item {
+  padding: 0;
+  font-size: toRem(14);
+
+  &--search {
+    z-index: $navbar-z-index;
+  }
+}
+
+.app-navbar__mobile-filler {
+  height: toRem(71);
+  width: 100%;
+  display: none;
+
+  &--visible {
+    display: block;
+  }
+}
+
+.app-navbar__mobile-search-transition-enter-active {
+  animation: mobile-search-frame-keyframes 0.25s ease-in-out;
+}
+
+.app-navbar__mobile-search-transition-leave-active {
+  animation: mobile-search-frame-keyframes 0.25s ease-in-out reverse;
+}
+
+@keyframes mobile-search-frame-keyframes {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: var(--mobile-search-width);
+  }
 }
 </style>

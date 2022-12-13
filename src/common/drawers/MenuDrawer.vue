@@ -1,40 +1,43 @@
 <script lang="ts" setup>
 import { Drawer, AppButton, Icon, Dropdown } from '@/common'
-import { cropAddress, formatAmount, getEmptyChain, getChain } from '@/helpers'
+import { cropAddress, formatAmount } from '@/helpers'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
-import { Chain } from '@/types'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 
+defineProps<{
+  isOpenedState: boolean
+}>()
+
 const { t } = useI18n()
 
+const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
-const chain = ref<Chain>(getEmptyChain())
-chain.value = getChain(provider.value.chainId)
+const chain = web3Store.currentChain
 
 enum EVENTS {
   trySwitchChain = 'try-switch-chain',
   providerBtnClick = 'provider-btn-click',
+  switchIsOpenedState = 'switch-is-opened-state',
 }
-
-const isDropdownOpen = ref(false)
 
 const route = useRoute()
 
 watch(route, () => {
-  isDropdownOpen.value = false
+  emit(EVENTS.switchIsOpenedState, false)
 })
 
 const emit = defineEmits<{
   (e: EVENTS.trySwitchChain, value: string | number): void
   (e: EVENTS.providerBtnClick): void
+  (e: EVENTS.switchIsOpenedState, value?: boolean): void
 }>()
 
 const trySwitchChain = (chainId: string | number) => {
@@ -44,6 +47,10 @@ const trySwitchChain = (chainId: string | number) => {
 const handleProviderBtnClick = () => {
   emit(EVENTS.providerBtnClick)
 }
+
+const switchIsOpenedState = () => {
+  emit(EVENTS.switchIsOpenedState)
+}
 </script>
 
 <template>
@@ -52,10 +59,10 @@ const handleProviderBtnClick = () => {
       class="menu-drawer__trigger"
       scheme="default"
       size="x-small"
-      :icon-right="isDropdownOpen ? $icons.x : $icons.menu"
-      @click="isDropdownOpen = !isDropdownOpen"
+      :icon-right="isOpenedState ? $icons.x : $icons.menu"
+      @click="switchIsOpenedState"
     />
-    <drawer class="menu-drawer__drawer" v-model:is-shown="isDropdownOpen">
+    <drawer class="menu-drawer__drawer" :is-shown="isOpenedState">
       <div class="menu-drawer__content">
         <div class="menu-drawer__section">
           <span class="menu-drawer__section-key">
@@ -130,6 +137,7 @@ const handleProviderBtnClick = () => {
 <style lang="scss" scoped>
 .menu-drawer__trigger {
   font-size: toRem(17);
+  transform: translateY(10%);
 }
 
 .menu-drawer__trigger-icon {
@@ -144,7 +152,7 @@ const handleProviderBtnClick = () => {
   gap: toRem(30);
   height: 100%;
   width: 100%;
-  padding: toRem(24) var(--app-padding-right) toRem(60) var(--app-padding-left);
+  padding: toRem(24) var(--app-padding-right) toRem(30) var(--app-padding-left);
 }
 
 .menu-drawer__section {

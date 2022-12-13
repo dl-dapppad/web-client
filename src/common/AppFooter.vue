@@ -58,6 +58,7 @@ const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
   font-size: toRem(14);
   line-height: 1.2;
   font-weight: 500;
+  letter-spacing: 0;
 
   @include respond-to(small) {
     padding: toRem(16) toRem(32);
@@ -67,7 +68,7 @@ const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
 .app-footer__terms-link {
   text-transform: capitalize;
   justify-self: end;
-  font-size: toRem(14);
+  font-size: toRem(12);
   line-height: 1;
   font-weight: 700;
   padding-left: 0;

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { AppNavbar, AppFooter } from '@/common'
 
-import { ErrorHandler } from '@/helpers/error-handler'
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'
 import { config } from '@config'
 import { useWeb3ProvidersStore } from '@/store'
+import { ErrorHandler } from '@/helpers'
 import { PROVIDERS } from '@/enums'
 
 const isAppInitialized = ref(false)
@@ -17,13 +17,22 @@ const init = async () => {
     useNotifications()
     await web3Store.detectProviders()
 
-    // temporary
     const metamaskProvider = web3Store.providers.find(
       provider => provider.name === PROVIDERS.metamask,
     )
 
-    if (metamaskProvider) {
-      await web3Store.provider.init(metamaskProvider)
+    if (metamaskProvider) await web3Store.provider.init(metamaskProvider)
+
+    if (
+      !metamaskProvider ||
+      !web3Store.isCurrentChainAvailable ||
+      !web3Store.provider.isConnected
+    ) {
+      const infuraProvider = web3Store.providers.find(
+        provider => provider.name === PROVIDERS.rpc,
+      )
+
+      if (infuraProvider) await web3Store.provider.init(infuraProvider)
     }
 
     document.title = config.APP_NAME
