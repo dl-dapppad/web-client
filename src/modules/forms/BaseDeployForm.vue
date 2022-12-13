@@ -71,7 +71,7 @@ enum EVENTS {
 }
 
 const emits = defineEmits<{
-  (e: EVENTS.submit, data: string[][]): void
+  (e: EVENTS.submit, data: string[]): void
   (e: EVENTS.updateisSuccessModalShown, val: boolean): void
 }>()
 
@@ -83,11 +83,13 @@ const productPaymentToken = ref({
   balance: '',
   symbol: '',
   decimals: 0,
+  swapPrice: '0',
 })
 const selectedPaymentToken = ref({
   balance: '',
   symbol: '',
   decimals: 0,
+  swapPrice: '0',
 })
 const product = ref<Product>()
 const useFormArray = [] as UseForm[]
@@ -138,22 +140,30 @@ const isAllFieldsValid = computed(() => {
   return result
 })
 
-const isBalanceInsuficient = computed(() =>
-  product.value?.currentPrice
-    ? new BN(product.value?.currentPrice).compare(
-        selectedPaymentToken.value.balance,
-      ) === 1
-    : false,
-)
+const isBalanceInsuficient = computed(() => {
+  if (!product.value) return false
+
+  const currentPrice = new BN(product.value?.currentPrice)
+    .fromFraction(productPaymentToken.value.decimals)
+    .toString()
+  const paymentBalance = new BN(selectedPaymentToken.value.balance)
+    .fromFraction(selectedPaymentToken.value.decimals)
+    .toString()
+
+  return new BN(currentPrice).compare(paymentBalance) === 1
+})
 
 const submit = () => {
-  const result = JSON.parse(JSON.stringify(form.data))
-  result[0][0] =
+  let result: string[] = []
+  JSON.parse(JSON.stringify(form.data)).map((el: string[]) => {
+    result = result.concat(el)
+  })
+
+  result[0] =
     paymentTokens.value.addresses[
-      paymentTokens.value.symbols.findIndex(
-        symbol => symbol === form.data[0][0],
-      )
+      paymentTokens.value.symbols.findIndex(symbol => symbol === result[0])
     ]
+
   emits(EVENTS.submit, result)
 }
 
@@ -161,20 +171,33 @@ const updateIsShownModal = (val: boolean) => {
   emits(EVENTS.updateisSuccessModalShown, val)
 }
 
-const updatePayment = async (val: string | number) => {
-  form.data[0][0] = val as string
+const updatePayment = async (selectedSymbol: string | number) => {
+  form.data[0][0] = selectedSymbol as string
 
-  const { symbol, decimals, balance } = await getSelectedTokenInfo(
-    paymentTokens.value.addresses[
-      paymentTokens.value.symbols.findIndex(symbol => symbol === val)
-    ],
+  const selectedIndex = paymentTokens.value.symbols.findIndex(
+    symbol => symbol === selectedSymbol,
   )
+  const selectedAddress = paymentTokens.value.addresses[selectedIndex]
+
+  let symbol, decimals, balance, swapPrice
+  if (selectedIndex === 0) {
+    ;({ symbol, decimals, balance, swapPrice } = await getSelectedTokenInfo(
+      selectedAddress,
+    ))
+  } else {
+    ;({ symbol, decimals, balance, swapPrice } = await getSelectedTokenInfo(
+      selectedAddress,
+      true,
+      product.value?.currentPrice ?? '0',
+    ))
+  }
 
   selectedPaymentToken.value = {
     ...selectedPaymentToken.value,
     symbol,
     decimals: Number(decimals),
     balance,
+    swapPrice,
   }
 }
 
@@ -346,6 +369,28 @@ onMounted(() => init())
                           )
                         }}
                         <span>{{ productPaymentToken.symbol }}</span>
+                      </div>
+                    </div>
+                    <div
+                      v-if="selectedPaymentToken.swapPrice !== '0'"
+                      class="app__row"
+                    >
+                      <span class="app__row-title">
+                        {{
+                          $t('deploy-form.product-swap-price', {
+                            fromSymbol: productPaymentToken.symbol,
+                            toSymbol: selectedPaymentToken.symbol,
+                          })
+                        }}
+                      </span>
+                      <div class="app__balance">
+                        {{
+                          formatAmount(
+                            selectedPaymentToken.swapPrice,
+                            selectedPaymentToken.decimals,
+                          )
+                        }}
+                        <span>{{ selectedPaymentToken.symbol }}</span>
                       </div>
                     </div>
                     <div v-if="selectedPaymentToken.balance" class="app__row">

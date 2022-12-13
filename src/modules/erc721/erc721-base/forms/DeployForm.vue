@@ -80,7 +80,10 @@ const categoriesData = [
   },
 ]
 
-const submit = async ([[paymentTokenAddress], [name, symbol]]: string[][]) => {
+const submit = async (values: string[]) => {
+  if (!Array.isArray(values)) return
+  const [paymentTokenAddress, name, symbol] = values
+
   txProcessing.value = true
   potentialContractAddress.value = await deploy(
     route.params.id as string,

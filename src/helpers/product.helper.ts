@@ -8,6 +8,7 @@ import {
   Erc20Contract,
   useFarming,
   Product,
+  usePayment,
 } from '@/composables'
 import { getMaxUint256, txWrapper } from '@/helpers'
 import { BN } from '@/utils'
@@ -24,8 +25,7 @@ export const deploy = async (
   initializeDataValues: any[],
 ): Promise<string> => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
-  if (!provider.value.chainId || !provider.value.selectedAddress)
-    throw new Error('Provider is not set')
+  if (!provider.value.chainId || !provider.value.selectedAddress) return ''
 
   const alias = config.PRODUCT_ALIASES[productId as string]
   const initializeData = getInitializeData(productId, initializeDataValues)
@@ -109,31 +109,50 @@ export const getAvailableTokenList = async (): Promise<
   Record<string, Array<string>>
 > => {
   const farming = useFarming()
+  const factory = useProductFactory()
 
-  await farming.loadDetails()
+  let paymentContractAddress = ''
+  await Promise.all([farming.loadDetails(), factory.payment()]).then(res => {
+    paymentContractAddress = res[1]
+    return
+  })
 
-  const mainPaymentToken = useErc20(farming.rewardToken.value)
-  await mainPaymentToken.loadDetails()
+  const payment = usePayment(paymentContractAddress)
+  const paymentTokensAddresses = await payment.getPaymentTokens()
+  const tokensAddresses = [farming.rewardToken.value, ...paymentTokensAddresses]
 
-  return {
-    symbols: [mainPaymentToken.symbol.value],
-    addresses: [mainPaymentToken.address.value],
-  }
+  const requests: Promise<void>[] = []
+  const paymentTokens = tokensAddresses.map(address => useErc20(address))
+  paymentTokens.forEach(token => requests.push(token.loadDetails()))
+
+  await Promise.all(requests)
+
+  const symbols: string[] = []
+  const addresses: string[] = []
+  paymentTokens.forEach(token => {
+    symbols.push(token.symbol.value)
+    addresses.push(token.address.value)
+  })
+
+  return { symbols: symbols, addresses: addresses }
 }
 
 export const getSelectedTokenInfo = async (
-  addres: string,
+  address: string,
+  isSwapToken = false,
+  swapAmount = '0',
 ): Promise<Record<string, string>> => {
   const data = {
     symbol: '',
     decimals: '',
     balance: '',
+    swapPrice: '0',
   }
 
   const { provider } = storeToRefs(useWeb3ProvidersStore())
   if (!provider.value.selectedAddress) return data
 
-  const erc20 = useErc20(addres)
+  const erc20 = useErc20(address)
   await Promise.all([
     erc20.loadDetails(),
     erc20.balanceOf(provider.value.selectedAddress),
@@ -144,6 +163,13 @@ export const getSelectedTokenInfo = async (
 
     return
   })
+
+  if (!isSwapToken) return data
+
+  const factory = useProductFactory()
+  const paymentContractAddress = await factory.payment()
+  const payment = usePayment(paymentContractAddress)
+  data.swapPrice = await payment.getInputSwapAmount(address, swapAmount)
 
   return data
 }
