@@ -1,7 +1,14 @@
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { ContractTransaction } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
 import { Erc20Mock, Erc20Mock__factory } from '@/types'
+
+export interface Erc20MockContract {
+  address: Ref<string>
+  init: (address: string) => void
+  mint: (args: Record<string, string>) => Promise<ContractTransaction>
+}
 
 export const useErc20Mock = (contractAddress?: string) => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -10,9 +17,6 @@ export const useErc20Mock = (contractAddress?: string) => {
   const _instance_rw = ref<Erc20Mock | undefined>()
 
   const address = ref('')
-  const name = ref('')
-  const symbol = ref('')
-  const decimals = ref(0)
 
   const init = (contractAddress: string): void => {
     address.value = contractAddress
@@ -31,10 +35,10 @@ export const useErc20Mock = (contractAddress?: string) => {
     }
   }
 
-  const mint = async (address: string) => {
-    if (!_instance.value) return
+  const mint = async (args: Record<string, string>) => {
+    if (!_instance_rw.value) return
 
-    await _instance.value.mint(address, '10000')
+    return _instance_rw.value.mint(args.to, args.amount)
   }
 
   if (contractAddress) init(contractAddress)
@@ -43,9 +47,6 @@ export const useErc20Mock = (contractAddress?: string) => {
     init,
 
     address,
-    name,
-    symbol,
-    decimals,
 
     mint,
   }

@@ -41,7 +41,6 @@ import {
 const router = useRouter()
 const route = useRoute()
 const farming = useFarming()
-const daiToken = useErc20Mock()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -183,13 +182,21 @@ const updatePayment = async (val: string | number) => {
 }
 
 const mintToken = async () => {
-  if (chain.value?.id === ETHEREUM_CHAINS.goerli) {
-    // await daiToken.mint(provider.value.selectedAddress as string)
-    await txWrapper(daiToken.mint, {
-      to: provider.value.selectedAddress as string,
-      _amount: '10000',
-    })
-  }
+  if (chain.value?.id !== ETHEREUM_CHAINS.goerli) return
+
+  const tokenAddress = paymentTokens.value.addresses[
+      paymentTokens.value.symbols.findIndex(
+        symbol => symbol === form.data[0][0],
+      )
+    ]
+
+  const erc20Mock = useErc20Mock()
+  erc20Mock.init(tokenAddress)
+
+  await txWrapper(erc20Mock.mint, {
+    to: provider.value.selectedAddress as string,
+    amount: '10000',
+  })
 }
 
 const init = async () => {
@@ -210,8 +217,6 @@ const init = async () => {
   productPaymentToken.value.balance = balance
 
   await farming.loadDetails()
-
-  daiToken.init(farming.rewardToken.value)
 }
 
 onMounted(() => init())
