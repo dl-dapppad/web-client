@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue'
-import { useWindowSize } from '@vueuse/core'
+import { ref, watch, computed, onMounted } from 'vue'
+import { useWindowSize, onClickOutside } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20, useProduct } from '@/composables'
@@ -22,7 +22,9 @@ const dapp = useErc20()
 const composableProduct = useProduct()
 
 const isMobileDrawerOpened = ref(false)
+const isMobileSearchOpened = ref(false)
 const addressSearchInput = ref('')
+const mobileSearchElem = ref<HTMLElement | null>(null)
 const chain = ref<Chain>(getEmptyChain())
 const accountAddress = ref()
 
@@ -30,6 +32,18 @@ const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
     ? (isMobileDrawerOpened.value = false)
     : (isMobileDrawerOpened.value = !isMobileDrawerOpened.value)
+}
+
+const closeMobileSearch = () => {
+  isMobileSearchOpened.value = false
+}
+
+const openMobileSearch = () => {
+  isMobileSearchOpened.value = true
+}
+
+const setWidthCSSVar = (element: HTMLElement) => {
+  element.style.setProperty('--mobile-search-width', `${element.scrollWidth}px`)
 }
 
 const init = async () => {
@@ -92,18 +106,20 @@ const isNavbarFixed = computed(
 )
 
 init()
+
+onMounted(() => {
+  if (mobileSearchElem.value) {
+    onClickOutside(mobileSearchElem, () => {
+      closeMobileSearch()
+    })
+  }
+})
 </script>
 
 <template>
   <div class="app-navbar__wrp">
     <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
-      <div class="app-navbar__logo-wrp">
-        <icon
-          class="app-navbar__search-icon-mobile"
-          :name="$icons.searchFilled"
-        />
-        <app-logo class="app-navbar__logo" />
-      </div>
+      <app-logo class="app-navbar__logo" />
       <template v-if="provider.isConnected">
         <div class="app-navbar__farm-farm-balance">
           <span class="app-navbar__farm-farm-balance-amount">
@@ -204,9 +220,38 @@ init()
         :icon-right="provider.selectedAddress ? $icons.logout : undefined"
         @click="handleProviderBtnClick"
       />
-      <div v-if="provider.selectedAddress" class="app-navbar__menu-farming-wrp">
+      <transition
+        name="app-navbar__mobile-search-transition"
+        @enter="setWidthCSSVar"
+        @before-leave="setWidthCSSVar"
+      >
+        <input-field
+          ref="mobileSearchElem"
+          class="app-navbar__search app-navbar__search--mobile"
+          v-show="isMobileSearchOpened"
+          v-model="addressSearchInput"
+          :placeholder="$t('app-navbar.search-placeholder')"
+          scheme="secondary"
+        >
+          <template #nodeRight>
+            <app-button
+              scheme="default"
+              class="app-navbar__search-icon app-navbar__search-icon--mobile"
+              :icon-right="$icons.searchFilled"
+              @click="clickContractSearch"
+            />
+          </template>
+        </input-field>
+      </transition>
+      <div v-if="provider.selectedAddress" class="app-navbar__menu-wrp">
         <app-button
-          class="app-navbar__farming-btn-icon"
+          class="app-navbar__menu-wrp-item"
+          scheme="default"
+          :icon-right="$icons.searchFilled"
+          @click="openMobileSearch"
+        />
+        <app-button
+          class="app-navbar__menu-wrp-item"
           scheme="default"
           :icon-right="$icons.gift"
           :route="{ name: $routes.farming }"
@@ -254,26 +299,8 @@ $navbar-z-index: 10;
   }
 }
 
-.app-navbar__logo-wrp {
-  display: flex;
-  align-items: center;
-  gap: toRem(20);
-}
-
 .app-navbar__logo {
   max-width: toRem(70);
-}
-
-.app-navbar__search-icon-mobile {
-  display: none;
-  max-width: toRem(14);
-  max-height: toRem(14);
-  min-width: toRem(14);
-  min-height: toRem(14);
-
-  @include respond-to(xmedium) {
-    display: block;
-  }
 }
 
 .app-navbar__farm-farm-balance {
@@ -314,8 +341,21 @@ $navbar-z-index: 10;
     height: 100%;
   }
 
+  &--mobile {
+    position: absolute;
+    z-index: $navbar-z-index;
+    width: calc(100% - #{toRem(140)});
+    min-height: toRem(30);
+    transform: translateY(-#{toRem(5)});
+    overflow: hidden;
+  }
+
   @include respond-to(xmedium) {
     display: none;
+
+    &--mobile {
+      display: grid;
+    }
   }
 }
 
@@ -326,12 +366,11 @@ $navbar-z-index: 10;
   min-width: toRem(14);
   padding: 0;
 
-  &--tablet {
-    display: none;
-
-    @include respond-to(xmedium) {
-      display: block;
-    }
+  &--mobile {
+    max-width: toRem(15);
+    max-height: toRem(15);
+    min-height: toRem(15);
+    min-width: toRem(15);
   }
 }
 
@@ -431,7 +470,7 @@ $navbar-z-index: 10;
   }
 }
 
-.app-navbar__menu-farming-wrp {
+.app-navbar__menu-wrp {
   display: none;
   align-items: center;
   gap: toRem(35);
@@ -441,7 +480,7 @@ $navbar-z-index: 10;
   }
 }
 
-.app-navbar__farming-btn-icon {
+.app-navbar__menu-wrp-item {
   padding: 0;
   font-size: toRem(14);
 }
@@ -453,6 +492,24 @@ $navbar-z-index: 10;
 
   &--visible {
     display: block;
+  }
+}
+
+.app-navbar__mobile-search-transition-enter-active {
+  animation: mobile-search-frame-keyframes 0.25s ease-in-out;
+}
+
+.app-navbar__mobile-search-transition-leave-active {
+  animation: mobile-search-frame-keyframes 0.25s ease-in-out reverse;
+}
+
+@keyframes mobile-search-frame-keyframes {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: var(--mobile-search-width);
   }
 }
 </style>
