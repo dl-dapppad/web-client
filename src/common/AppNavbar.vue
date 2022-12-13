@@ -29,7 +29,6 @@ const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
 
 const addressSearchInput = ref('')
-const accountAddress = ref()
 const selectedProvider = ref()
 
 const switchIsOpenedMobileState = (value?: boolean) => {
@@ -55,12 +54,13 @@ const init = async () => {
     return
   }
 
-  accountAddress.value = provider.value.selectedAddress
-  selectedProvider.value = accountAddress.value
+  const selectedAddress = provider.value.selectedAddress
+  selectedProvider.value = selectedAddress
     ? PROVIDER_TYPE.browser
     : PROVIDER_TYPE.rpc
 
-  if (!accountAddress.value) return
+  if (!selectedAddress) return
+
   dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
   await dapp.loadDetails()
 }
@@ -120,99 +120,97 @@ const handleMobileSearchBtn = () => {
   <div class="app-navbar__wrp">
     <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
       <app-logo class="app-navbar__logo" />
-      <template>
-        <div
-          v-if="selectedProvider === PROVIDER_TYPE.browser"
-          class="app-navbar__farm-farm-balance"
-        >
-          <span class="app-navbar__farm-farm-balance-amount">
-            <icon
-              class="app-navbar__farm-farm-balance-icon"
-              :name="$icons.gift"
-            />
-            {{
-              formatAmount(
-                account.dappBalance,
-                dapp?.decimals.value,
-                dapp?.symbol.value,
-              )
-            }}
-          </span>
-          <app-button
-            :text="$t('app-navbar.farm-link')"
-            size="small"
-            :route="{ name: $routes.farming }"
+      <div
+        v-if="selectedProvider === PROVIDER_TYPE.browser"
+        class="app-navbar__farm-farm-balance"
+      >
+        <span class="app-navbar__farm-farm-balance-amount">
+          <icon
+            class="app-navbar__farm-farm-balance-icon"
+            :name="$icons.gift"
           />
-        </div>
-        <input-field
-          class="app-navbar__search"
-          v-model="addressSearchInput"
-          :placeholder="$t('app-navbar.search-placeholder')"
-          scheme="secondary"
-        >
-          <template #nodeRight>
-            <app-button
-              scheme="default"
-              class="app-navbar__search-icon"
-              :icon-right="$icons.searchFilled"
-              @click="clickContractSearch"
-            />
-          </template>
-        </input-field>
-        <dropdown class="app-navbar__chain">
-          <template #head="{ dropdown }">
-            <app-button
-              class="app-navbar__chain-btn"
-              :class="{ 'app-navbar__chain-btn--active': dropdown.isOpen }"
-              size="small"
-              scheme="borderless"
-              :text="localizeChain(provider.chainId as string)"
-              :icon-left="$icons.circleFilled"
-              :icon-right="
-                dropdown.isOpen ? $icons.chevronUp : $icons.chevronDown
-              "
-              @click="dropdown.toggle"
-            />
-          </template>
-          <template #default>
-            <div class="app-navbar__dropdown-body">
-              <div
-                class="app-navbar__chain-item-wrp"
-                v-for="chainName in ETHEREUM_CHAINS"
-                :key="chainName"
-              >
-                <app-button
-                  v-if="config.AVAILABLE_CHAINS.includes(chainName)"
-                  class="app-navbar__chain-item"
-                  color="tertiary"
-                  scheme="borderless"
-                  :text="localizeChain(chainName)"
-                  :icon-left="$icons.circleFilled"
-                  @click="trySwitchChain(chainName)"
-                />
-              </div>
+          {{
+            formatAmount(
+              account.dappBalance,
+              dapp?.decimals.value,
+              dapp?.symbol.value,
+            )
+          }}
+        </span>
+        <app-button
+          :text="$t('app-navbar.farm-link')"
+          size="small"
+          :route="{ name: $routes.farming }"
+        />
+      </div>
+      <input-field
+        class="app-navbar__search"
+        v-model="addressSearchInput"
+        :placeholder="$t('app-navbar.search-placeholder')"
+        scheme="secondary"
+      >
+        <template #nodeRight>
+          <app-button
+            scheme="default"
+            class="app-navbar__search-icon"
+            :icon-right="$icons.searchFilled"
+            @click="clickContractSearch"
+          />
+        </template>
+      </input-field>
+      <dropdown class="app-navbar__chain">
+        <template #head="{ dropdown }">
+          <app-button
+            class="app-navbar__chain-btn"
+            :class="{ 'app-navbar__chain-btn--active': dropdown.isOpen }"
+            size="small"
+            scheme="borderless"
+            :text="localizeChain(provider.chainId as string)"
+            :icon-left="$icons.circleFilled"
+            :icon-right="
+              dropdown.isOpen ? $icons.chevronUp : $icons.chevronDown
+            "
+            @click="dropdown.toggle"
+          />
+        </template>
+        <template #default>
+          <div class="app-navbar__dropdown-body">
+            <div
+              class="app-navbar__chain-item-wrp"
+              v-for="chainName in ETHEREUM_CHAINS"
+              :key="chainName"
+            >
+              <app-button
+                v-if="config.AVAILABLE_CHAINS.includes(chainName)"
+                class="app-navbar__chain-item"
+                color="tertiary"
+                scheme="borderless"
+                :text="localizeChain(chainName)"
+                :icon-left="$icons.circleFilled"
+                @click="trySwitchChain(chainName)"
+              />
             </div>
-          </template>
-        </dropdown>
-        <div v-if="provider.selectedAddress" class="app-navbar__wallet">
-          <span class="app-navbar__wallet-balance">
-            {{
-              formatAmount(
-                account.nativeBalance,
-                chain?.decimals,
-                chain?.symbol,
-              )
-            }}
-          </span>
-          <span class="app-navbar__wallet-address">
-            {{ cropAddress(provider.selectedAddress ?? '') }}
-            <icon
-              class="app-navbar__wallet-address-icon"
-              :name="$icons.circleFilled"
-            />
-          </span>
-        </div>
-      </template>
+          </div>
+        </template>
+      </dropdown>
+      <div v-if="provider.selectedAddress" class="app-navbar__wallet">
+        <span class="app-navbar__wallet-balance">
+          {{
+            formatAmount(
+              account.nativeBalance,
+              web3Store.currentChain.decimals,
+              web3Store.currentChain.symbol,
+            )
+          }}
+        </span>
+        <span class="app-navbar__wallet-address">
+          {{ cropAddress(provider.selectedAddress ?? '') }}
+          <icon
+            class="app-navbar__wallet-address-icon"
+            :name="$icons.circleFilled"
+          />
+        </span>
+      </div>
       <app-button
         v-if="isProviderButtonShown"
         class="app-navbar__provider-btn"

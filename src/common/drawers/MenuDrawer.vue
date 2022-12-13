@@ -5,7 +5,7 @@ import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
