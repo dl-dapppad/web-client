@@ -4,7 +4,6 @@ import { ContractTransaction } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
 import { Farming, Farming__factory } from '@/types'
 import { CONTRACT_NAMES } from '@/enums'
-
 import { config } from '@/config'
 
 export interface InvestInfo {

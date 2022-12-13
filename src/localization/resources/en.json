@@ -204,6 +204,7 @@
     "payment-balance": "Your balance",
     "product-price": "Product price",
     "empty-balance-lbl": "Your balance is empty",
-    "mint-tokens-btn": "Mint Tokens"
+    "mint-tokens-btn": "Mint Tokens",
+    "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}"
   }
 }
