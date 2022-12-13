@@ -220,6 +220,9 @@ const handleMobileSearchBtn = () => {
       <app-button
         v-if="isProviderButtonShown"
         class="app-navbar__provider-btn"
+        :class="{
+          'app-navbar__provider-btn--disconnected': !provider.selectedAddress,
+        }"
         size="small"
         :text="
           !provider.selectedAddress ? $t('app-navbar.connect-btn') : undefined
@@ -508,6 +511,10 @@ $navbar-z-index: 10;
 
 .app-navbar__provider-btn {
   margin-left: auto;
+
+  &--disconnected {
+    padding: toRem(10) toRem(24);
+  }
 
   @include respond-to(xmedium) {
     margin: 0;
