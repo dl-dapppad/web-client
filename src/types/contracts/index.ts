@@ -2,9 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Erc20 } from "./Erc20";
+export type { Erc20Mock } from "./Erc20Mock";
 export type { Farming } from "./Farming";
 export type { ProductFactory } from "./ProductFactory";
 export * as factories from "./factories";
+export { Erc20Mock__factory } from "./factories/Erc20Mock__factory";
 export { Erc20__factory } from "./factories/Erc20__factory";
 export { Farming__factory } from "./factories/Farming__factory";
 export { ProductFactory__factory } from "./factories/ProductFactory__factory";

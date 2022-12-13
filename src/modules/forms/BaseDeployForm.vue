@@ -14,13 +14,19 @@ import {
   Modal,
 } from '@/common'
 import { SelectField, InputField } from '@/fields'
-import { Product, useFormValidation } from '@/composables'
-import { formatAmount, getEmptyChain, getChain } from '@/helpers'
+import {
+  Product,
+  useFormValidation,
+  useErc20Mock,
+  useFarming,
+} from '@/composables'
+import { formatAmount, getEmptyChain, getChain, txWrapper } from '@/helpers'
 import { config } from '@/config'
 import { Chain } from '@/types'
 import { BN } from '@/utils'
 import { required } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
+import { ETHEREUM_CHAINS } from '@/enums'
 
 import { SCHEMES } from '@/common/Loader.vue'
 import { DeploySuccessMessage } from '@/modules/common'
@@ -34,6 +40,8 @@ import {
 
 const router = useRouter()
 const route = useRoute()
+const farming = useFarming()
+const daiToken = useErc20Mock()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -174,6 +182,16 @@ const updatePayment = async (val: string | number) => {
   }
 }
 
+const mintToken = async () => {
+  if (chain.value?.id === ETHEREUM_CHAINS.goerli) {
+    // await daiToken.mint(provider.value.selectedAddress as string)
+    await txWrapper(daiToken.mint, {
+      to: provider.value.selectedAddress as string,
+      _amount: '10000',
+    })
+  }
+}
+
 const init = async () => {
   const { symbols, addresses } = await getAvailableTokenList()
 
@@ -190,6 +208,10 @@ const init = async () => {
   productPaymentToken.value.symbol = symbol
   productPaymentToken.value.decimals = Number(decimals)
   productPaymentToken.value.balance = balance
+
+  await farming.loadDetails()
+
+  daiToken.init(farming.rewardToken.value)
 }
 
 onMounted(() => init())
@@ -235,9 +257,10 @@ onMounted(() => init())
       </span>
     </div>
     <app-block
-      v-if="chain?.id === '5' && isBalanceInsuficient"
+      v-if="chain?.id === ETHEREUM_CHAINS.goerli && isBalanceInsuficient"
       :class="{
-        'app__module-content-wrp': chain?.id === '5' && isBalanceInsuficient,
+        'app__module-content-wrp':
+          chain?.id === ETHEREUM_CHAINS.goerli && isBalanceInsuficient,
       }"
     >
       <div class="app__module-content">
@@ -249,6 +272,7 @@ onMounted(() => init())
             <app-button
               class="app__submit-btn"
               :text="$t('deploy-form.mint-tokens-btn')"
+              @click="mintToken"
             />
           </div>
         </div>
@@ -256,7 +280,9 @@ onMounted(() => init())
     </app-block>
     <app-block
       :class="{
-        'app__module-content-wrp': !(chain?.id === '5' && isBalanceInsuficient),
+        'app__module-content-wrp': !(
+          chain?.id === ETHEREUM_CHAINS.goerli && isBalanceInsuficient
+        ),
       }"
     >
       <div class="app__module-content">
