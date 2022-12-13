@@ -1,16 +1,28 @@
 import { defineStore } from 'pinia'
 import { useProvider, useWeb3 } from '@/composables'
-import { DesignatedProvider } from '@/types'
+import { DesignatedProvider, Chain } from '@/types'
 import { PROVIDERS } from '@/enums'
 import { i18n } from '@/localization'
-import { isChainAvailable } from '@/helpers'
 import { config } from '@/config'
+import chainsData from '@/assets/chains.json'
 
 export const useWeb3ProvidersStore = defineStore('web3-providers-store', {
   state: () => ({
     providers: [] as DesignatedProvider[],
     provider: useProvider(),
   }),
+  getters: {
+    currentChain: state => {
+      return (
+        chainsData.filter(
+          chain => chain.id === String(state.provider.chainId),
+        ) as Chain[]
+      )[0]
+    },
+    isCurrentChainAvailable: state => {
+      return config.AVAILABLE_CHAINS.includes(String(state.provider.chainId))
+    },
+  },
   actions: {
     async detectProviders() {
       const web3 = useWeb3()
@@ -40,8 +52,7 @@ export const useWeb3ProvidersStore = defineStore('web3-providers-store', {
           throw new Error(t('errors.provider-user-rejected-request'))
         }
 
-        const chainId = this.provider.chainId
-        if (!chainId || !isChainAvailable(chainId)) {
+        if (!this.isCurrentChainAvailable) {
           try {
             await this.provider.switchChain(config.AVAILABLE_CHAINS[0])
           } catch (error) {

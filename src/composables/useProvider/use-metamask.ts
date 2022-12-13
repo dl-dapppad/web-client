@@ -4,7 +4,6 @@ import {
   connectEthAccounts,
   requestAddEthChain,
   requestSwitchEthChain,
-  isChainAvailable,
 } from '@/helpers'
 import { computed, ref } from 'vue'
 import {
@@ -27,11 +26,7 @@ export const useMetamask = (provider: ProviderInstance): ProviderWrapper => {
   )
   const currentSigner = computed(() => currentProvider.value.getSigner())
 
-  const isConnected = computed(() =>
-    Boolean(
-      selectedAddress.value && chainId.value && isChainAvailable(chainId.value),
-    ),
-  )
+  const isConnected = computed(() => Boolean(selectedAddress.value))
 
   const init = async (): Promise<void> => {
     _setListeners()

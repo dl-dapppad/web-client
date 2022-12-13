@@ -4,15 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
 import { useErc20, useProduct } from '@/composables'
-import {
-  formatAmount,
-  getChain,
-  getEmptyChain,
-  cropAddress,
-  ErrorHandler,
-  isChainAvailable,
-} from '@/helpers'
-import { Chain } from '@/types'
+import { formatAmount, cropAddress, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
@@ -24,7 +16,7 @@ enum PROVIDER_TYPE {
   rpc = 'rpc',
 }
 
-const web3ProvidersStore = useWeb3ProvidersStore()
+const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
@@ -37,8 +29,6 @@ const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
 
 const addressSearchInput = ref('')
-
-const chain = ref<Chain>(getEmptyChain())
 const accountAddress = ref()
 const selectedProvider = ref()
 
@@ -61,11 +51,10 @@ const setWidthCSSVar = (element: HTMLElement) => {
 }
 
 const init = async () => {
-  if (!provider.value.chainId || !isChainAvailable(provider.value.chainId)) {
+  if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) {
     return
   }
 
-  chain.value = getChain(provider.value.chainId)
   accountAddress.value = provider.value.selectedAddress
   selectedProvider.value = accountAddress.value
     ? PROVIDER_TYPE.browser
@@ -86,7 +75,7 @@ const trySwitchChain = async (chainId: string | number) => {
 
 const handleProviderBtnClick = async () => {
   try {
-    await web3ProvidersStore.connect()
+    await web3Store.connect()
 
     if (provider.value.selectedAddress) {
       selectedProvider.value = PROVIDER_TYPE.browser
@@ -131,7 +120,7 @@ const handleMobileSearchBtn = () => {
   <div class="app-navbar__wrp">
     <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
       <app-logo class="app-navbar__logo" />
-      <template v-if="provider.isConnected">
+      <template>
         <div
           v-if="selectedProvider === PROVIDER_TYPE.browser"
           class="app-navbar__farm-farm-balance"

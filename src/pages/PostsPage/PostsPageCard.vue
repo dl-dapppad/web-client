@@ -6,10 +6,11 @@ import { Icon, Loader } from '@/common'
 import { Post } from '@/types'
 import { ROUTE_NAMES } from '@/enums'
 import { config } from '@/config'
-import { ErrorHandler, isChainAvailable, formatAmount } from '@/helpers'
+import { ErrorHandler, formatAmount } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { useErc20, useFarming, useProductFactory, Product } from '@/composables'
 
+const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const paymentToken = useErc20()
@@ -42,8 +43,7 @@ const postCardRoute = computed(() => {
 })
 
 const init = async () => {
-  if (!provider.value.chainId || !isChainAvailable(provider.value.chainId))
-    return
+  if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) return
 
   try {
     alias.value = config.PRODUCT_ALIASES[props.post.id as string]

@@ -2,11 +2,8 @@ import { PROVIDERS } from '@/enums'
 import { computed, ComputedRef, Ref, ref } from 'vue'
 import { useMetamask, useRpc } from '@/composables/useProvider'
 import { DesignatedProvider, ChainId, ProviderWrapper } from '@/types'
-import {
-  getChain,
-  getEthExplorerAddressUrl,
-  getEthExplorerTxUrl,
-} from '@/helpers'
+import { getEthExplorerAddressUrl, getEthExplorerTxUrl } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
 
@@ -35,6 +32,8 @@ export interface UseProvider {
 }
 
 export const useProvider = (): UseProvider => {
+  const web3Store = useWeb3ProvidersStore()
+
   const _providerWrp = ref<ProviderWrapper | undefined>()
 
   const currentProvider = computed(
@@ -125,7 +124,7 @@ export const useProvider = (): UseProvider => {
       throw new errors.ProviderChainNotFoundError()
     }
 
-    const explorerUrl = getChain(chainId.value).explorerUrl
+    const explorerUrl = web3Store.currentChain.explorerUrl
     if (!explorerUrl) throw new errors.ProviderChainNotFoundError()
 
     return explorerUrl

@@ -5,7 +5,7 @@ import { ref } from 'vue'
 import { useNotifications } from '@/composables'
 import { config } from '@config'
 import { useWeb3ProvidersStore } from '@/store'
-import { ErrorHandler, isChainAvailable } from '@/helpers'
+import { ErrorHandler } from '@/helpers'
 import { PROVIDERS } from '@/enums'
 
 const isAppInitialized = ref(false)
@@ -23,11 +23,9 @@ const init = async () => {
 
     if (metamaskProvider) await web3Store.provider.init(metamaskProvider)
 
-    const chainId = web3Store.provider.chainId
     if (
       !metamaskProvider ||
-      !chainId ||
-      !isChainAvailable(chainId) ||
+      !web3Store.isCurrentChainAvailable ||
       !web3Store.provider.isConnected
     ) {
       const infuraProvider = web3Store.providers.find(

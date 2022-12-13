@@ -4,15 +4,8 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import { useWeb3ProvidersStore } from '@/store'
-import {
-  formatAmount,
-  formatPercent,
-  getChain,
-  getEmptyChain,
-  isChainAvailable,
-  ErrorHandler,
-} from '@/helpers'
-import { Chain, Post } from '@/types'
+import { formatAmount, formatPercent, ErrorHandler } from '@/helpers'
+import { Post } from '@/types'
 import {
   useErc20,
   useProductFactory,
@@ -39,6 +32,7 @@ defineProps<{
   post: Post
 }>()
 
+const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const route = useRoute()
@@ -52,10 +46,8 @@ const { t } = useI18n()
 const addressSearchInput = ref('')
 const addressSearchButtonDisabled = ref(false)
 const alias = ref('')
-const chain = ref<Chain>(getEmptyChain())
 const product = ref<Product>(factory.getEmptyProduct())
 const cashback = ref('0')
-// const chartData = ref<number[]>([])
 
 const chart = useChart()
 
@@ -68,14 +60,12 @@ const clickContractSearch = async () => {
 }
 
 const init = async () => {
-  if (!provider.value.chainId || !isChainAvailable(provider.value.chainId))
-    return
+  if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) return
 
   try {
     alias.value = config.PRODUCT_ALIASES[route.params.id as string]
     if (!alias.value) return
 
-    chain.value = getChain(provider.value.chainId)
     dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
 
     await Promise.all([
@@ -154,7 +144,7 @@ init()
                 {{ $t('post-item-page-checkout.current-network-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{ chain?.name ?? "Network isn't detected" }}
+                {{ web3Store.currentChain.name ?? "Network isn't detected" }}
               </span>
             </div>
             <div class="app__metadata-row">

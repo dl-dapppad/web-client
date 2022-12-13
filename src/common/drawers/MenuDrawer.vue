@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Drawer, AppButton, Icon, Dropdown } from '@/common'
-import { cropAddress, formatAmount, getEmptyChain, getChain } from '@/helpers'
+import { cropAddress, formatAmount } from '@/helpers'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
-import { Chain } from '@/types'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 
 import { ref, watch } from 'vue'
@@ -17,11 +16,11 @@ defineProps<{
 
 const { t } = useI18n()
 
+const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
-const chain = ref<Chain>(getEmptyChain())
-chain.value = getChain(provider.value.chainId)
+const chain = web3Store.currentChain
 
 enum EVENTS {
   trySwitchChain = 'try-switch-chain',
