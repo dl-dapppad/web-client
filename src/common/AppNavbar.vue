@@ -231,7 +231,7 @@ const handleMobileSearchBtn = () => {
         >
           <template #nodeLeft>
             <app-button
-              class="app-navbar__search-mobile-icon"
+              class="app-navbar__search-mobile-close-btn"
               scheme="default"
               :icon-right="$icons.x"
               @click="closeMobileSearch"
@@ -373,7 +373,7 @@ $navbar-z-index: 10;
   }
 }
 
-.app-navbar__search-mobile-icon {
+.app-navbar__search-mobile-close-btn {
   padding: 0;
   width: toRem(16);
   height: toRem(16);
