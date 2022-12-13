@@ -354,8 +354,11 @@ $page-padding-right: toRem(165);
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
   gap: toRem(35);
+
+  @include respond-to(medium) {
+    flex-direction: column;
+  }
 }
 
 a.post-item-page__img-links-item {
