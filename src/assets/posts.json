@@ -22,7 +22,7 @@
   {
     "id": "erc20-tokens",
     "type": "category",
-    "subPosts": ["erc20"],
+    "subPosts": ["erc20-base"],
     "bannerUrl": "/images/erc20-cat.png",
     "imageUrl": "/images/erc20-cat.png",
     "title": "ERC20 Tokens",
@@ -37,7 +37,7 @@
   {
     "id": "erc721-tokens",
     "type": "category",
-    "subPosts": ["erc721"],
+    "subPosts": ["erc721-base"],
     "bannerUrl": "/images/erc721-cat.png",
     "imageUrl": "/images/erc721-cat.png",
     "title": "ERC721 Tokens",
