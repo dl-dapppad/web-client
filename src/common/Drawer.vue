@@ -55,8 +55,8 @@ $z-drawer: 100;
 .drawer {
   position: fixed;
   width: 100%;
-  height: calc(100% - #{toRem(71)});
-  top: toRem(71);
+  height: calc(100% - #{toRem(65)});
+  top: toRem(65);
   left: 0;
   z-index: $z-drawer;
   background: var(--background-primary);

@@ -35,6 +35,8 @@ const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
     ? (isMobileDrawerOpened.value = false)
     : (isMobileDrawerOpened.value = !isMobileDrawerOpened.value)
+  if (value === false || (value === undefined && !isMobileDrawerOpened.value))
+    window.scrollTo(0, -1000000)
 }
 
 const closeMobileSearch = () => {
@@ -317,6 +319,7 @@ $navbar-z-index: 10;
   @include respond-to(medium) {
     padding: toRem(15) var(--app-padding-right) toRem(15)
       var(--app-padding-left);
+    align-items: center;
   }
 }
 
@@ -373,8 +376,8 @@ $navbar-z-index: 10;
   position: absolute;
   z-index: $navbar-z-index;
   width: calc(100% - #{toRem(170)});
+  min-width: toRem(135);
   min-height: toRem(30);
-  transform: translateY(-#{toRem(5)});
   overflow: hidden;
 
   :not([disabled]) {
@@ -542,7 +545,7 @@ $navbar-z-index: 10;
 }
 
 .app-navbar__mobile-filler {
-  height: toRem(71);
+  height: toRem(65);
   width: 100%;
   display: none;
 
@@ -553,10 +556,12 @@ $navbar-z-index: 10;
 
 .app-navbar__mobile-search-transition-enter-active {
   animation: mobile-search-frame-keyframes 0.25s ease-in-out;
+  min-width: 0;
 }
 
 .app-navbar__mobile-search-transition-leave-active {
   animation: mobile-search-frame-keyframes 0.25s ease-in-out reverse;
+  min-width: 0;
 }
 
 @keyframes mobile-search-frame-keyframes {
