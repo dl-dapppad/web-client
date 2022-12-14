@@ -57,7 +57,7 @@ const handleBackBtn = () => {
               {{ value }}
             </h4>
           </template>
-          <template v-if="key === 'title-accent'">
+          <template v-else-if="key === 'title-accent'">
             <h4
               class="post-item-page__title post-item-page__title--accent"
               :key="idx"
@@ -65,12 +65,12 @@ const handleBackBtn = () => {
               {{ value }}
             </h4>
           </template>
-          <template v-if="key === 'subtitle-accented'">
+          <template v-else-if="key === 'subtitle-accented'">
             <h5 class="post-item-page__subtitle-accented" :key="idx">
               {{ value }}
             </h5>
           </template>
-          <template v-if="key === 'subtitle-low'">
+          <template v-else-if="key === 'subtitle-low'">
             <h5
               class="post-item-page__subtitle post-item-page__subtitle--low"
               :key="idx"
@@ -78,26 +78,26 @@ const handleBackBtn = () => {
               {{ value }}
             </h5>
           </template>
-          <template v-if="key === 'subtitle'">
+          <template v-else-if="key === 'subtitle'">
             <h5 class="post-item-page__subtitle" :key="idx">
               {{ value }}
             </h5>
           </template>
-          <template v-if="key === 'paragraph'">
+          <template v-else-if="key === 'paragraph'">
             <!-- eslint-disable vue/no-v-html -->
             <p :key="idx" class="post-item-page__paragraph" v-html="value" />
           </template>
-          <template v-if="key === 'paragraph-secondary'">
+          <template v-else-if="key === 'paragraph-secondary'">
             <p
               :key="idx"
               class="post-item-page__paragraph-secondary"
               v-html="value"
             />
           </template>
-          <template v-if="key === 'image'">
+          <template v-else-if="key === 'image'">
             <img :key="idx" class="post-item-page__img" :src="value" alt="" />
           </template>
-          <template v-if="key === 'image-links'">
+          <template v-else-if="key === 'image-links'">
             <div :key="idx" class="post-item-page__img-links">
               <a
                 v-for="(link, ind) of value"
@@ -115,7 +115,7 @@ const handleBackBtn = () => {
               </a>
             </div>
           </template>
-          <template v-if="key === 'unordered-list'">
+          <template v-else-if="key === 'unordered-list'">
             <ul :key="idx" class="post-item-page__unordered-list">
               <li
                 v-for="(item, ind) of value"
@@ -131,7 +131,7 @@ const handleBackBtn = () => {
               </li>
             </ul>
           </template>
-          <template v-if="key === 'code-row'">
+          <template v-else-if="key === 'code-row'">
             <!-- eslint-disable-next-line vue/no-v-html -->
             <p :key="idx" class="post-item-page__code-row" v-html="value" />
           </template>
@@ -211,7 +211,6 @@ $page-padding-right: toRem(165);
 .post-item-page__content {
   display: flex;
   flex-direction: column;
-  gap: toRem(30);
   padding: toRem(70) $page-padding-right toRem(40) $page-padding-left;
 
   & a {
@@ -233,6 +232,10 @@ $page-padding-right: toRem(165);
 
   @include respond-to(medium) {
     padding: toRem(30) toRem(20);
+  }
+
+  & > :first-child {
+    padding-top: 0;
   }
 }
 
@@ -264,11 +267,21 @@ $page-padding-right: toRem(165);
   }
 }
 
+.post-item-page__unordered-list {
+  padding-top: toRem(30);
+  padding-left: toRem(30);
+}
+
 .post-item-page__paragraph {
+  padding-top: toRem(30);
   font-size: toRem(20);
   line-height: 1.3;
   letter-spacing: 0.1em;
   word-break: break-word;
+
+  & + .post-item-page__unordered-list {
+    padding-top: toRem(15);
+  }
 
   @include respond-to(medium) {
     font-size: toRem(16);
@@ -276,6 +289,7 @@ $page-padding-right: toRem(165);
 }
 
 .post-item-page__paragraph-secondary {
+  padding-top: toRem(30);
   color: var(--text-secondary-main);
   font-size: toRem(20);
   line-height: 1.3;
@@ -287,6 +301,7 @@ $page-padding-right: toRem(165);
 }
 
 .post-item-page__code-row {
+  padding-top: toRem(30);
   font-family: var(--app-font-family-tertiary);
   color: var(--text-secondary-main);
   font-weight: 700;
@@ -300,6 +315,7 @@ $page-padding-right: toRem(165);
 }
 
 .post-item-page__title {
+  padding-top: toRem(30);
   font-size: toRem(30);
   line-height: 1.2;
   font-weight: 700;
@@ -321,6 +337,7 @@ $page-padding-right: toRem(165);
 }
 
 .post-item-page__subtitle {
+  padding-top: toRem(30);
   font-size: toRem(26);
   line-height: 1.2;
   font-weight: 700;
@@ -337,6 +354,7 @@ $page-padding-right: toRem(165);
 }
 
 .post-item-page__subtitle-accented {
+  padding-top: toRem(30);
   font-size: toRem(24);
   line-height: 1.2;
   font-weight: 700;
@@ -345,12 +363,14 @@ $page-padding-right: toRem(165);
 }
 
 .post-item-page__img {
+  padding-top: toRem(30);
   max-width: 80%;
   height: auto;
   margin: 0 auto;
 }
 
 .post-item-page__img-links {
+  padding-top: toRem(30);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -380,10 +400,6 @@ a.post-item-page__img-links-item {
   max-height: toRem(12) !important;
   min-width: toRem(12);
   min-height: toRem(12);
-}
-
-.post-item-page__unordered-list {
-  padding-left: toRem(30);
 }
 
 .post-item-page__unordered-list-item {
