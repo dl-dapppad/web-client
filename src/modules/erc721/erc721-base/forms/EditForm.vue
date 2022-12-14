@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
-import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/modules/forms'
 import { OVERVIEW_ROW } from '@/modules/enums'
 import { OverviewRow } from '@/modules/types'
@@ -19,8 +17,8 @@ import {
   SetBaseUriForm,
   TokenUriForm,
 } from '../../forms'
-import { EditOverview } from '@/modules/common'
 import { useProductErc721 } from '../composables/use-product-erc721'
+import { BaseEditForm } from '@/modules/forms'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -41,24 +39,11 @@ const { t } = useI18n({
   },
 })
 
-const FORM_TABS = [
-  {
-    title: 'Read',
-    number: 1,
-  },
-  {
-    title: 'Write',
-    number: 2,
-  },
-]
-
-const router = useRouter()
 const route = useRoute()
 const erc721 = useProductErc721(route.params.contractAddress as string)
 
 const isLoaded = ref(false)
 
-const currentTabNumber = ref(FORM_TABS[0].number)
 const overviewRows = ref<Array<OverviewRow>>([
   {
     name: t('erc721.tracker'),
@@ -129,73 +114,35 @@ const updateBaseURI = async () => {
   overviewRows.value[2].value = erc721.baseURI.value
 }
 
+const formOverviewData = ref({
+  isLoaded,
+  rows: overviewRows,
+})
+
+const headingData = {
+  title: t('erc721.title'),
+  description: t('erc721.description'),
+  overviewLbl: t('erc721.overview'),
+}
+
 init()
 </script>
 
 <template>
-  <div class="erc20-edit-form">
-    <div class="app__module-heading">
-      <div class="app__module-title-wrp">
-        <app-button
-          type="button"
-          class="app__module-back-btn"
-          :icon-right="$icons.arrowLeft"
-          modification="border-circle"
-          color="tertiary"
-          @click="
-            router.push({
-              name: ROUTE_NAMES.product,
-              params: {
-                id: route.params.id,
-              },
-            })
-          "
-        />
-        <h2 class="app__module-title">
-          {{ t('erc721.title') }}
-        </h2>
-      </div>
-      <span class="app__module-subtitle">
-        <link-copy
-          :address="erc721.address.value"
-          class="app__module-subtitle"
-        />
-      </span>
-      <span class="app__module-description">
-        {{ t('erc721.description') }}
-      </span>
-    </div>
-    <edit-overview :is-loaded="isLoaded" :rows="overviewRows" />
-    <div>
-      <h3 class="app__module-block-title">
-        {{ t('erc721.interaction') }}
-      </h3>
-      <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
-      <app-block>
-        <div
-          v-if="currentTabNumber === FORM_TABS[0].number"
-          class="app__module-content"
-        >
-          <balance-form :token="erc721" />
-          <owner-form :token="erc721" />
-          <token-uri-form :token="erc721" />
-        </div>
-        <div
-          v-if="currentTabNumber === FORM_TABS[1].number"
-          class="app__module-content"
-        >
-          <set-base-uri-form :token="erc721" @change-base-uri="updateBaseURI" />
-          <approve-form :token="erc721" />
-          <approve-all-form :token="erc721" />
-          <mint-form :token="erc721" @change-balance="updateBalance" />
-          <safe-transfer-form :token="erc721" />
-          <transfer-ownership-form
-            :token="erc721"
-            @change-owner="updateOwner"
-          />
-          <upgrade-to-form :token="erc721" />
-        </div>
-      </app-block>
-    </div>
-  </div>
+  <base-edit-form :heading-data="headingData" :overview="formOverviewData">
+    <template #tabFirst>
+      <balance-form :token="erc721" />
+      <owner-form :token="erc721" />
+      <token-uri-form :token="erc721" />
+    </template>
+    <template #tabSecond>
+      <set-base-uri-form :token="erc721" @change-base-uri="updateBaseURI" />
+      <approve-form :token="erc721" />
+      <approve-all-form :token="erc721" />
+      <mint-form :token="erc721" @change-balance="updateBalance" />
+      <safe-transfer-form :token="erc721" />
+      <transfer-ownership-form :token="erc721" @change-owner="updateOwner" />
+      <upgrade-to-form :token="erc721" />
+    </template>
+  </base-edit-form>
 </template>

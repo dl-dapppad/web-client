@@ -209,5 +209,11 @@
     "empty-balance-lbl": "Your balance is empty",
     "mint-tokens-btn": "Mint Tokens",
     "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}"
+  },
+  "edit-form": {
+    "default-title": "Editing",
+    "default-description": "You are editing smart contract.",
+    "default-interaction-lbl": "Interaction",
+    "default-info-lbl": "Info"
   }
 }

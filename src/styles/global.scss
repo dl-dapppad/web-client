@@ -425,6 +425,14 @@ button.app__submit-btn {
   margin: 0 auto;
 }
 
+.app__module-padding-bottom {
+  padding: 0 0 toRem(70);
+
+  @include respond-to(medium) {
+    padding: toRem(40) 0;
+  }
+}
+
 .app__module-content-title {
   font-size: toRem(24);
   line-height: 1.3;
