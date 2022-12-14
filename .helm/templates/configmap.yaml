@@ -14,6 +14,9 @@ data:
                                 VITE_APP_AVAILABLE_CHAINS: [
                                   '5'
                                 ],
+                                VITE_APP_RPC_URL: {
+                                  '5': 'https://goerli.infura.io/v3/'
+                                }
                                 VITE_APP_CONTRACTS: {
                                   '5': {
                                     'dapp': '0x353C50AB9E10b62D75aD057327acdB39C0dB8a0B',
