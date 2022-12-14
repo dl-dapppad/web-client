@@ -174,20 +174,5 @@ export const getSelectedTokenInfo = async (
   return data
 }
 
-export const makeProductPath = (product: string, form: 'deploy' | 'edit') => {
-  const path = /-/.test(product)
-    ? `${product.split('-')[0]}/${product}`
-    : product
-
-  const comps =
-    form === 'deploy'
-      ? import.meta.glob('@/modules/**/forms/DeployForm.vue')
-      : import.meta.glob('@/modules/**/forms/EditForm.vue')
-
-  let importPath = ''
-  for (const comp in comps) {
-    if (comp.includes(path)) importPath = comp
-  }
-
-  return importPath
-}
+export const makeProductPath = (product: string) =>
+  /-/.test(product) ? [product.split('-')[0], product] : [product]
