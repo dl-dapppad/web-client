@@ -116,16 +116,12 @@ export const useProvider = (): UseProvider => {
   }
 
   const _getExplorerUrl = (): string => {
-    if (!_providerWrp.value) {
-      throw new errors.ProviderWrapperMethodNotFoundError()
-    }
-
-    if (!chainId.value) {
-      throw new errors.ProviderChainNotFoundError()
+    if (!_providerWrp.value || !chainId.value) {
+      return ''
     }
 
     const explorerUrl = web3Store.currentChain.explorerUrl
-    if (!explorerUrl) throw new errors.ProviderChainNotFoundError()
+    if (!explorerUrl) return ''
 
     return explorerUrl
   }

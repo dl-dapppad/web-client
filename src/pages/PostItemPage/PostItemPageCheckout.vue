@@ -144,7 +144,7 @@ init()
                 {{ $t('post-item-page-checkout.current-network-lbl') }}
               </span>
               <span class="app__metadata-value">
-                {{ web3Store.currentChain.name ?? "Network isn't detected" }}
+                {{ web3Store.currentChain?.name ?? "Network isn't detected" }}
               </span>
             </div>
             <div class="app__metadata-row">

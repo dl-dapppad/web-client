@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
@@ -136,6 +136,13 @@ const updateOwner = async () => {
   await erc20.updateOwner()
   overviewRows.value[3].value = erc20.owner.value
 }
+
+watch(
+  () => provider.value.selectedAddress,
+  () => {
+    init()
+  },
+)
 
 init()
 </script>

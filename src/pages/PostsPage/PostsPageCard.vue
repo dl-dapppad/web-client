@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { Icon, Loader } from '@/common'
@@ -62,6 +62,13 @@ const init = async () => {
     ErrorHandler.process(error)
   }
 }
+
+watch(
+  () => props.post.id,
+  () => {
+    init()
+  },
+)
 
 init()
 </script>
