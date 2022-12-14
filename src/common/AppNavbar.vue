@@ -35,6 +35,8 @@ const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
     ? (isMobileDrawerOpened.value = false)
     : (isMobileDrawerOpened.value = !isMobileDrawerOpened.value)
+  if (value === false || (value === undefined && !isMobileDrawerOpened.value))
+    window.scrollTo(0, -1000000)
 }
 
 const closeMobileSearch = () => {
@@ -43,10 +45,6 @@ const closeMobileSearch = () => {
 
 const openMobileSearch = () => {
   isMobileSearchOpened.value = true
-}
-
-const setWidthCSSVar = (element: HTMLElement) => {
-  element.style.setProperty('--mobile-search-width', `${element.scrollWidth}px`)
 }
 
 const init = async () => {
@@ -118,7 +116,13 @@ const handleMobileSearchBtn = () => {
 
 <template>
   <div class="app-navbar__wrp">
-    <div class="app-navbar" :class="{ 'app-navbar--fixed': isNavbarFixed }">
+    <div
+      class="app-navbar"
+      :class="{
+        'app-navbar--fixed': isNavbarFixed,
+        'app-navbar--disconnected': !provider.selectedAddress,
+      }"
+    >
       <app-logo class="app-navbar__logo" />
       <div
         v-if="selectedProvider === PROVIDER_TYPE.browser"
@@ -214,6 +218,9 @@ const handleMobileSearchBtn = () => {
       <app-button
         v-if="isProviderButtonShown"
         class="app-navbar__provider-btn"
+        :class="{
+          'app-navbar__provider-btn--disconnected': !provider.selectedAddress,
+        }"
         size="small"
         :text="
           !provider.selectedAddress ? $t('app-navbar.connect-btn') : undefined
@@ -221,13 +228,13 @@ const handleMobileSearchBtn = () => {
         :icon-right="provider.selectedAddress ? $icons.logout : undefined"
         @click="handleProviderBtnClick"
       />
-      <transition
-        name="app-navbar__mobile-search-transition"
-        @enter="setWidthCSSVar"
-        @before-leave="setWidthCSSVar"
-      >
+      <transition name="app-navbar__mobile-search-transition">
         <input-field
           class="app-navbar__search-mobile"
+          :class="{
+            'app-navbar__search-mobile--disconnected':
+              !provider.selectedAddress,
+          }"
           v-show="isMobileSearchOpened"
           v-model="addressSearchInput"
           :placeholder="$t('app-navbar.search-placeholder')"
@@ -279,6 +286,7 @@ $navbar-z-index: 10;
   display: flex;
   align-items: stretch;
   width: 100%;
+  min-height: toRem(65);
   padding: toRem(10) var(--app-padding-right) toRem(10) var(--app-padding-left);
   background: var(--background-primary);
   border-bottom: toRem(1) solid var(--border-primary-main);
@@ -289,6 +297,13 @@ $navbar-z-index: 10;
     position: fixed;
   }
 
+  &--disconnected:not(.app-navbar--fixed) {
+    @include respond-to(medium) {
+      padding: toRem(5) var(--app-padding-right) toRem(5)
+        var(--app-padding-left);
+    }
+  }
+
   @include respond-to(xmedium) {
     justify-content: space-between;
   }
@@ -296,6 +311,7 @@ $navbar-z-index: 10;
   @include respond-to(medium) {
     padding: toRem(15) var(--app-padding-right) toRem(15)
       var(--app-padding-left);
+    align-items: center;
   }
 }
 
@@ -352,9 +368,13 @@ $navbar-z-index: 10;
   position: absolute;
   z-index: $navbar-z-index;
   width: calc(100% - #{toRem(170)});
+  min-width: toRem(135);
   min-height: toRem(30);
-  transform: translateY(-#{toRem(5)});
   overflow: hidden;
+
+  :not([disabled]) {
+    height: 100%;
+  }
 
   /* stylelint-disable */
   &:not(.app-navbar__mobile-search-transition-enter-active)
@@ -362,11 +382,11 @@ $navbar-z-index: 10;
     :deep(input) {
     width: 100%;
   }
-  /* stylelint-enable */
 
-  :not([disabled]) {
-    height: 100%;
+  &--disconnected {
+    display: none !important;
   }
+  /* stylelint-enable */
 
   @include respond-to(medium) {
     display: grid;
@@ -490,6 +510,7 @@ $navbar-z-index: 10;
 
 .app-navbar__provider-btn {
   margin-left: auto;
+  padding: toRem(10) toRem(24);
 
   @include respond-to(xmedium) {
     margin: 0;
@@ -516,7 +537,7 @@ $navbar-z-index: 10;
 }
 
 .app-navbar__mobile-filler {
-  height: toRem(71);
+  height: toRem(65);
   width: 100%;
   display: none;
 
@@ -527,10 +548,12 @@ $navbar-z-index: 10;
 
 .app-navbar__mobile-search-transition-enter-active {
   animation: mobile-search-frame-keyframes 0.25s ease-in-out;
+  min-width: 0;
 }
 
 .app-navbar__mobile-search-transition-leave-active {
   animation: mobile-search-frame-keyframes 0.25s ease-in-out reverse;
+  min-width: 0;
 }
 
 @keyframes mobile-search-frame-keyframes {
@@ -539,7 +562,11 @@ $navbar-z-index: 10;
   }
 
   to {
-    width: var(--mobile-search-width);
+    width: calc(100% - #{toRem(170)});
+
+    @include respond-to(small) {
+      width: calc(100% - #{toRem(140)});
+    }
   }
 }
 </style>
