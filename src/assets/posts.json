@@ -36,8 +36,9 @@
     "chartDescription": "",
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
+      ["title-accent", "A quick intro to other fungible token standards"],
+      ["paragraph", "ERC-20 is not the only fungible token standard, but it was the first, which means that it does have a few bugs. For example, if you send ERC-20 tokens to a contract and that contract does not implement any functionality to interact with ERC-20 tokens, there is no way to get those tokens back. The tokens are, therefore, “lost”. There is also no way for a contract to revert when it receives ERC-20 tokens because there is no way for it to know when it receives those tokens."],
+      ["paragraph", "For example, if we send DAI to our SimpleBank contract address, there is no way for our SimpleBank to send them back to the sender, or to revert. The only change is in the DAI’s token contract, which doesn’t signal our SimpleBank contract to know that it is being sent tokens. This exact problem has resulted in thousands of tokens being lost."]
     ]
   },
   {
@@ -51,8 +52,9 @@
     "chartDescription": "",
     "description": "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!",
     "content": [
-      ["title-accent", "Title 1"],
-      ["paragraph", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"]
+      ["title-accent", "Non-fungible tokens"],
+      ["paragraph", "Non-fungible tokens (NFTs) all have a unique uint256 ID. This ID means that you can trace each token’s history and ownership. It also means you can associate metadata with the token, allowing the token to represent anything with unique properties."],
+      ["paragraph", "ERC721, which is by far the most widely used standard for NFTs, is quite similar to the ERC20 contract interface. It has almost exactly the same functions except when a token amount would be specified in ERC20, the token ID is now specified instead."]
     ]
   },
   {
