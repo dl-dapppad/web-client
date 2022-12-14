@@ -102,7 +102,7 @@ $z-drawer: 100;
   }
 
   to {
-    height: calc(100% - #{toRem(70)});
+    height: calc(100% - #{toRem(65)});
   }
 }
 </style>
