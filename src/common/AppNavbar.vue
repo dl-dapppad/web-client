@@ -47,10 +47,6 @@ const openMobileSearch = () => {
   isMobileSearchOpened.value = true
 }
 
-const setWidthCSSVar = (element: HTMLElement) => {
-  element.style.setProperty('--mobile-search-width', `${element.scrollWidth}px`)
-}
-
 const init = async () => {
   if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) {
     return
@@ -232,11 +228,7 @@ const handleMobileSearchBtn = () => {
         :icon-right="provider.selectedAddress ? $icons.logout : undefined"
         @click="handleProviderBtnClick"
       />
-      <transition
-        name="app-navbar__mobile-search-transition"
-        @enter="setWidthCSSVar"
-        @before-leave="setWidthCSSVar"
-      >
+      <transition name="app-navbar__mobile-search-transition">
         <input-field
           class="app-navbar__search-mobile"
           :class="{
@@ -570,7 +562,11 @@ $navbar-z-index: 10;
   }
 
   to {
-    width: var(--mobile-search-width);
+    width: calc(100% - #{toRem(170)});
+
+    @include respond-to(small) {
+      width: calc(100% - #{toRem(140)});
+    }
   }
 }
 </style>
