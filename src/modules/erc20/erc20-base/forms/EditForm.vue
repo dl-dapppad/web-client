@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
@@ -120,6 +120,10 @@ const init = async () => {
   isLoaded.value = true
 }
 
+const formBalance = computed(() => {
+  return new BN(balance.value).fromFraction(erc20.decimals.value).toString()
+})
+
 const updateBalance = async () => {
   if (!overviewRows.value || !provider.value.selectedAddress) return
 
@@ -201,7 +205,7 @@ init()
           <approve-form :token="erc20" />
           <transfer-form
             :token="erc20"
-            :balance="new BN(balance).fromFraction(erc20.decimals.value)"
+            :balance="formBalance"
             @change-balance="updateBalance"
           />
           <transfer-from-form :token="erc20" @change-balance="updateBalance" />

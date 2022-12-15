@@ -16,7 +16,7 @@ data:
                                 ],
                                 VITE_APP_RPC_URL: {
                                   '5': 'https://goerli.infura.io/v3/'
-                                }
+                                },
                                 VITE_APP_CONTRACTS: {
                                   '5': {
                                     'dapp': '0x353C50AB9E10b62D75aD057327acdB39C0dB8a0B',
@@ -25,8 +25,8 @@ data:
                                   },
                                 },
                                 VITE_APP_PRODUCT_ALIASES: {
-                                  'erc20': '0x8ae85d849167ff996c04040c44924fd364217285e4cad818292c7ac37c0a345b',
-                                  'erc721': '0x73ad2146b3d3a286642c794379d750360a2d53a3459a11b3e5d6cc900f55f44a',
+                                  'erc20-base': '0x8ae85d849167ff996c04040c44924fd364217285e4cad818292c7ac37c0a345b',
+                                  'erc721-base': '0x73ad2146b3d3a286642c794379d750360a2d53a3459a11b3e5d6cc900f55f44a',
                                 },
                               }
 {{- end }}
