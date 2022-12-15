@@ -214,6 +214,7 @@
     "default-title": "Editing",
     "default-description": "You are editing smart contract.",
     "default-interaction-lbl": "Interaction",
-    "default-info-lbl": "Info"
+    "default-info-lbl": "Info",
+    "info-btn": "Show more"
   }
 }

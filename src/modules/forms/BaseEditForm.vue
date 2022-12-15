@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useWindowSize } from '@vueuse/core'
 
 import { AppButton, AppBlock, LinkCopy, Tabs } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
-// import { Post } from '@/types'
+import { Post } from '@/types'
 
 import { EditOverview } from '@/modules/common'
 import { OverviewRow } from '@/modules/types'
 
-// import postsData from '@/assets/posts.json'
+import postsData from '@/assets/posts.json'
+import { animate } from 'motion'
 
 defineProps<{
   headingData?: {
@@ -27,9 +29,10 @@ defineProps<{
 const router = useRouter()
 const route = useRoute()
 
-// const posts = postsData as unknown as Post[]
-// const post = posts.find(el => el.id === route.params.id)
-// console.log(post)
+const { width: windowWidth } = useWindowSize()
+
+const posts = postsData as unknown as Post[]
+const post = posts.find(el => el.id === route.params.id)
 
 const FORM_TABS = [
   {
@@ -43,9 +46,73 @@ const FORM_TABS = [
 ]
 
 const currentTabNumber = ref(FORM_TABS[0].number)
+const infoTextElem = ref<HTMLParagraphElement | null>(null)
+const isInfoShownFull = ref(true)
+const defaultInfoHeight = ref(0)
+const cuttedInfoHeight = ref(0)
+const initWidth = ref(0)
 
-// const infoText = computed(() => props.headingData?.infoText as string)
-const infoText = computed(() => '123')
+const infoText = computed(() =>
+  isInfoShownFull.value
+    ? (post?.description as string)
+    : Number(post?.description.length) > 150
+    ? `${post?.description.slice(0, 150).trim()}...`
+    : post?.description,
+)
+
+const init = () => {
+  if (!infoTextElem.value || Number(post?.description.length) < 150) return
+
+  infoTextElem.value.removeAttribute('style')
+
+  infoTextElem.value.innerText = post?.description as string
+  defaultInfoHeight.value = infoTextElem.value.clientHeight
+
+  infoTextElem.value.innerText = `${post?.description.slice(0, 150).trim()}...`
+  cuttedInfoHeight.value = infoTextElem.value.clientHeight
+
+  initWidth.value = windowWidth.value
+}
+
+const handleShowMore = () => {
+  if (!infoTextElem.value) return
+
+  if (windowWidth.value !== initWidth.value) {
+    init()
+
+    isInfoShownFull.value = !isInfoShownFull.value
+    infoTextElem.value.setAttribute(
+      'style',
+      `height: ${
+        isInfoShownFull.value ? cuttedInfoHeight.value : defaultInfoHeight.value
+      }px`,
+    )
+
+    isInfoShownFull.value = !isInfoShownFull.value
+  }
+
+  animate(infoTextElem.value, {
+    height: isInfoShownFull.value
+      ? `${cuttedInfoHeight.value}px`
+      : `${defaultInfoHeight.value}px`,
+  })
+  isInfoShownFull.value = !isInfoShownFull.value
+}
+onMounted(() => {
+  init()
+
+  animate(infoTextElem.value ?? '', {
+    height: isInfoShownFull.value
+      ? `${cuttedInfoHeight.value}px`
+      : `${defaultInfoHeight.value}px`,
+  })
+  isInfoShownFull.value = !isInfoShownFull.value
+})
+
+watch(
+  () => windowWidth.value,
+  () => infoTextElem.value?.removeAttribute('style'),
+)
 </script>
 
 <template>
@@ -87,10 +154,16 @@ const infoText = computed(() => '123')
       </h3>
       <app-block>
         <div class="app__module-content base-edit-form__content">
-          <span class="app__module-info-text">
+          <span class="app__module-info-text" ref="infoTextElem">
             {{ infoText }}
           </span>
-          <app-button color="tertiary" size="small" :text="'Show more'" />
+          <app-button
+            v-if="Number(post?.description.length) > 150"
+            color="tertiary"
+            size="small"
+            :text="$t('edit-form.info-btn')"
+            @click="handleShowMore"
+          />
         </div>
       </app-block>
     </div>
