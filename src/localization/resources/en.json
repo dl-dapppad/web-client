@@ -7,7 +7,8 @@
     "field-error_maxValue": "Value can't be more than {max}",
     "field-error_minValue": "Value can't be less than {min}",
     "field-error_integer": "Value must be an integer",
-    "field-error_url": "Value must be an URL"
+    "field-error_url": "Value must be an URL",
+    "field-error_maxBNValue": "Value can't be more than your balance"
   },
   "errors": {
     "default": "Oops... Something went wrong",

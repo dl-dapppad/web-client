@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   token: ProductErc20Contract
-  balance: BN | number | string
+  balance: string
 }>()
 
 const { t } = useI18n({

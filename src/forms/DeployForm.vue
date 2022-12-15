@@ -1,20 +1,20 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
+import { defineAsyncComponent } from 'vue-demi'
 import { useRoute } from '@/router'
-import { defineAsyncComponent, Component } from 'vue-demi'
-
-import { ErrorHandler, makeProductPath } from '@/helpers'
+import { makeProductPath } from '@/helpers'
 
 const route = useRoute()
 
-let DeployForm: Component
+const DeployForm = computed(() => {
+  const path = makeProductPath(route.params.id as string)
 
-try {
-  DeployForm = defineAsyncComponent(
-    () => import(makeProductPath(route.params.id as string, 'deploy')),
+  return defineAsyncComponent(
+    path.length === 1
+      ? () => import(`@/modules/${path[0]}/forms/DeployForm.vue`)
+      : () => import(`@/modules/${path[0]}/${path[1]}/forms/DeployForm.vue`),
   )
-} catch (err) {
-  ErrorHandler.process(err)
-}
+})
 </script>
 
 <template>

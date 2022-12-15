@@ -1,20 +1,20 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
+import { defineAsyncComponent } from 'vue-demi'
 import { useRoute } from '@/router'
-import { defineAsyncComponent, Component } from 'vue-demi'
-
-import { ErrorHandler, makeProductPath } from '@/helpers'
+import { makeProductPath } from '@/helpers'
 
 const route = useRoute()
 
-let EditForm: Component
+const EditForm = computed(() => {
+  const path = makeProductPath(route.params.id as string)
 
-try {
-  EditForm = defineAsyncComponent(
-    () => import(makeProductPath(route.params.id as string, 'edit')),
+  return defineAsyncComponent(
+    path.length === 1
+      ? () => import(`@/modules/${path[0]}/forms/EditForm.vue`)
+      : () => import(`@/modules/${path[0]}/${path[1]}/forms/EditForm.vue`),
   )
-} catch (err) {
-  ErrorHandler.process(err)
-}
+})
 </script>
 
 <template>
