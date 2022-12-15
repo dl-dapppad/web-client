@@ -13,15 +13,10 @@ export const useProduct = () => {
     const productType = await getProductTypeByAddress(address)
     if (!productType) return
 
-    /* eslint-disable */
     router.push({
-      name: ROUTE_NAMES.notFound
-    }).then(() =>
-      router.push({name: ROUTE_NAMES.productEdit,
-        params: { id: productType, contractAddress: address },
-      })
-    )
-    /* eslint-enable */
+      name: ROUTE_NAMES.productEdit,
+      params: { id: productType, contractAddress: address },
+    })
   }
 
   const getProductTypeByAddress = async (
