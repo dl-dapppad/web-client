@@ -215,6 +215,9 @@
     "default-description": "You are editing smart contract.",
     "default-interaction-lbl": "Interaction",
     "default-info-lbl": "Info",
-    "info-btn": "Show more"
+    "info-btn-more": "Show more",
+    "info-btn-less": "Show less",
+    "tab-read": "Read",
+    "tab-write": "Write"
   }
 }

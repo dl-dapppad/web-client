@@ -2,8 +2,9 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useWindowSize } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 
-import { AppButton, AppBlock, LinkCopy, Tabs } from '@/common'
+import { AppButton, AppBlock, LinkCopy, Tabs, ContentRender } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
 import { Post } from '@/types'
 
@@ -26,6 +27,7 @@ defineProps<{
   }
 }>()
 
+const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const route = useRoute()
 
@@ -36,77 +38,103 @@ const post = posts.find(el => el.id === route.params.id)
 
 const FORM_TABS = [
   {
-    title: 'Read',
+    title: t('edit-form.tab-read'),
     number: 1,
   },
   {
-    title: 'Write',
+    title: t('edit-form.tab-write'),
     number: 2,
   },
 ]
 
 const currentTabNumber = ref(FORM_TABS[0].number)
 const infoTextElem = ref<HTMLParagraphElement | null>(null)
-const isInfoShownFull = ref(true)
-const defaultInfoHeight = ref(0)
-const cuttedInfoHeight = ref(0)
-const initWidth = ref(0)
 
-const infoText = computed(() =>
-  isInfoShownFull.value
-    ? (post?.description as string)
-    : Number(post?.description.length) > 150
-    ? `${post?.description.slice(0, 150).trim()}...`
-    : post?.description,
-)
+const infoBlock = ref({
+  html: '',
+  isShownFull: true,
+  heightDefault: 0,
+  heightCutted: 0,
+  initWidth: 0,
+})
 
-const init = () => {
-  if (!infoTextElem.value || Number(post?.description.length) < 150) return
+const initInfoAnimation = () => {
+  if (
+    !infoTextElem.value ||
+    !isShowMoreShown.value ||
+    !post?.infoDescriptionContent
+  )
+    return
 
   infoTextElem.value.removeAttribute('style')
 
-  infoTextElem.value.innerText = post?.description as string
-  defaultInfoHeight.value = infoTextElem.value.clientHeight
+  infoBlock.value.heightDefault = infoTextElem.value.clientHeight
 
-  infoTextElem.value.innerText = `${post?.description.slice(0, 150).trim()}...`
-  cuttedInfoHeight.value = infoTextElem.value.clientHeight
+  infoTextElem.value.innerText = `${post.infoDescriptionContent[0][1]
+    ?.slice(0, 150)
+    .trim()}...`
+  infoBlock.value.heightCutted =
+    infoTextElem.value.clientHeight < 200
+      ? infoTextElem.value.clientHeight
+      : 200
 
-  initWidth.value = windowWidth.value
+  infoBlock.value.initWidth = windowWidth.value
 }
 
 const handleShowMore = () => {
-  if (!infoTextElem.value) return
+  if (!infoTextElem.value || !post?.infoDescriptionContent) return
 
-  if (windowWidth.value !== initWidth.value) {
-    init()
+  if (windowWidth.value !== infoBlock.value.initWidth) {
+    initInfoAnimation()
 
-    isInfoShownFull.value = !isInfoShownFull.value
+    infoBlock.value.isShownFull = !infoBlock.value.isShownFull
     infoTextElem.value.setAttribute(
       'style',
       `height: ${
-        isInfoShownFull.value ? cuttedInfoHeight.value : defaultInfoHeight.value
+        infoBlock.value.isShownFull
+          ? infoBlock.value.heightCutted
+          : infoBlock.value.heightDefault
       }px`,
     )
 
-    isInfoShownFull.value = !isInfoShownFull.value
+    infoBlock.value.isShownFull = !infoBlock.value.isShownFull
   }
 
+  !infoBlock.value.isShownFull
+    ? (infoTextElem.value.innerHTML = infoBlock.value.html)
+    : (infoTextElem.value.innerHTML = `${post.infoDescriptionContent[0][1]
+        .slice(0, 150)
+        .trim()}...`)
+
   animate(infoTextElem.value, {
-    height: isInfoShownFull.value
-      ? `${cuttedInfoHeight.value}px`
-      : `${defaultInfoHeight.value}px`,
+    height: infoBlock.value.isShownFull
+      ? `${infoBlock.value.heightCutted}px`
+      : `${infoBlock.value.heightDefault}px`,
   })
-  isInfoShownFull.value = !isInfoShownFull.value
+  infoBlock.value.isShownFull = !infoBlock.value.isShownFull
 }
+
 onMounted(() => {
-  init()
+  infoBlock.value.html = infoTextElem?.value?.innerHTML as string
+  initInfoAnimation()
 
   animate(infoTextElem.value ?? '', {
-    height: isInfoShownFull.value
-      ? `${cuttedInfoHeight.value}px`
-      : `${defaultInfoHeight.value}px`,
+    height: infoBlock.value.isShownFull
+      ? `${infoBlock.value.heightCutted}px`
+      : `${infoBlock.value.heightDefault}px`,
   })
-  isInfoShownFull.value = !isInfoShownFull.value
+  infoBlock.value.isShownFull = !infoBlock.value.isShownFull
+})
+
+const isInfoShown = computed(() => post?.infoDescriptionContent?.length)
+
+const isShowMoreShown = computed(() => {
+  if (!post?.infoDescriptionContent?.length) return false
+
+  return (
+    post.infoDescriptionContent.length > 1 ||
+    post.infoDescriptionContent[0][1].length > 150
+  )
 })
 
 watch(
@@ -148,20 +176,24 @@ watch(
         {{ headingData?.description ?? $t('edit-form.default-description') }}
       </span>
     </div>
-    <div class="app__module-padding-bottom">
+    <div class="app__module-padding-bottom" v-if="isInfoShown">
       <h3 class="app__module-block-title">
         {{ headingData?.infoLbl ?? $t('edit-form.default-info-lbl') }}
       </h3>
       <app-block>
         <div class="app__module-content base-edit-form__content">
           <span class="app__module-info-text" ref="infoTextElem">
-            {{ infoText }}
+            <content-render :content="post?.infoDescriptionContent ?? []" />
           </span>
           <app-button
-            v-if="Number(post?.description.length) > 150"
+            v-if="isShowMoreShown"
             color="tertiary"
             size="small"
-            :text="$t('edit-form.info-btn')"
+            :text="
+              infoBlock.isShownFull
+                ? $t('edit-form.info-btn-less')
+                : $t('edit-form.info-btn-more')
+            "
             @click="handleShowMore"
           />
         </div>
