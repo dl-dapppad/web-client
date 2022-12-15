@@ -33,7 +33,8 @@
     "provider-wrapper-method-not-found": "provider not exist or hasn't this method",
     "provider-unconnected": "Please, connect your MetaMask wallet.",
     "address-invalid": "The smart contract address is not correct.",
-    "address-not-found": "No product with this address was found."
+    "address-not-found": "No product with this address was found.",
+    "can-not-create-initialize-data": "Initialize data can't be created for this product."
   },
   "notification": {
     "default-title-success": "Success!",
@@ -159,7 +160,7 @@
     "total-reward-lbl": "Total reward",
     "current-rewards-lbl": "Current rewards",
     "staking-title": "History of staking",
-    "staking-currency": "DAPPAD (DAPP)",
+    "staking-currency": "DAPPPAD (DAPP)",
     "staking-history-first-lbl": "Staked",
     "staking-history-second-lbl": "Withdrawn",
     "staking-history-third-lbl": "Staked",

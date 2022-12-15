@@ -4,9 +4,9 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { required } from '@/validators'
-import { deploy } from '@/helpers'
 import { BaseDeployForm } from '@/modules/forms'
 import { DeployMetadata } from '@/modules/common/index'
+import { useProduct } from '@/composables'
 
 const { t } = useI18n({
   locale: 'en',
@@ -31,9 +31,10 @@ const { t } = useI18n({
   },
 })
 
-const isSuccessModalShown = ref(false)
-
 const route = useRoute()
+const product = useProduct()
+
+const isSuccessModalShown = ref(false)
 
 const deployMetadata = ref<DeployMetadata>({
   name: '',
@@ -51,7 +52,7 @@ const headingData = {
 
 const buttonData = {
   label: t('erc721.btn-lbl'),
-  isShown: txProcessing,
+  isHidden: txProcessing,
 }
 
 const modalData = {
@@ -82,11 +83,12 @@ const categoriesData = [
 
 const submit = async (values: string[]) => {
   if (!Array.isArray(values)) return
-  const [paymentTokenAddress, name, symbol] = values
+  const [paymentTokenAddress, productPrice, name, symbol] = values
 
   txProcessing.value = true
-  potentialContractAddress.value = await deploy(
+  potentialContractAddress.value = await product.deploy(
     route.params.id as string,
+    productPrice,
     paymentTokenAddress,
     [name, symbol],
   )

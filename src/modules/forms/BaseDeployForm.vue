@@ -19,6 +19,7 @@ import {
   useFormValidation,
   useErc20Mock,
   useFarming,
+  useProduct,
 } from '@/composables'
 import { formatAmount, txWrapper } from '@/helpers'
 import { config } from '@/config'
@@ -26,20 +27,15 @@ import { BN } from '@/utils'
 import { required } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
 import { ETHEREUM_CHAINS } from '@/enums'
-
 import { SCHEMES } from '@/common/Loader.vue'
 import { DeploySuccessMessage } from '@/modules/common'
 import { DeployMetadata } from '@/modules/common'
 import { Input, ModalText, UseForm } from '@/modules/types'
-import {
-  getSelectedTokenInfo,
-  getAvailableTokenList,
-  getProduct,
-} from '@/helpers'
 
 const router = useRouter()
 const route = useRoute()
 const farming = useFarming()
+const product = useProduct()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -83,15 +79,15 @@ const productPaymentToken = ref({
   balance: '',
   symbol: '',
   decimals: 0,
-  swapPrice: '0',
+  amount: '0',
 })
 const selectedPaymentToken = ref({
   balance: '',
   symbol: '',
   decimals: 0,
-  swapPrice: '0',
+  amount: '0',
 })
-const product = ref<Product>()
+const selectedProduct = ref<Product>()
 const useFormArray = [] as UseForm[]
 
 // data to useForm
@@ -141,9 +137,9 @@ const isAllFieldsValid = computed(() => {
 })
 
 const isBalanceInsuficient = computed(() => {
-  if (!product.value) return false
+  if (!selectedProduct.value) return false
 
-  const currentPrice = new BN(product.value?.currentPrice)
+  const currentPrice = new BN(selectedProduct.value?.currentPrice)
     .fromFraction(productPaymentToken.value.decimals)
     .toString()
   const paymentBalance = new BN(selectedPaymentToken.value.balance)
@@ -172,33 +168,42 @@ const updateIsShownModal = (val: boolean) => {
 }
 
 const updatePayment = async (selectedSymbol: string | number) => {
-  form.data[0][0] = selectedSymbol as string
-
   const selectedIndex = paymentTokens.value.symbols.findIndex(
     symbol => symbol === selectedSymbol,
   )
   const selectedAddress = paymentTokens.value.addresses[selectedIndex]
 
-  let symbol, decimals, balance, swapPrice
+  let symbol, decimals, balance, amount
   if (selectedIndex === 0) {
-    ;({ symbol, decimals, balance, swapPrice } = await getSelectedTokenInfo(
-      selectedAddress,
-    ))
+    ;({ symbol, decimals, balance, amount } =
+      await product.getSelectedPaymentTokenInfo(selectedAddress))
+
+    selectedPaymentToken.value = {
+      ...selectedPaymentToken.value,
+      symbol,
+      decimals: Number(decimals),
+      balance,
+      amount: selectedProduct.value?.currentPrice ?? '0',
+    }
   } else {
-    ;({ symbol, decimals, balance, swapPrice } = await getSelectedTokenInfo(
-      selectedAddress,
-      true,
-      product.value?.currentPrice ?? '0',
-    ))
+    ;({ symbol, decimals, balance, amount } =
+      await product.getSelectedPaymentTokenInfo(
+        selectedAddress,
+        true,
+        selectedProduct.value?.currentPrice ?? '0',
+      ))
+
+    selectedPaymentToken.value = {
+      ...selectedPaymentToken.value,
+      symbol,
+      decimals: Number(decimals),
+      balance,
+      amount,
+    }
   }
 
-  selectedPaymentToken.value = {
-    ...selectedPaymentToken.value,
-    symbol,
-    decimals: Number(decimals),
-    balance,
-    swapPrice,
-  }
+  form.data[0][0] = selectedSymbol as string
+  form.data[0][1] = selectedPaymentToken.value.amount
 }
 
 const mintToken = async () => {
@@ -223,21 +228,23 @@ const mintToken = async () => {
 }
 
 const init = async () => {
-  const { symbols, addresses } = await getAvailableTokenList()
+  const { symbols, addresses } = await product.getAvailablePaymentTokenList()
 
   paymentTokens.value.symbols = symbols
   paymentTokens.value.addresses = addresses
 
   const alias = config.PRODUCT_ALIASES[route.params.id as string]
-  product.value = await getProduct(alias)
+  selectedProduct.value = await product.getProductInfo(alias)
 
   if (!addresses.length) return
 
-  const { symbol, decimals, balance } = await getSelectedTokenInfo(addresses[0])
+  const { symbol, decimals, balance } =
+    await product.getSelectedPaymentTokenInfo(addresses[0])
 
   productPaymentToken.value.symbol = symbol
   productPaymentToken.value.decimals = Number(decimals)
   productPaymentToken.value.balance = balance
+  productPaymentToken.value.amount = selectedProduct.value.currentPrice
 
   await farming.loadDetails()
 }
@@ -354,9 +361,14 @@ onMounted(() => init())
                       <info-tooltip :text="$t('deploy-form.payment-info')" />
                     </div>
                   </div>
+                  <!-- eslint-disable -->
                   <template
-                    v-if="selectedPaymentToken.balance && product?.currentPrice"
+                    v-if="
+                      selectedPaymentToken.balance &&
+                      selectedProduct?.currentPrice
+                    "
                   >
+                  <!-- eslint-enable -->
                     <div class="app__row">
                       <span class="app__row-title">
                         {{ $t('deploy-form.product-price') }}
@@ -364,7 +376,7 @@ onMounted(() => init())
                       <div class="app__balance">
                         {{
                           formatAmount(
-                            product.currentPrice,
+                            selectedProduct.currentPrice,
                             productPaymentToken.decimals,
                           )
                         }}
@@ -372,7 +384,7 @@ onMounted(() => init())
                       </div>
                     </div>
                     <div
-                      v-if="selectedPaymentToken.swapPrice !== '0'"
+                      v-if="selectedPaymentToken.amount !== '0'"
                       class="app__row"
                     >
                       <span class="app__row-title">
@@ -386,7 +398,7 @@ onMounted(() => init())
                       <div class="app__balance">
                         {{
                           formatAmount(
-                            selectedPaymentToken.swapPrice,
+                            selectedPaymentToken.amount,
                             selectedPaymentToken.decimals,
                           )
                         }}

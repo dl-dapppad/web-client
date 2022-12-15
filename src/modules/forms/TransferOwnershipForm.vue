@@ -5,7 +5,7 @@ import { txWrapper } from '@/helpers'
 import { required, isAddress } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
 import { ProductErc721Contract } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
-import { ProductErc20Contract } from '@/modules/erc20/erc20-base/composables/use-product-erc20'
+import { ProductErc20Contract } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
 
 enum EMITS {
   changeOwner = 'change-owner',

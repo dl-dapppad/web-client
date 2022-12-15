@@ -119,8 +119,8 @@ export const useProductFactory = (): ProductFactoryContract => {
 
     const tx = await _instance_rw.value.deploy(
       args.alias,
-      args.paymentToken,
-      args.initializeData,
+      args.paymentTokenAddress,
+      args.encodedInitializeData,
     )
 
     return tx

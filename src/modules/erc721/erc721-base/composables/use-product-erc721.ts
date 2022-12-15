@@ -1,8 +1,8 @@
 import { ref, Ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { ContractTransaction } from 'ethers'
+import { ContractTransaction, utils } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
-import { ERC721, ERC721__factory } from '../types'
+import { ERC721Base, ERC721Base__factory } from '../types'
 
 export interface ProductErc721Contract {
   address: Ref<string>
@@ -11,6 +11,10 @@ export interface ProductErc721Contract {
   baseURI: Ref<string>
   owner: Ref<string>
   init: (address: string) => void
+  encodeFunctionData: (
+    initializeDataValues: unknown[],
+    functionMethod?: string,
+  ) => string
   loadDetails: () => Promise<void>
   updateName: () => Promise<void>
   updateSymbol: () => Promise<void>
@@ -36,13 +40,13 @@ export interface ProductErc721Contract {
   upgradeTo: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
-export const useProductErc721 = (
+export const useProductErc721Base = (
   contractAddress?: string,
 ): ProductErc721Contract => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
 
-  const _instance = ref<ERC721 | undefined>()
-  const _instance_rw = ref<ERC721 | undefined>()
+  const _instance = ref<ERC721Base | undefined>()
+  const _instance_rw = ref<ERC721Base | undefined>()
 
   const address = ref('')
   const name = ref('')
@@ -54,17 +58,26 @@ export const useProductErc721 = (
     address.value = contractAddress
 
     if (provider.value.currentProvider) {
-      _instance.value = ERC721__factory.connect(
+      _instance.value = ERC721Base__factory.connect(
         address.value,
         provider.value.currentProvider,
       )
     }
     if (provider.value.currentSigner) {
-      _instance_rw.value = ERC721__factory.connect(
+      _instance_rw.value = ERC721Base__factory.connect(
         address.value,
         provider.value.currentSigner,
       )
     }
+  }
+
+  const encodeFunctionData = (
+    initializeDataValues: unknown[],
+    functionMethod = 'ERC721_init',
+  ): string => {
+    const abiInterface =
+      ERC721Base__factory.createInterface() as utils.Interface
+    return abiInterface.encodeFunctionData(functionMethod, initializeDataValues)
   }
 
   const loadDetails = async (): Promise<void> => {
@@ -209,6 +222,7 @@ export const useProductErc721 = (
 
   return {
     init,
+    encodeFunctionData,
     loadDetails,
 
     address,

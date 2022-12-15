@@ -20,7 +20,7 @@ import {
   TokenUriForm,
 } from '../../forms'
 import { EditOverview } from '@/modules/common'
-import { useProductErc721 } from '../composables/use-product-erc721'
+import { useProductErc721Base } from '../composables/use-product-erc721'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -54,7 +54,7 @@ const FORM_TABS = [
 
 const router = useRouter()
 const route = useRoute()
-const erc721 = useProductErc721(route.params.contractAddress as string)
+const erc721 = useProductErc721Base(route.params.contractAddress as string)
 
 const isLoaded = ref(false)
 
