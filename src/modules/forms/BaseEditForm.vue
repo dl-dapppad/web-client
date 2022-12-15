@@ -187,6 +187,7 @@ watch(
           </span>
           <app-button
             v-if="isShowMoreShown"
+            class="base-edit-form__info-btn"
             color="tertiary"
             size="small"
             :text="
@@ -230,5 +231,13 @@ watch(
   display: flex;
   flex-direction: column;
   gap: toRem(30);
+}
+
+.base-edit-form__info-btn {
+  min-width: toRem(150);
+
+  @include respond-to(medium) {
+    width: 100%;
+  }
 }
 </style>
