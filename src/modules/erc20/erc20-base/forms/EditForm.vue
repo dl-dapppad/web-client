@@ -91,14 +91,11 @@ const init = async () => {
   erc20.init(route.params.contractAddress as string)
 
   if (provider.value.selectedAddress) {
-    await Promise.all([
-      erc20.loadDetails(),
+    const [amount] = await Promise.all([
       erc20.balanceOf(provider.value.selectedAddress),
-    ]).then(res => {
-      balance.value = res[1]
-
-      return
-    })
+      erc20.loadDetails(),
+    ])
+    balance.value = amount
   }
 
   overviewRows.value[0].value = `${erc20.name.value} (${erc20.symbol.value})`

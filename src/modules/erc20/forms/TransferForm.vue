@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, isAddress, numeric, maxBNValue } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
-import { ProductErc20Contract } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
+import { ProductErc20BaseContract } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
 import { BN } from '@/utils'
 
 enum EMITS {
@@ -16,7 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
-  token: ProductErc20Contract
+  token: ProductErc20BaseContract
   balance: string
 }>()
 

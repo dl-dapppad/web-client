@@ -5,10 +5,10 @@ import { txWrapper } from '@/helpers'
 import { required, isAddress, numeric } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
 import { BN } from '@/utils'
-import { ProductErc20Contract } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
+import { ProductErc20BaseContract } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
 
 const props = defineProps<{
-  token: ProductErc20Contract
+  token: ProductErc20BaseContract
 }>()
 
 const { t } = useI18n({

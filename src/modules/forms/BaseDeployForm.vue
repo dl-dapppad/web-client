@@ -383,10 +383,15 @@ onMounted(() => init())
                         <span>{{ productPaymentToken.symbol }}</span>
                       </div>
                     </div>
+                    <!-- eslint-disable -->
                     <div
-                      v-if="selectedPaymentToken.amount !== '0'"
+                      v-if="
+                        selectedPaymentToken.symbol !==
+                          productPaymentToken.symbol
+                      "
                       class="app__row"
                     >
+                    <!-- eslint-enable -->
                       <span class="app__row-title">
                         {{
                           $t('deploy-form.product-swap-price', {

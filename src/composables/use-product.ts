@@ -118,10 +118,11 @@ export const useProduct = () => {
     const factory = useProductFactory()
 
     let paymentContractAddress = ''
-    await Promise.all([farming.loadDetails(), factory.payment()]).then(res => {
-      paymentContractAddress = res[1]
-      return
-    })
+    const [address] = await Promise.all([
+      factory.payment(),
+      farming.loadDetails(),
+    ])
+    paymentContractAddress = address
 
     const payment = usePayment(paymentContractAddress)
     const paymentTokensAddresses = await payment.getPaymentTokens()
@@ -162,16 +163,14 @@ export const useProduct = () => {
     if (!provider.value.selectedAddress) return data
 
     const erc20 = useErc20(address)
-    await Promise.all([
-      erc20.loadDetails(),
+    const [balance] = await Promise.all([
       erc20.balanceOf(provider.value.selectedAddress),
-    ]).then(res => {
-      data.symbol = erc20.symbol.value
-      data.decimals = String(erc20.decimals.value)
-      data.balance = res[1]
+      erc20.loadDetails(),
+    ])
 
-      return
-    })
+    data.symbol = erc20.symbol.value
+    data.decimals = String(erc20.decimals.value)
+    data.balance = balance
 
     if (!isSwapToken) return data
 
