@@ -13,12 +13,6 @@ export const config = {
     [ETHEREUM_CHAINS.goerli as string]: import.meta.env.VITE_APP_RPC_URL_GOERLI,
   },
   CONTRACTS: {
-    [ETHEREUM_CHAINS.localhost as string]: {
-      [CONTRACT_NAMES.DAPP]: import.meta.env.VITE_APP_CONTRACT_LOCAL_DAPP,
-      [CONTRACT_NAMES.FARMING]: import.meta.env.VITE_APP_CONTRACT_LOCAL_FARMING,
-      [CONTRACT_NAMES.PRODUCT_FACTORY]: import.meta.env
-        .VITE_APP_CONTRACT_LOCAL_PRODUCT_FACTORY,
-    },
     [ETHEREUM_CHAINS.goerli as string]: {
       [CONTRACT_NAMES.DAPP]: import.meta.env.VITE_APP_CONTRACT_GOERLI_DAPP,
       [CONTRACT_NAMES.FARMING]: import.meta.env
@@ -28,9 +22,26 @@ export const config = {
     },
   },
   PRODUCT_ALIASES: {
-    [PRODUCT_IDS.ERC20]: import.meta.env.VITE_APP_CONTRACT_PRODUCT_ERC20_ALIAS,
-    [PRODUCT_IDS.ERC721]: import.meta.env
+    [PRODUCT_IDS.erc20Base]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC20_ALIAS,
+    [PRODUCT_IDS.erc20Mint]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_ALIAS,
+    [PRODUCT_IDS.erc20Burn]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC20_BURN_ALIAS,
+    [PRODUCT_IDS.erc20MintBurn]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_BURN_ALIAS,
+    [PRODUCT_IDS.erc20MintBurnCapp]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_BURN_CAPP_ALIAS,
+    [PRODUCT_IDS.erc20MintCapp]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_CAPP_ALIAS,
+    [PRODUCT_IDS.erc721Base]: import.meta.env
       .VITE_APP_CONTRACT_PRODUCT_ERC721_ALIAS,
+    [PRODUCT_IDS.erc721Enum]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC721_ENUM_ALIAS,
+    [PRODUCT_IDS.erc721Burn]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC721_BURN_ALIAS,
+    [PRODUCT_IDS.erc721BurnEnum]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC721_BURN_ENUM_ALIAS,
   } as Record<string, string>,
 } as const
 

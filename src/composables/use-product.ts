@@ -48,7 +48,7 @@ export const useProduct = () => {
       const erc20 = useProductErc20Base(address)
       await erc20.updateDecimals()
 
-      return PRODUCT_IDS.ERC20
+      return PRODUCT_IDS.erc20Base
       // eslint-disable-next-line no-empty
     } catch {}
 
@@ -56,7 +56,7 @@ export const useProduct = () => {
       const erc721 = useProductErc721Base(address)
       await erc721.updateBaseURI()
 
-      return PRODUCT_IDS.ERC721
+      return PRODUCT_IDS.erc721Base
       // eslint-disable-next-line no-empty
     } catch {}
 
@@ -208,10 +208,10 @@ export const useProduct = () => {
 
     let product
     switch (productId) {
-      case PRODUCT_IDS.ERC20:
+      case PRODUCT_IDS.erc20Base:
         product = useProductErc20Base()
         break
-      case PRODUCT_IDS.ERC721:
+      case PRODUCT_IDS.erc721Base:
         product = useProductErc721Base()
         break
       default:
