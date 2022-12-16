@@ -14,7 +14,12 @@ import { useErc20, useProduct } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
+import {
+  CONTRACT_NAMES,
+  ETHEREUM_CHAINS,
+  WINDOW_BREAKPOINTS,
+  PROVIDERS,
+} from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
@@ -37,6 +42,10 @@ const isMobileSearchOpened = ref(false)
 
 const addressSearchInput = ref('')
 const selectedProvider = ref()
+
+const metamaskProvider = web3Store.providers.find(
+  provider => provider.name === PROVIDERS.metamask,
+)
 
 const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
@@ -101,16 +110,17 @@ const clickContractSearch = async () => {
     composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
+const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
+
 const isProviderButtonShown = computed(
   () =>
     windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
     !provider.value.selectedAddress,
 )
 
-const isNavbarFixed = computed(
-  () =>
-    isMobileDrawerOpened.value && windowWidth.value < WINDOW_BREAKPOINTS.medium,
-)
+const isNavbarFixed = computed(() => isMobileDrawerOpened.value && isMobile)
+
+const isMetamaskProvider = computed(() => !!metamaskProvider)
 
 watch(
   () => provider.value.selectedAddress,
