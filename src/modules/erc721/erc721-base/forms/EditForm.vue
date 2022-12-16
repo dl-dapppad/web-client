@@ -17,7 +17,7 @@ import {
   SetBaseUriForm,
   TokenUriForm,
 } from '../../forms'
-import { useProductErc721 } from '../composables/use-product-erc721'
+import { useProductErc721Base } from '../composables/use-product-erc721'
 import { BaseEditForm } from '@/modules/forms'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -40,7 +40,7 @@ const { t } = useI18n({
 })
 
 const route = useRoute()
-const erc721 = useProductErc721(route.params.contractAddress as string)
+const erc721 = useProductErc721Base(route.params.contractAddress as string)
 
 const isLoaded = ref(false)
 
@@ -72,14 +72,11 @@ const init = async () => {
   erc721.init(route.params.contractAddress as string)
 
   if (provider.value.selectedAddress) {
-    await Promise.all([
-      erc721.loadDetails(),
+    const [amount] = await Promise.all([
       erc721.balanceOf(provider.value.selectedAddress),
-    ]).then(res => {
-      overviewRows.value[3].value = res[1]
-
-      return
-    })
+      erc721.loadDetails(),
+    ])
+    overviewRows.value[3].value = amount
   }
 
   overviewRows.value[0].value = `${erc721.name.value} (${erc721.symbol.value})`

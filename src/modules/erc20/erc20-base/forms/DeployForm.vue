@@ -6,10 +6,10 @@ import { storeToRefs } from 'pinia'
 
 import { useWeb3ProvidersStore } from '@/store'
 import { required, isAddress, numeric } from '@/validators'
-import { deploy } from '@/helpers'
 import { BN } from '@/utils'
 import { DeployMetadata } from '@/modules/common'
 import { BaseDeployForm } from '@/modules/forms'
+import { useProduct } from '@/composables'
 
 const { t } = useI18n({
   locale: 'en',
@@ -42,11 +42,11 @@ const { t } = useI18n({
   },
 })
 
-const isSuccessModalShown = ref(false)
-
-const route = useRoute()
-
 const { provider } = storeToRefs(useWeb3ProvidersStore())
+const route = useRoute()
+const product = useProduct()
+
+const isSuccessModalShown = ref(false)
 
 const deployMetadata = ref<DeployMetadata>({
   name: '',
@@ -123,6 +123,7 @@ const submit = async (values: string[]) => {
   if (!Array.isArray(values)) return
   const [
     paymentTokenAddress,
+    productPrice,
     name,
     symbol,
     decimals,
@@ -131,8 +132,9 @@ const submit = async (values: string[]) => {
   ] = values
 
   txProcessing.value = true
-  potentialContractAddress.value = await deploy(
+  potentialContractAddress.value = await product.deploy(
     route.params.id as string,
+    productPrice,
     paymentTokenAddress,
     [
       name,

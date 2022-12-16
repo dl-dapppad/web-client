@@ -133,6 +133,7 @@ export const txWrapper = async (
 
     return true
   } catch (e) {
+    console.error(e)
     handleTxError(e)
 
     return false
