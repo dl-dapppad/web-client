@@ -68,16 +68,15 @@ const init = async () => {
 
     dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
 
-    await Promise.all([
-      dapp.loadDetails(),
-      farming.loadDetails(),
+    const [productData, cashbackAmount] = await Promise.all([
       factory.products(alias.value),
       factory.getCashback(alias.value),
-    ]).then(res => {
-      product.value = res[2]
-      cashback.value = res[3]
-      return
-    })
+      dapp.loadDetails(),
+      farming.loadDetails(),
+    ])
+
+    product.value = productData
+    cashback.value = cashbackAmount
 
     paymentToken.init(farming.rewardToken.value)
     await paymentToken.loadDetails()
@@ -123,7 +122,7 @@ init()
                   :text="
                     t('post-item-page-checkout.have-product-input-tooltip-txt')
                   "
-                  :move-side="right"
+                  move-side="right"
                 />
               </div>
               <app-button

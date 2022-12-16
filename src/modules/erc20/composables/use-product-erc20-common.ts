@@ -2,9 +2,9 @@ import { ref, Ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
-import { ERC20, ERC20__factory } from '../types'
+import { ERC20Common, ERC20Common__factory } from '@/modules/erc20/types'
 
-export interface ProductErc20Contract {
+export interface ProductErc20CommonContract {
   address: Ref<string>
   name: Ref<string>
   symbol: Ref<string>
@@ -29,13 +29,13 @@ export interface ProductErc20Contract {
   upgradeTo: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
-export const useProductErc20 = (
+export const useProductErc20Common = (
   contractAddress?: string,
-): ProductErc20Contract => {
+): ProductErc20CommonContract => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
 
-  const _instance = ref<ERC20 | undefined>()
-  const _instance_rw = ref<ERC20 | undefined>()
+  const _instance = ref<ERC20Common | undefined>()
+  const _instance_rw = ref<ERC20Common | undefined>()
 
   const address = ref('')
   const name = ref('')
@@ -48,14 +48,14 @@ export const useProductErc20 = (
     address.value = contractAddress
 
     if (provider.value.currentProvider) {
-      _instance.value = ERC20__factory.connect(
+      _instance.value = ERC20Common__factory.connect(
         address.value,
         provider.value.currentProvider,
       )
     }
 
     if (provider.value.currentSigner) {
-      _instance_rw.value = ERC20__factory.connect(
+      _instance_rw.value = ERC20Common__factory.connect(
         address.value,
         provider.value.currentSigner,
       )

@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { ERC721, ERC721Interface } from "../ERC721";
+import type { ERC721Base, ERC721BaseInterface } from "../ERC721Base";
 
 const _abi = [
   {
@@ -573,12 +573,15 @@ const _abi = [
   },
 ];
 
-export class ERC721__factory {
+export class ERC721Base__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC721Interface {
-    return new utils.Interface(_abi) as ERC721Interface;
+  static createInterface(): ERC721BaseInterface {
+    return new utils.Interface(_abi) as ERC721BaseInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): ERC721 {
-    return new Contract(address, _abi, signerOrProvider) as ERC721;
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): ERC721Base {
+    return new Contract(address, _abi, signerOrProvider) as ERC721Base;
   }
 }

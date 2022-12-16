@@ -75,21 +75,24 @@ const isWithdrawAvailable = computed(() =>
 const updateBalanceState = async () => {
   if (!provider.value.selectedAddress) return
 
-  await Promise.all([
+  const [
+    accountInvestInfo,
+    reward,
+    investmnetBalanceAmount,
+    rewardBalanceAmount,
+  ] = await Promise.all([
     farming.accountInvestInfo(provider.value.selectedAddress),
     farming.getRewards(provider.value.selectedAddress),
     investmentToken.balanceOf(provider.value.selectedAddress),
     rewardToken.balanceOf(provider.value.selectedAddress),
     farming.loadDetails(),
     account.value.updateDappBalance(),
-  ]).then(res => {
-    investInfo.value.amount = res[0].amount
-    investInfo.value.rewards = res[1]
-    investmentBalance.value = res[2]
-    rewardBalance.value = res[3]
+  ])
 
-    return
-  })
+  investInfo.value.amount = accountInvestInfo.amount
+  investInfo.value.rewards = reward
+  investmentBalance.value = investmnetBalanceAmount
+  rewardBalance.value = rewardBalanceAmount
 }
 
 const clickMaxStakingAmount = () => {

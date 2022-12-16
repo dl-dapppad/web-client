@@ -18,7 +18,7 @@ import {
   TransferFromForm,
 } from '@/modules/erc20/forms'
 import { EditOverview } from '@/modules/common'
-import { useProductErc20 } from '../composables/use-product-erc20'
+import { useProductErc20Base } from '../composables/use-product-erc20-base'
 import { BN } from '@/utils'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -83,24 +83,19 @@ const balance = ref('0')
 
 const router = useRouter()
 const route = useRoute()
-const erc20 = useProductErc20(route.params.contractAddress as string)
+const erc20 = useProductErc20Base(route.params.contractAddress as string)
 
 const isLoaded = ref(false)
 
 const init = async () => {
   erc20.init(route.params.contractAddress as string)
 
-  await erc20.loadDetails()
-
   if (provider.value.selectedAddress) {
-    await Promise.all([
-      erc20.loadDetails(),
+    const [amount] = await Promise.all([
       erc20.balanceOf(provider.value.selectedAddress),
-    ]).then(res => {
-      balance.value = res[1]
-
-      return
-    })
+      erc20.loadDetails(),
+    ])
+    balance.value = amount
   }
 
   overviewRows.value[0].value = `${erc20.name.value} (${erc20.symbol.value})`

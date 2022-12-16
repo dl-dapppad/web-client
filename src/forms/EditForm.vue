@@ -2,12 +2,13 @@
 import { computed } from 'vue'
 import { defineAsyncComponent } from 'vue-demi'
 import { useRoute } from '@/router'
-import { makeProductPath } from '@/helpers'
+import { useProduct } from '@/composables'
 
 const route = useRoute()
+const product = useProduct()
 
 const EditForm = computed(() => {
-  const path = makeProductPath(route.params.id as string)
+  const path = product.makeProductPath(route.params.id as string)
 
   return defineAsyncComponent(
     path.length === 1
