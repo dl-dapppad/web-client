@@ -10,6 +10,7 @@ import {
   MenuDrawer,
   AddressCopy,
 } from '@/common'
+import InvalidBrowserModal from '@/common/AppNavbar/AppNavbarInvalidBrowserModal.vue'
 import { useErc20, useProduct } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
@@ -39,6 +40,8 @@ const composableProduct = useProduct()
 
 const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
+
+const isInvalidBrowserModalOpened = ref(false)
 
 const addressSearchInput = ref('')
 const selectedProvider = ref()
@@ -88,6 +91,10 @@ const trySwitchChain = async (chainId: string | number) => {
 }
 
 const handleProviderBtnClick = async () => {
+  if (isInvalidBrowserModalShown.value) {
+    isInvalidBrowserModalOpened.value = true
+    return
+  }
   try {
     await web3Store.connect()
 
@@ -121,6 +128,10 @@ const isProviderButtonShown = computed(
 const isNavbarFixed = computed(() => isMobileDrawerOpened.value && isMobile)
 
 const isMetamaskProvider = computed(() => !!metamaskProvider)
+
+const isInvalidBrowserModalShown = computed(
+  () => isMobile.value && !isMetamaskProvider.value,
+)
 
 watch(
   () => provider.value.selectedAddress,
@@ -310,6 +321,8 @@ init()
       :class="{ 'app-navbar__mobile-filler--visible': isNavbarFixed }"
     />
   </div>
+
+  <invalid-browser-modal v-model:is-shown="isInvalidBrowserModalOpened" />
 </template>
 
 <style lang="scss" scoped>
