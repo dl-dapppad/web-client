@@ -86,8 +86,13 @@ const handleProviderBtnClick = async () => {
 }
 
 const clickContractSearch = async () => {
-  if (addressSearchInput.value !== '')
-    composableProduct.handleContractSearch(addressSearchInput.value)
+  if (windowWidth.value < WINDOW_BREAKPOINTS.medium) {
+    if (addressSearchInput.value !== '' && isMobileSearchOpened.value)
+      composableProduct.handleContractSearch(addressSearchInput.value)
+  } else {
+    if (addressSearchInput.value !== '')
+      composableProduct.handleContractSearch(addressSearchInput.value)
+  }
 }
 
 const isProviderButtonShown = computed(
@@ -108,11 +113,15 @@ watch(
   },
 )
 
-init()
-
 const handleMobileSearchBtn = () => {
   isMobileSearchOpened.value ? clickContractSearch() : openMobileSearch()
 }
+
+const keypressHandleSearch = (e: KeyboardEvent) => {
+  if (e.key === 'Enter') clickContractSearch()
+}
+
+init()
 </script>
 
 <template>
@@ -153,6 +162,7 @@ const handleMobileSearchBtn = () => {
         v-model="addressSearchInput"
         :placeholder="$t('app-navbar.search-placeholder')"
         scheme="secondary"
+        @keypress.stop="keypressHandleSearch"
       >
         <template #nodeRight>
           <app-button
@@ -244,6 +254,7 @@ const handleMobileSearchBtn = () => {
           v-model="addressSearchInput"
           :placeholder="$t('app-navbar.search-placeholder')"
           scheme="secondary"
+          @keypress.stop="keypressHandleSearch"
         >
           <template #nodeLeft>
             <app-button
@@ -253,6 +264,7 @@ const handleMobileSearchBtn = () => {
               @click="closeMobileSearch"
             />
           </template>
+          <template #nodeRight></template>
         </input-field>
       </transition>
       <div v-if="provider.selectedAddress" class="app-navbar__menu-wrp">
