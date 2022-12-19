@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { useWeb3ProvidersStore } from '@/store'
 import { Icon } from '@/common'
-import { cropAddress, copyToClipboard } from '@/helpers'
+import { cropAddress, copyToClipboard, Bus } from '@/helpers'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
+const { t } = useI18n({ useScope: 'global' })
 
 withDefaults(
   defineProps<{
@@ -21,6 +23,11 @@ withDefaults(
     showFirstCroppSymbols: 5,
   },
 )
+
+const copy = (strToCopy: string): void => {
+  copyToClipboard(strToCopy)
+  Bus.info(t('link-copy.copied-msg'))
+}
 </script>
 
 <template>
@@ -33,11 +40,7 @@ withDefaults(
     >
       {{ isCropped ? cropAddress(address, showFirstCroppSymbols) : address }}
     </a>
-    <button
-      v-if="isCopyable"
-      class="app__link-icon-wrp"
-      @click="copyToClipboard(address)"
-    >
+    <button v-if="isCopyable" class="app__link-icon-wrp" @click="copy(address)">
       <icon class="app__link-icon" :name="$icons.duplicateFilled" />
     </button>
   </div>

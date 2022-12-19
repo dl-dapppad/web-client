@@ -300,6 +300,7 @@ init()
                 <app-button
                   class="farming-page__table-btn"
                   :text="t('farming-page.stake-btn')"
+                  :disabled="formatAmount(account.dappBalance) === '0'"
                   size="large"
                   scheme="borderless"
                   modification="border-rounded"

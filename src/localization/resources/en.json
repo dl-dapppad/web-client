@@ -94,6 +94,9 @@
   "page-404": {
     "title": "We are sorry. There was an error loading and the page is not responding. Reload the page or check back later"
   },
+  "link-copy": {
+    "copied-msg": "You've copied the address"
+  },
   "app-navbar": {
     "connect-btn": "Connect Wallet",
     "logout-btn": "Log Out",

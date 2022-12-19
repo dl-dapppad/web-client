@@ -86,7 +86,8 @@ const handleProviderBtnClick = async () => {
 }
 
 const clickContractSearch = async () => {
-  composableProduct.handleContractSearch(addressSearchInput.value)
+  if (addressSearchInput.value !== '')
+    composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
 const isProviderButtonShown = computed(
@@ -157,7 +158,11 @@ const handleMobileSearchBtn = () => {
           <app-button
             scheme="default"
             class="app-navbar__search-icon"
+            :class="{
+              'app-navbar__search-icon--inactive': addressSearchInput === '',
+            }"
             :icon-right="$icons.searchFilled"
+            :disabled="addressSearchInput === ''"
             @click="clickContractSearch"
           />
         </template>
@@ -255,6 +260,7 @@ const handleMobileSearchBtn = () => {
           class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
           scheme="default"
           :icon-right="$icons.searchFilled"
+          :disabled="addressSearchInput === '' && isMobileSearchOpened"
           @click.stop="handleMobileSearchBtn"
         />
         <app-button
@@ -411,12 +417,17 @@ $navbar-z-index: 10;
   min-height: toRem(14);
   min-width: toRem(14);
   padding: 0;
+  height: 100%;
 
   &--mobile {
     max-width: toRem(15);
     max-height: toRem(15);
     min-height: toRem(15);
     min-width: toRem(15);
+  }
+
+  &--inactive {
+    cursor: default;
   }
 }
 
