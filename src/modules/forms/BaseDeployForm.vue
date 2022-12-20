@@ -296,6 +296,7 @@ onMounted(() => init())
     </div>
     <app-block
       v-if="provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient"
+      class="deploy-form__mint-block"
       :class="{
         'app__module-content-wrp':
           provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient,
@@ -540,4 +541,8 @@ onMounted(() => init())
   </form>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.deploy-form__mint-block {
+  padding-bottom: 0;
+}
+</style>

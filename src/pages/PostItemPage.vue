@@ -141,7 +141,7 @@ const handleBackBtn = () => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 /* stylelint-disable declaration-no-important */
 $page-padding-left: toRem(165);
 $page-padding-right: toRem(165);

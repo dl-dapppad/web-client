@@ -135,7 +135,7 @@ init()
           </div>
         </div>
       </app-block>
-      <app-block>
+      <app-block class="post-item-page-checkout__block-second">
         <div class="post-item-page-checkout__block">
           <div class="app__metadata">
             <div class="app__metadata-row">
@@ -338,8 +338,16 @@ init()
   display: grid;
   grid-template-columns: 1fr 1fr;
 
-  @include respond-to(medium) {
+  @include resp`ond-to(medium) {
     grid-template-columns: 1fr;
+  }
+}
+
+.post-item-page-checkout__block-second {
+  padding-right: 0;
+
+  @include respond-to(medium) {
+    padding: toRem(1) toRem(1) 0;
   }
 }
 
@@ -532,6 +540,7 @@ init()
 
 .post-item-page-checkout__block-wrp {
   grid-column: 1 / -1;
+  padding: 0 toRem(1);
 }
 
 .post-item-page-checkout__metadata-tooltip {

@@ -136,6 +136,10 @@ $back-btn-z: 1;
   }
 }
 
+.posts-page__banner-wrp {
+  padding: 0 toRem(1) toRem(1);
+}
+
 .posts-page__banner {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -231,5 +235,21 @@ $back-btn-z: 1;
   max-height: toRem(450);
   grid-column: 2 / 3;
   grid-row: 1 / -1;
+}
+
+.posts-page__card {
+  padding-top: 0;
+
+  &:nth-child(even):not(:last-child) {
+    padding-right: 0;
+
+    @include respond-to(medium) {
+      padding: 0 toRem(1) toRem(1);
+    }
+  }
+
+  @include respond-to(medium) {
+    padding: 0 toRem(1) toRem(1);
+  }
 }
 </style>
