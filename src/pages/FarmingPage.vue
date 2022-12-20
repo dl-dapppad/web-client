@@ -72,6 +72,10 @@ const isWithdrawAvailable = computed(() =>
     : false,
 )
 
+const isDappBalanceEmpty = computed(
+  () => formatAmount(account.value.dappBalance) === '0',
+)
+
 const updateBalanceState = async () => {
   if (!provider.value.selectedAddress) return
 
@@ -300,7 +304,7 @@ init()
                 <app-button
                   class="farming-page__table-btn"
                   :text="t('farming-page.stake-btn')"
-                  :disabled="formatAmount(account.dappBalance) === '0'"
+                  :disabled="isDappBalanceEmpty"
                   size="large"
                   scheme="borderless"
                   modification="border-rounded"

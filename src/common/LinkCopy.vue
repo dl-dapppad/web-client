@@ -8,13 +8,14 @@ import { cropAddress, copyToClipboard, Bus } from '@/helpers'
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { t } = useI18n({ useScope: 'global' })
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     address: string
     href?: string
     isCropped?: boolean
     isCopyable?: boolean
     showFirstCroppSymbols?: number
+    copyWithoutIcon?: boolean
   }>(),
   {
     isCropped: true,
@@ -23,6 +24,12 @@ withDefaults(
     showFirstCroppSymbols: 5,
   },
 )
+
+const handleLinkClick = () => {
+  if (props.copyWithoutIcon) {
+    copy(props.address)
+  }
+}
 
 const copy = (strToCopy: string): void => {
   copyToClipboard(strToCopy)
@@ -34,13 +41,24 @@ const copy = (strToCopy: string): void => {
   <div class="link-copy app__link-wrp" :title="address">
     <a
       class="app__link"
-      :href="href ? href : provider.getAddressUrl(address)"
+      :href="
+        !copyWithoutIcon
+          ? href
+            ? href
+            : provider.getAddressUrl(address)
+          : undefined
+      "
       target="_blank"
       v-bind="$attrs"
+      @click="handleLinkClick"
     >
       {{ isCropped ? cropAddress(address, showFirstCroppSymbols) : address }}
     </a>
-    <button v-if="isCopyable" class="app__link-icon-wrp" @click="copy(address)">
+    <button
+      v-if="isCopyable && !copyWithoutIcon"
+      class="app__link-icon-wrp"
+      @click="copy(address)"
+    >
       <icon class="app__link-icon" :name="$icons.duplicateFilled" />
     </button>
   </div>

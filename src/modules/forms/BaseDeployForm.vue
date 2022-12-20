@@ -218,10 +218,13 @@ const mintToken = async () => {
 
   const erc20Mock = useErc20Mock()
   erc20Mock.init(tokenAddress)
+  await erc20Mock.updateDecimals()
 
   await txWrapper(erc20Mock.mint, {
     to: provider.value.selectedAddress as string,
-    amount: '10000000000000000000000',
+    amount: new BN('10000')
+      .mul(new BN('10').pow(erc20Mock.decimals.value))
+      .toString(),
   })
 
   await updatePayment(form.data[0][0])

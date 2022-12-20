@@ -241,6 +241,14 @@ a {
   &--medium {
     font-size: toRem(24);
   }
+
+  &--small-medium {
+    font-size: toRem(20);
+  }
+
+  &--small {
+    font-size: toRem(12);
+  }
 }
 
 .app__link-icon {

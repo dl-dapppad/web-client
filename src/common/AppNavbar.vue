@@ -2,9 +2,16 @@
 import { ref, watch, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
-import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
+import {
+  AppLogo,
+  Icon,
+  AppButton,
+  Dropdown,
+  MenuDrawer,
+  LinkCopy,
+} from '@/common'
 import { useErc20, useProduct } from '@/composables'
-import { formatAmount, cropAddress, ErrorHandler } from '@/helpers'
+import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
@@ -86,13 +93,12 @@ const handleProviderBtnClick = async () => {
 }
 
 const clickContractSearch = async () => {
-  if (windowWidth.value < WINDOW_BREAKPOINTS.medium) {
-    if (addressSearchInput.value !== '' && isMobileSearchOpened.value)
-      composableProduct.handleContractSearch(addressSearchInput.value)
-  } else {
-    if (addressSearchInput.value !== '')
-      composableProduct.handleContractSearch(addressSearchInput.value)
-  }
+  if (
+    addressSearchInput.value &&
+    (windowWidth.value > WINDOW_BREAKPOINTS.medium ||
+      isMobileSearchOpened.value)
+  )
+    composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
 const isProviderButtonShown = computed(
@@ -169,10 +175,10 @@ init()
             scheme="default"
             class="app-navbar__search-icon"
             :class="{
-              'app-navbar__search-icon--inactive': addressSearchInput === '',
+              'app-navbar__search-icon--inactive': !addressSearchInput,
             }"
             :icon-right="$icons.searchFilled"
-            :disabled="addressSearchInput === ''"
+            :disabled="!addressSearchInput"
             @click="clickContractSearch"
           />
         </template>
@@ -223,7 +229,11 @@ init()
           }}
         </span>
         <span class="app-navbar__wallet-address">
-          {{ cropAddress(provider.selectedAddress ?? '') }}
+          <link-copy
+            class="app__link--small"
+            :address="provider.selectedAddress ?? ''"
+            :copy-without-icon="true"
+          />
           <icon
             class="app-navbar__wallet-address-icon"
             :name="$icons.circleFilled"
@@ -231,7 +241,7 @@ init()
         </span>
       </div>
       <app-button
-        v-if="isProviderButtonShown"
+        v-if="isProviderButtonShown && !provider.selectedAddress"
         class="app-navbar__provider-btn"
         :class="{
           'app-navbar__provider-btn--disconnected': !provider.selectedAddress,
@@ -272,7 +282,7 @@ init()
           class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
           scheme="default"
           :icon-right="$icons.searchFilled"
-          :disabled="addressSearchInput === '' && isMobileSearchOpened"
+          :disabled="!addressSearchInput && isMobileSearchOpened"
           @click.stop="handleMobileSearchBtn"
         />
         <app-button

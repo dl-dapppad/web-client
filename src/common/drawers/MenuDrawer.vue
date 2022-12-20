@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import { Drawer, AppButton, Icon, Dropdown } from '@/common'
-import { cropAddress, formatAmount } from '@/helpers'
+import { Drawer, AppButton, Icon, Dropdown, LinkCopy } from '@/common'
+import { formatAmount } from '@/helpers'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+// import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 
 defineProps<{
   isOpenedState: boolean
 }>()
 
-const { t } = useI18n()
+// const { t } = useI18n()
 
 const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -44,9 +44,9 @@ const trySwitchChain = (chainId: string | number) => {
   emit(EVENTS.trySwitchChain, chainId)
 }
 
-const handleProviderBtnClick = () => {
-  emit(EVENTS.providerBtnClick)
-}
+// const handleProviderBtnClick = () => {
+//   emit(EVENTS.providerBtnClick)
+// }
 
 const switchIsOpenedState = () => {
   emit(EVENTS.switchIsOpenedState)
@@ -73,7 +73,11 @@ const switchIsOpenedState = () => {
               class="menu-drawer__section-icon"
               :name="$icons.circleFilled"
             />
-            {{ cropAddress(provider.selectedAddress) }}
+            <link-copy
+              class="app__link--small-medium"
+              :address="provider.selectedAddress ?? ''"
+              :copy-without-icon="true"
+            />
           </span>
         </div>
         <div class="menu-drawer__section">
@@ -121,14 +125,14 @@ const switchIsOpenedState = () => {
             </div>
           </template>
         </dropdown>
-        <app-button
+        <!-- <app-button
           class="menu-drawer__logout-btn"
           scheme="default"
           size="large"
           :icon-left="$icons.logout"
           :text="t('app-navbar.logout-btn')"
           @click="handleProviderBtnClick"
-        />
+        /> -->
       </div>
     </drawer>
   </div>
