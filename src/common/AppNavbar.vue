@@ -243,14 +243,8 @@ init()
       <app-button
         v-if="isProviderButtonShown && !provider.selectedAddress"
         class="app-navbar__provider-btn"
-        :class="{
-          'app-navbar__provider-btn--disconnected': !provider.selectedAddress,
-        }"
         size="small"
-        :text="
-          !provider.selectedAddress ? $t('app-navbar.connect-btn') : undefined
-        "
-        :icon-right="provider.selectedAddress ? $icons.logout : undefined"
+        :text="$t('app-navbar.connect-btn')"
         @click="handleProviderBtnClick"
       />
       <transition name="app-navbar__mobile-search-transition">
@@ -296,7 +290,6 @@ init()
           :is-opened-state="isMobileDrawerOpened"
           @switch-is-opened-state="switchIsOpenedMobileState"
           @try-switch-chain="trySwitchChain"
-          @provider-btn-click="handleProviderBtnClick"
         />
       </div>
     </div>
