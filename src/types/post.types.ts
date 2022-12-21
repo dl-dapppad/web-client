@@ -9,4 +9,5 @@ export type Post = {
   chartTitle: string
   chartDescription: string
   content: [string, string][]
+  infoDescriptionContent?: [string, string][]
 }

@@ -8,6 +8,7 @@ import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { config } from '@/config'
 
 defineProps<{
   isOpenedState: boolean
@@ -102,16 +103,21 @@ const switchIsOpenedState = () => {
           </template>
           <template #default>
             <div class="menu-drawer__chain-dropdown-body">
-              <app-button
+              <div
                 v-for="chainName in ETHEREUM_CHAINS"
+                class="menu-drawer__chain-dropdown-item-wrp"
                 :key="chainName"
-                class="menu-drawer__chain-dropdown-item"
-                color="tertiary"
-                scheme="borderless"
-                :text="localizeChain(chainName)"
-                :icon-left="$icons.circleFilled"
-                @click="trySwitchChain(chainName)"
-              />
+              >
+                <app-button
+                  v-if="config.AVAILABLE_CHAINS.includes(chainName)"
+                  class="menu-drawer__chain-dropdown-item"
+                  color="tertiary"
+                  scheme="borderless"
+                  :text="localizeChain(chainName)"
+                  :icon-left="$icons.circleFilled"
+                  @click="trySwitchChain(chainName)"
+                />
+              </div>
             </div>
           </template>
         </dropdown>
@@ -173,25 +179,23 @@ const switchIsOpenedState = () => {
   width: 100%;
 }
 
+.menu-drawer__chain-dropdown-body {
+  &:last-child {
+    border-bottom: toRem(1) solid var(--primary-main);
+  }
+}
+
 .menu-drawer__chain-dropdown-item {
   width: 100%;
   justify-content: start;
   border: toRem(1) solid var(--primary-main);
   border-bottom: 0;
 
-  &:last-child {
-    border-bottom: toRem(1) solid var(--primary-main);
-  }
-
   &:not([disabled]):hover,
   &:not([disabled]):focus,
   &:not([disabled]):active {
     border: toRem(1) solid var(--primary-main);
     border-bottom: 0;
-
-    &:last-child {
-      border-bottom: toRem(1) solid var(--primary-main);
-    }
   }
 }
 

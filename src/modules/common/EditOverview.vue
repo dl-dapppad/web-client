@@ -16,7 +16,7 @@ const props = withDefaults(
 </script>
 
 <template>
-  <div class="edit-overview">
+  <div class="app__module-padding-bottom">
     <h3 class="app__module-block-title">
       {{ $t('edit.overview') }}
     </h3>
@@ -65,13 +65,3 @@ const props = withDefaults(
     </app-block>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.edit-overview {
-  padding: 0 0 toRem(70);
-
-  @include respond-to(medium) {
-    padding: toRem(40) 0;
-  }
-}
-</style>

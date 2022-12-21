@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
-import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppBlock, AppButton, Tabs, AddressCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/modules/forms'
 import { formatAmount } from '@/helpers'
 import { OVERVIEW_ROW } from '@/modules/enums'
@@ -17,8 +15,8 @@ import {
   TransferForm,
   TransferFromForm,
 } from '@/modules/erc20/forms'
-import { EditOverview } from '@/modules/common'
 import { useProductErc20Base } from '../composables/use-product-erc20-base'
+import { BaseEditForm } from '@/modules/forms'
 import { BN } from '@/utils'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -40,18 +38,6 @@ const { t } = useI18n({
   },
 })
 
-const FORM_TABS = [
-  {
-    title: 'Read',
-    number: 1,
-  },
-  {
-    title: 'Write',
-    number: 2,
-  },
-]
-
-const currentTabNumber = ref(FORM_TABS[0].number)
 const overviewRows = ref<Array<OverviewRow>>([
   {
     name: t('erc20.tracker'),
@@ -81,7 +67,6 @@ const overviewRows = ref<Array<OverviewRow>>([
 ])
 const balance = ref('0')
 
-const router = useRouter()
 const route = useRoute()
 const erc20 = useProductErc20Base(route.params.contractAddress as string)
 
@@ -143,71 +128,36 @@ watch(
   },
 )
 
+const formOverviewData = ref({
+  isLoaded,
+  rows: overviewRows,
+})
+
+const headingData = {
+  title: t('erc20.title'),
+  description: t('erc20.description'),
+  overviewLbl: t('erc20.overview'),
+}
+
 init()
 </script>
 
 <template>
-  <div class="erc20-edit-form">
-    <div class="app__module-heading">
-      <div class="app__module-title-wrp">
-        <app-button
-          type="button"
-          class="app__module-back-btn"
-          :icon-right="$icons.arrowLeft"
-          modification="border-circle"
-          color="tertiary"
-          @click="
-            router.push({
-              name: ROUTE_NAMES.product,
-              params: {
-                id: route.params.id,
-              },
-            })
-          "
-        />
-        <h2 class="app__module-title">
-          {{ t('erc20.title') }}
-        </h2>
-      </div>
-      <span class="app__module-subtitle">
-        <address-copy
-          :address="erc20.address.value"
-          class="app__module-subtitle"
-        />
-      </span>
-      <span class="app__module-description">
-        {{ t('erc20.description') }}
-      </span>
-    </div>
-    <edit-overview :is-loaded="isLoaded" :rows="overviewRows" />
-    <div>
-      <h3 class="app__module-block-title">
-        {{ t('erc20.interaction') }}
-      </h3>
-      <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
-      <app-block>
-        <div
-          v-if="currentTabNumber === FORM_TABS[0].number"
-          class="app__module-content"
-        >
-          <allowance-form :token="erc20" />
-          <balance-form :token="erc20" />
-        </div>
-        <div
-          v-if="currentTabNumber === FORM_TABS[1].number"
-          class="app__module-content"
-        >
-          <approve-form :token="erc20" />
-          <transfer-form
-            :token="erc20"
-            :balance="formBalance"
-            @change-balance="updateBalance"
-          />
-          <transfer-from-form :token="erc20" @change-balance="updateBalance" />
-          <transfer-ownership-form :token="erc20" @change-owner="updateOwner" />
-          <upgrade-to-form :token="erc20" />
-        </div>
-      </app-block>
-    </div>
-  </div>
+  <base-edit-form :heading-data="headingData" :overview="formOverviewData">
+    <template #tabFirst>
+      <allowance-form :token="erc20" />
+      <balance-form :token="erc20" />
+    </template>
+    <template #tabSecond>
+      <approve-form :token="erc20" />
+      <transfer-form
+        :token="erc20"
+        :balance="formBalance"
+        @change-balance="updateBalance"
+      />
+      <transfer-from-form :token="erc20" @change-balance="updateBalance" />
+      <transfer-ownership-form :token="erc20" @change-owner="updateOwner" />
+      <upgrade-to-form :token="erc20" />
+    </template>
+  </base-edit-form>
 </template>
