@@ -16,12 +16,14 @@ const props = withDefaults(
     isCopyable?: boolean
     showFirstCroppSymbols?: number
     copyWithoutIcon?: boolean
+    fontSize?: number
   }>(),
   {
     isCropped: true,
     isCopyable: true,
     href: '',
     showFirstCroppSymbols: 5,
+    fontSize: 16,
   },
 )
 
@@ -40,7 +42,7 @@ const copy = (strToCopy: string): void => {
 <template>
   <div class="link-copy app__link-wrp" :title="address">
     <a
-      class="app__link"
+      class="app__link link-copy__link"
       :href="
         !copyWithoutIcon
           ? href
@@ -64,4 +66,8 @@ const copy = (strToCopy: string): void => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.link-copy__link {
+  font-size: inherit;
+}
+</style>

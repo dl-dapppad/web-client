@@ -230,7 +230,6 @@ init()
         </span>
         <span class="app-navbar__wallet-address">
           <link-copy
-            class="app__link--small"
             :address="provider.selectedAddress ?? ''"
             :copy-without-icon="true"
           />

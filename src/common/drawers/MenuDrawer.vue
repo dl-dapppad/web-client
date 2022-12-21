@@ -65,7 +65,6 @@ const switchIsOpenedState = () => {
               :name="$icons.circleFilled"
             />
             <link-copy
-              class="app__link--small-medium"
               :address="provider.selectedAddress ?? ''"
               :copy-without-icon="true"
             />

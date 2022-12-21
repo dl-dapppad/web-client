@@ -73,7 +73,7 @@ const isWithdrawAvailable = computed(() =>
 )
 
 const isDappBalanceEmpty = computed(
-  () => formatAmount(account.value.dappBalance) === '0',
+  () => !Number(formatAmount(account.value.dappBalance)),
 )
 
 const updateBalanceState = async () => {

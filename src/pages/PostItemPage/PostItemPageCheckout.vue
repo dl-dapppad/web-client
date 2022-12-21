@@ -338,7 +338,7 @@ init()
   display: grid;
   grid-template-columns: 1fr 1fr;
 
-  @include resp`ond-to(medium) {
+  @include respond-to(medium) {
     grid-template-columns: 1fr;
   }
 }
