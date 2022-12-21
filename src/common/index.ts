@@ -1,6 +1,6 @@
 export { default as Icon } from '@/common/Icon.vue'
 export { default as AppButton } from '@/common/AppButton.vue'
-export { default as LinkCopy } from '@/common/LinkCopy.vue'
+export { default as AddressCopy } from '@/common/AddressCopy.vue'
 export { default as Collapse } from '@/common/Collapse.vue'
 export { default as Dropdown } from '@/common/Dropdown.vue'
 export { default as NoDataMessage } from '@/common/NoDataMessage.vue'

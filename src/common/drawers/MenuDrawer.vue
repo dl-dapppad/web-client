@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Drawer, AppButton, Icon, Dropdown, LinkCopy } from '@/common'
+import { Drawer, AppButton, Icon, Dropdown, AddressCopy } from '@/common'
 import { formatAmount } from '@/helpers'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
@@ -64,7 +64,7 @@ const switchIsOpenedState = () => {
               class="menu-drawer__section-icon"
               :name="$icons.circleFilled"
             />
-            <link-copy
+            <address-copy
               :address="provider.selectedAddress ?? ''"
               :copy-without-icon="true"
             />

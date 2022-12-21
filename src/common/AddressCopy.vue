@@ -16,14 +16,12 @@ const props = withDefaults(
     isCopyable?: boolean
     showFirstCroppSymbols?: number
     copyWithoutIcon?: boolean
-    fontSize?: number
   }>(),
   {
     isCropped: true,
     isCopyable: true,
     href: '',
     showFirstCroppSymbols: 5,
-    fontSize: 16,
   },
 )
 
@@ -35,14 +33,14 @@ const handleLinkClick = () => {
 
 const copy = (strToCopy: string): void => {
   copyToClipboard(strToCopy)
-  Bus.info(t('link-copy.copied-msg'))
+  Bus.info(t('address-copy.copied-msg'))
 }
 </script>
 
 <template>
-  <div class="link-copy app__link-wrp" :title="address">
+  <div class="address-copy app__link-wrp" :title="address">
     <a
-      class="app__link link-copy__link"
+      class="app__link address-copy__link"
       :href="
         !copyWithoutIcon
           ? href
@@ -67,7 +65,7 @@ const copy = (strToCopy: string): void => {
 </template>
 
 <style lang="scss" scoped>
-.link-copy__link {
+.address-copy__link {
   font-size: inherit;
 }
 </style>

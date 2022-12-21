@@ -20,7 +20,7 @@ import {
   Icon,
   LineChart,
   InfoTooltip,
-  LinkCopy,
+  AddressCopy,
   Loader,
 } from '@/common'
 import { CONTRACT_NAMES } from '@/enums'
@@ -187,7 +187,7 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-item-page-checkout.implementation-address-lbl') }}
               </span>
-              <link-copy
+              <address-copy
                 v-if="isProductLoaded"
                 :address="product.implementation"
                 class="app__link--accented"
@@ -198,7 +198,7 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-item-page-checkout.factory-address-lbl') }}
               </span>
-              <link-copy
+              <address-copy
                 v-if="isProductLoaded"
                 :address="factory.address.value"
                 class="app__link--accented"

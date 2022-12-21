@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
-import { AppBlock, AppButton, Tabs, LinkCopy } from '@/common'
+import { AppBlock, AppButton, Tabs, AddressCopy } from '@/common'
 import { TransferOwnershipForm, UpgradeToForm } from '@/modules/forms'
 import { formatAmount } from '@/helpers'
 import { OVERVIEW_ROW } from '@/modules/enums'
@@ -170,7 +170,7 @@ init()
         </h2>
       </div>
       <span class="app__module-subtitle">
-        <link-copy
+        <address-copy
           :address="erc20.address.value"
           class="app__module-subtitle"
         />

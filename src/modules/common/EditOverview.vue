@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AppBlock, LinkCopy, Loader } from '@/common'
+import { AppBlock, AddressCopy, Loader } from '@/common'
 import { OVERVIEW_ROW } from '@/modules/enums'
 import { OverviewRow } from '@/modules/types'
 
@@ -41,10 +41,13 @@ const props = withDefaults(
                 </span>
               </template>
               <template v-else-if="row.type === OVERVIEW_ROW.address">
-                <link-copy :address="row.value" class="app__link--accented" />
+                <address-copy
+                  :address="row.value"
+                  class="app__link--accented"
+                />
               </template>
               <template v-else-if="row.type === OVERVIEW_ROW.link">
-                <link-copy
+                <address-copy
                   :address="row.value"
                   :href="row.value"
                   :show-first-cropp-symbols="20"

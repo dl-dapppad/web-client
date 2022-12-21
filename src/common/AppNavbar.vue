@@ -8,7 +8,7 @@ import {
   AppButton,
   Dropdown,
   MenuDrawer,
-  LinkCopy,
+  AddressCopy,
 } from '@/common'
 import { useErc20, useProduct } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
@@ -229,7 +229,7 @@ init()
           }}
         </span>
         <span class="app-navbar__wallet-address">
-          <link-copy
+          <address-copy
             :address="provider.selectedAddress ?? ''"
             :copy-without-icon="true"
           />
