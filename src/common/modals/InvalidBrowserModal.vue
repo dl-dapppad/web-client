@@ -41,26 +41,26 @@ const openMetamaskBrowser = () =>
   <modal
     :is-shown="isShown && isMobile"
     @update:is-shown="updateIsShown"
-    class="app-navbar-invalid-browser-modal"
+    class="invalid-browser-modal"
   >
-    <div class="app-navbar-invalid-browser-modal__content">
+    <div class="invalid-browser-modal__content">
       <app-button
         size="small"
         scheme="default"
         :icon-right="$icons.x"
         @click="closeModal"
       />
-      <p class="app-navbar-invalid-browser-modal__message">
-        {{ $t('app-navbar-invalid-browser-modal.message') }}
+      <p class="invalid-browser-modal__message">
+        {{ $t('invalid-browser-modal.message') }}
       </p>
       <app-button
-        class="app-navbar-invalid-browser-modal__button"
-        :text="$t('app-navbar-invalid-browser-modal.go-to-metamask-btn')"
+        class="invalid-browser-modal__button"
+        :text="$t('invalid-browser-modal.go-to-metamask-btn')"
         @click="openMetamaskBrowser"
       />
       <app-button
-        class="app-navbar-invalid-browser-modal__button"
-        :text="$t('app-navbar-invalid-browser-modal.close-modal-btn')"
+        class="invalid-browser-modal__button"
+        :text="$t('invalid-browser-modal.close-modal-btn')"
         icon-name="arrow-left"
         is-icon-left
         @click="closeModal"
@@ -70,11 +70,11 @@ const openMetamaskBrowser = () =>
 </template>
 
 <style lang="scss" scoped>
-.app-navbar-invalid-browser-modal__content {
+.invalid-browser-modal__content {
   padding: toRem(20) var(--app-padding-right) toRem(20) var(--app-padding-left);
 }
 
-.app-navbar-invalid-browser-modal__button {
+.invalid-browser-modal__button {
   margin-top: toRem(30);
 
   & + & {

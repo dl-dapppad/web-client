@@ -10,7 +10,7 @@ import {
   MenuDrawer,
   AddressCopy,
 } from '@/common'
-import InvalidBrowserModal from '@/common/AppNavbar/AppNavbarInvalidBrowserModal.vue'
+import InvalidBrowserModal from '@/common/modals/InvalidBrowserModal.vue'
 import { useErc20, useProduct } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'

@@ -105,7 +105,7 @@
     "farm-link": "Farm",
     "search-placeholder": "0x353C50AB9E10b62D75aD057327acdB39C0dB8a0B"
   },
-  "app-navbar-invalid-browser-modal": {
+  "invalid-browser-modal": {
     "message": "Go to Metamask browser to continue",
     "go-to-metamask-btn": "Go to Metamask",
     "close-modal-btn": "Close modal"
