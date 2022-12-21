@@ -150,7 +150,7 @@ a {
   align-items: center;
 
   & > .loader {
-    width: toRem(150);
+    max-width: toRem(150);
   }
 
   &--mobile-break-line {
