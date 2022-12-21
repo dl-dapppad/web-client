@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive, Ref } from 'vue'
 
-import { InfoTooltip, AppButton, LinkCopy } from '@/common'
+import { InfoTooltip, AppButton, AddressCopy } from '@/common'
 import { InputField } from '@/fields'
 import { useFormValidation } from '@/composables'
 import { Input } from '@/modules/types'
@@ -109,13 +109,13 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
           <div
             v-else-if="result.type === PRODUCT_INT_FORM_RESULT_TYPES.address"
           >
-            <link-copy
+            <address-copy
               class="app__link--accented"
               :address="result.data.value"
             />
           </div>
           <div v-else-if="result.type === PRODUCT_INT_FORM_RESULT_TYPES.link">
-            <link-copy
+            <address-copy
               class="app__link--accented"
               :address="result.data.value"
               :href="result.data.value"

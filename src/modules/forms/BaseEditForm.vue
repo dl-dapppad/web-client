@@ -4,7 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useWindowSize } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 
-import { AppButton, AppBlock, LinkCopy, Tabs, ContentRender } from '@/common'
+import { AppButton, AppBlock, AddressCopy, Tabs, ContentRender } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
 import { Post } from '@/types'
 
@@ -167,7 +167,7 @@ watch(
         </h2>
       </div>
       <span class="app__module-subtitle">
-        <link-copy
+        <address-copy
           :address="String(route.params.contractAddress)"
           class="app__module-subtitle"
         />

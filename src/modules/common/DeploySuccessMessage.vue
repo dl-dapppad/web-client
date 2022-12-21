@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Icon, AppButton, LinkCopy } from '@/common'
+import { Icon, AppButton, AddressCopy } from '@/common'
 import { useI18n } from 'vue-i18n'
 import { DeployMetadata } from '@/modules/common'
 import { ModalText } from '@/modules/types'
@@ -97,7 +97,7 @@ const { t } = useI18n({
         <span class="app__metadata-lbl">
           {{ t('deploy-success-message.mint-receiver-lbl') }}
         </span>
-        <link-copy
+        <address-copy
           :address="deployMetadata.erc20Metadata.mintReceiver"
           class="app__link--accented"
         />
@@ -106,7 +106,7 @@ const { t } = useI18n({
         <span class="app__metadata-lbl">
           {{ t('deploy-success-message.contract-lbl') }}
         </span>
-        <link-copy
+        <address-copy
           :address="deployMetadata.contract"
           class="app__link--accented"
         />

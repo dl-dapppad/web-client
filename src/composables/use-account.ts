@@ -1,9 +1,10 @@
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useErc20 } from './useContracts'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
+import { formatAmount } from '@/helpers'
 
 export const useAccount = () => {
   const web3Store = useWeb3ProvidersStore()
@@ -27,6 +28,10 @@ export const useAccount = () => {
     if (!balance) return
     nativeBalance.value = balance.toString()
   }
+
+  const isDappBalanceEmpty = computed(
+    () => !Number(formatAmount(dappBalance.value)),
+  )
 
   const updateDappBalance = async () => {
     if (!provider.value.selectedAddress || !provider.value.chainId) return
@@ -52,6 +57,7 @@ export const useAccount = () => {
   return {
     nativeBalance,
     dappBalance,
+    isDappBalanceEmpty,
 
     updateNativeBalance,
     updateDappBalance,

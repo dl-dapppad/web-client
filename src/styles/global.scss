@@ -233,14 +233,6 @@ a {
   &--accented {
     color: var(--secondary-main);
   }
-
-  &--big {
-    font-size: toRem(30);
-  }
-
-  &--medium {
-    font-size: toRem(24);
-  }
 }
 
 .app__link-icon {

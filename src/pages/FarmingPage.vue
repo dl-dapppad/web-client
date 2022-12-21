@@ -2,7 +2,7 @@
 import { ref, watch, reactive, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { AppButton, Icon, AppBlock, Modal, LinkCopy, Loader } from '@/common'
+import { AppButton, Icon, AppBlock, Modal, AddressCopy, Loader } from '@/common'
 import { InputField } from '@/fields'
 import { getMaxUint256, txWrapper } from '@/helpers'
 import { formatAmount } from '@/helpers'
@@ -183,7 +183,7 @@ init()
             {{ $t('farming-page.title') }}
           </div>
         </div>
-        <link-copy
+        <address-copy
           class="app__link--secondary app__module-subtitle"
           :address="farming.address.value"
         />
@@ -300,6 +300,7 @@ init()
                 <app-button
                   class="farming-page__table-btn"
                   :text="t('farming-page.stake-btn')"
+                  :disabled="account.isDappBalanceEmpty"
                   size="large"
                   scheme="borderless"
                   modification="border-rounded"
@@ -318,7 +319,7 @@ init()
                     })`
                   }}
                 </span>
-                <link-copy
+                <address-copy
                   class="app__link--accented farming-page__table-desc-address"
                   :address="investmentToken.address.value"
                 />
@@ -444,7 +445,7 @@ init()
                     })`
                   }}
                 </span>
-                <link-copy
+                <address-copy
                   class="app__link--accented farming-page__table-desc-address"
                   :address="rewardToken.address.value"
                 />

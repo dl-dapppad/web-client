@@ -17,6 +17,7 @@ export const useErc20Mock = (contractAddress?: string) => {
   const _instance_rw = ref<Erc20Mock | undefined>()
 
   const address = ref('')
+  const decimals = ref(0)
 
   const init = (contractAddress: string): void => {
     address.value = contractAddress
@@ -35,6 +36,12 @@ export const useErc20Mock = (contractAddress?: string) => {
     }
   }
 
+  const updateDecimals = async (): Promise<void> => {
+    if (!_instance.value) return
+
+    decimals.value = Number(await _instance.value.decimals())
+  }
+
   const mint = async (args: Record<string, string>) => {
     if (!_instance_rw.value) return
 
@@ -46,8 +53,10 @@ export const useErc20Mock = (contractAddress?: string) => {
   return {
     init,
 
+    decimals,
     address,
 
+    updateDecimals,
     mint,
   }
 }

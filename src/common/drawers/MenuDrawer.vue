@@ -1,21 +1,18 @@
 <script lang="ts" setup>
-import { Drawer, AppButton, Icon, Dropdown } from '@/common'
-import { cropAddress, formatAmount } from '@/helpers'
+import { Drawer, AppButton, Icon, Dropdown, AddressCopy } from '@/common'
+import { formatAmount } from '@/helpers'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { config } from '@/config'
 
 defineProps<{
   isOpenedState: boolean
 }>()
-
-const { t } = useI18n()
 
 const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -25,7 +22,6 @@ const chain = web3Store.currentChain
 
 enum EVENTS {
   trySwitchChain = 'try-switch-chain',
-  providerBtnClick = 'provider-btn-click',
   switchIsOpenedState = 'switch-is-opened-state',
 }
 
@@ -37,16 +33,11 @@ watch(route, () => {
 
 const emit = defineEmits<{
   (e: EVENTS.trySwitchChain, value: string | number): void
-  (e: EVENTS.providerBtnClick): void
   (e: EVENTS.switchIsOpenedState, value?: boolean): void
 }>()
 
 const trySwitchChain = (chainId: string | number) => {
   emit(EVENTS.trySwitchChain, chainId)
-}
-
-const handleProviderBtnClick = () => {
-  emit(EVENTS.providerBtnClick)
 }
 
 const switchIsOpenedState = () => {
@@ -74,7 +65,10 @@ const switchIsOpenedState = () => {
               class="menu-drawer__section-icon"
               :name="$icons.circleFilled"
             />
-            {{ cropAddress(provider.selectedAddress) }}
+            <address-copy
+              :address="provider.selectedAddress ?? ''"
+              :copy-without-icon="true"
+            />
           </span>
         </div>
         <div class="menu-drawer__section">
@@ -127,14 +121,6 @@ const switchIsOpenedState = () => {
             </div>
           </template>
         </dropdown>
-        <app-button
-          class="menu-drawer__logout-btn"
-          scheme="default"
-          size="large"
-          :icon-left="$icons.logout"
-          :text="t('app-navbar.logout-btn')"
-          @click="handleProviderBtnClick"
-        />
       </div>
     </drawer>
   </div>

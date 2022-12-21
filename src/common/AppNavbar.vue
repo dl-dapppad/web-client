@@ -2,9 +2,16 @@
 import { ref, watch, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
-import { AppLogo, Icon, AppButton, Dropdown, MenuDrawer } from '@/common'
+import {
+  AppLogo,
+  Icon,
+  AppButton,
+  Dropdown,
+  MenuDrawer,
+  AddressCopy,
+} from '@/common'
 import { useErc20, useProduct } from '@/composables'
-import { formatAmount, cropAddress, ErrorHandler } from '@/helpers'
+import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
@@ -86,7 +93,12 @@ const handleProviderBtnClick = async () => {
 }
 
 const clickContractSearch = async () => {
-  composableProduct.handleContractSearch(addressSearchInput.value)
+  if (
+    addressSearchInput.value &&
+    (windowWidth.value > WINDOW_BREAKPOINTS.medium ||
+      isMobileSearchOpened.value)
+  )
+    composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
 const isProviderButtonShown = computed(
@@ -107,11 +119,15 @@ watch(
   },
 )
 
-init()
-
 const handleMobileSearchBtn = () => {
   isMobileSearchOpened.value ? clickContractSearch() : openMobileSearch()
 }
+
+const keypressHandleSearch = (e: KeyboardEvent) => {
+  if (e.key === 'Enter') clickContractSearch()
+}
+
+init()
 </script>
 
 <template>
@@ -152,12 +168,17 @@ const handleMobileSearchBtn = () => {
         v-model="addressSearchInput"
         :placeholder="$t('app-navbar.search-placeholder')"
         scheme="secondary"
+        @keypress.stop="keypressHandleSearch"
       >
         <template #nodeRight>
           <app-button
             scheme="default"
             class="app-navbar__search-icon"
+            :class="{
+              'app-navbar__search-icon--inactive': !addressSearchInput,
+            }"
             :icon-right="$icons.searchFilled"
+            :disabled="!addressSearchInput"
             @click="clickContractSearch"
           />
         </template>
@@ -208,7 +229,10 @@ const handleMobileSearchBtn = () => {
           }}
         </span>
         <span class="app-navbar__wallet-address">
-          {{ cropAddress(provider.selectedAddress ?? '') }}
+          <address-copy
+            :address="provider.selectedAddress ?? ''"
+            :copy-without-icon="true"
+          />
           <icon
             class="app-navbar__wallet-address-icon"
             :name="$icons.circleFilled"
@@ -216,16 +240,10 @@ const handleMobileSearchBtn = () => {
         </span>
       </div>
       <app-button
-        v-if="isProviderButtonShown"
+        v-if="isProviderButtonShown && !provider.selectedAddress"
         class="app-navbar__provider-btn"
-        :class="{
-          'app-navbar__provider-btn--disconnected': !provider.selectedAddress,
-        }"
         size="small"
-        :text="
-          !provider.selectedAddress ? $t('app-navbar.connect-btn') : undefined
-        "
-        :icon-right="provider.selectedAddress ? $icons.logout : undefined"
+        :text="$t('app-navbar.connect-btn')"
         @click="handleProviderBtnClick"
       />
       <transition name="app-navbar__mobile-search-transition">
@@ -239,6 +257,7 @@ const handleMobileSearchBtn = () => {
           v-model="addressSearchInput"
           :placeholder="$t('app-navbar.search-placeholder')"
           scheme="secondary"
+          @keypress.stop="keypressHandleSearch"
         >
           <template #nodeLeft>
             <app-button
@@ -248,6 +267,7 @@ const handleMobileSearchBtn = () => {
               @click="closeMobileSearch"
             />
           </template>
+          <template #nodeRight></template>
         </input-field>
       </transition>
       <div v-if="provider.selectedAddress" class="app-navbar__menu-wrp">
@@ -255,6 +275,7 @@ const handleMobileSearchBtn = () => {
           class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
           scheme="default"
           :icon-right="$icons.searchFilled"
+          :disabled="!addressSearchInput && isMobileSearchOpened"
           @click.stop="handleMobileSearchBtn"
         />
         <app-button
@@ -268,7 +289,6 @@ const handleMobileSearchBtn = () => {
           :is-opened-state="isMobileDrawerOpened"
           @switch-is-opened-state="switchIsOpenedMobileState"
           @try-switch-chain="trySwitchChain"
-          @provider-btn-click="handleProviderBtnClick"
         />
       </div>
     </div>
@@ -411,12 +431,17 @@ $navbar-z-index: 10;
   min-height: toRem(14);
   min-width: toRem(14);
   padding: 0;
+  height: 100%;
 
   &--mobile {
     max-width: toRem(15);
     max-height: toRem(15);
     min-height: toRem(15);
     min-width: toRem(15);
+  }
+
+  &--inactive {
+    cursor: default;
   }
 }
 

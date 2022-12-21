@@ -94,13 +94,16 @@
   "page-404": {
     "title": "We are sorry. There was an error loading and the page is not responding. Reload the page or check back later"
   },
+  "address-copy": {
+    "copied-msg": "You've copied the address"
+  },
   "app-navbar": {
     "connect-btn": "Connect Wallet",
     "logout-btn": "Log Out",
     "wallet-address-lbl": "Wallet address",
     "balance-lbl": "Balance",
     "farm-link": "Farm",
-    "search-placeholder": "Search"
+    "search-placeholder": "0x353C50AB9E10b62D75aD057327acdB39C0dB8a0B"
   },
   "app-footer": {
     "copyright": "All rights reserved",

@@ -20,7 +20,7 @@ import {
   Icon,
   LineChart,
   InfoTooltip,
-  LinkCopy,
+  AddressCopy,
   Loader,
 } from '@/common'
 import { CONTRACT_NAMES } from '@/enums'
@@ -135,7 +135,7 @@ init()
           </div>
         </div>
       </app-block>
-      <app-block>
+      <app-block class="post-item-page-checkout__block-second">
         <div class="post-item-page-checkout__block">
           <div class="app__metadata">
             <div class="app__metadata-row">
@@ -187,7 +187,7 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-item-page-checkout.implementation-address-lbl') }}
               </span>
-              <link-copy
+              <address-copy
                 v-if="isProductLoaded"
                 :address="product.implementation"
                 class="app__link--accented"
@@ -198,7 +198,7 @@ init()
               <span class="app__metadata-lbl">
                 {{ $t('post-item-page-checkout.factory-address-lbl') }}
               </span>
-              <link-copy
+              <address-copy
                 v-if="isProductLoaded"
                 :address="factory.address.value"
                 class="app__link--accented"
@@ -340,6 +340,14 @@ init()
 
   @include respond-to(medium) {
     grid-template-columns: 1fr;
+  }
+}
+
+.post-item-page-checkout__block-second {
+  padding-right: 0;
+
+  @include respond-to(medium) {
+    padding: toRem(1) toRem(1) 0;
   }
 }
 
@@ -532,6 +540,7 @@ init()
 
 .post-item-page-checkout__block-wrp {
   grid-column: 1 / -1;
+  padding: 0 toRem(1);
 }
 
 .post-item-page-checkout__metadata-tooltip {

@@ -127,7 +127,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
         </div>
       </div>
       <div class="main-page__people">
-        <app-block>
+        <app-block class="main-page__people-block">
           <div class="main-page__people-item">
             <img
               class="main-page__people-img"
@@ -148,7 +148,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
             </div>
           </div>
         </app-block>
-        <app-block>
+        <app-block class="main-page__people-block">
           <div class="main-page__people-item">
             <img
               class="main-page__people-img"
@@ -169,7 +169,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
             </div>
           </div>
         </app-block>
-        <app-block>
+        <app-block class="main-page__people-block">
           <div class="main-page__people-item">
             <img
               class="main-page__people-img"
@@ -320,6 +320,17 @@ $description-z-index: 5;
   @include respond-to(xmedium) {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr 1fr;
+  }
+}
+
+.main-page__people-block {
+  &:not(:last-child) {
+    padding-right: 0;
+
+    @include respond-to(xmedium) {
+      padding-right: toRem(1);
+      padding-bottom: 0;
+    }
   }
 }
 
