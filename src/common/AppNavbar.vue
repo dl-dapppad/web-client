@@ -218,7 +218,10 @@ init()
           </div>
         </template>
       </dropdown>
-      <div v-if="provider.selectedAddress" class="app-navbar__wallet">
+      <div
+        v-if="provider.selectedAddress && web3Store.isCurrentChainAvailable"
+        class="app-navbar__wallet"
+      >
         <span class="app-navbar__wallet-balance">
           {{
             formatAmount(

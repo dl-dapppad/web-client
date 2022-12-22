@@ -121,9 +121,9 @@ const formOverviewData = ref({
 })
 
 const headingData = {
-  title: t('erc20-burn.title'),
-  description: t('erc20-burn.description'),
-  overviewLbl: t('erc20-burn.overview'),
+  title: t('product-edit.erc20-common.title'),
+  description: t('product-edit.erc20-common.description'),
+  overviewLbl: t('product-edit.erc20-common.overview'),
 }
 
 init()
