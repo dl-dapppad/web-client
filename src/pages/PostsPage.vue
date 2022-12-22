@@ -234,6 +234,7 @@ $back-btn-z: 1;
   max-height: toRem(450);
   grid-column: 2 / 3;
   grid-row: 1 / -1;
+  border-radius: toRem(12);
 }
 
 .posts-page__card {

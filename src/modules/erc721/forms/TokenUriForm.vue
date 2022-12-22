@@ -5,10 +5,10 @@ import { handleTxError } from '@/helpers'
 import { required, numeric, integer } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
 import { PRODUCT_INT_FORM_RESULT_TYPES } from '@/modules/enums'
-import { ProductErc721Contract } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
+import { ProductErc721BaseContract } from '@/modules/erc721/erc721-base/composables/use-product-erc721-base'
 
 const props = defineProps<{
-  token: ProductErc721Contract
+  token: ProductErc721BaseContract
 }>()
 
 const { t } = useI18n({

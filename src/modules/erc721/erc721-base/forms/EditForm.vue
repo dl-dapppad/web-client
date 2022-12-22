@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
+
+import { i18n } from '@/localization'
 import { useWeb3ProvidersStore } from '@/store'
 import { TransferOwnershipForm, UpgradeToForm } from '@/modules/forms'
 import { OVERVIEW_ROW } from '@/modules/enums'
@@ -16,28 +17,12 @@ import {
   OwnerForm,
   SetBaseUriForm,
   TokenUriForm,
-} from '../../forms'
-import { useProductErc721Base } from '../composables/use-product-erc721'
+} from '@/modules/erc721/forms'
+import { useProductErc721Base } from '@/modules/erc721/erc721-base/composables/use-product-erc721-base'
 import { BaseEditForm } from '@/modules/forms'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
-
-const { t } = useI18n({
-  locale: 'en',
-  messages: {
-    en: {
-      'erc721.title': 'Editing',
-      'erc721.description':
-        'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
-      'erc721.tracker': 'Token tracker',
-      'erc721.owner': 'Owner address',
-      'erc721.balance': 'Your balance',
-      'erc721.interaction': 'Interaction',
-      'erc721.baseURI': 'Base URI',
-      'erc721.baseURI-default-value': 'Not set yet',
-    },
-  },
-})
+const { t } = i18n.global
 
 const route = useRoute()
 const erc721 = useProductErc721Base(route.params.contractAddress as string)
@@ -46,23 +31,23 @@ const isLoaded = ref(false)
 
 const overviewRows = ref<Array<OverviewRow>>([
   {
-    name: t('erc721.tracker'),
+    name: t('product-edit.erc721-common.tracker'),
     value: '',
     type: OVERVIEW_ROW.default,
   },
   {
-    name: t('erc721.owner'),
+    name: t('product-edit.erc721-common.owner'),
     value: '',
     type: OVERVIEW_ROW.address,
   },
   {
-    name: t('erc721.baseURI'),
+    name: t('product-edit.erc721-common.baseURI'),
     value: '',
     type:
       erc721.baseURI.value === '' ? OVERVIEW_ROW.default : OVERVIEW_ROW.link,
   },
   {
-    name: t('erc721.balance'),
+    name: t('product-edit.erc721-common.balance'),
     value: '',
     type: OVERVIEW_ROW.default,
   },
@@ -83,7 +68,7 @@ const init = async () => {
   overviewRows.value[1].value = erc721.owner.value
   overviewRows.value[2].value =
     erc721.baseURI.value === ''
-      ? t('erc721.baseURI-default-value')
+      ? t('product-edit.erc721-common.baseURI-default-value')
       : erc721.baseURI.value
 
   isLoaded.value = true
@@ -117,9 +102,9 @@ const formOverviewData = ref({
 })
 
 const headingData = {
-  title: t('erc721.title'),
-  description: t('erc721.description'),
-  overviewLbl: t('erc721.overview'),
+  title: t('product-edit.erc721-common.title'),
+  description: t('product-edit.erc721-common.description'),
+  overviewLbl: t('product-edit.erc721-common.overview'),
 }
 
 init()

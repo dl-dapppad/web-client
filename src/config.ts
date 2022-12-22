@@ -30,10 +30,10 @@ export const config = {
       .VITE_APP_CONTRACT_PRODUCT_ERC20_BURN_ALIAS,
     [PRODUCT_IDS.erc20MintBurn]: import.meta.env
       .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_BURN_ALIAS,
-    [PRODUCT_IDS.erc20MintBurnCapp]: import.meta.env
-      .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_BURN_CAPP_ALIAS,
-    [PRODUCT_IDS.erc20MintCapp]: import.meta.env
-      .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_CAPP_ALIAS,
+    [PRODUCT_IDS.erc20MintBurnCap]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_BURN_CAP_ALIAS,
+    [PRODUCT_IDS.erc20MintCap]: import.meta.env
+      .VITE_APP_CONTRACT_PRODUCT_ERC20_MINT_CAP_ALIAS,
     [PRODUCT_IDS.erc721Base]: import.meta.env
       .VITE_APP_CONTRACT_PRODUCT_ERC721_ALIAS,
     [PRODUCT_IDS.erc721Enum]: import.meta.env

@@ -12,21 +12,7 @@ const { t } = useI18n({
   locale: 'en',
   messages: {
     en: {
-      'erc721.title': 'Deploy',
-      'erc721.subtitle': 'Token ERC-721',
-      'erc721.description':
-        'Deploy your product on chain. You should deploy product smart contract only one time with a transaction.',
-
-      'erc721.token-group': 'NFT info',
-      'erc721.name-lbl': 'NFT name',
-      'erc721.name-info': 'Enter the token name',
-      'erc721.symbol-lbl': 'Token symbol',
-      'erc721.symbol-info': 'Enter the token symbol',
-
-      'erc721.btn-lbl': 'Buy',
-
-      'erc721.deploy-success.message.description':
-        'Congratulations! You’ve just deployed your contract for Non Fungible Tokens!',
+      'erc721-base.subtitle': 'Token ERC-721',
     },
   },
 })
@@ -45,13 +31,12 @@ const potentialContractAddress = ref('')
 const txProcessing = ref(false)
 
 const headingData = {
-  title: t('erc721.title'),
-  subtitle: t('erc721.subtitle'),
-  description: t('erc721.description'),
+  subtitle: t('erc721-base.subtitle'),
+  description: t('product-deploy.erc721-common.description'),
 }
 
 const buttonData = {
-  label: t('erc721.btn-lbl'),
+  label: t('product-deploy.erc721-common.btn-lbl'),
   isHidden: txProcessing,
 }
 
@@ -59,22 +44,22 @@ const modalData = {
   potentialContractAddress,
   metadata: deployMetadata,
   txt: {
-    description: t('erc721.deploy-success.message.description'),
+    description: t('product-deploy.erc721-common.deploy-success-message'),
   },
 }
 
 const categoriesData = [
   {
-    title: t('erc721.token-group'),
+    title: t('product-deploy.erc721-common.token-group'),
     inputs: [
       {
-        label: t('erc721.name-lbl'),
-        tooltip: t('erc721.name-info'),
+        label: t('product-deploy.erc721-common.name-lbl'),
+        tooltip: t('product-deploy.erc721-common.name-info'),
         validators: [required],
       },
       {
-        label: t('erc721.symbol-lbl'),
-        tooltip: t('erc721.symbol-info'),
+        label: t('product-deploy.erc721-common.symbol-lbl'),
+        tooltip: t('product-deploy.erc721-common.symbol-info'),
         validators: [required],
       },
     ],

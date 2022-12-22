@@ -1,20 +1,18 @@
 import { ref, Ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { ContractTransaction, utils } from 'ethers'
-import { useWeb3ProvidersStore } from '@/store'
-import { ERC721Base, ERC721Base__factory } from '../types'
+import { ContractTransaction } from 'ethers'
 
-export interface ProductErc721Contract {
+import { useWeb3ProvidersStore } from '@/store'
+import { errors } from '@/errors'
+import { ERC721Common, ERC721Common__factory } from '@/modules/erc721/types'
+
+export interface ProductErc721CommonContract {
   address: Ref<string>
   name: Ref<string>
   symbol: Ref<string>
   baseURI: Ref<string>
   owner: Ref<string>
   init: (address: string) => void
-  encodeFunctionData: (
-    initializeDataValues: unknown[],
-    functionMethod?: string,
-  ) => string
   loadDetails: () => Promise<void>
   updateName: () => Promise<void>
   updateSymbol: () => Promise<void>
@@ -40,13 +38,13 @@ export interface ProductErc721Contract {
   upgradeTo: (args: Record<string, string>) => Promise<ContractTransaction>
 }
 
-export const useProductErc721Base = (
+export const useProductErc721Common = (
   contractAddress?: string,
-): ProductErc721Contract => {
+): ProductErc721CommonContract => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
 
-  const _instance = ref<ERC721Base | undefined>()
-  const _instance_rw = ref<ERC721Base | undefined>()
+  const _instance = ref<ERC721Common | undefined>()
+  const _instance_rw = ref<ERC721Common | undefined>()
 
   const address = ref('')
   const name = ref('')
@@ -58,26 +56,17 @@ export const useProductErc721Base = (
     address.value = contractAddress
 
     if (provider.value.currentProvider) {
-      _instance.value = ERC721Base__factory.connect(
+      _instance.value = ERC721Common__factory.connect(
         address.value,
         provider.value.currentProvider,
       )
     }
     if (provider.value.currentSigner) {
-      _instance_rw.value = ERC721Base__factory.connect(
+      _instance_rw.value = ERC721Common__factory.connect(
         address.value,
         provider.value.currentSigner,
       )
     }
-  }
-
-  const encodeFunctionData = (
-    initializeDataValues: unknown[],
-    functionMethod = 'ERC721_init',
-  ): string => {
-    const abiInterface =
-      ERC721Base__factory.createInterface() as utils.Interface
-    return abiInterface.encodeFunctionData(functionMethod, initializeDataValues)
   }
 
   const loadDetails = async (): Promise<void> => {
@@ -151,7 +140,7 @@ export const useProductErc721Base = (
   const approve = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.approve(args.to, args.tokenId)
   }
@@ -159,7 +148,7 @@ export const useProductErc721Base = (
   const setApprovalForAll = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.setApprovalForAll(
       args.operator,
@@ -170,7 +159,7 @@ export const useProductErc721Base = (
   const safeTransferFrom = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value['safeTransferFrom(address,address,uint256)'](
       args.from,
@@ -182,7 +171,7 @@ export const useProductErc721Base = (
   const safeMint = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.safeMint(args.to, args.tokenId)
   }
@@ -190,7 +179,7 @@ export const useProductErc721Base = (
   const setBaseURI = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.setBaseURI(args.baseURI)
   }
@@ -198,7 +187,7 @@ export const useProductErc721Base = (
   const transferOwnership = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.transferOwnership(args.newOwner)
   }
@@ -206,7 +195,7 @@ export const useProductErc721Base = (
   const upgradeTo = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.upgradeTo(args.implementation)
   }
@@ -222,7 +211,6 @@ export const useProductErc721Base = (
 
   return {
     init,
-    encodeFunctionData,
     loadDetails,
 
     address,

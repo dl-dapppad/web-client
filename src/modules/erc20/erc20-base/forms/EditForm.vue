@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
+
+import { i18n } from '@/localization'
 import { useWeb3ProvidersStore } from '@/store'
 import { TransferOwnershipForm, UpgradeToForm } from '@/modules/forms'
 import { formatAmount } from '@/helpers'
@@ -20,47 +21,31 @@ import { BaseEditForm } from '@/modules/forms'
 import { BN } from '@/utils'
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
-
-const { t } = useI18n({
-  locale: 'en',
-  messages: {
-    en: {
-      'erc20.title': 'Editing',
-      'erc20.description':
-        'Editing your product smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.',
-      'erc20.total': 'Total supply',
-      'erc20.tracker': 'Token tracker',
-      'erc20.owner': 'Owner address',
-      'erc20.decimals': 'Decimals',
-      'erc20.balance': 'Your balance',
-      'erc20.interaction': 'Interaction',
-    },
-  },
-})
+const { t } = i18n.global
 
 const overviewRows = ref<Array<OverviewRow>>([
   {
-    name: t('erc20.tracker'),
+    name: t('product-edit.erc20-common.tracker'),
     value: '',
     type: OVERVIEW_ROW.default,
   },
   {
-    name: t('erc20.total'),
+    name: t('product-edit.erc20-common.total'),
     value: '',
     type: OVERVIEW_ROW.amount,
   },
   {
-    name: t('erc20.decimals'),
+    name: t('product-edit.erc20-common.decimals'),
     value: '',
     type: OVERVIEW_ROW.default,
   },
   {
-    name: t('erc20.owner'),
+    name: t('product-edit.erc20-common.owner'),
     value: '',
     type: OVERVIEW_ROW.address,
   },
   {
-    name: t('erc20.balance'),
+    name: t('product-edit.erc20-common.balance'),
     value: '',
     type: OVERVIEW_ROW.amount,
   },

@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, url } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
-import { ProductErc721Contract } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
+import { ProductErc721BaseContract } from '@/modules/erc721/erc721-base/composables/use-product-erc721-base'
 
 enum EMITS {
   changeBaseURI = 'change-base-uri',
@@ -15,7 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
-  token: ProductErc721Contract
+  token: ProductErc721BaseContract
 }>()
 
 const { t } = useI18n({

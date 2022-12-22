@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, isAddress } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
-import { ProductErc721Contract } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
+import { ProductErc721BaseContract } from '@/modules/erc721/erc721-base/composables/use-product-erc721-base'
 import { ProductErc20BaseContract } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
 
 enum EMITS {
@@ -16,7 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
-  token: ProductErc721Contract | ProductErc20BaseContract
+  token: ProductErc721BaseContract | ProductErc20BaseContract
 }>()
 
 const { t } = useI18n({

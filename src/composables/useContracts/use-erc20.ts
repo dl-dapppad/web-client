@@ -1,7 +1,9 @@
 import { ref, Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
+
 import { useWeb3ProvidersStore } from '@/store'
+import { errors } from '@/errors'
 import { Erc20, Erc20__factory } from '@/types'
 
 export interface Erc20Contract {
@@ -86,7 +88,7 @@ export const useErc20 = (contractAddress?: string): Erc20Contract => {
   const approve = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.approve(args.spender, args.amount)
   }

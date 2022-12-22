@@ -147,7 +147,86 @@
   },
   "product-deploy": {
     "tx-processing": "Transaction processing...",
-    "tx-processing-description": "It can takes a some time, please wait"
+    "tx-processing-description": "It can takes a some time, please wait",
+    "default": {
+      "title": "Deploy",
+      "subtitle": "Token",
+      "description": "You are going to deploy some token.",
+      "btn-lbl": "Buy",
+      "payment-group": "Payment info",
+      "payment-lbl": "Payment token",
+      "payment-info": "Select the token you want to pay with",
+      "payment-balance": "Your balance",
+      "product-price": "Product price",
+      "empty-balance-lbl": "Your balance is empty",
+      "mint-tokens-btn": "Mint Tokens",
+      "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}"
+    },
+    "erc20-common": {
+      "description": "Deploy your product on chain. The first time you will need to make two transactions. The first will allow us to take payment for the product, the second will perform the deployment of the smart contract in the network. Afterwards, only one transaction will be necessary.",
+      "token-group": "NFT info",
+      "name-lbl": "NFT name",
+      "name-info": "Enter the token name",
+      "symbol-lbl": "NFT symbol",
+      "symbol-info": "Enter the NFT symbol",
+      "btn-lbl": "Buy",
+      "deploy-success-message": "Congratulations! You’ve just deployed your contract for Fungible Tokens!"
+    },
+    "erc721-common": {
+      "description": "Deploy your product on chain. The first time you will need to make two transactions. The first will allow us to take payment for the product, the second will perform the deployment of the smart contract in the network. Afterwards, only one transaction will be necessary.",
+      "token-group": "Token info",
+      "name-lbl": "Token name",
+      "name-info": "Enter the token name",
+      "symbol-lbl": "Token symbol",
+      "symbol-info": "Enter the token symbol",
+      "decimals-lbl": "Token decimals",
+      "decimals-info": "Enter the token decimals",
+      "cap-lbl": "Max token supply",
+      "cap-info": "Total supply will be limited to the number of tokens entered",
+      "mint-group": "Mint info",
+      "mint-amount-lbl": "Mint amount",
+      "mint-amount-info": "Enter the initial mint amount",
+      "mint-receiver-lbl": "Mint receiver",
+      "mint-receiver-info": "Enter the tokens receiver",
+      "btn-lbl": "Buy",
+      "deploy-success-message": "Congratulations! You’ve just deployed your contract for Non Fungible Tokens!"
+    }
+  },
+  "product-edit": {
+    "default": {
+      "overview": "Overview",
+      "title": "Editing",
+      "description": "You are editing smart contract.",
+      "interaction-lbl": "Interaction",
+      "info-lbl": "Info",
+      "info-btn-more": "Show more",
+      "info-btn-less": "Show less",
+      "tab-read": "Read",
+      "tab-write": "Write"
+    },
+    "erc20-common": {
+      "title": "Editing",
+      "description":
+        "Editing your token smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.",
+      "total": "Total supply",
+      "max-supply": "Max total supply",
+      "tracker": "Token tracker",
+      "owner": "Owner address",
+      "decimals": "Decimals",
+      "balance": "Your balance",
+      "interaction": "Interaction"
+    },
+    "erc721-common": {
+      "title": "Editing",
+      "description":
+        "Editing your token smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.",
+      "tracker": "Token tracker",
+      "owner": "Owner address",
+      "balance": "Your balance",
+      "interaction": "Interaction",
+      "baseURI": "Base URI",
+      "baseURI-default-value": "Not set yet"
+    }
   },
   "farming-page": {
     "title": "Farming",
@@ -196,32 +275,5 @@
     "grid-address-lbl": "Address",
     "grid-date-lbl": "Date and time",
     "grid-amount-lbl": "Amount (DAPP)"
-  },
-  "edit": {
-    "overview": "Overview"
-  },
-  "deploy-form": {
-    "default-title": "Deploy",
-    "default-subtitle": "Token",
-    "default-description": "You are going to deploy some token.",
-    "default-btn-lbl": "Buy",
-    "payment-group": "Payment info",
-    "payment-lbl": "Payment token",
-    "payment-info": "Select the token you want to pay with",
-    "payment-balance": "Your balance",
-    "product-price": "Product price",
-    "empty-balance-lbl": "Your balance is empty",
-    "mint-tokens-btn": "Mint Tokens",
-    "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}"
-  },
-  "edit-form": {
-    "default-title": "Editing",
-    "default-description": "You are editing smart contract.",
-    "default-interaction-lbl": "Interaction",
-    "default-info-lbl": "Info",
-    "info-btn-more": "Show more",
-    "info-btn-less": "Show less",
-    "tab-read": "Read",
-    "tab-write": "Write"
   }
 }

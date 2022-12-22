@@ -4,6 +4,7 @@ export interface DeployMetadata {
   contract: string
   erc20Metadata?: {
     decimals: string
+    cap?: string
     mintAmount: string
     mintReceiver: string
   }

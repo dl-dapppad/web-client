@@ -27,11 +27,11 @@ export const routeBackMap = {
     name: ROUTE_NAMES.categories,
     params: { id: CATEGORIES_IDS.erc20Tokens },
   } as RouteLocationRaw,
-  [PRODUCT_IDS.erc20MintBurnCapp]: {
+  [PRODUCT_IDS.erc20MintBurnCap]: {
     name: ROUTE_NAMES.categories,
     params: { id: CATEGORIES_IDS.erc20Tokens },
   } as RouteLocationRaw,
-  [PRODUCT_IDS.erc20MintCapp]: {
+  [PRODUCT_IDS.erc20MintCap]: {
     name: ROUTE_NAMES.categories,
     params: { id: CATEGORIES_IDS.erc20Tokens },
   } as RouteLocationRaw,

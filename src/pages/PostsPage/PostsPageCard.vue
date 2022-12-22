@@ -128,6 +128,7 @@ init()
   width: 100%;
   max-height: clamp(#{toRem(200)}, 25vw, #{toRem(350)});
   min-height: clamp(#{toRem(200)}, 25vw, #{toRem(350)});
+  border-radius: toRem(12);
 }
 
 .posts-page-card__title {

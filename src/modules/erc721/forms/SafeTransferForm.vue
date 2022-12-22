@@ -4,10 +4,18 @@ import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
 import { required, isAddress, numeric, integer } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
-import { ProductErc721Contract } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
+import { ProductErc721BaseContract } from '@/modules/erc721/erc721-base/composables/use-product-erc721-base'
+
+enum EMITS {
+  changeBalance = 'change-balance',
+}
+
+const emit = defineEmits<{
+  (e: EMITS.changeBalance): void
+}>()
 
 const props = defineProps<{
-  token: ProductErc721Contract
+  token: ProductErc721BaseContract
 }>()
 
 const { t } = useI18n({
@@ -58,6 +66,8 @@ const submit = async ([from, to, tokenId]: string[]) => {
   txProcessing.value = true
 
   await txWrapper(props.token.safeTransferFrom, { from, to, tokenId })
+
+  emit(EMITS.changeBalance)
 
   txProcessing.value = false
 }
