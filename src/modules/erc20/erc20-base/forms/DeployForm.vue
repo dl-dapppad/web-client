@@ -15,29 +15,7 @@ const { t } = useI18n({
   locale: 'en',
   messages: {
     en: {
-      'erc20.title': 'Deploy',
-      'erc20.subtitle': 'Token ERC-20',
-      'erc20.description':
-        'Deploy your product on chain. You should deploy product smart contract only one time with a transaction.',
-
-      'erc20.token-group': 'Token info',
-      'erc20.name-lbl': 'Token name',
-      'erc20.name-info': 'Enter the token name',
-      'erc20.symbol-lbl': 'Token symbol',
-      'erc20.symbol-info': 'Enter the token symbol',
-      'erc20.decimals-lbl': 'Token decimals',
-      'erc20.decimals-info': 'Enter the token decimals',
-
-      'erc20.mint-group': 'Mint info',
-      'erc20.mint-amount-lbl': 'Mint amount',
-      'erc20.mint-amount-info': 'Enter the initial mint amount',
-      'erc20.mint-receiver-lbl': 'Mint receiver',
-      'erc20.mint-receiver-info': 'Enter the tokens receiver',
-
-      'erc20.btn-lbl': 'Buy',
-
-      'erc20.deploy-success-message.description':
-        'Congratulations! You’ve just deployed your contract for Fungible Tokens!',
+      'erc20-base.subtitle': 'Token ERC-20',
     },
   },
 })
@@ -62,13 +40,12 @@ const potentialContractAddress = ref('')
 const txProcessing = ref(false)
 
 const headingData = {
-  title: t('erc20.title'),
-  subtitle: t('erc20.subtitle'),
-  description: t('erc20.description'),
+  subtitle: t('erc20-base.subtitle'),
+  description: t('product-deploy.erc20-common.description'),
 }
 
 const buttonData = {
-  label: t('erc20.btn-lbl'),
+  label: t('product-deploy.erc20-common.btn-lbl'),
   isHidden: txProcessing,
 }
 
@@ -76,43 +53,43 @@ const modalData = {
   potentialContractAddress,
   metadata: deployMetadata,
   txt: {
-    description: t('erc20.deploy-success-message.description'),
+    description: t('product-deploy.erc20-common.deploy-success-message'),
   },
 }
 
 const categoriesData = [
   {
-    title: t('erc20.token-group'),
+    title: t('product-deploy.erc20-common.token-group'),
     inputs: [
       {
-        label: t('erc20.name-lbl'),
-        tooltip: t('erc20.name-info'),
+        label: t('product-deploy.erc20-common.name-lbl'),
+        tooltip: t('product-deploy.erc20-common.name-info'),
         validators: [required],
       },
       {
-        label: t('erc20.symbol-lbl'),
-        tooltip: t('erc20.symbol-info'),
+        label: t('product-deploy.erc20-common.symbol-lbl'),
+        tooltip: t('product-deploy.erc20-common.symbol-info'),
         validators: [required],
       },
       {
-        label: t('erc20.decimals-lbl'),
-        tooltip: t('erc20.decimals-info'),
+        label: t('product-deploy.erc20-common.decimals-lbl'),
+        tooltip: t('product-deploy.erc20-common.decimals-info'),
         validators: [required, numeric],
       },
     ],
   },
   {
-    title: t('erc20.mint-group'),
+    title: t('product-deploy.erc20-common.mint-group'),
     inputs: [
       {
         value: provider.value.selectedAddress as string,
-        label: t('erc20.mint-receiver-lbl'),
-        tooltip: t('erc20.mint-receiver-info'),
+        label: t('product-deploy.erc20-common.mint-receiver-lbl'),
+        tooltip: t('product-deploy.erc20-common.mint-receiver-info'),
         validators: [required, isAddress],
       },
       {
-        label: t('erc20.mint-amount-lbl'),
-        tooltip: t('erc20.mint-amount-info'),
+        label: t('product-deploy.erc20-common.mint-amount-lbl'),
+        tooltip: t('product-deploy.erc20-common.mint-amount-info'),
         validators: [required, numeric],
       },
     ],

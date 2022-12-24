@@ -4,8 +4,8 @@ import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
 import { ROUTE_NAMES } from '@/enums'
 import PostItemPageCheckout from '@/pages/PostItemPage/PostItemPageCheckout.vue'
+import { routeBackMap } from '@/router/route-back-map'
 import postsData from '@/assets/posts.json'
-import { postsBackMap } from '@/assets/postsStructure'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,7 +21,7 @@ const handleBackBtn = () => {
         id: route.params.id,
       },
     })
-  else router.push(postsBackMap[route.params.id])
+  else router.push(routeBackMap[route.params.id as string])
 }
 </script>
 

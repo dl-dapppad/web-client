@@ -273,7 +273,7 @@ onMounted(() => init())
           {{
             headingData?.title
               ? headingData.title
-              : $t('deploy-form.default-title')
+              : $t('product-deploy.default.title')
           }}
         </h2>
       </div>
@@ -281,14 +281,14 @@ onMounted(() => init())
         {{
           headingData?.subtitle
             ? headingData.subtitle
-            : $t('deploy-form.default-subtitle')
+            : $t('product-deploy.default.subtitle')
         }}
       </span>
       <span class="app__module-description">
         {{
           headingData?.description
             ? headingData.description
-            : $t('deploy-form.default-description')
+            : $t('product-deploy.default.description')
         }}
       </span>
     </div>
@@ -304,11 +304,11 @@ onMounted(() => init())
         <div class="app__module-content-inner">
           <div class="app__metadata-row app__metadata-row--mobile-break-line">
             <span class="app__module-span">
-              {{ $t('deploy-form.empty-balance-lbl') }}</span
+              {{ $t('product-deploy.default.empty-balance-lbl') }}</span
             >
             <app-button
               class="app__submit-btn"
-              :text="$t('deploy-form.mint-tokens-btn')"
+              :text="$t('product-deploy.default.mint-tokens-btn')"
               @click="mintToken"
             />
           </div>
@@ -345,7 +345,7 @@ onMounted(() => init())
                       : $icons.arrowDownTriangle
                   "
                 />
-                {{ $t('deploy-form.payment-group') }}
+                {{ $t('product-deploy.default.payment-group') }}
               </app-button>
             </template>
             <template #default>
@@ -355,12 +355,14 @@ onMounted(() => init())
                     <select-field
                       class="app__module-field"
                       :model-value="form.data[0][0]"
-                      :label="$t('deploy-form.payment-lbl')"
+                      :label="$t('product-deploy.default.payment-lbl')"
                       :value-options="paymentTokens.symbols"
                       @update:model-value="updatePayment"
                     />
                     <div class="app__field-tooltip">
-                      <info-tooltip :text="$t('deploy-form.payment-info')" />
+                      <info-tooltip
+                        :text="$t('product-deploy.default.payment-info')"
+                      />
                     </div>
                   </div>
                   <!-- eslint-disable -->
@@ -373,7 +375,7 @@ onMounted(() => init())
                   <!-- eslint-enable -->
                     <div class="app__row">
                       <span class="app__row-title">
-                        {{ $t('deploy-form.product-price') }}
+                        {{ $t('product-deploy.default.product-price') }}
                       </span>
                       <div class="app__balance">
                         {{
@@ -396,7 +398,7 @@ onMounted(() => init())
                     <!-- eslint-enable -->
                       <span class="app__row-title">
                         {{
-                          $t('deploy-form.product-swap-price', {
+                          $t('product-deploy.default.product-swap-price', {
                             fromSymbol: productPaymentToken.symbol,
                             toSymbol: selectedPaymentToken.symbol,
                           })
@@ -414,7 +416,7 @@ onMounted(() => init())
                     </div>
                     <div v-if="selectedPaymentToken.balance" class="app__row">
                       <span class="app__row-title">
-                        {{ $t('deploy-form.payment-balance') }}
+                        {{ $t('product-deploy.default.payment-balance') }}
                       </span>
                       <div
                         class="app__balance app__balance-small"
@@ -499,7 +501,9 @@ onMounted(() => init())
             class="app__submit-btn app__submit-btn--cutted"
             type="submit"
             :text="
-              button?.label ? button.label : $t('deploy-form.default-btn-lbl')
+              button?.label
+                ? button.label
+                : $t('product-deploy.default.btn-lbl')
             "
             size="small"
             :disabled="isBalanceInsuficient || !isAllFieldsValid"

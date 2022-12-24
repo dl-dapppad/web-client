@@ -1,7 +1,9 @@
 import { ref, Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
+
 import { useWeb3ProvidersStore } from '@/store'
+import { errors } from '@/errors'
 import { Farming, Farming__factory } from '@/types'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
@@ -120,7 +122,7 @@ export const useFarming = (): FarmingContract => {
   const invest = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.invest(args.amount)
   }
@@ -128,7 +130,7 @@ export const useFarming = (): FarmingContract => {
   const claim = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.claim(args.account)
   }
@@ -136,7 +138,7 @@ export const useFarming = (): FarmingContract => {
   const withdraw = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.withdraw(args.amount, args.receiver)
   }

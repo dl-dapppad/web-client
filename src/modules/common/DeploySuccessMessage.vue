@@ -24,6 +24,7 @@ const { t } = useI18n({
       'deploy-success-message.name-lbl': 'Name',
       'deploy-success-message.symbol-lbl': 'Symbol',
       'deploy-success-message.decimals-lbl': 'Decimals',
+      'deploy-success-message.cap-lbl': 'Cap (max total supply)',
       'deploy-success-message.mint-amount-lbl': 'Minted',
       'deploy-success-message.mint-receiver-lbl': 'Minted to',
       'deploy-success-message.contract-lbl': 'Contract address',
@@ -78,6 +79,22 @@ const { t } = useI18n({
         </span>
         <span class="app__metadata-value">
           {{ deployMetadata.erc20Metadata.decimals }}
+        </span>
+      </div>
+      <div
+        class="app__metadata-row"
+        v-if="deployMetadata.erc20Metadata && deployMetadata.erc20Metadata.cap"
+      >
+        <span class="app__metadata-lbl">
+          {{ t('deploy-success-message.cap-lbl') }}
+        </span>
+        <span class="app__metadata-value">
+          <span class="app__price">
+            {{ deployMetadata.erc20Metadata.cap }}
+            <span class="app__price-asset">
+              {{ deployMetadata.symbol }}
+            </span>
+          </span>
         </span>
       </div>
       <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">

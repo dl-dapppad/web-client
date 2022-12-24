@@ -1,7 +1,9 @@
 import { ref, Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
+
 import { useWeb3ProvidersStore } from '@/store'
+import { errors } from '@/errors'
 import { ProductFactory, ProductFactory__factory } from '@/types'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
@@ -115,7 +117,7 @@ export const useProductFactory = (): ProductFactoryContract => {
   const deploy = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     const tx = await _instance_rw.value.deploy(
       args.alias,

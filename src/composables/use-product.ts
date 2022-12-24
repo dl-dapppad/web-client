@@ -18,7 +18,15 @@ import {
 } from '@/composables'
 
 import { useProductErc20Base } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
-import { useProductErc721Base } from '@/modules/erc721/erc721-base/composables/use-product-erc721'
+import { useProductErc20Mint } from '@/modules/erc20/erc20-mint/composables/use-product-erc20-mint'
+import { useProductErc20Burn } from '@/modules/erc20/erc20-burn/composables/use-product-erc20-burn'
+import { useProductErc20MintBurn } from '@/modules/erc20/erc20-mint-burn/composables/use-product-erc20-mint-burn'
+import { useProductErc20MintBurnCap } from '@/modules/erc20/erc20-mint-burn-cap/composables/use-product-erc20-mint-burn-cap'
+import { useProductErc20MintCap } from '@/modules/erc20/erc20-mint-cap/composables/use-product-erc20-mint-cap'
+import { useProductErc721Base } from '@/modules/erc721/erc721-base/composables/use-product-erc721-base'
+import { useProductErc721Enum } from '@/modules/erc721/erc721-enum/composables/use-product-erc721-enum'
+import { useProductErc721Burn } from '@/modules/erc721/erc721-burn/composables/use-product-erc721-burn'
+import { useProductErc721BurnEnum } from '@/modules/erc721/erc721-burn-enum/composables/use-product-erc721-burn-enum'
 
 export const useProduct = () => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
@@ -48,7 +56,7 @@ export const useProduct = () => {
       const erc20 = useProductErc20Base(address)
       await erc20.updateDecimals()
 
-      return PRODUCT_IDS.ERC20
+      return PRODUCT_IDS.erc20Base
       // eslint-disable-next-line no-empty
     } catch {}
 
@@ -56,7 +64,7 @@ export const useProduct = () => {
       const erc721 = useProductErc721Base(address)
       await erc721.updateBaseURI()
 
-      return PRODUCT_IDS.ERC721
+      return PRODUCT_IDS.erc721Base
       // eslint-disable-next-line no-empty
     } catch {}
 
@@ -208,11 +216,35 @@ export const useProduct = () => {
 
     let product
     switch (productId) {
-      case PRODUCT_IDS.ERC20:
+      case PRODUCT_IDS.erc20Base:
         product = useProductErc20Base()
         break
-      case PRODUCT_IDS.ERC721:
+      case PRODUCT_IDS.erc20Mint:
+        product = useProductErc20Mint()
+        break
+      case PRODUCT_IDS.erc20Burn:
+        product = useProductErc20Burn()
+        break
+      case PRODUCT_IDS.erc20MintBurn:
+        product = useProductErc20MintBurn()
+        break
+      case PRODUCT_IDS.erc20MintBurnCap:
+        product = useProductErc20MintBurnCap()
+        break
+      case PRODUCT_IDS.erc20MintCap:
+        product = useProductErc20MintCap()
+        break
+      case PRODUCT_IDS.erc721Base:
         product = useProductErc721Base()
+        break
+      case PRODUCT_IDS.erc721Enum:
+        product = useProductErc721Enum()
+        break
+      case PRODUCT_IDS.erc721Burn:
+        product = useProductErc721Burn()
+        break
+      case PRODUCT_IDS.erc721BurnEnum:
+        product = useProductErc721BurnEnum()
         break
       default:
         throw new Error(t('errors.can-not-create-initialize-data'))

@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+
 import { useRoute, useRouter } from '@/router'
 import { AppBlock, AppButton } from '@/common'
 import { Post } from '@/types'
 import { ErrorHandler } from '@/helpers'
+import { routeBackMap } from '@/router/route-back-map'
+import { Loader, ErrorMessage, NoDataMessage } from '@/common'
 import PostsPageCard from '@/pages/PostsPage/PostsPageCard.vue'
-import Loader from '@/common/Loader.vue'
-import ErrorMessage from '@/common/ErrorMessage.vue'
-import NoDataMessage from '@/common/NoDataMessage.vue'
-import { postsBackMap } from '@/assets/postsStructure'
 
 const route = useRoute()
 const router = useRouter()
@@ -37,7 +36,7 @@ const subPosts = computed<Post[]>(() => {
 })
 
 const handleBackBtn = () => {
-  router.push(postsBackMap[route.params.id])
+  router.push(routeBackMap[route.params.id as string])
 }
 
 const loadPosts = async () => {
@@ -67,7 +66,7 @@ loadPosts()
             <div class="posts-page__banner-text-wrp">
               <div class="posts-page__banner-title-wrp">
                 <h2 class="posts-page__banner-title">
-                  {{ currentPost.title }}
+                  {{ currentPost?.title }}
                 </h2>
                 <app-button
                   class="posts-page__back-btn"
@@ -87,7 +86,7 @@ loadPosts()
                 :text="$t('posts-page.show-more-btn')"
                 :route="{
                   name: $routes.category,
-                  params: { id: currentPost.id },
+                  params: { id: currentPost?.id },
                 }"
               />
             </div>
@@ -235,6 +234,7 @@ $back-btn-z: 1;
   max-height: toRem(450);
   grid-column: 2 / 3;
   grid-row: 1 / -1;
+  border-radius: toRem(12);
 }
 
 .posts-page__card {

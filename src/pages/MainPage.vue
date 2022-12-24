@@ -68,7 +68,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
                 @click="
                   router.push({
                     name: $routes.product,
-                    params: { id: PRODUCT_IDS.ERC20 },
+                    params: { id: PRODUCT_IDS.erc20Base },
                   })
                 "
               />
@@ -92,7 +92,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
                 @click="
                   router.push({
                     name: $routes.product,
-                    params: { id: PRODUCT_IDS.ERC721 },
+                    params: { id: PRODUCT_IDS.erc721Base },
                   })
                 "
               />

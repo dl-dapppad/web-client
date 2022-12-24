@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useWindowSize } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
+import { animate } from 'motion'
 
 import { AppButton, AppBlock, AddressCopy, Tabs, ContentRender } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
@@ -12,7 +13,6 @@ import { EditOverview } from '@/modules/common'
 import { OverviewRow } from '@/modules/types'
 
 import postsData from '@/assets/posts.json'
-import { animate } from 'motion'
 
 defineProps<{
   headingData?: {
@@ -38,11 +38,11 @@ const post = posts.find(el => el.id === route.params.id)
 
 const FORM_TABS = [
   {
-    title: t('edit-form.tab-read'),
+    title: t('product-edit.default.tab-read'),
     number: 1,
   },
   {
-    title: t('edit-form.tab-write'),
+    title: t('product-edit.default.tab-write'),
     number: 2,
   },
 ]
@@ -118,11 +118,14 @@ onMounted(() => {
   infoBlock.value.html = infoTextElem?.value?.innerHTML as string
   initInfoAnimation()
 
-  animate(infoTextElem.value ?? '', {
-    height: infoBlock.value.isShownFull
-      ? `${infoBlock.value.heightCutted}px`
-      : `${infoBlock.value.heightDefault}px`,
-  })
+  if (infoTextElem.value) {
+    animate(infoTextElem.value, {
+      height: infoBlock.value.isShownFull
+        ? `${infoBlock.value.heightCutted}px`
+        : `${infoBlock.value.heightDefault}px`,
+    })
+  }
+
   infoBlock.value.isShownFull = !infoBlock.value.isShownFull
 })
 
@@ -163,7 +166,7 @@ watch(
           "
         />
         <h2 class="app__module-title">
-          {{ headingData?.title ?? $t('edit-form.default-title') }}
+          {{ headingData?.title ?? $t('product-edit.default.title') }}
         </h2>
       </div>
       <span class="app__module-subtitle">
@@ -173,12 +176,12 @@ watch(
         />
       </span>
       <span class="app__module-description">
-        {{ headingData?.description ?? $t('edit-form.default-description') }}
+        {{ headingData?.description ?? $t('product-edit.default.description') }}
       </span>
     </div>
     <div class="app__module-padding-bottom" v-if="isInfoShown">
       <h3 class="app__module-block-title">
-        {{ headingData?.infoLbl ?? $t('edit-form.default-info-lbl') }}
+        {{ headingData?.infoLbl ?? $t('product-edit.default.info-lbl') }}
       </h3>
       <app-block>
         <div class="app__module-content base-edit-form__content">
@@ -192,8 +195,8 @@ watch(
             size="small"
             :text="
               infoBlock.isShownFull
-                ? $t('edit-form.info-btn-less')
-                : $t('edit-form.info-btn-more')
+                ? $t('product-edit.default.info-btn-less')
+                : $t('product-edit.default.info-btn-more')
             "
             @click="handleShowMore"
           />
@@ -202,11 +205,14 @@ watch(
     </div>
     <edit-overview :is-loaded="overview.isLoaded" :rows="overview.rows" />
     <div>
+      <!-- eslint-disable -->
       <h3 class="app__module-block-title">
         {{
-          headingData?.interactionLbl ?? $t('edit-form.default-interaction-lbl')
+          headingData?.interactionLbl ??
+            $t('product-edit.default.interaction-lbl')
         }}
       </h3>
+      <!-- eslint-enable -->
       <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
       <app-block>
         <div

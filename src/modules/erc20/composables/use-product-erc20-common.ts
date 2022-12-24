@@ -1,7 +1,9 @@
 import { ref, Ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
+
 import { useWeb3ProvidersStore } from '@/store'
+import { errors } from '@/errors'
 import { ERC20Common, ERC20Common__factory } from '@/modules/erc20/types'
 
 export interface ProductErc20CommonContract {
@@ -119,7 +121,7 @@ export const useProductErc20Common = (
   const approve = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.approve(args.spender, args.amount)
   }
@@ -127,7 +129,7 @@ export const useProductErc20Common = (
   const transfer = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.transfer(args.recipient, args.amount)
   }
@@ -135,7 +137,7 @@ export const useProductErc20Common = (
   const transferFrom = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.transferFrom(
       args.sender,
@@ -147,7 +149,7 @@ export const useProductErc20Common = (
   const transferOwnership = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.transferOwnership(args.newOwner)
   }
@@ -155,7 +157,7 @@ export const useProductErc20Common = (
   const upgradeTo = async (
     args: Record<string, string>,
   ): Promise<ContractTransaction> => {
-    if (!_instance_rw.value) throw new Error('Undefined instance')
+    if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     return _instance_rw.value.upgradeTo(args.implementation)
   }

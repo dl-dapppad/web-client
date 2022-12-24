@@ -40,8 +40,6 @@ export const useChart = () => {
       new BN(product.currentPrice).fromFraction(decimals).toString(),
     )
 
-    if (!basePrice) return
-
     const minPrice = Number(
       new BN(product.minPrice).fromFraction(decimals).toString(),
     )

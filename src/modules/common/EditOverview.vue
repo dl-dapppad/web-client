@@ -18,7 +18,7 @@ const props = withDefaults(
 <template>
   <div class="app__module-padding-bottom">
     <h3 class="app__module-block-title">
-      {{ $t('edit.overview') }}
+      {{ $t('product-edit.default.overview') }}
     </h3>
     <app-block>
       <div class="app__module-content">
