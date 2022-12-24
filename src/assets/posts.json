@@ -68,9 +68,11 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens."],
-      ["title", "ERC-20"],
-      ["paragraph-16", "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens."]
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
     "content": [
       ["title-accent", "What is ERC-20?"],
@@ -111,6 +113,13 @@
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "infoDescriptionContent": [
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
+    ],
     "content": [
       ["title-accent", "What is ERC-20?"],
       ["paragraph", "ERC-20 is a standard for the creation and deployment of smart contracts on the Ethereum blockchain. ERC-20 tokens are a form of token that can be issued on Ethereum Virtual Machine compatible blockchains that also represent a set of standards that cryptocurrencies can adhere to."],
@@ -150,6 +159,13 @@
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "infoDescriptionContent": [
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
+    ],
     "content": [
       ["title-accent", "What is ERC-20?"],
       ["paragraph", "ERC-20 is a standard for the creation and deployment of smart contracts on the Ethereum blockchain. ERC-20 tokens are a form of token that can be issued on Ethereum Virtual Machine compatible blockchains that also represent a set of standards that cryptocurrencies can adhere to."],
@@ -189,6 +205,13 @@
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "infoDescriptionContent": [
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
+    ],
     "content": [
       ["title-accent", "What is ERC-20?"],
       ["paragraph", "ERC-20 is a standard for the creation and deployment of smart contracts on the Ethereum blockchain. ERC-20 tokens are a form of token that can be issued on Ethereum Virtual Machine compatible blockchains that also represent a set of standards that cryptocurrencies can adhere to."],
@@ -228,6 +251,13 @@
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "infoDescriptionContent": [
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
+    ],
     "content": [
       ["title-accent", "What is ERC-20?"],
       ["paragraph", "ERC-20 is a standard for the creation and deployment of smart contracts on the Ethereum blockchain. ERC-20 tokens are a form of token that can be issued on Ethereum Virtual Machine compatible blockchains that also represent a set of standards that cryptocurrencies can adhere to."],
@@ -267,6 +297,13 @@
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "infoDescriptionContent": [
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
+    ],
     "content": [
       ["title-accent", "What is ERC-20?"],
       ["paragraph", "ERC-20 is a standard for the creation and deployment of smart contracts on the Ethereum blockchain. ERC-20 tokens are a form of token that can be issued on Ethereum Virtual Machine compatible blockchains that also represent a set of standards that cryptocurrencies can adhere to."],
@@ -307,9 +344,11 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?"],
-      ["title", "Non-Fungible Tokens"],
-      ["paragraph-16", "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?"]
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
@@ -361,6 +400,13 @@
     "description": "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "infoDescriptionContent": [
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
+    ],
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
       ["paragraph", "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!"],
@@ -410,6 +456,13 @@
     "description": "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "infoDescriptionContent": [
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
+    ],
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
       ["paragraph", "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!"],
@@ -459,6 +512,13 @@
     "description": "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "infoDescriptionContent": [
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["title", "Contract Verification on Blockchain Explorer "],
+      ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
+    ],
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
       ["paragraph", "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!"],

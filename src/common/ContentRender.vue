@@ -76,8 +76,17 @@ defineProps<{
           </a>
         </div>
       </template>
-      <template v-else-if="key === 'unordered-list'">
-        <ul :key="idx" class="content-render__unordered-list">
+      <template
+        v-else-if="key === 'unordered-list' || key === 'unordered-list-16'"
+      >
+        <ul
+          :key="idx"
+          class="content-render__unordered-list"
+          :class="{
+            'content-render__unordered-list--small':
+              key === 'unordered-list-16',
+          }"
+        >
           <li
             v-for="(item, ind) of value"
             :key="ind"
@@ -325,5 +334,14 @@ a.content-render__img-links-item {
   position: absolute;
   top: toRem(11);
   left: -#{toRem(16)};
+}
+
+.content-render__unordered-list--small {
+  .content-render__unordered-list-text {
+    font-size: toRem(16);
+    line-height: 1.3;
+    letter-spacing: 0.1em;
+    word-break: break-word;
+  }
 }
 </style>
