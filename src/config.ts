@@ -9,6 +9,7 @@ export const config = {
   LOG_LEVEL: 'trace' as LogLevelDesc,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
   AVAILABLE_CHAINS: [ETHEREUM_CHAINS.goerli] as string[],
+  URL_SUBGRAPH: import.meta.env.VITE_APP_URL_SUBGRAPH,
   RPC_URL: {
     [ETHEREUM_CHAINS.goerli as string]: import.meta.env.VITE_APP_RPC_URL_GOERLI,
   },

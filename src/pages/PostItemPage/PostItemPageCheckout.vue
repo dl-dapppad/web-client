@@ -41,6 +41,7 @@ const paymentToken = useErc20()
 const factory = useProductFactory()
 const farming = useFarming()
 const composableProduct = useProduct()
+
 const { t } = useI18n()
 
 const addressSearchInput = ref('')
@@ -53,9 +54,9 @@ const chart = useChart()
 
 const isProductLoaded = ref(false)
 
-const clickContractSearch = async () => {
+const clickContractSearch = () => {
   addressSearchButtonDisabled.value = true
-  await composableProduct.handleContractSearch(addressSearchInput.value)
+  composableProduct.handleContractSearch(addressSearchInput.value)
   addressSearchButtonDisabled.value = false
 }
 
@@ -384,7 +385,7 @@ init()
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: toRem(70) toRem(165);
+  padding: toRem(70) toRem(165) toRem(40);
   gap: toRem(40);
   height: 100%;
   max-width: 100%;
