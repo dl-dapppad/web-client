@@ -67,7 +67,12 @@ export const useProduct = () => {
     paymentTokenAddress: string,
     initializeData: unknown[],
   ): Promise<string> => {
-    if (!provider.value.selectedAddress) return ''
+    const { t } = i18n.global
+
+    if (!provider.value.selectedAddress) {
+      Bus.error(t('errors.provider-unconnected'))
+      return ''
+    }
 
     const alias = config.PRODUCT_ALIASES[productId as string]
 

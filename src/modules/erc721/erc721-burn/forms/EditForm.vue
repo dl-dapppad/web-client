@@ -63,20 +63,19 @@ const overviewRows = ref<Array<OverviewRow>>([
 const init = async () => {
   erc721.init(route.params.contractAddress as string)
 
-  if (provider.value.selectedAddress) {
-    const [amount] = await Promise.all([
-      erc721.balanceOf(provider.value.selectedAddress),
-      erc721.loadDetails(),
-    ])
-    overviewRows.value[3].value = amount
-  }
-
+  await erc721.loadDetails()
   overviewRows.value[0].value = `${erc721.name.value} (${erc721.symbol.value})`
   overviewRows.value[1].value = erc721.owner.value
   overviewRows.value[2].value =
     erc721.baseURI.value === ''
       ? t('product-edit.erc721-common.baseURI-default-value')
       : erc721.baseURI.value
+
+  if (provider.value.selectedAddress) {
+    overviewRows.value[3].value = await erc721.balanceOf(
+      provider.value.selectedAddress,
+    )
+  }
 
   isLoaded.value = true
 }
