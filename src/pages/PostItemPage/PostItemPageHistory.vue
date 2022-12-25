@@ -14,6 +14,7 @@ import {
 } from '@/composables'
 import { AppPagination, AddressCopy, Loader } from '@/common'
 import { config } from '@/config'
+import { WINDOW_BREAKPOINTS } from '@/enums'
 import { formatAmount, formatDMYTime } from '@/helpers'
 
 type History = {
@@ -111,7 +112,11 @@ init()
       <div
         class="product-history__grid"
         :style="{
-          width: `${windowWidth < 1024 ? windowWidth - 90 + 'px' : 'auto'}`,
+          width: `${
+            windowWidth < WINDOW_BREAKPOINTS.medium
+              ? windowWidth - 90 + 'px'
+              : windowWidth - 410 + 'px'
+          }`,
         }"
       >
         <template v-if="history.showed">

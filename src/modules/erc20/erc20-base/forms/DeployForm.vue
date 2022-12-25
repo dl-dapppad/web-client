@@ -24,7 +24,7 @@ const { t } = i18n.global
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const product = useProduct()
 
-const isSuccessModalShown = ref(false)
+const isSuccessModalShown = ref(true)
 
 const overviewRows = ref<Array<OverviewRow>>([
   {
