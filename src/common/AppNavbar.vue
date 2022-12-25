@@ -15,12 +15,7 @@ import { useErc20, useProduct } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import {
-  CONTRACT_NAMES,
-  ETHEREUM_CHAINS,
-  WINDOW_BREAKPOINTS,
-  PROVIDERS,
-} from '@/enums'
+import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
@@ -41,14 +36,20 @@ const composableProduct = useProduct()
 const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
 
-const isInvalidBrowserModalOpened = ref(false)
+const isMobileModalMetamaskAppOpened = ref(false)
 
 const addressSearchInput = ref('')
 const selectedProvider = ref()
 
-const metamaskProvider = web3Store.providers.find(
-  provider => provider.name === PROVIDERS.metamask,
+const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
+
+const isProviderButtonShown = computed(
+  () =>
+    windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
+    !provider.value.selectedAddress,
 )
+
+const isNavbarFixed = computed(() => isMobileDrawerOpened.value && isMobile)
 
 const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
@@ -91,10 +92,6 @@ const trySwitchChain = async (chainId: string | number) => {
 }
 
 const handleProviderBtnClick = async () => {
-  if (isInvalidBrowserModalShown.value) {
-    isInvalidBrowserModalOpened.value = true
-    return
-  }
   try {
     await web3Store.connect()
 
@@ -104,7 +101,11 @@ const handleProviderBtnClick = async () => {
       selectedProvider.value = PROVIDER_TYPE.rpc
     }
   } catch (error) {
-    ErrorHandler.process(error)
+    if (windowWidth.value < WINDOW_BREAKPOINTS.small) {
+      isMobileModalMetamaskAppOpened.value = true
+    } else {
+      ErrorHandler.process(error)
+    }
   }
 }
 
@@ -116,22 +117,6 @@ const clickContractSearch = async () => {
   )
     composableProduct.handleContractSearch(addressSearchInput.value)
 }
-
-const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
-
-const isProviderButtonShown = computed(
-  () =>
-    windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
-    !provider.value.selectedAddress,
-)
-
-const isNavbarFixed = computed(() => isMobileDrawerOpened.value && isMobile)
-
-const isMetamaskProvider = computed(() => !!metamaskProvider)
-
-const isInvalidBrowserModalShown = computed(
-  () => isMobile.value && !isMetamaskProvider.value,
-)
 
 watch(
   () => provider.value.selectedAddress,
@@ -322,7 +307,7 @@ init()
     />
   </div>
 
-  <invalid-browser-modal v-model:is-shown="isInvalidBrowserModalOpened" />
+  <invalid-browser-modal v-model:is-shown="isMobileModalMetamaskAppOpened" />
 </template>
 
 <style lang="scss" scoped>

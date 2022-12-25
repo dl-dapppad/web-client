@@ -1,33 +1,23 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useWindowSize } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 
 import { Modal, AppButton } from '@/common'
-import { WINDOW_BREAKPOINTS } from '@/enums'
 
 defineProps<{
   isShown: boolean
 }>()
 
-enum EVENTS {
-  updateIsShown = 'update:is-shown',
-}
-
-const { width: windowWidth } = useWindowSize()
-
-const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
-
-const emit = defineEmits<{
-  (e: EVENTS.updateIsShown, value: boolean): void
-}>()
-
-const updateIsShown = (val: boolean) => {
-  emit(EVENTS.updateIsShown, val)
-}
-
-const closeModal = () => {
-  emit(EVENTS.updateIsShown, false)
-}
+const { t } = useI18n({
+  locale: 'en',
+  messages: {
+    en: {
+      'invalid-browser.title': 'Connect your wallet',
+      'invalid-browser.description':
+        'To continue, open the page in the MetaMask app on your phone.',
+      'invalid-browser.btn': 'Go to Metamask',
+    },
+  },
+})
 
 const openMetamaskBrowser = () =>
   window.open(
@@ -38,40 +28,61 @@ const openMetamaskBrowser = () =>
 </script>
 
 <template>
-  <modal
-    :is-shown="isShown && isMobile"
-    @update:is-shown="updateIsShown"
-    class="invalid-browser-modal"
-  >
-    <div class="invalid-browser-modal__content">
-      <app-button
-        size="small"
-        scheme="default"
-        :icon-right="$icons.x"
-        @click="closeModal"
-      />
-      <p class="invalid-browser-modal__message">
-        {{ $t('invalid-browser-modal.message') }}
-      </p>
-      <app-button
-        class="invalid-browser-modal__button"
-        :text="$t('invalid-browser-modal.go-to-metamask-btn')"
-        @click="openMetamaskBrowser"
-      />
-      <app-button
-        class="invalid-browser-modal__button"
-        :text="$t('invalid-browser-modal.close-modal-btn')"
-        icon-name="arrow-left"
-        is-icon-left
-        @click="closeModal"
-      />
-    </div>
+  <modal :is-shown="isShown" class="invalid-browser-modal">
+    <template #default="{ modal }">
+      <div class="invalid-browser-modal__content">
+        <div class="invalid-browser-modal__title-wrp">
+          <div class="invalid-browser-modal__title">
+            {{ t('invalid-browser.title') }}
+          </div>
+          <app-button
+            class="invalid-browser-modal__close"
+            size="small"
+            scheme="default"
+            :icon-right="$icons.x"
+            @click="modal.close"
+          />
+        </div>
+        <p class="invalid-browser-modal__message">
+          {{ t('invalid-browser.description') }}
+        </p>
+        <app-button
+          class="invalid-browser-modal__button"
+          :text="t('invalid-browser.btn')"
+          @click="openMetamaskBrowser"
+        />
+      </div>
+    </template>
   </modal>
 </template>
 
 <style lang="scss" scoped>
 .invalid-browser-modal__content {
+  display: flex;
+  flex-direction: column;
   padding: toRem(20) var(--app-padding-right) toRem(20) var(--app-padding-left);
+  gap: toRem(30);
+}
+
+.invalid-browser-modal__title-wrp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.invalid-browser-modal__title {
+  font-family: var(--app-font-family-secondary);
+  font-size: toRem(20);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.invalid-browser-modal__close {
+  padding: 0;
+}
+
+.invalid-browser-modal__message {
+  font-size: toRem(14);
 }
 
 .invalid-browser-modal__button {
