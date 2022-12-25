@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 
@@ -38,6 +39,8 @@ const { t } = useI18n({
 })
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
+
+const { width: windowWidth } = useWindowSize()
 
 const route = useRoute()
 const farming = useFarming()
@@ -105,7 +108,12 @@ init()
       {{ t('product-history.title') }}
     </h2>
     <template v-if="history.loaded">
-      <div class="product-history__grid">
+      <div
+        class="product-history__grid"
+        :style="{
+          width: `${windowWidth < 1024 ? windowWidth - 90 + 'px' : 'auto'}`,
+        }"
+      >
         <template v-if="history.showed">
           <div
             class="product-history__grid-row product-history__grid-row--titled"
@@ -133,17 +141,20 @@ init()
           >
             <span class="product-history__grid-row-value">
               <address-copy
-                :address="row.deployer"
+                :address="row.deployer ?? ''"
                 class="app__link--accented"
               />
             </span>
             <span class="product-history__grid-row-value">
-              <address-copy :address="row.proxy" class="app__link--accented" />
+              <address-copy
+                :address="row.proxy ?? ''"
+                class="app__link--accented"
+              />
             </span>
             <span class="product-history__grid-row-value">
               {{
                 formatAmount(
-                  row.price,
+                  row.price ?? '0',
                   paymentToken.decimals.value,
                   paymentToken.symbol.value,
                 )
@@ -152,7 +163,7 @@ init()
             <span class="product-history__grid-row-value">
               {{
                 formatAmount(
-                  row.cashback,
+                  row.cashback ?? '0',
                   paymentToken.decimals.value,
                   paymentToken.symbol.value,
                 )
@@ -187,7 +198,8 @@ init()
 }
 
 .product-history__grid {
-  margin-top: toRem(30);
+  margin-top: toRem(10);
+  overflow-x: auto;
 }
 
 .product-history__controls {
@@ -199,10 +211,12 @@ init()
 .product-history__grid-row {
   display: grid;
   grid-template-columns: 1.3fr 1.3fr 1.2fr 1.2fr 1.5fr;
-  padding: toRem(20) toRem(10);
+  padding: toRem(20) 0;
   font-weight: 700;
   font-size: toRem(16);
   border-bottom: #{toRem(1) solid var(--border-primary-main)};
+  width: 100%;
+  min-width: toRem(900);
 
   &--titled {
     font-family: var(--app-font-family-secondary);
