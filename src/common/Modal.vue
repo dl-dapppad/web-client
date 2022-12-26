@@ -82,7 +82,7 @@ $modal-z-index: 10;
 
   @include respond-to(medium) {
     width: 100%;
-    height: 100%;
+    max-height: 100%;
   }
 }
 

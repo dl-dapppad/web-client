@@ -614,7 +614,7 @@ button.app__submit-btn {
   width: 100%;
 
   @include respond-to(medium) {
-    height: 100%;
+    height: 100vh;
     overflow: auto;
     max-width: toRem(1000);
   }
