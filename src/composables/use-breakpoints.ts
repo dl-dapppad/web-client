@@ -9,14 +9,9 @@ export const useBreakpoints = () => {
   const isSmall = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
   const isMedium = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
 
-  const minMedium = computed(
-    () => windowWidth.value >= WINDOW_BREAKPOINTS.medium,
-  )
-
   return {
     isXSmall,
     isSmall,
     isMedium,
-    minMedium,
   }
 }

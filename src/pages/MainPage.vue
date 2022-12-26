@@ -17,7 +17,7 @@ const breakpoints = useBreakpoints()
   <div class="main-page">
     <img
       class="main-page__title-img"
-      :src="breakpoints.isSmall ? ImgMainTitleMobile : ImgMainTitle"
+      :src="breakpoints.isSmall.value ? ImgMainTitleMobile : ImgMainTitle"
     />
     <div class="main-page__content">
       <div class="main-page__rows">
@@ -45,7 +45,9 @@ const breakpoints = useBreakpoints()
           </app-block>
           <img
             class="main-page__row-img"
-            :src="breakpoints.isMedium ? ImgMainPage1Mobile : ImgMainPage1"
+            :src="
+              breakpoints.isMedium.value ? ImgMainPage1Mobile : ImgMainPage1
+            "
           />
         </div>
         <div class="main-page__row main-page__row--inverted">

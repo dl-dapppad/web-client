@@ -15,7 +15,7 @@ const breakpoints = useBreakpoints()
       class="app-footer__terms-link"
       :icon-left="$icons.questionMarkCircleFilled"
       :text="$t('app-footer.terms-link')"
-      :size="breakpoints.isXSmall ? 'small' : 'medium'"
+      :size="breakpoints.isXSmall.value ? 'small' : 'medium'"
       color="default"
       scheme="default"
     />

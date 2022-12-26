@@ -40,12 +40,8 @@ const isMobileModalMetamaskAppOpened = ref(false)
 const addressSearchInput = ref('')
 const selectedProvider = ref()
 
-const isProviderButtonShown = computed(
-  () => breakpoints.minMedium || !provider.value.selectedAddress,
-)
-
 const isNavbarFixed = computed(
-  () => isMobileDrawerOpened.value && breakpoints.isMedium,
+  () => isMobileDrawerOpened.value && breakpoints.isMedium.value,
 )
 
 const switchIsOpenedMobileState = (value?: boolean) => {
@@ -98,7 +94,7 @@ const handleProviderBtnClick = async () => {
       selectedProvider.value = PROVIDER_TYPE.rpc
     }
   } catch (error) {
-    if (breakpoints.isSmall) {
+    if (breakpoints.isSmall.value) {
       isMobileModalMetamaskAppOpened.value = true
     } else {
       ErrorHandler.process(error)
@@ -107,11 +103,8 @@ const handleProviderBtnClick = async () => {
 }
 
 const clickContractSearch = async () => {
-  if (
-    addressSearchInput.value &&
-    (breakpoints.minMedium || isMobileSearchOpened.value)
-  )
-    composableProduct.handleContractSearch(addressSearchInput.value)
+  if (breakpoints.isMedium.value && !isMobileSearchOpened.value) return
+  composableProduct.handleContractSearch(addressSearchInput.value)
 }
 
 watch(
@@ -245,7 +238,7 @@ init()
         </span>
       </div>
       <app-button
-        v-if="isProviderButtonShown && !provider.selectedAddress"
+        v-if="!provider.selectedAddress"
         class="app-navbar__provider-btn"
         size="small"
         :text="$t('app-navbar.connect-btn')"
