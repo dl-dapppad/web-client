@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useWindowSize } from '@vueuse/core'
+
 import {
   AppLogo,
   Icon,
@@ -9,12 +9,13 @@ import {
   Dropdown,
   MenuDrawer,
   AddressCopy,
+  InvalidBrowserModal,
 } from '@/common'
-import { useErc20, useProduct } from '@/composables'
+import { useErc20, useProduct, useBreakpoints } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
+import { CONTRACT_NAMES, ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
@@ -27,16 +28,21 @@ const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
-const { width: windowWidth } = useWindowSize()
-
 const dapp = useErc20()
 const composableProduct = useProduct()
+const breakpoints = useBreakpoints()
 
 const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
 
+const isMobileModalMetamaskAppOpened = ref(false)
+
 const addressSearchInput = ref('')
 const selectedProvider = ref()
+
+const isNavbarFixed = computed(
+  () => isMobileDrawerOpened.value && breakpoints.isMedium.value,
+)
 
 const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
@@ -88,29 +94,18 @@ const handleProviderBtnClick = async () => {
       selectedProvider.value = PROVIDER_TYPE.rpc
     }
   } catch (error) {
-    ErrorHandler.process(error)
+    if (breakpoints.isSmall.value) {
+      isMobileModalMetamaskAppOpened.value = true
+    } else {
+      ErrorHandler.process(error)
+    }
   }
 }
 
 const clickContractSearch = async () => {
-  if (
-    addressSearchInput.value &&
-    (windowWidth.value > WINDOW_BREAKPOINTS.medium ||
-      isMobileSearchOpened.value)
-  )
-    composableProduct.handleContractSearch(addressSearchInput.value)
+  if (breakpoints.isMedium.value && !isMobileSearchOpened.value) return
+  composableProduct.handleContractSearch(addressSearchInput.value)
 }
-
-const isProviderButtonShown = computed(
-  () =>
-    windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
-    !provider.value.selectedAddress,
-)
-
-const isNavbarFixed = computed(
-  () =>
-    isMobileDrawerOpened.value && windowWidth.value < WINDOW_BREAKPOINTS.medium,
-)
 
 watch(
   () => provider.value.selectedAddress,
@@ -243,7 +238,7 @@ init()
         </span>
       </div>
       <app-button
-        v-if="isProviderButtonShown && !provider.selectedAddress"
+        v-if="!provider.selectedAddress"
         class="app-navbar__provider-btn"
         size="small"
         :text="$t('app-navbar.connect-btn')"
@@ -300,6 +295,8 @@ init()
       :class="{ 'app-navbar__mobile-filler--visible': isNavbarFixed }"
     />
   </div>
+
+  <invalid-browser-modal v-model:is-shown="isMobileModalMetamaskAppOpened" />
 </template>
 
 <style lang="scss" scoped>
