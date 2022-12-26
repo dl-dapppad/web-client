@@ -1,13 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useWindowSize } from '@vueuse/core'
-
 import { AppButton, AppLogo } from '@/common'
-import { WINDOW_BREAKPOINTS } from '@/enums'
+import { useBreakpoints } from '@/composables'
 
-const { width: windowWidth } = useWindowSize()
-
-const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
+const breakpoints = useBreakpoints()
 </script>
 
 <template>
@@ -20,7 +15,7 @@ const isXSmall = computed(() => windowWidth.value <= WINDOW_BREAKPOINTS.xSmall)
       class="app-footer__terms-link"
       :icon-left="$icons.questionMarkCircleFilled"
       :text="$t('app-footer.terms-link')"
-      :size="isXSmall ? 'small' : 'medium'"
+      :size="breakpoints.isXSmall ? 'small' : 'medium'"
       color="default"
       scheme="default"
     />

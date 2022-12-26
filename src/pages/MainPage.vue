@@ -1,27 +1,23 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import { computed } from 'vue'
-import { useWindowSize } from '@vueuse/core'
 
 import { AppBlock, AppButton } from '@/common'
-import { CATEGORIES_IDS, PRODUCT_IDS, WINDOW_BREAKPOINTS } from '@/enums'
+import { CATEGORIES_IDS, PRODUCT_IDS } from '@/enums'
+import { useBreakpoints } from '@/composables'
 import ImgMainTitle from '/static/images/MainTitle.png'
 import ImgMainTitleMobile from '/static/images/MainTitleMobile.png'
 import ImgMainPage1 from '/static/images/MainPage_1.png'
 import ImgMainPage1Mobile from '/static/images/MainPage_1Mobile.png'
 
 const router = useRouter()
-const { width: windowWidth } = useWindowSize()
-
-const isTablet = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
-const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
+const breakpoints = useBreakpoints()
 </script>
 
 <template>
   <div class="main-page">
     <img
       class="main-page__title-img"
-      :src="isMobile ? ImgMainTitleMobile : ImgMainTitle"
+      :src="breakpoints.isSmall ? ImgMainTitleMobile : ImgMainTitle"
     />
     <div class="main-page__content">
       <div class="main-page__rows">
@@ -49,7 +45,7 @@ const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.small)
           </app-block>
           <img
             class="main-page__row-img"
-            :src="isTablet ? ImgMainPage1Mobile : ImgMainPage1"
+            :src="breakpoints.isMedium ? ImgMainPage1Mobile : ImgMainPage1"
           />
         </div>
         <div class="main-page__row main-page__row--inverted">

@@ -86,12 +86,6 @@ const openMetamaskBrowser = () =>
 }
 
 .invalid-browser-modal__button {
-  margin-top: toRem(30);
-
-  & + & {
-    margin-top: toRem(10);
-  }
-
   @include respond-to(medium) {
     width: 100%;
   }

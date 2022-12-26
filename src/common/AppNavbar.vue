@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useWindowSize } from '@vueuse/core'
+
 import {
   AppLogo,
   Icon,
@@ -9,13 +9,13 @@ import {
   Dropdown,
   MenuDrawer,
   AddressCopy,
+  InvalidBrowserModal,
 } from '@/common'
-import InvalidBrowserModal from '@/common/modals/InvalidBrowserModal.vue'
-import { useErc20, useProduct } from '@/composables'
+import { useErc20, useProduct, useBreakpoints } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { CONTRACT_NAMES, ETHEREUM_CHAINS, WINDOW_BREAKPOINTS } from '@/enums'
+import { CONTRACT_NAMES, ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
@@ -28,10 +28,9 @@ const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
-const { width: windowWidth } = useWindowSize()
-
 const dapp = useErc20()
 const composableProduct = useProduct()
+const breakpoints = useBreakpoints()
 
 const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
@@ -41,15 +40,13 @@ const isMobileModalMetamaskAppOpened = ref(false)
 const addressSearchInput = ref('')
 const selectedProvider = ref()
 
-const isMobile = computed(() => windowWidth.value < WINDOW_BREAKPOINTS.medium)
-
 const isProviderButtonShown = computed(
-  () =>
-    windowWidth.value >= WINDOW_BREAKPOINTS.medium ||
-    !provider.value.selectedAddress,
+  () => breakpoints.minMedium || !provider.value.selectedAddress,
 )
 
-const isNavbarFixed = computed(() => isMobileDrawerOpened.value && isMobile)
+const isNavbarFixed = computed(
+  () => isMobileDrawerOpened.value && breakpoints.isMedium,
+)
 
 const switchIsOpenedMobileState = (value?: boolean) => {
   value === false
@@ -101,7 +98,7 @@ const handleProviderBtnClick = async () => {
       selectedProvider.value = PROVIDER_TYPE.rpc
     }
   } catch (error) {
-    if (windowWidth.value < WINDOW_BREAKPOINTS.small) {
+    if (breakpoints.isSmall) {
       isMobileModalMetamaskAppOpened.value = true
     } else {
       ErrorHandler.process(error)
@@ -112,8 +109,7 @@ const handleProviderBtnClick = async () => {
 const clickContractSearch = async () => {
   if (
     addressSearchInput.value &&
-    (windowWidth.value > WINDOW_BREAKPOINTS.medium ||
-      isMobileSearchOpened.value)
+    (breakpoints.minMedium || isMobileSearchOpened.value)
   )
     composableProduct.handleContractSearch(addressSearchInput.value)
 }
