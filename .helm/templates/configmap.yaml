@@ -8,25 +8,42 @@ metadata:
 data:
   {{ .Values.config.name  }}: |
                               document.ENV = {
-                                VITE_ENVIRONMENT: 'development',
-                                VITE_API_URL: 'http://localhost:8000/_/api/',
+                                VITE_APP_API_URL: 'http://localhost:8000/_/api/',
                                 VITE_APP_APP_NAME: 'Dapppad On-Chain',
-                                VITE_APP_AVAILABLE_CHAINS: [
-                                  '5'
-                                ],
+                                VITE_APP_AVAILABLE_CHAINS: ['5'],
+                                VITE_APP_URL_SUBGRAPH:
+                                  'https://api.thegraph.com/subgraphs/name/fedoken/dapppad-v1',
                                 VITE_APP_RPC_URL: {
-                                  '5': 'https://goerli.infura.io/v3/'
+                                  '5': 'https://goerli.infura.io/v3/',
                                 },
                                 VITE_APP_CONTRACTS: {
                                   '5': {
-                                    'dapp': '0x353C50AB9E10b62D75aD057327acdB39C0dB8a0B',
-                                    'farming': '0xDda6906636F681853665Ae155C9771119D51AdF4',
-                                    'product-factory': '0xa5af85f98066DA249997d41E6233Aa82D3e3c9bc',
+                                    dapp: '0x353C50AB9E10b62D75aD057327acdB39C0dB8a0B',
+                                    farming: '0xDda6906636F681853665Ae155C9771119D51AdF4',
+                                    'product-factory': '0x1b898fC32375Af028A3a3D8CAdb59DcA94E24C7D',
                                   },
                                 },
                                 VITE_APP_PRODUCT_ALIASES: {
-                                  'erc20-base': '0x8ae85d849167ff996c04040c44924fd364217285e4cad818292c7ac37c0a345b',
-                                  'erc721-base': '0x73ad2146b3d3a286642c794379d750360a2d53a3459a11b3e5d6cc900f55f44a',
+                                  'erc20-base':
+                                    '0x8ae85d849167ff996c04040c44924fd364217285e4cad818292c7ac37c0a345b',
+                                  'erc20-mint':
+                                    '0x3472c9b670dfbe75af12c1d152ea52c92acc9a30fc73a369ddf0ec39f650b979',
+                                  'erc20-burn':
+                                    '0xe623c8787026f49917d5bc40ed268b2076d83e93458b4fb1f861c2dfe8f5e3b6',
+                                  'erc20-mint-burn':
+                                    '0x44ca57ad758e3ea37db6145c551bc966484fee2f6e9d6a8d2475ca92db1f66e0',
+                                  'erc20-mint-burn-cap':
+                                    '0xe6c3a2737c3418afa96e487f845823ade3241668e2f1c9a93c3b49b124bedd53',
+                                  'erc20-mint-cap':
+                                    '0x68647f1876774a7cd2eceba3991861cdce75afb9c06f82bd40e182f3104ff06f',
+                                  'erc721-base':
+                                    '0x73ad2146b3d3a286642c794379d750360a2d53a3459a11b3e5d6cc900f55f44a',
+                                  'erc721-enum':
+                                    '0x97459d1cc648356bbcbefbb49822efd16d2278e43a2ff51f4dcca35352bab870',
+                                  'erc721-burn':
+                                    '0xf4a80989c2b50ed5b1afdd3dad74f849c306ee363335b3093721be025df88869',
+                                  'erc721-burn-enum':
+                                    '0xccb6bc1088424066d9937fcef2dc13281dba0c779f19e69c3a3fc2d2d634ab56',
                                 },
                               }
 {{- end }}
