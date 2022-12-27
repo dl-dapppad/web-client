@@ -614,7 +614,7 @@ button.app__submit-btn {
   width: 100%;
 
   @include respond-to(medium) {
-    height: 100vh;
+    max-height: 100vh;
     overflow: auto;
     max-width: toRem(1000);
   }
@@ -677,6 +677,10 @@ button.app__submit-btn {
     letter-spacing: 0.1em;
     margin-top: toRem(10);
     text-align: center;
+
+    @include respond-to(medium) {
+      font-size: 14px;
+    }
   }
 
   .loader {

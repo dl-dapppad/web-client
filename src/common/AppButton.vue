@@ -130,7 +130,7 @@ const buttonClasses = computed(() =>
   user-select: none;
   overflow: hidden;
   display: flex;
-  width: min-content;
+  width: max-content;
   align-items: center;
   justify-content: center;
   transition: var(--button-transition-duration) ease-in;

@@ -24,7 +24,5 @@ export default defineComponent({
   display: grid;
   place-items: center;
   pointer-events: none;
-  max-width: 100%;
-  max-height: 100%;
 }
 </style>
