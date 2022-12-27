@@ -128,7 +128,7 @@ init()
               <app-button
                 class="post-checkout__block-search-btn"
                 :icon-right="$icons.searchFilled"
-                :disabled="addressSearchButtonDisabled"
+                :disabled="addressSearchButtonDisabled || !addressSearchInput"
                 @click="clickContractSearch"
               />
             </div>

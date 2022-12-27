@@ -40,12 +40,18 @@ const isLoaded = ref(false)
 
 const stakingForm = reactive({ amount: '' })
 const stakingValidation = useFormValidation(stakingForm, {
-  amount: { required, numeric },
+  amount: {
+    required,
+    numeric,
+  },
 })
 
 const withdrawForm = reactive({ amount: '' })
 const withdrawValidation = useFormValidation(withdrawForm, {
-  amount: { required, numeric },
+  amount: {
+    required,
+    numeric,
+  },
 })
 
 const init = async () => {
@@ -161,6 +167,60 @@ watch(
   () => provider.value.selectedAddress,
   () => {
     updateBalanceState()
+  },
+)
+
+watch(
+  () => isModalStakingShown.value,
+  () => {
+    stakingValidation.resetField('amount')
+    stakingForm.amount = ''
+  },
+)
+
+watch(
+  () => stakingForm.amount,
+  async () => {
+    const maxValue = new BN(
+      await investmentToken.balanceOf(
+        provider?.value?.selectedAddress as string,
+      ),
+    )
+      .fromFraction(investmentToken.decimals.value)
+      .toString()
+
+    stakingForm.amount =
+      new BN(stakingForm.amount).compare(maxValue) === 1
+        ? maxValue
+        : stakingForm.amount
+  },
+)
+
+watch(
+  () => isModalWithdrawingShown.value,
+  () => {
+    withdrawValidation.resetField('amount')
+    withdrawForm.amount = ''
+  },
+)
+
+watch(
+  () => withdrawForm.amount,
+  async () => {
+    const maxValue = new BN(
+      (
+        await farming.accountInvestInfo(
+          provider?.value?.selectedAddress as string,
+        )
+      ).amount,
+    )
+      .fromFraction(investmentToken.decimals.value)
+      .toString()
+
+    withdrawForm.amount =
+      new BN(withdrawForm.amount).compare(maxValue) === 1
+        ? maxValue
+        : withdrawForm.amount
   },
 )
 
@@ -396,7 +456,7 @@ init()
               <div
                 class="farming-page__table-item farming-page__table-item--colored"
               >
-              <!-- eslint-enable -->
+                <!-- eslint-enable -->
                 <div class="farming-page__table-title">
                   <icon
                     class="farming-page__table-icon"
@@ -572,7 +632,7 @@ init()
     </modal>
     <modal v-model:is-shown="isModalClaimingShown">
       <template #default="{ modal }">
-        <div class="farming-page__modal">
+        <div class="farming-page__modal" v-if="isLoaded">
           <div class="farming-page__modal-title-wrp">
             <div class="farming-page__modal-title">
               <icon class="farming-page__modal-icon" :name="$icons.hands" />
