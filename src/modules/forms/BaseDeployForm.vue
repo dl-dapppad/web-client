@@ -29,8 +29,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { SCHEMES } from '@/common/Loader.vue'
 import { DeploySuccessMessage } from '@/modules/common'
-import { DeployMetadata } from '@/modules/common'
-import { Input, ModalText, UseForm } from '@/modules/types'
+import { Input, ModalText, OverviewRow, UseForm } from '@/modules/types'
 
 const router = useRouter()
 const route = useRoute()
@@ -51,7 +50,7 @@ const props = defineProps<{
     isHidden?: Ref<boolean>
   }
   modal: {
-    metadata: Ref<DeployMetadata>
+    rows: Ref<Array<OverviewRow>>
     potentialContractAddress: Ref<string>
     txt?: ModalText
   }
@@ -269,7 +268,7 @@ onMounted(() => init())
             })
           "
         />
-        <h2 class="app__module-title">
+        <h2 class="app__module-title" @click="updateIsShownModal(true)">
           {{
             headingData?.title
               ? headingData.title
@@ -372,7 +371,7 @@ onMounted(() => init())
                       selectedProduct?.currentPrice
                     "
                   >
-                  <!-- eslint-enable -->
+                    <!-- eslint-enable -->
                     <div class="app__row">
                       <span class="app__row-title">
                         {{ $t('product-deploy.default.product-price') }}
@@ -391,11 +390,11 @@ onMounted(() => init())
                     <div
                       v-if="
                         selectedPaymentToken.symbol !==
-                          productPaymentToken.symbol
+                        productPaymentToken.symbol
                       "
                       class="app__row"
                     >
-                    <!-- eslint-enable -->
+                      <!-- eslint-enable -->
                       <span class="app__row-title">
                         {{
                           $t('product-deploy.default.product-swap-price', {
@@ -522,7 +521,7 @@ onMounted(() => init())
     >
       <template #default>
         <deploy-success-message
-          :deploy-metadata="modal.metadata.value"
+          :rows="modal.rows"
           :txt="modal.txt"
           @submit="
             () => {

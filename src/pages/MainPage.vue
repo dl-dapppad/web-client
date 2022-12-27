@@ -226,6 +226,7 @@ const breakpoints = useBreakpoints()
 
 .main-page__row-img {
   transform: translateX(-#{toRem(125)});
+  max-width: toRem(544);
 
   @include respond-to(medium) {
     width: 100%;

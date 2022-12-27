@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 
 import {
@@ -31,13 +32,16 @@ const { account } = storeToRefs(useAccountStore())
 const dapp = useErc20()
 const composableProduct = useProduct()
 const breakpoints = useBreakpoints()
+const { width: windowWidth } = useWindowSize()
 
 const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
+const walletElem = ref<HTMLElement | null>(null)
 
 const isMobileModalMetamaskAppOpened = ref(false)
 
 const addressSearchInput = ref('')
+const mobileSearchWidth = ref('')
 const selectedProvider = ref()
 
 const isNavbarFixed = computed(
@@ -114,6 +118,27 @@ watch(
   },
 )
 
+watch(
+  () => windowWidth.value,
+  () => {
+    if (breakpoints.isSmall.value)
+      mobileSearchWidth.value = `${
+        (walletElem?.value?.getBoundingClientRect().left as number) + 14
+      }px`
+    else if (breakpoints.isMedium.value)
+      mobileSearchWidth.value = `${
+        walletElem?.value?.getBoundingClientRect().left as number
+      }px`
+    else
+      mobileSearchWidth.value = `${
+        walletElem?.value?.getBoundingClientRect().left as number
+      }px`
+  },
+  {
+    immediate: true,
+  },
+)
+
 const handleMobileSearchBtn = () => {
   isMobileSearchOpened.value ? clickContractSearch() : openMobileSearch()
 }
@@ -121,6 +146,21 @@ const handleMobileSearchBtn = () => {
 const keypressHandleSearch = (e: KeyboardEvent) => {
   if (e.key === 'Enter') clickContractSearch()
 }
+
+onMounted(() => {
+  if (breakpoints.isSmall.value)
+    mobileSearchWidth.value = `${
+      (walletElem?.value?.getBoundingClientRect().left as number) - 1
+    }px`
+  else if (breakpoints.isMedium.value)
+    mobileSearchWidth.value = `${
+      walletElem?.value?.getBoundingClientRect().left as number
+    }px`
+  else
+    mobileSearchWidth.value = `${
+      (walletElem?.value?.getBoundingClientRect().left as number) - 40
+    }px`
+})
 
 init()
 </script>
@@ -178,6 +218,57 @@ init()
           />
         </template>
       </input-field>
+      <div v-if="provider.selectedAddress" class="app-navbar__menu-wrp">
+        <transition name="app-navbar__mobile-search-transition">
+          <input-field
+            class="app-navbar__search-mobile"
+            :style="{ '--input-field-width': mobileSearchWidth }"
+            :class="{
+              'app-navbar__search-mobile--disconnected':
+                !provider.selectedAddress,
+            }"
+            v-show="isMobileSearchOpened"
+            v-model="addressSearchInput"
+            :placeholder="$t('app-navbar.search-placeholder')"
+            scheme="secondary"
+            @keypress.stop="keypressHandleSearch"
+          >
+            <template #nodeLeft>
+              <app-button
+                class="app-navbar__search-mobile-close-btn"
+                scheme="default"
+                :icon-right="$icons.x"
+                @click="closeMobileSearch"
+              />
+            </template>
+            <template #nodeRight></template>
+          </input-field>
+        </transition>
+        <div
+          class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
+          ref="walletElem"
+        >
+          <app-button
+            class="app-navbar__menu-wrp-item"
+            scheme="default"
+            :icon-right="$icons.searchFilled"
+            :disabled="!addressSearchInput && isMobileSearchOpened"
+            @click.stop="handleMobileSearchBtn"
+          />
+        </div>
+        <app-button
+          class="app-navbar__menu-wrp-item"
+          scheme="default"
+          :icon-right="$icons.gift"
+          :route="{ name: $routes.farming }"
+        />
+        <menu-drawer
+          class="app-navbar__menu-drawer"
+          :is-opened-state="isMobileDrawerOpened"
+          @switch-is-opened-state="switchIsOpenedMobileState"
+          @try-switch-chain="trySwitchChain"
+        />
+      </div>
       <dropdown class="app-navbar__chain">
         <template #head="{ dropdown }">
           <app-button
@@ -244,51 +335,6 @@ init()
         :text="$t('app-navbar.connect-btn')"
         @click="handleProviderBtnClick"
       />
-      <transition name="app-navbar__mobile-search-transition">
-        <input-field
-          class="app-navbar__search-mobile"
-          :class="{
-            'app-navbar__search-mobile--disconnected':
-              !provider.selectedAddress,
-          }"
-          v-show="isMobileSearchOpened"
-          v-model="addressSearchInput"
-          :placeholder="$t('app-navbar.search-placeholder')"
-          scheme="secondary"
-          @keypress.stop="keypressHandleSearch"
-        >
-          <template #nodeLeft>
-            <app-button
-              class="app-navbar__search-mobile-close-btn"
-              scheme="default"
-              :icon-right="$icons.x"
-              @click="closeMobileSearch"
-            />
-          </template>
-          <template #nodeRight></template>
-        </input-field>
-      </transition>
-      <div v-if="provider.selectedAddress" class="app-navbar__menu-wrp">
-        <app-button
-          class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
-          scheme="default"
-          :icon-right="$icons.searchFilled"
-          :disabled="!addressSearchInput && isMobileSearchOpened"
-          @click.stop="handleMobileSearchBtn"
-        />
-        <app-button
-          class="app-navbar__menu-wrp-item"
-          scheme="default"
-          :icon-right="$icons.gift"
-          :route="{ name: $routes.farming }"
-        />
-        <menu-drawer
-          class="app-navbar__menu-drawer"
-          :is-opened-state="isMobileDrawerOpened"
-          @switch-is-opened-state="switchIsOpenedMobileState"
-          @try-switch-chain="trySwitchChain"
-        />
-      </div>
     </div>
     <div
       class="app-navbar__mobile-filler"
@@ -324,25 +370,23 @@ $navbar-z-index: 10;
     }
   }
 
-  @include respond-to(xmedium) {
-    justify-content: space-between;
-  }
-
   @include respond-to(medium) {
     padding: toRem(15) var(--app-padding-right) toRem(15)
       var(--app-padding-left);
     align-items: center;
+    justify-content: space-between;
   }
 }
 
 .app-navbar__logo {
   max-width: toRem(70);
+  margin-right: auto;
 }
 
 .app-navbar__farm-farm-balance {
   display: flex;
 
-  @include respond-to(medium) {
+  @include respond-to(xmedium) {
     display: none;
   }
 }
@@ -386,10 +430,11 @@ $navbar-z-index: 10;
   padding: 0;
   display: none;
   position: absolute;
+  right: toRem(50);
   z-index: $navbar-z-index;
-  width: calc(100% - #{toRem(170)});
+  width: var(--input-field-width);
+  min-height: toRem(44);
   min-width: toRem(135);
-  min-height: toRem(30);
   overflow: hidden;
 
   :not([disabled]) {
@@ -408,12 +453,13 @@ $navbar-z-index: 10;
   }
   /* stylelint-enable */
 
-  @include respond-to(medium) {
+  @include respond-to(xmedium) {
     display: grid;
   }
 
-  @include respond-to(small) {
-    width: calc(100% - #{toRem(140)});
+  @include respond-to(medium) {
+    min-height: toRem(30);
+    right: calc(100% - toRem(36));
   }
 }
 
@@ -545,10 +591,16 @@ $navbar-z-index: 10;
 .app-navbar__menu-wrp {
   display: none;
   align-items: center;
+  position: relative;
   gap: toRem(35);
+  padding-right: toRem(20);
+
+  @include respond-to(xmedium) {
+    display: flex;
+  }
 
   @include respond-to(medium) {
-    display: flex;
+    padding: 0;
   }
 }
 
@@ -571,6 +623,14 @@ $navbar-z-index: 10;
   }
 }
 
+.app-navbar__menu-drawer {
+  display: none;
+
+  @include respond-to(medium) {
+    display: block;
+  }
+}
+
 .app-navbar__mobile-search-transition-enter-active {
   animation: mobile-search-frame-keyframes 0.25s ease-in-out;
   min-width: 0;
@@ -584,14 +644,6 @@ $navbar-z-index: 10;
 @keyframes mobile-search-frame-keyframes {
   from {
     width: 0;
-  }
-
-  to {
-    width: calc(100% - #{toRem(170)});
-
-    @include respond-to(small) {
-      width: calc(100% - #{toRem(140)});
-    }
   }
 }
 </style>

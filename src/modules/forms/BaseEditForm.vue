@@ -17,6 +17,7 @@ import postsData from '@/assets/posts.json'
 defineProps<{
   headingData?: {
     title?: string
+    subtitle?: string
     description?: string
     interactionLbl?: string
     infoLbl?: string
@@ -68,15 +69,21 @@ const initInfoAnimation = () => {
 
   infoTextElem.value.removeAttribute('style')
 
+  infoTextElem.value.innerHTML = infoBlock.value.html
   infoBlock.value.heightDefault = infoTextElem.value.clientHeight
 
   infoTextElem.value.innerText = `${post.infoDescriptionContent[0][1]
     ?.slice(0, 150)
     .trim()}...`
+
   infoBlock.value.heightCutted =
     infoTextElem.value.clientHeight < 200
       ? infoTextElem.value.clientHeight
       : 200
+
+  infoTextElem.value.innerHTML = infoBlock.value.isShownFull
+    ? infoBlock.value.html
+    : `${post.infoDescriptionContent[0][1]?.slice(0, 150).trim()}...`
 
   infoBlock.value.initWidth = windowWidth.value
 }
@@ -115,6 +122,7 @@ const handleShowMore = () => {
 }
 
 onMounted(() => {
+  if (!infoTextElem.value || !post?.infoDescriptionContent) return
   infoBlock.value.html = infoTextElem?.value?.innerHTML as string
   initInfoAnimation()
 
@@ -127,6 +135,10 @@ onMounted(() => {
   }
 
   infoBlock.value.isShownFull = !infoBlock.value.isShownFull
+
+  infoTextElem.value.innerHTML = infoBlock.value.isShownFull
+    ? infoBlock.value.html
+    : `${post?.infoDescriptionContent[0][1]?.slice(0, 150).trim()}...`
 })
 
 const isInfoShown = computed(() => post?.infoDescriptionContent?.length)
@@ -169,12 +181,16 @@ watch(
           {{ headingData?.title ?? $t('product-edit.default.title') }}
         </h2>
       </div>
-      <span class="app__module-subtitle">
+      <div class="base-edit-form__subtitle app__module-subtitle">
+        <h3 class="app__module-subtitle base-edit-form__subtitle-item">
+          {{ headingData?.subtitle ?? $t('product-edit.default.subtitle') }}
+        </h3>
         <address-copy
           :address="String(route.params.contractAddress)"
-          class="app__module-subtitle"
+          :prefix="$t('product-edit.default.address-prefix')"
+          class="base-edit-form__subtitle-address"
         />
-      </span>
+      </div>
       <span class="app__module-description">
         {{ headingData?.description ?? $t('product-edit.default.description') }}
       </span>
@@ -209,7 +225,7 @@ watch(
       <h3 class="app__module-block-title">
         {{
           headingData?.interactionLbl ??
-            $t('product-edit.default.interaction-lbl')
+          $t('product-edit.default.interaction-lbl')
         }}
       </h3>
       <!-- eslint-enable -->
@@ -232,7 +248,7 @@ watch(
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .base-edit-form__content {
   display: flex;
   flex-direction: column;
@@ -244,6 +260,27 @@ watch(
 
   @include respond-to(medium) {
     width: 100%;
+  }
+}
+
+.base-edit-form__subtitle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: end;
+  gap: toRem(10);
+}
+
+.base-edit-form__subtitle-item {
+  align-self: end;
+}
+
+.base-edit-form__subtitle-address {
+  font-weight: 400;
+  font-size: toRem(14);
+
+  @include respond-to(medium) {
+    font-size: toRem(12);
   }
 }
 </style>
