@@ -129,9 +129,8 @@ const buttonClasses = computed(() =>
   cursor: pointer;
   user-select: none;
   overflow: hidden;
-  display: grid;
-  width: min-content;
-  grid: auto / auto-flow max-content;
+  display: flex;
+  width: max-content;
   align-items: center;
   justify-content: center;
   transition: var(--button-transition-duration) ease-in;
@@ -464,7 +463,7 @@ const buttonClasses = computed(() =>
   /* sizes */
   &--large {
     padding: toRem(24) toRem(50);
-    grid-gap: toRem(16);
+    gap: toRem(16);
     font-weight: 700;
     font-size: toRem(20);
   }
@@ -474,7 +473,7 @@ const buttonClasses = computed(() =>
     font-size: toRem(16);
     line-height: 1.4;
     font-weight: 600;
-    grid-gap: toRem(12);
+    gap: toRem(12);
     letter-spacing: 0;
   }
 
@@ -484,7 +483,7 @@ const buttonClasses = computed(() =>
     letter-spacing: 0.1em;
     font-weight: 700;
     padding: toRem(12) toRem(24);
-    grid-gap: toRem(8);
+    gap: toRem(8);
   }
 
   .app-button__icon-left,

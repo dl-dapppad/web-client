@@ -166,7 +166,7 @@
       "description": "Deploy your product on chain. The first time you will need to make two transactions. The first will allow us to take payment for the product, the second will perform the deployment of the smart contract in the network. Afterwards, only one transaction will be necessary.",
       "token-group": "NFT info",
       "name-lbl": "NFT name",
-      "name-info": "Enter the token name",
+      "name-info": "Enter the NFT name",
       "symbol-lbl": "NFT symbol",
       "symbol-info": "Enter the NFT symbol",
       "btn-lbl": "Buy",

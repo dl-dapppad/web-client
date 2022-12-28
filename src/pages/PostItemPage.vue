@@ -3,8 +3,10 @@ import { AppBlock, AppButton, ContentRender } from '@/common'
 import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
 import { ROUTE_NAMES } from '@/enums'
-import PostItemPageCheckout from '@/pages/PostItemPage/PostItemPageCheckout.vue'
 import { routeBackMap } from '@/router/route-back-map'
+
+import PostItemPageCheckout from '@/pages/PostItemPage/PostItemPageCheckout.vue'
+import PostItemPageHistory from '@/pages/PostItemPage/PostItemPageHistory.vue'
 import postsData from '@/assets/posts.json'
 
 const route = useRoute()
@@ -49,6 +51,14 @@ const handleBackBtn = () => {
       </div>
     </app-block>
     <post-item-page-checkout v-if="post" :post="post" />
+    <app-block
+      class="post-item-page__content-wrp"
+      v-if="post?.subPosts.length === 0"
+    >
+      <div class="post-item-page__content">
+        <post-item-page-history />
+      </div>
+    </app-block>
     <app-block class="post-item-page__content-wrp">
       <div class="post-item-page__content">
         <content-render :content="(post?.content as Post['content'])" />
