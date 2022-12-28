@@ -12,7 +12,7 @@ import {
   useApollo,
   ApolloDeployedProducts,
 } from '@/composables'
-import { AppPagination, AddressCopy, Loader } from '@/common'
+import { AppPagination, AddressCopy, Loader, AppButton } from '@/common'
 import { config } from '@/config'
 import { WINDOW_BREAKPOINTS } from '@/enums'
 import { formatAmount, formatDMYTime } from '@/helpers'
@@ -177,6 +177,18 @@ init()
             <span class="product-history__grid-row-value">
               {{ formatDMYTime(Number(row.timestamp)) }}
             </span>
+            <app-button
+              class="product-history__grid-row-btn"
+              color="tertiary"
+              :icon-right="$icons.pencil"
+              :route="{
+                name: $routes.productEdit,
+                params: {
+                  id: route.params.id,
+                  contractAddress: row.proxy ?? '',
+                },
+              }"
+            />
           </div>
         </template>
         <span v-else>{{ t('product-history.not-found') }}</span>
@@ -216,7 +228,8 @@ init()
 
 .product-history__grid-row {
   display: grid;
-  grid-template-columns: 1.3fr 1.3fr 1.2fr 1.2fr 1.5fr;
+  align-items: center;
+  grid-template-columns: 1.3fr 1.3fr 1.2fr 1.2fr 1.5fr toRem(72);
   padding: toRem(20) 0;
   font-weight: 700;
   font-size: toRem(16);
@@ -240,10 +253,16 @@ init()
   padding-right: toRem(10);
   overflow: hidden;
 
-  &:last-child {
+  &:nth-child(5) {
     text-align: end;
     padding: 0;
   }
+}
+
+.product-history__grid-row-btn {
+  justify-self: end;
+  padding: toRem(4);
+  font-size: toRem(12);
 }
 
 .product-history__pagination {
