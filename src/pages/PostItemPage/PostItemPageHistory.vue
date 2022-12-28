@@ -114,8 +114,8 @@ init()
         :style="{
           width: `${
             windowWidth < WINDOW_BREAKPOINTS.medium
-              ? windowWidth - 132 + 'px'
-              : windowWidth - 452 + 'px'
+              ? windowWidth - 122 + 'px'
+              : windowWidth - 412 + 'px'
           }`,
         }"
       >
