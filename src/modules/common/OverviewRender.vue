@@ -62,6 +62,6 @@ withDefaults(
 }
 
 .overview-render__value {
-  word-break: break-all;
+  word-break: break-word;
 }
 </style>

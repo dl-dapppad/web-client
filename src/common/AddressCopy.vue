@@ -70,5 +70,6 @@ const copy = (strToCopy: string): void => {
 <style lang="scss" scoped>
 .address-copy__link {
   font-size: inherit;
+  word-break: break-word;
 }
 </style>

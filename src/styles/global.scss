@@ -155,14 +155,6 @@ a {
   & > .loader {
     max-width: toRem(150);
   }
-
-  &--mobile-break-line {
-    @include respond-to(medium) {
-      flex-direction: column;
-      align-items: start;
-      gap: toRem(10);
-    }
-  }
 }
 
 .app__metadata-lbl {
@@ -517,6 +509,7 @@ button.app__submit-btn {
   font-weight: 700;
   font-size: toRem(20);
   margin-right: 28px;
+  word-break: break-word;
 
   &-small {
     font-size: toRem(12);
@@ -603,6 +596,8 @@ button.app__submit-btn {
 
   @include respond-to(medium) {
     font-size: toRem(12);
+    width: toRem(120);
+    min-width: toRem(120);
   }
 }
 
