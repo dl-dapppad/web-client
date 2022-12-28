@@ -237,21 +237,9 @@
       "baseURI-default-value": "Not set yet"
     }
   },
-  "product": {
-    "erc20": {
-      "base": "Token ERC-20",
-      "burn": "Token ERC-20 Burnable",
-      "mint": "Token ERC-20 Mintable",
-      "mint-burn": "Token ERC-20 Mint Burn",
-      "mint-burn-cap": "Token ERC-20 Mint Burn Cap",
-      "mint-cap": "Token ERC-20 Mint Cap"
-    },
-    "erc721": {
-      "base": "Token ERC-721",
-      "burn": "Token ERC-721 Burnable",
-      "burn-enum": "Token ERC-721 Burn Enum",
-      "enum": "Token ERC-721 Enumerable"
-    }
+  "product-prefix": {
+    "erc20": "Token",
+    "erc721": "Token"
   },
   "farming-page": {
     "title": "Farming",

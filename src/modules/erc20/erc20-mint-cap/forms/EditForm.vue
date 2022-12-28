@@ -20,6 +20,13 @@ import {
 import { useProductErc20MintBurnCap } from '@/modules/erc20/erc20-mint-burn-cap/composables/use-product-erc20-mint-burn-cap'
 import { BaseEditForm } from '@/modules/forms'
 import { BN } from '@/utils'
+import postsData from '@/assets/posts.json'
+import { Post } from '@/types'
+
+const route = useRoute()
+
+const posts = postsData as unknown as Post[]
+const post = posts.find(el => el.id === route.params.id)
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { t } = i18n.global
@@ -59,7 +66,6 @@ const overviewRows = ref<Array<OverviewRow>>([
 const balance = ref('0')
 const cap = ref('0')
 
-const route = useRoute()
 const token = useProductErc20MintBurnCap(route.params.contractAddress as string)
 
 const isLoaded = ref(false)
@@ -141,7 +147,7 @@ const formOverviewData = ref({
 
 const headingData = {
   title: t('product-edit.erc20-common.title'),
-  subtitle: t('product.erc20.mint-cap'),
+  subtitle: `${t('product-prefix.erc20')} ${post?.title}`,
   description: t('product-edit.erc20-common.description'),
   overviewLbl: t('product-edit.erc20-common.overview'),
 }

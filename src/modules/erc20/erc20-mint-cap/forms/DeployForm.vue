@@ -11,11 +11,17 @@ import { OverviewRow } from '@/modules/types'
 import { OVERVIEW_ROW } from '@/modules/enums'
 import { BaseDeployForm } from '@/modules/forms'
 import { useProduct } from '@/composables'
+import postsData from '@/assets/posts.json'
+import { Post } from '@/types'
+
+const route = useRoute()
+
+const posts = postsData as unknown as Post[]
+const post = posts.find(el => el.id === route.params.id)
 
 const { t } = i18n.global
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
-const route = useRoute()
 const product = useProduct()
 
 const isSuccessModalShown = ref(false)
@@ -61,7 +67,7 @@ const potentialContractAddress = ref('')
 const txProcessing = ref(false)
 
 const headingData = {
-  subtitle: t('product.erc20.mint-cap'),
+  subtitle: `${t('product-prefix.erc20')} ${post?.title}`,
   description: t('product-deploy.erc20-common.description'),
 }
 

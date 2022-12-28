@@ -269,10 +269,18 @@ watch(
   justify-content: center;
   align-items: end;
   gap: toRem(10);
+
+  @include respond-to(medium) {
+    align-items: start;
+  }
 }
 
 .base-edit-form__subtitle-item {
   align-self: end;
+
+  @include respond-to(medium) {
+    align-self: start;
+  }
 }
 
 .base-edit-form__subtitle-address {

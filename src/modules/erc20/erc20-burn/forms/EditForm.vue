@@ -21,6 +21,13 @@ import {
 import { useProductErc20Burn } from '@/modules/erc20/erc20-burn/composables/use-product-erc20-burn'
 import { BaseEditForm } from '@/modules/forms'
 import { BN } from '@/utils'
+import postsData from '@/assets/posts.json'
+import { Post } from '@/types'
+
+const route = useRoute()
+
+const posts = postsData as unknown as Post[]
+const post = posts.find(el => el.id === route.params.id)
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { t } = i18n.global
@@ -54,7 +61,6 @@ const overviewRows = ref<Array<OverviewRow>>([
 ])
 const balance = ref('0')
 
-const route = useRoute()
 const erc20 = useProductErc20Burn(route.params.contractAddress as string)
 
 const isLoaded = ref(false)
@@ -122,7 +128,7 @@ const formOverviewData = ref({
 
 const headingData = {
   title: t('product-edit.erc20-common.title'),
-  subtitle: t('product.erc20.burn'),
+  subtitle: `${t('product-prefix.erc20')} ${post?.title}`,
   description: t('product-edit.erc20-common.description'),
   overviewLbl: t('product-edit.erc20-common.overview'),
 }
