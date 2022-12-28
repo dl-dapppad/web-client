@@ -20,11 +20,17 @@ import {
 } from '@/modules/erc721/forms'
 import { useProductErc721Base } from '@/modules/erc721/erc721-base/composables/use-product-erc721-base'
 import { BaseEditForm } from '@/modules/forms'
+import postsData from '@/assets/posts.json'
+import { Post } from '@/types'
+
+const route = useRoute()
+
+const posts = postsData as unknown as Post[]
+const post = posts.find(el => el.id === route.params.id)
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { t } = i18n.global
 
-const route = useRoute()
 const erc721 = useProductErc721Base(route.params.contractAddress as string)
 
 const isLoaded = ref(false)
@@ -103,6 +109,7 @@ const formOverviewData = ref({
 
 const headingData = {
   title: t('product-edit.erc721-common.title'),
+  subtitle: `${t('product-prefix.erc721')} ${post?.title}`,
   description: t('product-edit.erc721-common.description'),
   overviewLbl: t('product-edit.erc721-common.overview'),
 }

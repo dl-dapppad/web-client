@@ -1,37 +1,49 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
+import { i18n } from '@/localization'
 import { required } from '@/validators'
 import { BaseDeployForm } from '@/modules/forms'
-import { DeployMetadata } from '@/modules/common/index'
+import { OverviewRow } from '@/modules/types'
+import { OVERVIEW_ROW } from '@/modules/enums'
 import { useProduct } from '@/composables'
-
-const { t } = useI18n({
-  locale: 'en',
-  messages: {
-    en: {
-      'erc721-enum.subtitle': 'Token ERC-721 Enumerable',
-    },
-  },
-})
+import postsData from '@/assets/posts.json'
+import { Post } from '@/types'
 
 const route = useRoute()
+
+const posts = postsData as unknown as Post[]
+const post = posts.find(el => el.id === route.params.id)
+
+const { t } = i18n.global
+
 const product = useProduct()
 
 const isSuccessModalShown = ref(false)
 
-const deployMetadata = ref<DeployMetadata>({
-  name: '',
-  symbol: '',
-  contract: '',
-})
+const overviewRows = ref<Array<OverviewRow>>([
+  {
+    name: t('product-deploy.modal.name-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+  {
+    name: t('product-deploy.modal.symbol-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+  {
+    name: t('product-deploy.modal.contract-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.address,
+  },
+])
 const potentialContractAddress = ref('')
 const txProcessing = ref(false)
 
 const headingData = {
-  subtitle: t('erc721-enum.subtitle'),
+  subtitle: `${t('product-prefix.erc721')} ${post?.title}`,
   description: t('product-deploy.erc721-common.description'),
 }
 
@@ -42,7 +54,7 @@ const buttonData = {
 
 const modalData = {
   potentialContractAddress,
-  metadata: deployMetadata,
+  rows: overviewRows,
   txt: {
     description: t('product-deploy.erc721-common.deploy-success-message'),
   },
@@ -83,11 +95,9 @@ const submit = async (values: string[]) => {
     return
   }
 
-  deployMetadata.value = {
-    name: name,
-    symbol: symbol,
-    contract: potentialContractAddress.value,
-  }
+  overviewRows.value[0].value = name
+  overviewRows.value[1].value = symbol
+  overviewRows.value[2].value = potentialContractAddress.value
 
   isSuccessModalShown.value = true
   txProcessing.value = false

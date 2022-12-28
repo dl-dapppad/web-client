@@ -11,6 +11,7 @@ const { t } = useI18n({ useScope: 'global' })
 const props = withDefaults(
   defineProps<{
     address: string
+    prefix?: string
     href?: string
     isCropped?: boolean
     isCopyable?: boolean
@@ -18,6 +19,7 @@ const props = withDefaults(
     copyWithoutIcon?: boolean
   }>(),
   {
+    prefix: '',
     isCropped: true,
     isCopyable: true,
     href: '',
@@ -52,6 +54,7 @@ const copy = (strToCopy: string): void => {
       v-bind="$attrs"
       @click="handleLinkClick"
     >
+      {{ prefix ?? '' }}
       {{ isCropped ? cropAddress(address, showFirstCroppSymbols) : address }}
     </a>
     <button

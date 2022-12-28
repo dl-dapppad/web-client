@@ -190,6 +190,15 @@
       "mint-receiver-info": "Enter the tokens receiver",
       "btn-lbl": "Buy",
       "deploy-success-message": "Congratulations! You’ve just deployed your contract for Non Fungible Tokens!"
+    },
+    "modal": {
+      "name-lbl": "Name",
+      "symbol-lbl": "Symbol",
+      "decimals-lbl": "Decimals",
+      "cap-lbl": "Cap (max total supply)",
+      "mint-amount-lbl": "Minted",
+      "mint-receiver-lbl": "Minted to",
+      "contract-lbl": "Contract address"
     }
   },
   "product-edit": {
@@ -197,6 +206,8 @@
       "overview": "Overview",
       "title": "Editing",
       "description": "You are editing smart contract.",
+      "subtitle": "Token",
+      "address-prefix": "Contract",
       "interaction-lbl": "Interaction",
       "info-lbl": "Info",
       "info-btn-more": "Show more",
@@ -206,8 +217,7 @@
     },
     "erc20-common": {
       "title": "Editing",
-      "description":
-        "Editing your token smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.",
+      "description": "Editing your token smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.",
       "total": "Total supply",
       "max-supply": "Max total supply",
       "tracker": "Token tracker",
@@ -218,8 +228,7 @@
     },
     "erc721-common": {
       "title": "Editing",
-      "description":
-        "Editing your token smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.",
+      "description": "Editing your token smart contract parameters on chain. After each edition transaction is initiated. After transaction is added to the blockchain new parameters take effect.",
       "tracker": "Token tracker",
       "owner": "Owner address",
       "balance": "Your balance",
@@ -227,6 +236,10 @@
       "baseURI": "Base URI",
       "baseURI-default-value": "Not set yet"
     }
+  },
+  "product-prefix": {
+    "erc20": "Token",
+    "erc721": "Token"
   },
   "farming-page": {
     "title": "Farming",

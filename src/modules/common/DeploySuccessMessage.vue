@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import { Icon, AppButton, AddressCopy } from '@/common'
+import { Ref } from 'vue'
+import { Icon, AppButton } from '@/common'
 import { useI18n } from 'vue-i18n'
-import { DeployMetadata } from '@/modules/common'
-import { ModalText } from '@/modules/types'
+import { ModalText, OverviewRow } from '@/modules/types'
+import { OverviewRender } from '@/modules/common'
 
 defineProps<{
   txt?: ModalText
-  deployMetadata: DeployMetadata
+  rows?: Ref<Array<OverviewRow>>
 }>()
 
 const emit = defineEmits<{
@@ -21,13 +22,6 @@ const { t } = useI18n({
       'deploy-success-message.title': 'Success',
       'deploy-success-message.description':
         'Congratulations! You’ve just deployed your contract!',
-      'deploy-success-message.name-lbl': 'Name',
-      'deploy-success-message.symbol-lbl': 'Symbol',
-      'deploy-success-message.decimals-lbl': 'Decimals',
-      'deploy-success-message.cap-lbl': 'Cap (max total supply)',
-      'deploy-success-message.mint-amount-lbl': 'Minted',
-      'deploy-success-message.mint-receiver-lbl': 'Minted to',
-      'deploy-success-message.contract-lbl': 'Contract address',
       'deploy-success-message.btn-lbl': 'Go to edit',
     },
   },
@@ -55,80 +49,7 @@ const { t } = useI18n({
     <span class="app__deploy-success-message__description">
       {{ txt?.description ?? t('deploy-success-message.description') }}
     </span>
-
-    <div v-if="deployMetadata" class="app__metadata">
-      <div class="app__metadata-row">
-        <span class="app__metadata-lbl">
-          {{ t('deploy-success-message.name-lbl') }}
-        </span>
-        <span class="app__metadata-value">
-          {{ deployMetadata.name }}
-        </span>
-      </div>
-      <div class="app__metadata-row">
-        <span class="app__metadata-lbl">
-          {{ t('deploy-success-message.symbol-lbl') }}
-        </span>
-        <span class="app__metadata-value">
-          {{ deployMetadata.symbol }}
-        </span>
-      </div>
-      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
-        <span class="app__metadata-lbl">
-          {{ t('deploy-success-message.decimals-lbl') }}
-        </span>
-        <span class="app__metadata-value">
-          {{ deployMetadata.erc20Metadata.decimals }}
-        </span>
-      </div>
-      <div
-        class="app__metadata-row"
-        v-if="deployMetadata.erc20Metadata && deployMetadata.erc20Metadata.cap"
-      >
-        <span class="app__metadata-lbl">
-          {{ t('deploy-success-message.cap-lbl') }}
-        </span>
-        <span class="app__metadata-value">
-          <span class="app__price">
-            {{ deployMetadata.erc20Metadata.cap }}
-            <span class="app__price-asset">
-              {{ deployMetadata.symbol }}
-            </span>
-          </span>
-        </span>
-      </div>
-      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
-        <span class="app__metadata-lbl">
-          {{ t('deploy-success-message.mint-amount-lbl') }}
-        </span>
-        <span class="app__metadata-value">
-          <span class="app__price">
-            {{ deployMetadata.erc20Metadata.mintAmount }}
-            <span class="app__price-asset">
-              {{ deployMetadata.symbol }}
-            </span>
-          </span>
-        </span>
-      </div>
-      <div class="app__metadata-row" v-if="deployMetadata.erc20Metadata">
-        <span class="app__metadata-lbl">
-          {{ t('deploy-success-message.mint-receiver-lbl') }}
-        </span>
-        <address-copy
-          :address="deployMetadata.erc20Metadata.mintReceiver"
-          class="app__link--accented"
-        />
-      </div>
-      <div class="app__metadata-row">
-        <span class="app__metadata-lbl">
-          {{ t('deploy-success-message.contract-lbl') }}
-        </span>
-        <address-copy
-          :address="deployMetadata.contract"
-          class="app__link--accented"
-        />
-      </div>
-    </div>
+    <overview-render :rows="rows.value" />
     <app-button
       class="app__deploy-success-message__submit"
       :text="t('deploy-success-message.btn-lbl')"

@@ -1,46 +1,68 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
+import { i18n } from '@/localization'
 import { useWeb3ProvidersStore } from '@/store'
 import { required, isAddress, numeric } from '@/validators'
 import { BN } from '@/utils'
-import { DeployMetadata } from '@/modules/common'
+import { OverviewRow } from '@/modules/types'
+import { OVERVIEW_ROW } from '@/modules/enums'
 import { BaseDeployForm } from '@/modules/forms'
 import { useProduct } from '@/composables'
+import postsData from '@/assets/posts.json'
+import { Post } from '@/types'
 
-const { t } = useI18n({
-  locale: 'en',
-  messages: {
-    en: {
-      'erc20-mint.subtitle': 'Token ERC-20 Mintable',
-    },
-  },
-})
+const route = useRoute()
+
+const posts = postsData as unknown as Post[]
+const post = posts.find(el => el.id === route.params.id)
+
+const { t } = i18n.global
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
-const route = useRoute()
 const product = useProduct()
 
 const isSuccessModalShown = ref(false)
 
-const deployMetadata = ref<DeployMetadata>({
-  name: '',
-  symbol: '',
-  contract: '',
-  erc20Metadata: {
-    decimals: '',
-    mintAmount: '',
-    mintReceiver: '',
+const overviewRows = ref<Array<OverviewRow>>([
+  {
+    name: t('product-deploy.modal.name-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.default,
   },
-})
+  {
+    name: t('product-deploy.modal.symbol-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+  {
+    name: t('product-deploy.modal.decimals-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+  {
+    name: t('product-deploy.modal.mint-amount-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.default,
+  },
+  {
+    name: t('product-deploy.modal.mint-receiver-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.address,
+  },
+  {
+    name: t('product-deploy.modal.contract-lbl'),
+    value: '',
+    type: OVERVIEW_ROW.address,
+  },
+])
 const potentialContractAddress = ref('')
 const txProcessing = ref(false)
 
 const headingData = {
-  subtitle: t('erc20-mint.subtitle'),
+  subtitle: `${t('product-prefix.erc20')} ${post?.title}`,
   description: t('product-deploy.erc20-common.description'),
 }
 
@@ -51,7 +73,7 @@ const buttonData = {
 
 const modalData = {
   potentialContractAddress,
-  metadata: deployMetadata,
+  rows: overviewRows,
   txt: {
     description: t('product-deploy.erc20-common.deploy-success-message'),
   },
@@ -127,16 +149,12 @@ const submit = async (values: string[]) => {
     return
   }
 
-  deployMetadata.value = {
-    name: name,
-    symbol: symbol,
-    contract: potentialContractAddress.value,
-    erc20Metadata: {
-      decimals: decimals,
-      mintAmount: mintAmount,
-      mintReceiver: mintReceiver,
-    },
-  }
+  overviewRows.value[0].value = name
+  overviewRows.value[1].value = symbol
+  overviewRows.value[2].value = decimals
+  overviewRows.value[3].value = mintAmount
+  overviewRows.value[4].value = mintReceiver
+  overviewRows.value[5].value = potentialContractAddress.value
 
   isSuccessModalShown.value = true
   txProcessing.value = false
