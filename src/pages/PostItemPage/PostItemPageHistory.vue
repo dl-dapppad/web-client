@@ -114,8 +114,8 @@ init()
         :style="{
           width: `${
             windowWidth < WINDOW_BREAKPOINTS.medium
-              ? windowWidth - 90 + 'px'
-              : windowWidth - 410 + 'px'
+              ? windowWidth - 132 + 'px'
+              : windowWidth - 452 + 'px'
           }`,
         }"
       >
@@ -205,6 +205,7 @@ init()
 .product-history__grid {
   margin-top: toRem(10);
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .product-history__controls {

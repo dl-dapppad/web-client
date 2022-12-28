@@ -51,7 +51,7 @@ const handleBackBtn = () => {
       </div>
     </app-block>
     <post-item-page-checkout v-if="post" :post="post" />
-    <app-block class="post-item-page__content-wrp">
+    <app-block class="post-item-page__content-wrp" v-if="!post?.subPosts">
       <div class="post-item-page__content">
         <post-item-page-history />
       </div>
