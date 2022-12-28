@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch, computed, onMounted } from 'vue'
-import { useWindowSize } from '@vueuse/core'
+import { ref, watch, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import {
@@ -32,7 +31,6 @@ const { account } = storeToRefs(useAccountStore())
 const dapp = useErc20()
 const composableProduct = useProduct()
 const breakpoints = useBreakpoints()
-const { width: windowWidth } = useWindowSize()
 
 const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
@@ -41,7 +39,6 @@ const walletElem = ref<HTMLElement | null>(null)
 const isMobileModalMetamaskAppOpened = ref(false)
 
 const addressSearchInput = ref('')
-const mobileSearchWidth = ref('')
 const selectedProvider = ref()
 
 const isNavbarFixed = computed(
@@ -118,27 +115,6 @@ watch(
   },
 )
 
-watch(
-  () => windowWidth.value,
-  () => {
-    if (breakpoints.isSmall.value)
-      mobileSearchWidth.value = `${
-        (walletElem?.value?.getBoundingClientRect().left as number) + 14
-      }px`
-    else if (breakpoints.isMedium.value)
-      mobileSearchWidth.value = `${
-        walletElem?.value?.getBoundingClientRect().left as number
-      }px`
-    else
-      mobileSearchWidth.value = `${
-        walletElem?.value?.getBoundingClientRect().left as number
-      }px`
-  },
-  {
-    immediate: true,
-  },
-)
-
 const handleMobileSearchBtn = () => {
   isMobileSearchOpened.value ? clickContractSearch() : openMobileSearch()
 }
@@ -146,21 +122,6 @@ const handleMobileSearchBtn = () => {
 const keypressHandleSearch = (e: KeyboardEvent) => {
   if (e.key === 'Enter') clickContractSearch()
 }
-
-onMounted(() => {
-  if (breakpoints.isSmall.value)
-    mobileSearchWidth.value = `${
-      (walletElem?.value?.getBoundingClientRect().left as number) - 1
-    }px`
-  else if (breakpoints.isMedium.value)
-    mobileSearchWidth.value = `${
-      walletElem?.value?.getBoundingClientRect().left as number
-    }px`
-  else
-    mobileSearchWidth.value = `${
-      (walletElem?.value?.getBoundingClientRect().left as number) - 40
-    }px`
-})
 
 init()
 </script>
@@ -222,7 +183,6 @@ init()
         <transition name="app-navbar__mobile-search-transition">
           <input-field
             class="app-navbar__search-mobile"
-            :style="{ '--input-field-width': mobileSearchWidth }"
             :class="{
               'app-navbar__search-mobile--disconnected':
                 !provider.selectedAddress,
@@ -432,7 +392,7 @@ $navbar-z-index: 10;
   position: absolute;
   right: toRem(50);
   z-index: $navbar-z-index;
-  width: var(--input-field-width);
+  width: calc(100% - toRem(50));
   min-height: toRem(44);
   min-width: toRem(135);
   overflow: hidden;
@@ -458,8 +418,9 @@ $navbar-z-index: 10;
   }
 
   @include respond-to(medium) {
+    right: toRem(90);
     min-height: toRem(30);
-    right: calc(100% - toRem(36));
+    width: 100%;
   }
 }
 
@@ -597,6 +558,8 @@ $navbar-z-index: 10;
 
   @include respond-to(xmedium) {
     display: flex;
+    flex: 1;
+    justify-content: end;
   }
 
   @include respond-to(medium) {
