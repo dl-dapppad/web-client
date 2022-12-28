@@ -34,7 +34,6 @@ const breakpoints = useBreakpoints()
 
 const isMobileDrawerOpened = ref(false)
 const isMobileSearchOpened = ref(false)
-const walletElem = ref<HTMLElement | null>(null)
 
 const isMobileModalMetamaskAppOpened = ref(false)
 
@@ -206,7 +205,6 @@ init()
         </transition>
         <div
           class="app-navbar__menu-wrp-item app-navbar__menu-wrp-item--search"
-          ref="walletElem"
         >
           <app-button
             class="app-navbar__menu-wrp-item"

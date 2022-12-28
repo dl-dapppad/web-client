@@ -200,6 +200,7 @@ a {
   font-size: toRem(16);
   line-height: 130%;
   color: var(--text-primary-main);
+  word-break: break-word;
 
   &--big {
     font-size: toRem(20);
@@ -548,6 +549,7 @@ button.app__submit-btn {
   justify-content: space-between;
   align-items: center;
   margin-right: 30px;
+  gap: 10px;
 
   & > div:last-child {
     font-weight: 700;
