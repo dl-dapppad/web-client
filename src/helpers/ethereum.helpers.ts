@@ -155,11 +155,18 @@ export const handleTxError = (e: any) => {
 }
 
 export const handleErrorMessage = (msg: string): string => {
-  const regex = /("message":|string )"[a-zA-Z\r\n\d :,{}.']*"/
+  const regex =
+    /(("message":|string |reason=)"[a-zA-Z\r\n\d :,{}.']*")|user rejected transaction/
   const arr = regex.exec(msg)
 
   if (!arr) return ''
-  return arr[0].replace('"message":', '').replaceAll('"', '')
+  const result = arr[0]
+    .replace('"message":', '')
+    .replace('string "', '')
+    .replace('reason=', '')
+    .replace('execution reverted: ', '')
+    .replaceAll('"', '')
+  return result[0].toUpperCase() + result.substring(1)
 }
 
 export const handleTxErrorMessage = (msg: string): string => {

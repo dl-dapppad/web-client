@@ -47,10 +47,18 @@ export const useFormValidation = (
     }
   }
 
+  const resetField = (fieldPath: string): void => {
+    const field = get(validationController.value, fieldPath)
+    if (field) {
+      field.$reset()
+    }
+  }
+
   return {
     isFieldsValid,
     getFieldErrorMessage,
     touchField,
+    resetField,
     isFormValid,
   }
 }

@@ -4,7 +4,7 @@ import { ref, watch, computed } from 'vue'
 import { useErc20 } from './useContracts'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
-import { formatAmount } from '@/helpers'
+import { BN } from '@/utils'
 
 export const useAccount = () => {
   const web3Store = useWeb3ProvidersStore()
@@ -12,6 +12,10 @@ export const useAccount = () => {
 
   const nativeBalance = ref('0')
   const dappBalance = ref('0')
+
+  const isDappBalanceEmpty = computed(
+    () => new BN(dappBalance.value).compare(0) !== 1,
+  )
 
   const init = () => {
     updateNativeBalance()
@@ -28,10 +32,6 @@ export const useAccount = () => {
     if (!balance) return
     nativeBalance.value = balance.toString()
   }
-
-  const isDappBalanceEmpty = computed(
-    () => !Number(formatAmount(dappBalance.value)),
-  )
 
   const updateDappBalance = async () => {
     if (!provider.value.selectedAddress || !provider.value.chainId) return
