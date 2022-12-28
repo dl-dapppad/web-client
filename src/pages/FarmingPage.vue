@@ -163,8 +163,18 @@ const submitWithdraw = async () => {
   isModalWithdrawingShown.value = false
 }
 
-const handleInputAmount = (maxValue: BN, inputAmount: string): string =>
-  maxValue.compare(inputAmount) === -1 ? maxValue.toString() : inputAmount
+const handleInputAmount = (
+  maxWeiValue: string,
+  inputAmount: string,
+): string => {
+  const maxValue = new BN(maxWeiValue).fromFraction(
+    investmentToken.decimals.value,
+  )
+
+  return maxValue.compare(inputAmount) === -1
+    ? maxValue.toString()
+    : inputAmount
+}
 
 watch(
   () => provider.value.selectedAddress,
@@ -184,13 +194,11 @@ watch(
 watch(
   () => stakingForm.amount,
   async () => {
-    const maxValue = new BN(
-      await investmentToken.balanceOf(
-        provider?.value?.selectedAddress as string,
-      ),
-    ).fromFraction(investmentToken.decimals.value)
+    const maxWeiValue = await investmentToken.balanceOf(
+      provider?.value?.selectedAddress as string,
+    )
 
-    stakingForm.amount = handleInputAmount(maxValue, stakingForm.amount)
+    stakingForm.amount = handleInputAmount(maxWeiValue, stakingForm.amount)
   },
 )
 
@@ -205,15 +213,13 @@ watch(
 watch(
   () => withdrawForm.amount,
   async () => {
-    const maxValue = new BN(
-      (
-        await farming.accountInvestInfo(
-          provider?.value?.selectedAddress as string,
-        )
-      ).amount,
-    ).fromFraction(investmentToken.decimals.value)
+    const maxWeiValue = (
+      await farming.accountInvestInfo(
+        provider?.value?.selectedAddress as string,
+      )
+    ).amount
 
-    withdrawForm.amount = handleInputAmount(maxValue, withdrawForm.amount)
+    withdrawForm.amount = handleInputAmount(maxWeiValue, withdrawForm.amount)
   },
 )
 
