@@ -55,9 +55,7 @@ const handleBackBtn = () => {
       class="post-item-page__content-wrp"
       v-if="post?.subPosts.length === 0"
     >
-      <div
-        class="post-item-page__content post-item-page__content--paddingless-r"
-      >
+      <div class="post-item-page__content">
         <post-item-page-history />
       </div>
     </app-block>
@@ -138,10 +136,6 @@ $page-padding-right: toRem(165);
 
 .post-item-page__content {
   padding: toRem(70) $page-padding-right toRem(40) $page-padding-left;
-
-  &--paddingless-r {
-    padding-right: 0;
-  }
 
   @include respond-to(medium) {
     padding: toRem(30) toRem(20);
