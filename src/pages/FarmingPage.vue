@@ -163,6 +163,9 @@ const submitWithdraw = async () => {
   isModalWithdrawingShown.value = false
 }
 
+const handleInputAmount = (maxValue: BN, inputAmount: string): string =>
+  maxValue.compare(inputAmount) === -1 ? maxValue.toString() : inputAmount
+
 watch(
   () => provider.value.selectedAddress,
   () => {
@@ -185,14 +188,9 @@ watch(
       await investmentToken.balanceOf(
         provider?.value?.selectedAddress as string,
       ),
-    )
-      .fromFraction(investmentToken.decimals.value)
-      .toString()
+    ).fromFraction(investmentToken.decimals.value)
 
-    stakingForm.amount =
-      new BN(stakingForm.amount).compare(maxValue) === 1
-        ? maxValue
-        : stakingForm.amount
+    stakingForm.amount = handleInputAmount(maxValue, stakingForm.amount)
   },
 )
 
@@ -213,14 +211,9 @@ watch(
           provider?.value?.selectedAddress as string,
         )
       ).amount,
-    )
-      .fromFraction(investmentToken.decimals.value)
-      .toString()
+    ).fromFraction(investmentToken.decimals.value)
 
-    withdrawForm.amount =
-      new BN(withdrawForm.amount).compare(maxValue) === 1
-        ? maxValue
-        : withdrawForm.amount
+    withdrawForm.amount = handleInputAmount(maxValue, withdrawForm.amount)
   },
 )
 
