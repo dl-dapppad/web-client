@@ -48,6 +48,13 @@ const farming = useFarming()
 const paymentToken = useErc20()
 const apollo = useApollo()
 
+const width = computed(() => {
+  if (windowWidth.value < WINDOW_BREAKPOINTS.small)
+    return windowWidth.value - 100
+  else if (windowWidth.value < WINDOW_BREAKPOINTS.medium)
+    return windowWidth.value - 130
+  return windowWidth.value - 412
+})
 const alias = computed(() => config.PRODUCT_ALIASES[route.params.id as string])
 const history = ref<History>({
   data: undefined,
@@ -112,11 +119,7 @@ init()
       <div
         class="product-history__grid"
         :style="{
-          width: `${
-            windowWidth < WINDOW_BREAKPOINTS.medium
-              ? windowWidth - 90 + 'px'
-              : windowWidth - 412 + 'px'
-          }`,
+          width: `${width}px`,
         }"
       >
         <template v-if="history.showed">
