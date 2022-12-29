@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useWindowSize } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 
@@ -13,6 +14,7 @@ import {
 } from '@/composables'
 import { AppPagination, AddressCopy, Loader, AppButton } from '@/common'
 import { config } from '@/config'
+import { WINDOW_BREAKPOINTS } from '@/enums'
 import { formatAmount, formatDMYTime } from '@/helpers'
 
 type History = {
@@ -39,6 +41,8 @@ const { t } = useI18n({
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
+const { width: windowWidth } = useWindowSize()
+
 const route = useRoute()
 const farming = useFarming()
 const paymentToken = useErc20()
@@ -55,9 +59,6 @@ const pagination = ref({
   showOnPage: 5,
   totalPages: 0,
 })
-
-const productHistoryElem = ref<HTMLElement | null>(null)
-const gridWidth = computed(() => productHistoryElem.value?.offsetWidth + 'px')
 
 const init = async () => {
   initApollo()
@@ -103,12 +104,21 @@ init()
 </script>
 
 <template>
-  <div class="product-history" ref="productHistoryElem">
+  <div class="product-history">
     <h2 class="product-history__title">
       {{ t('product-history.title') }}
     </h2>
     <template v-if="history.loaded">
-      <div class="product-history__grid" :style="{ width: `${gridWidth}` }">
+      <div
+        class="product-history__grid"
+        :style="{
+          width: `${
+            windowWidth < WINDOW_BREAKPOINTS.medium
+              ? windowWidth - 90 + 'px'
+              : windowWidth - 412 + 'px'
+          }`,
+        }"
+      >
         <template v-if="history.showed">
           <div
             class="product-history__grid-row product-history__grid-row--titled"
