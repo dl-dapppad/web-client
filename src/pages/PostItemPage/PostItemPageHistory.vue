@@ -191,7 +191,9 @@ init()
             />
           </div>
         </template>
-        <span v-else>{{ t('product-history.not-found') }}</span>
+        <span class="product-history__grid-not-found" v-else>
+          {{ t('product-history.not-found') }}
+        </span>
       </div>
     </template>
     <loader v-else class="loader__history" />
@@ -218,6 +220,11 @@ init()
   margin-top: toRem(10);
   overflow-x: auto;
   overflow-y: hidden;
+
+  &-not-found {
+    display: block;
+    margin-top: toRem(20);
+  }
 }
 
 .product-history__controls {
