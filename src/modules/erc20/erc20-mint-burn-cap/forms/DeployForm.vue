@@ -50,7 +50,7 @@ const overviewRows = ref<Array<OverviewRow>>([
   {
     name: t('product-deploy.modal.mint-amount-lbl'),
     value: '',
-    type: OVERVIEW_ROW.default,
+    type: OVERVIEW_ROW.amount,
   },
   {
     name: t('product-deploy.modal.mint-receiver-lbl'),
@@ -165,7 +165,7 @@ const submit = async (values: string[]) => {
   overviewRows.value[1].value = symbol
   overviewRows.value[2].value = decimals
   overviewRows.value[3].value = cap
-  overviewRows.value[4].value = mintAmount
+  overviewRows.value[4].value = `${mintAmount} ${symbol}`
   overviewRows.value[5].value = mintReceiver
   overviewRows.value[6].value = potentialContractAddress.value
 
