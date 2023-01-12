@@ -155,7 +155,7 @@ init()
         <app-button
           :text="$t('app-navbar.farm-link')"
           size="small"
-          :route="{ name: $routes.farming }"
+          :route="{ name: $routes.cashback }"
         />
       </div>
       <input-field
@@ -218,7 +218,7 @@ init()
           class="app-navbar__menu-wrp-item"
           scheme="default"
           :icon-right="$icons.gift"
-          :route="{ name: $routes.farming }"
+          :route="{ name: $routes.cashback }"
         />
         <menu-drawer
           class="app-navbar__menu-drawer"

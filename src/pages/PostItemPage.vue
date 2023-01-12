@@ -1,30 +1,33 @@
 <script lang="ts" setup>
+import { ref, watch } from 'vue'
 import { AppBlock, AppButton, ContentRender } from '@/common'
 import { useRoute, useRouter } from '@/router'
 import { Post } from '@/types'
 import { ROUTE_NAMES } from '@/enums'
-import { routeBackMap } from '@/router/route-back-map'
 
 import PostItemPageCheckout from '@/pages/PostItemPage/PostItemPageCheckout.vue'
 import PostItemPageHistory from '@/pages/PostItemPage/PostItemPageHistory.vue'
 import postsData from '@/assets/posts.json'
 
+const isHistoryShown = ref(false)
+
 const route = useRoute()
 const router = useRouter()
 
 const posts = postsData as unknown as Post[]
-const post = posts.find(el => el.id === route.params.id)
+const post = ref(posts.find(el => el.id === route.params.id))
 
-const handleBackBtn = () => {
-  if (route.name === ROUTE_NAMES.category)
-    router.push({
-      name: ROUTE_NAMES.categories,
-      params: {
-        id: route.params.id,
-      },
-    })
-  else router.push(routeBackMap[route.params.id as string])
-}
+const handleHistoryState = (val: boolean) => (isHistoryShown.value = val)
+
+const handleBackBtn = () =>
+  router.push({
+    name: ROUTE_NAMES.main,
+  })
+
+watch(
+  () => route.params.id,
+  () => (post.value = posts.find(el => el.id === route.params.id)),
+)
 </script>
 
 <template>
@@ -32,7 +35,9 @@ const handleBackBtn = () => {
     <app-block class="post-item-page__banner-wrp">
       <div
         class="post-item-page__banner"
-        :style="{ backgroundImage: `url(${post?.bannerUrl})` }"
+        :style="{
+          backgroundImage: `url(/images/${route.params.id.split('-')[0]}.png)`,
+        }"
       >
         <div class="post-item-page__banner-darker">
           <div class="post-item-page__banner-title-wrp">
@@ -51,14 +56,12 @@ const handleBackBtn = () => {
       </div>
     </app-block>
     <post-item-page-checkout v-if="post" :post="post" />
-    <app-block
-      class="post-item-page__content-wrp"
-      v-if="post?.subPosts.length === 0"
-    >
+    <app-block class="post-item-page__content-wrp">
       <div
-        class="post-item-page__content post-item-page__content--paddingless-r"
+        class="post-item-page__content"
+        :class="{ 'post-item-page__content--paddingless-r': isHistoryShown }"
       >
-        <post-item-page-history />
+        <post-item-page-history @update-history-state="handleHistoryState" />
       </div>
     </app-block>
     <app-block class="post-item-page__content-wrp">

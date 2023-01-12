@@ -69,28 +69,10 @@
     }
   },
   "main-page": {
-    "first-block-title": "Tokens",
-    "first-block-description": "Tokens, generally speaking, are non-mineable digital units of value that exist as registry entries in blockchains. Tokens come in many different forms – they can be used as currencies for specific ecosystems or encode unique data. Additionally, some tokens might be redeemable for off-chain assets (i.e., gold, property, stocks).",
-    "first-block-btn": "Show more",
-    "second-block-title": "ERC-20",
-    "second-block-description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
-    "second-block-btn": "Show more",
-    "third-block-title": "ERC-721",
-    "third-block-description": "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!",
-    "third-block-btn": "Show more",
-    "fourth-block-title": "Who We Are",
-    "fourth-block-description": "Ukrainian R&D blockchain center consisting of developers, cryptographers, business analysts and architects specialized on launching custom blockchain platforms turn-key, in sum around 100 people in-house. On market since 2014.",
-    "fourth-block-btn": "Show more",
-    "first-people-name": "Pavel",
-    "first-people-surname": "Kravchenko",
-    "first-people-subtitle": "Co‐Founder, CEO",
-    "second-people-name": "Vladimir",
-    "second-people-surname": "Dubinin",
-    "second-people-subtitle": "Co‐Founder, COO",
-    "third-people-name": "Yaroslav",
-    "third-people-surname": "Panasenko",
-    "third-people-subtitle": "CTO",
-    "people-description": "The team consists of researchers, developers, analysts. Main activities are creation of innovative products and architectures, education events and conferences. The goal of Distributed Lab is to create financial internet that uses open, uniform protocol that facilitates trade and value transfer."
+    "our-products": "Our products",
+    "show-more-btn": "Show more",
+    "show-less-btn": "Show Less",
+    "instruction-lbl": "How to use DAPPPAD"
   },
   "page-404": {
     "title": "We are sorry. There was an error loading and the page is not responding. Reload the page or check back later"
@@ -103,12 +85,11 @@
     "logout-btn": "Log Out",
     "wallet-address-lbl": "Wallet address",
     "balance-lbl": "Balance",
-    "farm-link": "Farm",
+    "farm-link": "Cashback",
     "search-placeholder": "0x353C50AB9E10b62D75aD057327acdB39C0dB8a0B"
   },
   "app-footer": {
-    "copyright": "All rights reserved",
-    "terms-link": "terms of use and privacy policy"
+    "gitlab-link": "GitLab"
   },
   "posts-page": {
     "show-more-btn": "Show More",
@@ -123,6 +104,50 @@
   "posts-page-card": {
     "subcategories-lbl": "{amount} SubCategories",
     "price-lbl": "Price"
+  },
+  "gas-fee": {
+    "lbl": "+ gas fee"
+  },
+  "product-card": {
+    "current-price": "Current price",
+    "more-info": "More info",
+    "deploy": "Deploy",
+    "erc20-not-found": "Available in ERC20",
+    "erc20-owner-tooltip": "Token smart contract owner address.",
+    "erc20-owner-lbl": "Owner",
+    "erc20-transfer-ownership-tooltip": "Transfer token smart contract ownership to other address.",
+    "erc20-transfer-ownership-lbl": "Transfer Ownership",
+    "erc20-approve-tooltip": "Approve other address to spend tokens from your address.",
+    "erc20-approve-lbl": "Approve",
+    "erc20-transfer-tooltip": "Transfer tokens from your address to other address.",
+    "erc20-transfer-lbl": "Transfer",
+    "erc20-transfer-from-tooltip": "Transfer tokens from third party address with approve on you to spend tokens to other address.",
+    "erc20-transfer-from-lbl": "Transfer From",
+    "erc20-mint-tooltip": "Mint new tokens and increase total token supply.",
+    "erc20-mint-lbl": "Mint",
+    "erc20-burn-tooltip": "Burn tokens from your address and decrease total token supply.",
+    "erc20-burn-lbl": "Burn",
+    "erc20-cap-tooltip": "Token with predefined maximum token supply.",
+    "erc20-cap-lbl": "Cap",
+    "erc721-not-found": "Available in ERC721",
+    "erc721-owner-tooltip": "Token smart contract owner address.",
+    "erc721-owner-lbl": "Owner",
+    "erc721-transfer-ownership-tooltip": "Transfer token smart contract ownership to other address.",
+    "erc721-transfer-ownership-lbl": "Transfer Ownership",
+    "erc721-set-base-u-r-i-tooltip": "Define NFT content storage link.",
+    "erc721-set-base-u-r-i-lbl": "Set Base URI",
+    "erc721-approve-tooltip": "Approve other address to spend specific NFT token from your address.",
+    "erc721-approve-lbl": "Approve",
+    "erc721-approve-all-tooltip": "Approve other address to spend all NFT tokens from your address.",
+    "erc721-approve-all-lbl": "Approve All",
+    "erc721-mint-tooltip": "Mint new NFT.",
+    "erc721-mint-lbl": "Mint",
+    "erc721-burn-tooltip": "Burn NFT.",
+    "erc721-burn-lbl": "Burn",
+    "erc721-safe-transfer-tooltip": "NFT transfer from one address to another.",
+    "erc721-safe-transfer-lbl": "Transfer",
+    "erc721-enum-tooltip": "Implements an optional extension of ERC721 defined in the EIP that adds enumerability of all the token ids in the contract as well as all token ids owned by each account. Enumerability adds additional view finctions like total token supply, function that returns the tokenId of an NFT that is stored at the provided index, function that returns the tokenId of an NFT that is stored at a particular index of the owner's list of tokens.",
+    "erc721-enum-lbl": "Enumerable"
   },
   "post-item-page-checkout": {
     "have-product-lbl": "Already have this product?",
@@ -140,10 +165,10 @@
     "minimal-price-tooltip": "The minimum price of the product, can not be lower than the specified value",
     "reward-lbl": "Reward",
     "reward-tooltip": "The specified number of tokens will be transferred to the buyer's address after the purchase",
-    "distribution-lbl": "Distribution",
-    "distribution-tooltip": "The specified number of tokens will be distributed among all participants of farming",
+    "cashback-lbl": "Cashback",
+    "cashback-tooltip": "The specified number of tokens will be distributed among all participants of farming",
     "current-price-lbl": "Current price",
-    "buy-now-link": "Buy now",
+    "buy-now-link": "Deploy now",
     "buy-description-lbl": "First, the contract will be deployed, and then you can configure it"
   },
   "product-deploy": {
@@ -242,8 +267,8 @@
     "erc20": "Token",
     "erc721": "Token"
   },
-  "farming-page": {
-    "title": "Farming",
+  "cashback-page": {
+    "title": "Cashback",
     "subtitle": "Stake your DAPP tokens and receive cashback rewards from each subsequent product sale.",
     "withdraw-btn": "Withdraw",
     "stake-btn": "Stake",
@@ -282,7 +307,7 @@
     "claiming-modal-row-key": "Available to claim",
     "claiming-page-btn-lbl": "Claim"
   },
-  "farming-history": {
+  "cashback-history": {
     "title": "History",
     "switch-left-lbl": "Global",
     "switch-right-lbl": "My",

@@ -17,6 +17,8 @@
   --success-main: #{$success-main};
   --success-dark: #{$success-dark};
 
+  --success-secondary-main: #{$success-secondary-main};
+
   --error-light: #{$error-light};
   --error-main: #{$error-main};
   --error-dark: #{$error-dark};
@@ -111,11 +113,8 @@
   --field-padding-right: #{toRem(16)};
   --field-padding-bottom: #{toRem(11)};
   --field-padding-left: #{toRem(16)};
-  --field-padding:
-    var(--field-padding-top)
-    var(--field-padding-right)
-    var(--field-padding-bottom)
-    var(--field-padding-left);
+  --field-padding: var(--field-padding-top) var(--field-padding-right)
+    var(--field-padding-bottom) var(--field-padding-left);
 
   --field-error: var(--error-main);
 }

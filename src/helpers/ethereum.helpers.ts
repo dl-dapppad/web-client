@@ -2,10 +2,12 @@ import { ethers } from 'ethers'
 import { i18n } from '@/localization'
 import { EthProviderRpcError } from '@/types'
 import { errors } from '@/errors'
-import { EIP1193, EIP1474 } from '@/enums'
+import { EIP1193, EIP1474, PRODUCT_IDS } from '@/enums'
 import { BN } from '@/utils'
 import { Bus, ErrorHandler } from '@/helpers'
 import { useAccountStore, useWeb3ProvidersStore } from '@/store'
+import { api } from '@/api'
+import { config } from '@/config'
 
 export const connectEthAccounts = async (
   provider: ethers.providers.Web3Provider,
@@ -176,4 +178,50 @@ export const handleTxErrorMessage = (msg: string): string => {
   if (!arr) return ''
   // eslint-disable-next-line quotes
   return arr[0].replaceAll("'", '')
+}
+
+export const getTxGasPrice = async (productId: string) => {
+  const gasPrice = (
+    await api.get(
+      `https://api-goerli.etherscan.io/api?module=proxy&action=eth_gasPrice&apikey=${config.ETHERSCAN_API_KEY}`,
+    )
+  ).data.result
+
+  let avgUsageByTxn = 0
+  switch (productId) {
+    case PRODUCT_IDS.erc20Base:
+      avgUsageByTxn = 470000
+      break
+    case PRODUCT_IDS.erc20Mint:
+      avgUsageByTxn = 479000
+      break
+    case PRODUCT_IDS.erc20Burn:
+      avgUsageByTxn = 485000
+      break
+    case PRODUCT_IDS.erc20MintBurn:
+      avgUsageByTxn = 525000
+      break
+    case PRODUCT_IDS.erc20MintCap:
+      avgUsageByTxn = 510000
+      break
+    case PRODUCT_IDS.erc20MintBurnCap:
+      avgUsageByTxn = 540000
+      break
+    case PRODUCT_IDS.erc721Base:
+      avgUsageByTxn = 390000
+      break
+    case PRODUCT_IDS.erc721Burn:
+      avgUsageByTxn = 400000
+      break
+    case PRODUCT_IDS.erc721Enum:
+      avgUsageByTxn = 410000
+      break
+    case PRODUCT_IDS.erc721BurnEnum:
+      avgUsageByTxn = 420000
+      break
+    default:
+      avgUsageByTxn = 500000
+  }
+
+  return new BN(gasPrice).fromFraction().mul(avgUsageByTxn)
 }

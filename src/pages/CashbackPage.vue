@@ -227,8 +227,8 @@ init()
 </script>
 
 <template>
-  <div class="farming-page">
-    <div class="farming-page__content">
+  <div class="cashback-page">
+    <div class="cashback-page__content">
       <div class="app__module-heading">
         <div class="app__module-title-wrp">
           <app-button
@@ -239,7 +239,7 @@ init()
             :route="{ name: $routes.main }"
           />
           <div class="app__module-title">
-            {{ $t('farming-page.title') }}
+            {{ $t('cashback-page.title') }}
           </div>
         </div>
         <address-copy
@@ -247,28 +247,28 @@ init()
           :address="farming.address.value"
         />
         <div class="app__module-description">
-          {{ $t('farming-page.subtitle') }}
+          {{ $t('cashback-page.subtitle') }}
         </div>
       </div>
-      <div class="farming-page__tables">
-        <div class="farming-page__table-wrp">
-          <div class="farming-page__table">
-            <app-block class="farming-page__table-block">
-              <div class="farming-page__table-item">
-                <div class="farming-page__table-title">
+      <div class="cashback-page__tables">
+        <div class="cashback-page__table-wrp">
+          <div class="cashback-page__table">
+            <app-block class="cashback-page__table-block">
+              <div class="cashback-page__table-item">
+                <div class="cashback-page__table-title">
                   <icon
-                    class="farming-page__table-icon farming-page__dark-icon"
+                    class="cashback-page__table-icon cashback-page__dark-icon"
                     :name="ICON_NAMES.circleFilled"
                   />
-                  <i18n-t keypath="farming-page.balance-lbl" tag="span">
+                  <i18n-t keypath="cashback-page.balance-lbl" tag="span">
                     <template #curr>
                       {{ investmentToken.symbol.value }}
                     </template>
                   </i18n-t>
                 </div>
-                <div class="farming-page__table-body">
+                <div class="cashback-page__table-body">
                   <template v-if="isLoaded">
-                    <span class="farming-page__table-count">
+                    <span class="cashback-page__table-count">
                       {{
                         formatAmount(
                           account.dappBalance,
@@ -276,7 +276,7 @@ init()
                         )
                       }}
                     </span>
-                    <span class="farming-page__table-currency">
+                    <span class="cashback-page__table-currency">
                       {{ investmentToken.symbol.value }}
                     </span>
                   </template>
@@ -284,18 +284,18 @@ init()
                 </div>
               </div>
             </app-block>
-            <app-block class="farming-page__table-block">
-              <div class="farming-page__table-item">
-                <div class="farming-page__table-title">
+            <app-block class="cashback-page__table-block">
+              <div class="cashback-page__table-item">
+                <div class="cashback-page__table-title">
                   <icon
-                    class="farming-page__table-icon"
+                    class="cashback-page__table-icon"
                     :name="ICON_NAMES.coins"
                   />
-                  {{ t('farming-page.total-stake-lbl') }}
+                  {{ t('cashback-page.total-stake-lbl') }}
                 </div>
-                <div class="farming-page__table-body">
+                <div class="cashback-page__table-body">
                   <template v-if="isLoaded">
-                    <span class="farming-page__table-count">
+                    <span class="cashback-page__table-count">
                       {{
                         formatAmount(
                           farming.totalInvestedAmount.value,
@@ -303,7 +303,7 @@ init()
                         )
                       }}
                     </span>
-                    <span class="farming-page__table-currency">
+                    <span class="cashback-page__table-currency">
                       {{ investmentToken.symbol.value }}
                     </span>
                   </template>
@@ -311,18 +311,18 @@ init()
                 </div>
               </div>
             </app-block>
-            <app-block class="farming-page__table-block">
-              <div class="farming-page__table-item">
-                <div class="farming-page__table-title">
+            <app-block class="cashback-page__table-block">
+              <div class="cashback-page__table-item">
+                <div class="cashback-page__table-title">
                   <icon
-                    class="farming-page__table-icon"
+                    class="cashback-page__table-icon"
                     :name="ICON_NAMES.coin"
                   />
-                  {{ t('farming-page.my-stake-lbl') }}
+                  {{ t('cashback-page.my-stake-lbl') }}
                 </div>
-                <div class="farming-page__table-body">
+                <div class="cashback-page__table-body">
                   <template v-if="isLoaded">
-                    <span class="farming-page__table-count">
+                    <span class="cashback-page__table-count">
                       {{
                         formatAmount(
                           investInfo.amount,
@@ -330,7 +330,7 @@ init()
                         )
                       }}
                     </span>
-                    <span class="farming-page__table-currency">
+                    <span class="cashback-page__table-currency">
                       {{ investmentToken.symbol.value }}
                     </span>
                   </template>
@@ -338,18 +338,18 @@ init()
                 </div>
               </div>
             </app-block>
-            <app-block class="farming-page__table-block">
+            <app-block class="cashback-page__table-block">
               <div
-                class="farming-page__table-buttons"
+                class="cashback-page__table-buttons"
                 :class="{
-                  'farming-page__table-buttons--no-withdraw':
+                  'cashback-page__table-buttons--no-withdraw':
                     !isWithdrawAvailable || !isLoaded,
                 }"
               >
                 <app-button
                   v-if="isWithdrawAvailable && isLoaded"
-                  class="farming-page__table-btn farming-page__table-btn--white"
-                  :text="t('farming-page.withdraw-btn')"
+                  class="cashback-page__btn cashback-page__btn--white"
+                  :text="t('cashback-page.withdraw-btn')"
                   size="large"
                   color="tertiary"
                   scheme="borderless"
@@ -357,8 +357,8 @@ init()
                   @click="isModalWithdrawingShown = true"
                 />
                 <app-button
-                  class="farming-page__table-btn"
-                  :text="t('farming-page.stake-btn')"
+                  class="cashback-page__btn"
+                  :text="t('cashback-page.stake-btn')"
                   :disabled="account.isDappBalanceEmpty"
                   size="large"
                   scheme="borderless"
@@ -368,18 +368,18 @@ init()
               </div>
             </app-block>
           </div>
-          <div class="farming-page__token-info-wrp">
-            <div class="farming-page__token-info">
+          <div class="cashback-page__token-info-wrp">
+            <div class="cashback-page__token-info">
               <template v-if="isLoaded">
-                <span class="farming-page__table-desc-text">
+                <span class="cashback-page__table-desc-text">
                   {{
-                    `${$t('farming-page.stake-address-lbl')} (${
+                    `${$t('cashback-page.stake-address-lbl')} (${
                       investmentToken.symbol.value
                     })`
                   }}
                 </span>
                 <address-copy
-                  class="app__link--accented farming-page__table-desc-address"
+                  class="app__link--accented cashback-page__table-desc-address"
                   :address="investmentToken.address.value"
                 />
               </template>
@@ -387,35 +387,35 @@ init()
             </div>
           </div>
         </div>
-        <div class="farming-page__table-wrp">
+        <div class="cashback-page__table-wrp">
           <div
-            class="farming-page__table"
+            class="cashback-page__table"
             :class="{
-              'farming-page__claim-not-available':
+              'cashback-page__claim-not-available':
                 !isClaimAvailable || !isLoaded,
             }"
           >
-            <app-block class="farming-page__table-block">
-              <div class="farming-page__table-item">
-                <div class="farming-page__table-title">
+            <app-block class="cashback-page__table-block">
+              <div class="cashback-page__table-item">
+                <div class="cashback-page__table-title">
                   <icon
-                    class="farming-page__table-icon farming-page__dark-icon"
+                    class="cashback-page__table-icon cashback-page__dark-icon"
                     :name="ICON_NAMES.daiCoin"
                   />
-                  <i18n-t keypath="farming-page.balance-lbl" tag="span">
+                  <i18n-t keypath="cashback-page.balance-lbl" tag="span">
                     <template #curr>
                       {{ rewardToken.symbol.value }}
                     </template>
                   </i18n-t>
                 </div>
-                <div class="farming-page__table-body">
+                <div class="cashback-page__table-body">
                   <template v-if="isLoaded">
-                    <span class="farming-page__table-count">
+                    <span class="cashback-page__table-count">
                       {{
                         formatAmount(rewardBalance, rewardToken?.decimals.value)
                       }}
                     </span>
-                    <span class="farming-page__table-currency">
+                    <span class="cashback-page__table-currency">
                       {{ rewardToken.symbol.value }}
                     </span>
                   </template>
@@ -423,18 +423,18 @@ init()
                 </div>
               </div>
             </app-block>
-            <app-block class="farming-page__table-block">
-              <div class="farming-page__table-item">
-                <div class="farming-page__table-title">
+            <app-block class="cashback-page__table-block">
+              <div class="cashback-page__table-item">
+                <div class="cashback-page__table-title">
                   <icon
-                    class="farming-page__table-icon"
+                    class="cashback-page__table-icon"
                     :name="ICON_NAMES.gift"
                   />
-                  {{ t('farming-page.total-reward-lbl') }}
+                  {{ t('cashback-page.total-reward-lbl') }}
                 </div>
-                <div class="farming-page__table-body">
+                <div class="cashback-page__table-body">
                   <template v-if="isLoaded">
-                    <span class="farming-page__table-count">
+                    <span class="cashback-page__table-count">
                       {{
                         formatAmount(
                           farming.totalRewardAmount.value,
@@ -442,7 +442,7 @@ init()
                         )
                       }}
                     </span>
-                    <span class="farming-page__table-currency">
+                    <span class="cashback-page__table-currency">
                       {{ rewardToken.symbol.value }}
                     </span>
                   </template>
@@ -450,22 +450,22 @@ init()
                 </div>
               </div>
             </app-block>
-            <app-block class="farming-page__table-block">
+            <app-block class="cashback-page__table-block">
               <!-- eslint-disable -->
               <div
-                class="farming-page__table-item farming-page__table-item--colored"
+                class="cashback-page__table-item cashback-page__table-item--colored"
               >
                 <!-- eslint-enable -->
-                <div class="farming-page__table-title">
+                <div class="cashback-page__table-title">
                   <icon
-                    class="farming-page__table-icon"
+                    class="cashback-page__table-icon"
                     :name="ICON_NAMES.checkCircleFilled"
                   />
-                  {{ t('farming-page.current-rewards-lbl') }}
+                  {{ t('cashback-page.current-rewards-lbl') }}
                 </div>
-                <div class="farming-page__table-body">
+                <div class="cashback-page__table-body">
                   <template v-if="isLoaded">
-                    <span class="farming-page__table-count">
+                    <span class="cashback-page__table-count">
                       {{
                         formatAmount(
                           investInfo.rewards,
@@ -473,7 +473,7 @@ init()
                         )
                       }}
                     </span>
-                    <span class="farming-page__table-currency">
+                    <span class="cashback-page__table-currency">
                       {{ rewardToken.symbol.value }}
                     </span>
                   </template>
@@ -484,8 +484,8 @@ init()
             <template v-if="isClaimAvailable && isLoaded">
               <app-block>
                 <app-button
-                  class="farming-page__table-btn"
-                  :text="t('farming-page.claim-btn')"
+                  class="cashback-page__btn"
+                  :text="t('cashback-page.claim-btn')"
                   size="large"
                   scheme="borderless"
                   modification="border-rounded"
@@ -494,18 +494,18 @@ init()
               </app-block>
             </template>
           </div>
-          <div class="farming-page__token-info-wrp">
-            <div class="farming-page__token-info">
+          <div class="cashback-page__token-info-wrp">
+            <div class="cashback-page__token-info">
               <template v-if="isLoaded">
-                <span class="farming-page__table-desc-text">
+                <span class="cashback-page__table-desc-text">
                   {{
-                    `${$t('farming-page.reward-address-lbl')} (${
+                    `${$t('cashback-page.reward-address-lbl')} (${
                       rewardToken.symbol.value
                     })`
                   }}
                 </span>
                 <address-copy
-                  class="app__link--accented farming-page__table-desc-address"
+                  class="app__link--accented cashback-page__table-desc-address"
                   :address="rewardToken.address.value"
                 />
               </template>
@@ -517,55 +517,55 @@ init()
     </div>
     <modal v-model:is-shown="isModalWithdrawingShown">
       <template #default="{ modal }">
-        <div class="farming-page__modal">
-          <div class="farming-page__modal-title-wrp">
-            <div class="farming-page__modal-title">
-              <icon class="farming-page__modal-icon" :name="$icons.hands" />
-              {{ $t('farming-page.withdrawing-modal-title') }}
+        <div class="cashback-page__modal">
+          <div class="cashback-page__modal-title-wrp">
+            <div class="cashback-page__modal-title">
+              <icon class="cashback-page__modal-icon" :name="$icons.hands" />
+              {{ $t('cashback-page.withdrawing-modal-title') }}
             </div>
             <app-button
-              class="farming-page__modal-close"
+              class="cashback-page__modal-close"
               size="small"
               scheme="default"
               :icon-right="$icons.x"
               @click="modal.close"
             />
           </div>
-          <p class="farming-page__modal-paragraph">
-            {{ $t('farming-page.withdrawing-modal-text') }}
+          <p class="cashback-page__modal-paragraph">
+            {{ $t('cashback-page.withdrawing-modal-text') }}
           </p>
-          <div class="farming-page__modal-row">
-            <span class="farming-page__modal-row-key">
-              {{ $t('farming-page.withdrawing-modal-row-key') }}
+          <div class="cashback-page__modal-row">
+            <span class="cashback-page__modal-row-key">
+              {{ $t('cashback-page.withdrawing-modal-row-key') }}
             </span>
-            <span class="farming-page__modal-row-value">
+            <span class="cashback-page__modal-row-value">
               {{
                 formatAmount(investInfo.amount, investmentToken.decimals.value)
               }}
-              <span class="farming-page__modal-row-currency">
+              <span class="cashback-page__modal-row-currency">
                 {{ investmentToken.symbol.value }}
               </span>
             </span>
           </div>
-          <div class="farming-page__modal-input">
+          <div class="cashback-page__modal-input">
             <input-field
               class="app__module-field"
               v-model="withdrawForm.amount"
               scheme="secondary"
-              :label="t('farming-page.withdrawing-modal-input-label')"
+              :label="t('cashback-page.withdrawing-modal-input-label')"
               :error-message="withdrawValidation.getFieldErrorMessage('amount')"
               @blur="withdrawValidation.touchField('amount')"
             />
             <app-button
-              class="farming-page__modal-max-btn"
-              :text="t('farming-page.withdrawing-modal-input-btn-lbl')"
+              class="cashback-page__modal-max-btn"
+              :text="t('cashback-page.withdrawing-modal-input-btn-lbl')"
               @click="clickMaxWithdrawAmount"
             />
           </div>
           <app-button
-            class="farming-page__modal-btn"
+            class="cashback-page__modal-btn"
             size="large"
-            :text="t('farming-page.withdrawing-page-btn-lbl')"
+            :text="t('cashback-page.withdrawing-page-btn-lbl')"
             :disabled="!withdrawValidation.isFieldsValid.value"
             @click="submitWithdraw"
           />
@@ -574,55 +574,55 @@ init()
     </modal>
     <modal v-model:is-shown="isModalStakingShown">
       <template #default="{ modal }">
-        <div class="farming-page__modal">
-          <div class="farming-page__modal-title-wrp">
-            <div class="farming-page__modal-title">
-              <icon class="farming-page__modal-icon" :name="$icons.coin" />
-              {{ $t('farming-page.staking-modal-title') }}
+        <div class="cashback-page__modal">
+          <div class="cashback-page__modal-title-wrp">
+            <div class="cashback-page__modal-title">
+              <icon class="cashback-page__modal-icon" :name="$icons.coin" />
+              {{ $t('cashback-page.staking-modal-title') }}
             </div>
             <app-button
-              class="farming-page__modal-close"
+              class="cashback-page__modal-close"
               size="small"
               scheme="default"
               :icon-right="$icons.x"
               @click="modal.close"
             />
           </div>
-          <p class="farming-page__modal-paragraph">
-            {{ $t('farming-page.staking-modal-text-first') }}
+          <p class="cashback-page__modal-paragraph">
+            {{ $t('cashback-page.staking-modal-text-first') }}
           </p>
-          <div class="farming-page__modal-row">
-            <span class="farming-page__modal-row-key">
-              {{ $t('farming-page.staking-modal-row-key') }}
+          <div class="cashback-page__modal-row">
+            <span class="cashback-page__modal-row-key">
+              {{ $t('cashback-page.staking-modal-row-key') }}
             </span>
-            <span class="farming-page__modal-row-value">
+            <span class="cashback-page__modal-row-value">
               {{
                 formatAmount(investmentBalance, investmentToken.decimals.value)
               }}
-              <span class="farming-page__modal-row-currency">
+              <span class="cashback-page__modal-row-currency">
                 {{ investmentToken.symbol.value }}
               </span>
             </span>
           </div>
-          <div class="farming-page__modal-input">
+          <div class="cashback-page__modal-input">
             <input-field
               class="app__module-field"
               v-model="stakingForm.amount"
               scheme="secondary"
-              :label="t('farming-page.staking-modal-input-label')"
+              :label="t('cashback-page.staking-modal-input-label')"
               :error-message="stakingValidation.getFieldErrorMessage('amount')"
               @blur="stakingValidation.touchField('amount')"
             />
             <app-button
-              class="farming-page__modal-max-btn"
-              :text="t('farming-page.staking-modal-input-btn-lbl')"
+              class="cashback-page__modal-max-btn"
+              :text="t('cashback-page.staking-modal-input-btn-lbl')"
               @click="clickMaxStakingAmount"
             />
           </div>
           <app-button
-            class="farming-page__modal-btn"
+            class="cashback-page__modal-btn"
             size="large"
-            :text="t('farming-page.staking-page-btn-lbl')"
+            :text="t('cashback-page.staking-page-btn-lbl')"
             :disabled="!stakingValidation.isFieldsValid.value"
             @click="submitStaking"
           />
@@ -631,38 +631,38 @@ init()
     </modal>
     <modal v-model:is-shown="isModalClaimingShown">
       <template #default="{ modal }">
-        <div class="farming-page__modal" v-if="isLoaded">
-          <div class="farming-page__modal-title-wrp">
-            <div class="farming-page__modal-title">
-              <icon class="farming-page__modal-icon" :name="$icons.hands" />
-              {{ $t('farming-page.claiming-modal-title') }}
+        <div class="cashback-page__modal" v-if="isLoaded">
+          <div class="cashback-page__modal-title-wrp">
+            <div class="cashback-page__modal-title">
+              <icon class="cashback-page__modal-icon" :name="$icons.hands" />
+              {{ $t('cashback-page.claiming-modal-title') }}
             </div>
             <app-button
-              class="farming-page__modal-close"
+              class="cashback-page__modal-close"
               size="small"
               scheme="default"
               :icon-right="$icons.x"
               @click="modal.close"
             />
           </div>
-          <p class="farming-page__modal-paragraph">
-            {{ $t('farming-page.claiming-modal-text') }}
+          <p class="cashback-page__modal-paragraph">
+            {{ $t('cashback-page.claiming-modal-text') }}
           </p>
-          <div class="farming-page__modal-row">
-            <span class="farming-page__modal-row-key">
-              {{ $t('farming-page.claiming-modal-row-key') }}
+          <div class="cashback-page__modal-row">
+            <span class="cashback-page__modal-row-key">
+              {{ $t('cashback-page.claiming-modal-row-key') }}
             </span>
-            <span class="farming-page__modal-row-value">
+            <span class="cashback-page__modal-row-value">
               {{ formatAmount(investInfo.rewards, rewardToken.decimals.value) }}
-              <span class="farming-page__modal-row-currency">
+              <span class="cashback-page__modal-row-currency">
                 {{ rewardToken.symbol.value }}
               </span>
             </span>
           </div>
           <app-button
-            class="farming-page__modal-btn"
+            class="cashback-page__modal-btn"
             size="large"
-            :text="t('farming-page.claiming-page-btn-lbl')"
+            :text="t('cashback-page.claiming-page-btn-lbl')"
             @click="submitClaim"
           />
         </div>
@@ -672,7 +672,7 @@ init()
 </template>
 
 <style lang="scss" scoped>
-.farming-page {
+.cashback-page {
   padding: toRem(50) toRem(145) toRem(50) toRem(225);
   display: flex;
   gap: toRem(54);
@@ -683,7 +683,7 @@ init()
   }
 }
 
-.farming-page__content {
+.cashback-page__content {
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -691,7 +691,7 @@ init()
   gap: toRem(40);
 }
 
-.farming-page__back-btn {
+.cashback-page__back-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -701,7 +701,7 @@ init()
   padding: 0;
 }
 
-.farming-page__tables {
+.cashback-page__tables {
   display: flex;
   flex-direction: column;
   gap: toRem(40);
@@ -711,13 +711,13 @@ init()
   }
 }
 
-.farming-page__title-wrp {
+.cashback-page__title-wrp {
   display: flex;
   flex-direction: column;
   gap: toRem(20);
 }
 
-.farming-page__title {
+.cashback-page__title {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -732,7 +732,7 @@ init()
   }
 }
 
-.farming-page__heading {
+.cashback-page__heading {
   font-family: var(--app-font-family-secondary);
   font-weight: 900;
   font-size: toRem(70);
@@ -743,16 +743,16 @@ init()
   }
 }
 
-.farming-page__title-icon {
+.cashback-page__title-icon {
   width: toRem(16);
   height: toRem(16);
 }
 
-.farming-page__table {
+.cashback-page__table {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 
-  & > .farming-page__table-block:not(:last-child) {
+  & > .cashback-page__table-block:not(:last-child) {
     padding-right: toRem(0);
   }
 
@@ -760,14 +760,14 @@ init()
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, 1fr);
 
-    & > .farming-page__table-block:not(:last-child) {
+    & > .cashback-page__table-block:not(:last-child) {
       padding-right: toRem(1);
       padding-bottom: toRem(0);
     }
   }
 }
 
-.farming-page__table-title {
+.cashback-page__table-title {
   display: flex;
   gap: toRem(14);
   font-size: toRem(16);
@@ -776,14 +776,14 @@ init()
   color: var(--text-secondary-main);
 }
 
-.farming-page__table-icon {
+.cashback-page__table-icon {
   min-width: toRem(16);
   min-height: toRem(16);
   max-width: toRem(16);
   max-height: toRem(16);
 }
 
-.farming-page__under-table-icon {
+.cashback-page__under-table-icon {
   min-width: toRem(12);
   min-height: toRem(12);
   max-width: toRem(12);
@@ -791,11 +791,11 @@ init()
   color: var(--text-primary-main);
 }
 
-.farming-page__dark-icon {
+.cashback-page__dark-icon {
   color: var(--primary-main);
 }
 
-.farming-page__table-item {
+.cashback-page__table-item {
   padding: toRem(30) toRem(20);
   display: flex;
   flex-direction: column;
@@ -806,17 +806,17 @@ init()
     background-color: var(--secondary-main);
     color: var(--text-primary-invert-main);
 
-    & .farming-page__table-title {
+    & .cashback-page__table-title {
       color: var(--text-primary-invert-main);
 
-      & .farming-page__table-icon {
+      & .cashback-page__table-icon {
         color: var(--text-primary-invert-main);
       }
     }
   }
 }
 
-.farming-page__table-body {
+.cashback-page__table-body {
   display: flex;
   align-items: flex-end;
   gap: toRem(6);
@@ -826,17 +826,17 @@ init()
   }
 }
 
-.farming-page__table-count {
+.cashback-page__table-count {
   font-weight: 800;
   font-size: toRem(20);
 }
 
-.farming-page__table-currency {
+.cashback-page__table-currency {
   font-weight: 700;
   font-size: toRem(12);
 }
 
-.farming-page__table-buttons {
+.cashback-page__table-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
   height: 100%;
@@ -847,7 +847,7 @@ init()
   }
 }
 
-.farming-page__table-btn {
+.cashback-page__btn {
   width: 100%;
   height: 100%;
   padding: toRem(1);
@@ -857,57 +857,57 @@ init()
   }
 }
 
-.farming-page__table-desc-text {
+.cashback-page__table-desc-text {
   padding: toRem(14) 0;
   font-size: toRem(12);
   color: var(--text-secondary-main);
   font-weight: 700;
 }
 
-.farming-page__table-desc-address {
+.cashback-page__table-desc-address {
   justify-self: end;
 }
 
-.farming-page__charts-history-wrp {
+.cashback-page__charts-history-wrp {
   display: flex;
   flex-direction: column;
 }
 
-.farming-page__charts {
+.cashback-page__charts {
   display: grid;
   grid-template-columns: minmax(#{toRem(346)}, 1fr) minmax(#{toRem(693)}, 2fr);
 }
 
-.farming-page__chart {
+.cashback-page__chart {
   padding: toRem(40);
 }
 
-.farming-page__history {
+.cashback-page__history {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: start;
 }
 
-.farming-page__history-item {
+.cashback-page__history-item {
   padding: toRem(40);
   display: flex;
   flex-direction: column;
   gap: toRem(30);
 }
 
-.farming-page__history-title {
+.cashback-page__history-title {
   display: flex;
   justify-content: space-between;
 }
 
-.farming-page__history-heading {
+.cashback-page__history-heading {
   font-family: var(--app-font-family-secondary);
   font-weight: 700;
   letter-spacing: 0.1em;
   font-size: toRem(20);
 }
 
-.farming-page__history-currency {
+.cashback-page__history-currency {
   font-weight: 700;
   font-size: toRem(14);
   display: flex;
@@ -915,29 +915,29 @@ init()
   align-items: center;
 }
 
-.farming-page__history-currency-icon {
+.cashback-page__history-currency-icon {
   height: toRem(24);
   width: toRem(24);
 }
 
-.farming-page__history-table {
+.cashback-page__history-table {
   display: flex;
   flex-direction: column;
 }
 
-.farming-page__history-time {
+.cashback-page__history-time {
   padding: toRem(20) 0 toRem(10);
   font-weight: 700;
   font-family: var(--app-font-family-secondary);
   color: var(--text-secondary-main);
 }
 
-.farming-page__history-icon {
+.cashback-page__history-icon {
   width: toRem(16);
   height: toRem(16);
 }
 
-.farming-page__row {
+.cashback-page__row {
   padding: toRem(20) toRem(10);
   display: flex;
   justify-content: space-between;
@@ -949,13 +949,13 @@ init()
   }
 }
 
-.farming-page__row-key {
+.cashback-page__row-key {
   display: flex;
   gap: toRem(5);
   align-items: center;
 }
 
-.farming-page__modal {
+.cashback-page__modal {
   display: flex;
   flex-direction: column;
   gap: toRem(40);
@@ -970,13 +970,13 @@ init()
   }
 }
 
-.farming-page__modal-title-wrp {
+.cashback-page__modal-title-wrp {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.farming-page__modal-title {
+.cashback-page__modal-title {
   display: flex;
   align-items: center;
   gap: toRem(18);
@@ -990,13 +990,13 @@ init()
   }
 }
 
-.farming-page__modal-icon {
+.cashback-page__modal-icon {
   width: toRem(30);
   height: toRem(30);
   color: var(--secondary-main);
 }
 
-.farming-page__modal-close {
+.cashback-page__modal-close {
   padding: 0;
   width: toRem(20);
   height: toRem(20);
@@ -1004,7 +1004,7 @@ init()
   cursor: pointer;
 }
 
-.farming-page__modal-paragraph {
+.cashback-page__modal-paragraph {
   line-height: toRem(20);
 
   @include respond-to(medium) {
@@ -1012,7 +1012,7 @@ init()
   }
 }
 
-.farming-page__modal-row {
+.cashback-page__modal-row {
   display: flex;
   justify-content: space-between;
 
@@ -1022,7 +1022,7 @@ init()
   }
 }
 
-.farming-page__modal-row-key {
+.cashback-page__modal-row-key {
   font-size: toRem(14);
   color: var(--text-secondary-main);
   font-weight: 700;
@@ -1032,21 +1032,21 @@ init()
   }
 }
 
-.farming-page__modal-row-value {
+.cashback-page__modal-row-value {
   font-size: toRem(16);
   font-weight: 700;
 }
 
-.farming-page__modal-row-currency {
+.cashback-page__modal-row-currency {
   font-size: toRem(12);
 }
 
-.farming-page__modal-input {
+.cashback-page__modal-input {
   display: flex;
   gap: toRem(10);
 }
 
-.farming-page__modal-max-btn {
+.cashback-page__modal-max-btn {
   padding: 0 toRem(20);
   font-size: toRem(14);
   max-height: toRem(56);
@@ -1056,18 +1056,18 @@ init()
   }
 }
 
-.farming-page__modal-btn {
+.cashback-page__modal-btn {
   width: 100%;
   height: toRem(52);
   padding-top: toRem(16);
   padding-bottom: toRem(16);
 }
 
-.farming-page__history-grid {
+.cashback-page__history-grid {
   padding-top: toRem(30);
 }
 
-.farming-page__claim-not-available {
+.cashback-page__claim-not-available {
   grid-template-columns: repeat(3, 1fr);
 
   @include respond-to(medium) {
@@ -1076,7 +1076,7 @@ init()
   }
 }
 
-.farming-page__token-info-wrp {
+.cashback-page__token-info-wrp {
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: toRem(5) 0;
@@ -1086,7 +1086,7 @@ init()
   }
 }
 
-.farming-page__token-info {
+.cashback-page__token-info {
   display: flex;
   justify-content: space-between;
 

@@ -4,7 +4,7 @@ import { useWindowSize } from '@vueuse/core'
 
 import { Icon } from '@/common'
 
-const props = defineProps<{
+defineProps<{
   text: string
   moveSide?: 'left' | 'center' | 'right'
 }>()
@@ -13,28 +13,34 @@ const { width: windowWidth } = useWindowSize()
 
 const tooltipElem = ref<HTMLElement | undefined>()
 const isMobileMovingRight = ref<boolean>(false)
+const isTotallyMovingRight = ref<boolean>(true)
 
 onMounted(() => {
   if (!tooltipElem.value) return
 
   isMobileMovingRight.value =
     tooltipElem.value.getBoundingClientRect().left <= windowWidth.value / 2
+
+  isTotallyMovingRight.value =
+    tooltipElem.value.getBoundingClientRect().left < 100
 })
 </script>
 
 <template>
   <div class="info-tooltip" ref="tooltipElem">
     <icon class="info-tooltip__icon" :name="$icons.informationCircleFilled" />
-    <!-- -->
     <div
       class="info-tooltip__message"
       :class="{
+        'info-tooltip__message--totally-moving-right': isTotallyMovingRight,
         'info-tooltip__message--mobile-moving-right':
-          (isMobileMovingRight && props.moveSide === undefined) ||
-          props.moveSide === 'right',
+          ((isMobileMovingRight && moveSide === undefined) ||
+            moveSide === 'right') &&
+          !isTotallyMovingRight,
         'info-tooltip__message--mobile-moving-left':
-          (!isMobileMovingRight && props.moveSide === undefined) ||
-          props.moveSide === 'left',
+          ((!isMobileMovingRight && moveSide === undefined) ||
+            moveSide === 'left') &&
+          !isTotallyMovingRight,
       }"
     >
       {{ text }}
@@ -68,6 +74,14 @@ onMounted(() => {
     transform: rotate(45deg);
   }
 
+  &--totally-moving-right {
+    transform: translateX(-20%);
+
+    &:before {
+      transform: translateX(-#{toRem(75)}) rotate(45deg);
+    }
+  }
+
   @include respond-to(medium) {
     &--mobile-moving-right {
       transform: translateX(-20%);
@@ -91,6 +105,7 @@ onMounted(() => {
   color: var(--text-secondary-main);
   position: relative;
   padding: toRem(6);
+  cursor: pointer;
 
   &:hover {
     background-color: var(--secondary-main);

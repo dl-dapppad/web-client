@@ -8,14 +8,13 @@ const breakpoints = useBreakpoints()
 <template>
   <div class="app-footer">
     <app-logo class="app-footer__logo" />
-    <span class="app-footer__copyright">
-      {{ $t('app-footer.copyright') }}
-    </span>
     <app-button
-      class="app-footer__terms-link"
-      :icon-left="$icons.questionMarkCircleFilled"
-      :text="$t('app-footer.terms-link')"
+      class="app-footer__github-link"
+      :icon-left="$icons.gitlab"
+      :text="$t('app-footer.gitlab-link')"
       :size="breakpoints.isXSmall.value ? 'small' : 'medium'"
+      href="https://gitlab.com/dapppad"
+      target="blank"
       color="default"
       scheme="default"
     />
@@ -24,10 +23,9 @@ const breakpoints = useBreakpoints()
 
 <style lang="scss" scoped>
 .app-footer {
-  display: grid;
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  grid-template-columns: 1fr 1fr 1fr;
   padding: toRem(30) var(--app-padding-right) toRem(30) var(--app-padding-left);
 
   @include respond-to(small) {
@@ -47,22 +45,7 @@ const breakpoints = useBreakpoints()
   }
 }
 
-.app-footer__copyright {
-  justify-self: center;
-  color: var(--text-secondary-main);
-  font-size: toRem(14);
-  line-height: 1.2;
-  font-weight: 500;
-  letter-spacing: 0;
-
-  @include respond-to(small) {
-    padding: toRem(16) toRem(32);
-  }
-}
-
-.app-footer__terms-link {
-  text-transform: capitalize;
-  justify-self: end;
+.app-footer__github-link {
   font-size: toRem(12);
   line-height: 1;
   font-weight: 700;

@@ -1,72 +1,20 @@
 [
   {
-    "id": "tokens",
-    "type": "category",
-    "subPosts": ["erc20-tokens", "erc721-tokens"],
-    "bannerUrl": "/images/Tokens_Img.png",
-    "imageUrl": "/images/Tokens_Img.png",
-    "title": "Tokens",
-    "chartTitle": "",
-    "chartDescription": "",
-    "description": "Tokens, generally speaking, are non-mineable digital units of value that exist as registry entries in blockchains.",
-    "content": [
-      ["title-accent", "What is a token?"],
-      ["paragraph", "Tokens, generally speaking, are non-mineable digital units of value that exist as registry entries in blockchains."],
-      ["paragraph", "A token within Ethereum, that is not Ether itself, is stored in a smart contract. This all began when someone wrote a smart contract to manage balances. It is literally a mapping of addresses to numbers storing the balance of each address. Yes, it really is that simple."],
-      ["paragraph", "ERC token standards (like ERC-20) are usually just interfaces that your contract (like SimpleBank.sol) must implement if you want your token to be considered as that specific type of token. There are many different standards such as fungible (where one unit is equal to another, like money) and non-fungible (where one unit is not equal to another, like artwork). These standards tell you what your contract needs to implement in order to be considered compliant with the standard. You can have functions that are not included or go above and beyond the standards, however, you must ensure that if you can only communicate with your contract through the standard’s functions that you can still access the functionality. If you are unable to do so, some of your functionality may go unused by wallet users."],
-      ["title-accent", "Why do we need standards?"],
-      ["paragraph", "In traditional tech, if two companies wished to have their apps talk to each other, they would have to make a custom API layer to interact between the two apps. This would be a completely custom API and would not be reusable. If the app wanted to talk to a third app, another API layer would have to be created. If there was a standard in place, no additional work would have to be put in before the apps could communicate with one another."],
-      ["paragraph", "There are thousands of tokens, and without token standards, it would be almost impossible to communicate with each token contract. If a wallet such as Metamask wanted to communicate with multiple tokens, it would need to create an interface for each and every token. This is unscalable. We have standards so that a wallet service can implement one standard that then allows the service to interact with thousands of tokens. It also means that your contract can easily trade with other token contracts."],
-      ["title-accent", "A quick intro to other fungible token standards"],
-      ["paragraph", "ERC-20 is not the only fungible token standard, but it was the first, which means that it does have a few bugs. For example, if you send ERC-20 tokens to a contract and that contract does not implement any functionality to interact with ERC-20 tokens, there is no way to get those tokens back. The tokens are, therefore, “lost”. There is also no way for a contract to revert when it receives ERC-20 tokens because there is no way for it to know when it receives those tokens."],
-      ["paragraph", "For example, if we send DAI to our SimpleBank contract address, there is no way for our SimpleBank to send them back to the sender, or to revert. The only change is in the DAI’s token contract, which doesn’t signal our SimpleBank contract to know that it is being sent tokens. This exact problem has resulted in thousands of tokens being lost."],
-      ["title-accent", "Non-fungible tokens"],
-      ["paragraph", "Non-fungible tokens (NFTs) all have a unique uint256 ID. This ID means that you can trace each token’s history and ownership. It also means you can associate metadata with the token, allowing the token to represent anything with unique properties."],
-      ["paragraph", "ERC-721, which is by far the most widely used standard for NFTs, is quite similar to the ERC-20 contract interface. It has almost exactly the same functions except when a token amount would be specified in ERC-20, the token ID is now specified instead."]
-    ]
-  },
-  {
-    "id": "erc20-tokens",
-    "type": "category",
-    "subPosts": ["erc20-base", "erc20-mint", "erc20-burn", "erc20-mint-burn", "erc20-mint-burn-cap", "erc20-mint-cap"],
-    "bannerUrl": "/images/erc20-cat.png",
-    "imageUrl": "/images/erc20-cat.png",
-    "title": "ERC-20 Tokens",
-    "chartTitle": "",
-    "chartDescription": "",
-    "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
-    "content": [
-      ["title-accent", "A quick intro to fungible token standards"],
-      ["paragraph", "ERC-20 is not the only fungible token standard, but it was the first, which means that it does have a few bugs. For example, if you send ERC-20 tokens to a contract and that contract does not implement any functionality to interact with ERC-20 tokens, there is no way to get those tokens back. The tokens are, therefore, “lost”. There is also no way for a contract to revert when it receives ERC-20 tokens because there is no way for it to know when it receives those tokens."],
-      ["paragraph", "For example, if we send DAI to our SimpleBank contract address, there is no way for our SimpleBank to send them back to the sender, or to revert. The only change is in the DAI’s token contract, which doesn’t signal our SimpleBank contract to know that it is being sent tokens. This exact problem has resulted in thousands of tokens being lost."]
-    ]
-  },
-  {
-    "id": "erc721-tokens",
-    "type": "category",
-    "subPosts": ["erc721-base", "erc721-enum", "erc721-burn", "erc721-burn-enum"],
-    "bannerUrl": "/images/erc721-cat.png",
-    "imageUrl": "/images/erc721-cat.png",
-    "title": "ERC-721 Tokens",
-    "chartTitle": "",
-    "chartDescription": "",
-    "description": "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!",
-    "content": [
-      ["title-accent", "Non-fungible tokens"],
-      ["paragraph", "Non-fungible tokens (NFTs) all have a unique uint256 ID. This ID means that you can trace each token’s history and ownership. It also means you can associate metadata with the token, allowing the token to represent anything with unique properties."],
-      ["paragraph", "ERC721, which is by far the most widely used standard for NFTs, is quite similar to the ERC20 contract interface. It has almost exactly the same functions except when a token amount would be specified in ERC20, the token ID is now specified instead."]
-    ]
-  },
-  {
     "id": "erc20-base",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20.png",
-    "imageUrl": "/images/erc20.png",
     "title": "ERC-20",
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["approve", true],
+      ["transfer", true],
+      ["transfer-from", true],
+      ["mint", false],
+      ["burn", false],
+      ["cap", false]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -81,7 +29,6 @@
       ["paragraph", "While Ether (ETH) is the native cryptocurrency of the Ethereum network, the ERC-20 token represents a specific standard — or set of rules — that developers can follow to make Ethereum-based tokens. They are, in the truest sense, the standard-bearer for the Ethereum and compatible with Ethereum networks."],
       ["paragraph", "This token standard is only for fungible tokens, and not non-fungible tokens (NFTs). As such, one ERC-20 token can be exchanged with another, as they’d have equal value."],
       ["paragraph", "ERC-20 smart contracts use ERC-20 tokens to facilitate transactions when its protocol calls for it. Any smart contract that utilizes transaction functionality will therefore pay the user in the form of an ERC-20 token. Many popular stablecoins, like USDC and DAI, are ERC-20 tokens."],
-      ["image", "/images/ERC20_1.png"],
       ["title-accent", "Which Tokens Are ERC-20?"],
       ["paragraph", "ERC-20 has enabled the creation of many new tokens. These are the 10 largest and most popular ERC-20 tokens by market cap, as of September 2022:"],
       ["unordered-list", ["Binance USD (BUSD)", "Multi-Collateral Dai (DAI)", "Polygon (MATIC)", "SHIBA INU (SHIB)", "Wrapped Bitcoin (WBTC)", "UNUS SED LEO (LEO)", "Uniswap (UNI)", "ChainLink (LINK)", "Cronos (CRO)", "ApeCoin (APE)"]],
@@ -99,20 +46,25 @@
       ["paragraph", "Wallets like these can also be used to interact with other blockchain-based platforms, such as DeFi apps and NFT marketplaces."],
       ["paragraph", "Remember, though, that when storing crypto in any wallet, it’s generally considered good practice to back up your private keys and seed phrase. Giving someone else access to your keys or phrase could allow them to take ownership of all the crypto in that wallet."],
       ["title-accent", "The future of ERC-20 tokens"],
-      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."],
-      ["image", "/images/ERC20_2.png"]
+      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."]
     ]
   },
   {
     "id": "erc20-mint",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20-mint.png",
-    "imageUrl": "/images/erc20-mint.png",
     "title": "ERC-20 Mintable",
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["approve", true],
+      ["transfer", true],
+      ["transfer-from", true],
+      ["mint", true],
+      ["burn", false],
+      ["cap", false]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -127,7 +79,6 @@
       ["paragraph", "While Ether (ETH) is the native cryptocurrency of the Ethereum network, the ERC-20 token represents a specific standard — or set of rules — that developers can follow to make Ethereum-based tokens. They are, in the truest sense, the standard-bearer for the Ethereum and compatible with Ethereum networks."],
       ["paragraph", "This token standard is only for fungible tokens, and not non-fungible tokens (NFTs). As such, one ERC-20 token can be exchanged with another, as they’d have equal value."],
       ["paragraph", "ERC-20 smart contracts use ERC-20 tokens to facilitate transactions when its protocol calls for it. Any smart contract that utilizes transaction functionality will therefore pay the user in the form of an ERC-20 token. Many popular stablecoins, like USDC and DAI, are ERC-20 tokens."],
-      ["image", "/images/ERC20_1.png"],
       ["title-accent", "Which Tokens Are ERC-20?"],
       ["paragraph", "ERC-20 has enabled the creation of many new tokens. These are the 10 largest and most popular ERC-20 tokens by market cap, as of September 2022:"],
       ["unordered-list", ["Binance USD (BUSD)", "Multi-Collateral Dai (DAI)", "Polygon (MATIC)", "SHIBA INU (SHIB)", "Wrapped Bitcoin (WBTC)", "UNUS SED LEO (LEO)", "Uniswap (UNI)", "ChainLink (LINK)", "Cronos (CRO)", "ApeCoin (APE)"]],
@@ -145,20 +96,24 @@
       ["paragraph", "Wallets like these can also be used to interact with other blockchain-based platforms, such as DeFi apps and NFT marketplaces."],
       ["paragraph", "Remember, though, that when storing crypto in any wallet, it’s generally considered good practice to back up your private keys and seed phrase. Giving someone else access to your keys or phrase could allow them to take ownership of all the crypto in that wallet."],
       ["title-accent", "The future of ERC-20 tokens"],
-      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."],
-      ["image", "/images/ERC20_2.png"]
-    ]
+      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."]    ]
   },
   {
     "id": "erc20-burn",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20-burn.png",
-    "imageUrl": "/images/erc20-burn.png",
     "title": "ERC-20 Burnable",
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["approve", true],
+      ["transfer", true],
+      ["transfer-from", true],
+      ["mint", false],
+      ["burn", true],
+      ["cap", false]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -173,7 +128,6 @@
       ["paragraph", "While Ether (ETH) is the native cryptocurrency of the Ethereum network, the ERC-20 token represents a specific standard — or set of rules — that developers can follow to make Ethereum-based tokens. They are, in the truest sense, the standard-bearer for the Ethereum and compatible with Ethereum networks."],
       ["paragraph", "This token standard is only for fungible tokens, and not non-fungible tokens (NFTs). As such, one ERC-20 token can be exchanged with another, as they’d have equal value."],
       ["paragraph", "ERC-20 smart contracts use ERC-20 tokens to facilitate transactions when its protocol calls for it. Any smart contract that utilizes transaction functionality will therefore pay the user in the form of an ERC-20 token. Many popular stablecoins, like USDC and DAI, are ERC-20 tokens."],
-      ["image", "/images/ERC20_1.png"],
       ["title-accent", "Which Tokens Are ERC-20?"],
       ["paragraph", "ERC-20 has enabled the creation of many new tokens. These are the 10 largest and most popular ERC-20 tokens by market cap, as of September 2022:"],
       ["unordered-list", ["Binance USD (BUSD)", "Multi-Collateral Dai (DAI)", "Polygon (MATIC)", "SHIBA INU (SHIB)", "Wrapped Bitcoin (WBTC)", "UNUS SED LEO (LEO)", "Uniswap (UNI)", "ChainLink (LINK)", "Cronos (CRO)", "ApeCoin (APE)"]],
@@ -191,20 +145,24 @@
       ["paragraph", "Wallets like these can also be used to interact with other blockchain-based platforms, such as DeFi apps and NFT marketplaces."],
       ["paragraph", "Remember, though, that when storing crypto in any wallet, it’s generally considered good practice to back up your private keys and seed phrase. Giving someone else access to your keys or phrase could allow them to take ownership of all the crypto in that wallet."],
       ["title-accent", "The future of ERC-20 tokens"],
-      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."],
-      ["image", "/images/ERC20_2.png"]
-    ]
+      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."]    ]
   },
   {
     "id": "erc20-mint-burn",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20-mint-burn.png",
-    "imageUrl": "/images/erc20-mint-burn.png",
     "title": "ERC-20 Mint Burn",
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["approve", true],
+      ["transfer", true],
+      ["transfer-from", true],
+      ["mint", true],
+      ["burn", true],
+      ["cap", false]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -219,7 +177,6 @@
       ["paragraph", "While Ether (ETH) is the native cryptocurrency of the Ethereum network, the ERC-20 token represents a specific standard — or set of rules — that developers can follow to make Ethereum-based tokens. They are, in the truest sense, the standard-bearer for the Ethereum and compatible with Ethereum networks."],
       ["paragraph", "This token standard is only for fungible tokens, and not non-fungible tokens (NFTs). As such, one ERC-20 token can be exchanged with another, as they’d have equal value."],
       ["paragraph", "ERC-20 smart contracts use ERC-20 tokens to facilitate transactions when its protocol calls for it. Any smart contract that utilizes transaction functionality will therefore pay the user in the form of an ERC-20 token. Many popular stablecoins, like USDC and DAI, are ERC-20 tokens."],
-      ["image", "/images/ERC20_1.png"],
       ["title-accent", "Which Tokens Are ERC-20?"],
       ["paragraph", "ERC-20 has enabled the creation of many new tokens. These are the 10 largest and most popular ERC-20 tokens by market cap, as of September 2022:"],
       ["unordered-list", ["Binance USD (BUSD)", "Multi-Collateral Dai (DAI)", "Polygon (MATIC)", "SHIBA INU (SHIB)", "Wrapped Bitcoin (WBTC)", "UNUS SED LEO (LEO)", "Uniswap (UNI)", "ChainLink (LINK)", "Cronos (CRO)", "ApeCoin (APE)"]],
@@ -237,20 +194,24 @@
       ["paragraph", "Wallets like these can also be used to interact with other blockchain-based platforms, such as DeFi apps and NFT marketplaces."],
       ["paragraph", "Remember, though, that when storing crypto in any wallet, it’s generally considered good practice to back up your private keys and seed phrase. Giving someone else access to your keys or phrase could allow them to take ownership of all the crypto in that wallet."],
       ["title-accent", "The future of ERC-20 tokens"],
-      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."],
-      ["image", "/images/ERC20_2.png"]
-    ]
+      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."]    ]
   },
   {
     "id": "erc20-mint-burn-cap",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20-mint-burn-cap.png",
-    "imageUrl": "/images/erc20-mint-burn-cap.png",
     "title": "ERC-20 Mint Burn Cap",
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["approve", true],
+      ["transfer", true],
+      ["transfer-from", true],
+      ["mint", true],
+      ["burn", true],
+      ["cap", true]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -265,7 +226,6 @@
       ["paragraph", "While Ether (ETH) is the native cryptocurrency of the Ethereum network, the ERC-20 token represents a specific standard — or set of rules — that developers can follow to make Ethereum-based tokens. They are, in the truest sense, the standard-bearer for the Ethereum and compatible with Ethereum networks."],
       ["paragraph", "This token standard is only for fungible tokens, and not non-fungible tokens (NFTs). As such, one ERC-20 token can be exchanged with another, as they’d have equal value."],
       ["paragraph", "ERC-20 smart contracts use ERC-20 tokens to facilitate transactions when its protocol calls for it. Any smart contract that utilizes transaction functionality will therefore pay the user in the form of an ERC-20 token. Many popular stablecoins, like USDC and DAI, are ERC-20 tokens."],
-      ["image", "/images/ERC20_1.png"],
       ["title-accent", "Which Tokens Are ERC-20?"],
       ["paragraph", "ERC-20 has enabled the creation of many new tokens. These are the 10 largest and most popular ERC-20 tokens by market cap, as of September 2022:"],
       ["unordered-list", ["Binance USD (BUSD)", "Multi-Collateral Dai (DAI)", "Polygon (MATIC)", "SHIBA INU (SHIB)", "Wrapped Bitcoin (WBTC)", "UNUS SED LEO (LEO)", "Uniswap (UNI)", "ChainLink (LINK)", "Cronos (CRO)", "ApeCoin (APE)"]],
@@ -283,20 +243,24 @@
       ["paragraph", "Wallets like these can also be used to interact with other blockchain-based platforms, such as DeFi apps and NFT marketplaces."],
       ["paragraph", "Remember, though, that when storing crypto in any wallet, it’s generally considered good practice to back up your private keys and seed phrase. Giving someone else access to your keys or phrase could allow them to take ownership of all the crypto in that wallet."],
       ["title-accent", "The future of ERC-20 tokens"],
-      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."],
-      ["image", "/images/ERC20_2.png"]
-    ]
+      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."]    ]
   },
   {
     "id": "erc20-mint-cap",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc20-mint-cap.png",
-    "imageUrl": "/images/erc20-mint-cap.png",
     "title": "ERC-20 Mint Cap",
     "description": "The ERC-20 introduces a standard for Fungible Tokens, in other words, they have a property that makes each Token be exactly the same (in type and value) as another Token. For example, an ERC-20 Token acts just like the ETH, meaning that 1 Token is and will always be equal to all the other Tokens.",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["approve", true],
+      ["transfer", true],
+      ["transfer-from", true],
+      ["mint", true],
+      ["burn", false],
+      ["cap", true]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -311,7 +275,6 @@
       ["paragraph", "While Ether (ETH) is the native cryptocurrency of the Ethereum network, the ERC-20 token represents a specific standard — or set of rules — that developers can follow to make Ethereum-based tokens. They are, in the truest sense, the standard-bearer for the Ethereum and compatible with Ethereum networks."],
       ["paragraph", "This token standard is only for fungible tokens, and not non-fungible tokens (NFTs). As such, one ERC-20 token can be exchanged with another, as they’d have equal value."],
       ["paragraph", "ERC-20 smart contracts use ERC-20 tokens to facilitate transactions when its protocol calls for it. Any smart contract that utilizes transaction functionality will therefore pay the user in the form of an ERC-20 token. Many popular stablecoins, like USDC and DAI, are ERC-20 tokens."],
-      ["image", "/images/ERC20_1.png"],
       ["title-accent", "Which Tokens Are ERC-20?"],
       ["paragraph", "ERC-20 has enabled the creation of many new tokens. These are the 10 largest and most popular ERC-20 tokens by market cap, as of September 2022:"],
       ["unordered-list", ["Binance USD (BUSD)", "Multi-Collateral Dai (DAI)", "Polygon (MATIC)", "SHIBA INU (SHIB)", "Wrapped Bitcoin (WBTC)", "UNUS SED LEO (LEO)", "Uniswap (UNI)", "ChainLink (LINK)", "Cronos (CRO)", "ApeCoin (APE)"]],
@@ -329,20 +292,25 @@
       ["paragraph", "Wallets like these can also be used to interact with other blockchain-based platforms, such as DeFi apps and NFT marketplaces."],
       ["paragraph", "Remember, though, that when storing crypto in any wallet, it’s generally considered good practice to back up your private keys and seed phrase. Giving someone else access to your keys or phrase could allow them to take ownership of all the crypto in that wallet."],
       ["title-accent", "The future of ERC-20 tokens"],
-      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."],
-      ["image", "/images/ERC20_2.png"]
-    ]
+      ["paragraph", "ERC-20 tokens are widely used and their traction will continue as long as Ethereum Virtual Machine compatible networks maintain its status."]    ]
   },
   {
     "id": "erc721-base",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc721-base.png",
-    "imageUrl": "/images/erc721-base.png",
     "title": "ERC-721",
     "description": "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["set-base-u-r-i", true],
+      ["approve", true],
+      ["approve-all", true],
+      ["mint", true],
+      ["burn", false],
+      ["safe-transfer", true],
+      ["enum", false]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -353,11 +321,9 @@
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
       ["paragraph", "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!"],
-      ["image", "../static/images/ERC721_1.png"],
       ["title-accent", "What is ERC-721?"],
       ["paragraph", "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?"],
       ["paragraph", "Yes! All NFTs have a uint256 variable called tokenId, so for any ERC-721 Contract, the pair contract address, uint256 tokenId must be globally unique. That said, a dapp can have a \"converter\" that uses the tokenId as input and outputs an image of something cool, like zombies, weapons, skills or amazing kitties!"],
-      ["image", "../static/images/ERC721_2.png"],
       ["title-accent", "Who invented ERC-721?"],
       ["paragraph", "The initial ERC-721 specification was proposed by Dieter Shirley as an Ethereum Improvement Proposal (EIP), which is a process for introducing new standards to Ethereum."],
       ["paragraph", "Anyone can submit an EIP, but it goes through a process of review and revision before it is accepted by the community. Once accepted, the EIP moves to an Ethereum Request for Comments (ERC), which is a standard process for Ethereum applications. The official authors of the ERC-721 standard are William Entriken, Dieter Shirley, Jacob Evans, and Nastassia Sachs."],
@@ -392,14 +358,21 @@
   ,
   {
     "id": "erc721-enum",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc721-enum.png",
-    "imageUrl": "/images/erc721-enum.png",
     "title": "ERC-721 Enumerable",
     "description": "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["set-base-u-r-i", true],
+      ["approve", true],
+      ["approve-all", true],
+      ["mint", true],
+      ["burn", false],
+      ["safe-transfer", true],
+      ["enum", true]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -410,11 +383,9 @@
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
       ["paragraph", "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!"],
-      ["image", "../static/images/ERC721_1.png"],
       ["title-accent", "What is ERC-721?"],
       ["paragraph", "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?"],
       ["paragraph", "Yes! All NFTs have a uint256 variable called tokenId, so for any ERC-721 Contract, the pair contract address, uint256 tokenId must be globally unique. That said, a dapp can have a \"converter\" that uses the tokenId as input and outputs an image of something cool, like zombies, weapons, skills or amazing kitties!"],
-      ["image", "../static/images/ERC721_2.png"],
       ["title-accent", "Who invented ERC-721?"],
       ["paragraph", "The initial ERC-721 specification was proposed by Dieter Shirley as an Ethereum Improvement Proposal (EIP), which is a process for introducing new standards to Ethereum."],
       ["paragraph", "Anyone can submit an EIP, but it goes through a process of review and revision before it is accepted by the community. Once accepted, the EIP moves to an Ethereum Request for Comments (ERC), which is a standard process for Ethereum applications. The official authors of the ERC-721 standard are William Entriken, Dieter Shirley, Jacob Evans, and Nastassia Sachs."],
@@ -448,14 +419,21 @@
   },
   {
     "id": "erc721-burn",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc721-burn.png",
-    "imageUrl": "/images/erc721-burn.png",
     "title": "ERC-721 Burnable",
     "description": "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["set-base-u-r-i", true],
+      ["approve", true],
+      ["approve-all", true],
+      ["mint", true],
+      ["burn", true],
+      ["safe-transfer", true],
+      ["enum", false]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -466,11 +444,9 @@
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
       ["paragraph", "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!"],
-      ["image", "../static/images/ERC721_1.png"],
       ["title-accent", "What is ERC-721?"],
       ["paragraph", "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?"],
       ["paragraph", "Yes! All NFTs have a uint256 variable called tokenId, so for any ERC-721 Contract, the pair contract address, uint256 tokenId must be globally unique. That said, a dapp can have a \"converter\" that uses the tokenId as input and outputs an image of something cool, like zombies, weapons, skills or amazing kitties!"],
-      ["image", "../static/images/ERC721_2.png"],
       ["title-accent", "Who invented ERC-721?"],
       ["paragraph", "The initial ERC-721 specification was proposed by Dieter Shirley as an Ethereum Improvement Proposal (EIP), which is a process for introducing new standards to Ethereum."],
       ["paragraph", "Anyone can submit an EIP, but it goes through a process of review and revision before it is accepted by the community. Once accepted, the EIP moves to an Ethereum Request for Comments (ERC), which is a standard process for Ethereum applications. The official authors of the ERC-721 standard are William Entriken, Dieter Shirley, Jacob Evans, and Nastassia Sachs."],
@@ -504,14 +480,21 @@
   },
   {
     "id": "erc721-burn-enum",
-    "type": "product",
-    "subPosts": [],
-    "bannerUrl": "/images/erc721-burn-enum.png",
-    "imageUrl": "/images/erc721-burn-enum.png",
     "title": "ERC-721 Burn Enum",
     "description": "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?",
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
+    "checklist": [
+      ["owner", true],
+      ["transfer-ownership", true],
+      ["set-base-u-r-i", true],
+      ["approve", true],
+      ["approve-all", true],
+      ["mint", true],
+      ["burn", true],
+      ["safe-transfer", true],
+      ["enum", true]
+    ],
     "infoDescriptionContent": [
       ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
       ["title", "About Upgradeability"],
@@ -522,11 +505,9 @@
     "content": [
       ["title-accent", "What is a Non-Fungible Token?"],
       ["paragraph", "A Non-Fungible Token (NFT) is used to identify something or someone in a unique way. This type of Token is perfect to be used on platforms that offer collectible items, access keys, lottery tickets, numbered seats for concerts and sports matches, etc. This special type of Token has amazing possibilities so it deserves a proper Standard, the ERC-721 came to solve that!"],
-      ["image", "../static/images/ERC721_1.png"],
       ["title-accent", "What is ERC-721?"],
       ["paragraph", "The ERC-721 introduces a standard for NFT, in other words, this type of Token is unique and can have different value than another Token from the same Smart Contract, maybe due to its age, rarity or even something else like its visual. Wait, visual?"],
       ["paragraph", "Yes! All NFTs have a uint256 variable called tokenId, so for any ERC-721 Contract, the pair contract address, uint256 tokenId must be globally unique. That said, a dapp can have a \"converter\" that uses the tokenId as input and outputs an image of something cool, like zombies, weapons, skills or amazing kitties!"],
-      ["image", "../static/images/ERC721_2.png"],
       ["title-accent", "Who invented ERC-721?"],
       ["paragraph", "The initial ERC-721 specification was proposed by Dieter Shirley as an Ethereum Improvement Proposal (EIP), which is a process for introducing new standards to Ethereum."],
       ["paragraph", "Anyone can submit an EIP, but it goes through a process of review and revision before it is accepted by the community. Once accepted, the EIP moves to an Ethereum Request for Comments (ERC), which is a standard process for Ethereum applications. The official authors of the ERC-721 standard are William Entriken, Dieter Shirley, Jacob Evans, and Nastassia Sachs."],
