@@ -361,6 +361,7 @@ button.app__submit-btn {
 }
 
 .app__module-subtitle {
+  text-align: end;
   font-family: var(--app-font-family-secondary);
   font-size: toRem(30);
   font-weight: 700;
@@ -368,6 +369,7 @@ button.app__submit-btn {
   align-self: center;
 
   @include respond-to(medium) {
+    text-align: start;
     justify-self: start;
     grid-row: 3;
     font-size: toRem(24);

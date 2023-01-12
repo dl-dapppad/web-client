@@ -5,3 +5,7 @@ export interface OverviewRow {
   value: string
   type: OVERVIEW_ROW
 }
+
+export interface OverviewRowWithId extends OverviewRow {
+  id: string
+}
