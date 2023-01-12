@@ -1,11 +1,8 @@
 export type Post = {
   id: string
-  type: 'category' | 'product'
-  subPosts: string[]
-  bannerUrl: string
-  imageUrl: string
   title: string
   description: string
+  checklist?: [string, boolean][]
   chartTitle: string
   chartDescription: string
   content: [string, string][]

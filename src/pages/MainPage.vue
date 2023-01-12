@@ -1,391 +1,416 @@
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
 import { AppBlock, AppButton } from '@/common'
-import { CATEGORIES_IDS, PRODUCT_IDS } from '@/enums'
-import { useBreakpoints } from '@/composables'
-import ImgMainTitle from '/static/images/MainTitle.png'
-import ImgMainTitleMobile from '/static/images/MainTitleMobile.png'
-import ImgMainPage1 from '/static/images/MainPage_1.png'
-import ImgMainPage1Mobile from '/static/images/MainPage_1Mobile.png'
+import ProductCard from '@/pages/MainPage/ProductCard.vue'
 
-const router = useRouter()
-const breakpoints = useBreakpoints()
+const countOfCards = ref<number>(3)
+
+const productCards = [
+  {
+    id: 'erc20-base',
+    imgPosition: 'right bottom',
+  },
+  {
+    id: 'erc721-base',
+    imgPosition: 'left bottom',
+  },
+  {
+    id: 'erc20-mint',
+    imgPosition: 'right top',
+  },
+  {
+    id: 'erc20-burn',
+    imgPosition: 'left bottom',
+  },
+  {
+    id: 'erc721-burn',
+    imgPosition: '25% 75%',
+  },
+  {
+    id: 'erc721-enum',
+    imgPosition: 'right top',
+  },
+  {
+    id: 'erc20-mint-cap',
+    imgPosition: 'left top',
+  },
+  {
+    id: 'erc20-mint-burn',
+    imgPosition: 'center',
+  },
+  {
+    id: 'erc721-burn-enum',
+    imgPosition: 'right bottom',
+  },
+  {
+    id: 'erc20-mint-burn-cap',
+    imgPosition: '25% 75%',
+  },
+]
+
+const instruction = [
+  [
+    [
+      'text',
+      'To start working with Dapppad, connect your MetaMask wallet and switch to Goerli test network',
+    ],
+    ['img', '/images/MainPageInstruction_1.png'],
+  ],
+  [
+    [
+      'text',
+      'Choose the product you want to deploy, accept the current price and press “Deploy now”',
+    ],
+    ['img', '/images/MainPageInstruction_2.png'],
+  ],
+  [
+    [
+      'text',
+      'Choose payment token and define product deployment parameters then press "Deploy"',
+    ],
+    ['img', '/images/MainPageInstruction_3.png'],
+    [
+      'text',
+      'For Goerli test net you can mint payment token if you don’t have one. This option will be available after selecting a payment token.',
+    ],
+    ['img', '/images/MainPageInstruction_3-2.png'],
+  ],
+  [
+    ['text', 'Wait while “Transaction processing...”'],
+    ['img', '/images/MainPageInstruction_4.png'],
+    [
+      'text',
+      'Your product is deployed on blockchain and payment is withdrawn from your address. You were also given a certain amount of DAPP token.',
+    ],
+    ['img', '/images/MainPageInstruction_4-2.png'],
+    [
+      'text',
+      'You may close the window or press “Go to edit" to interact with the product.',
+    ],
+  ],
+  [
+    [
+      'text',
+      'After “Go to edit” in “Editing” you may, for example, send "Approve" or "Transfer" transaction token transactions or make any other allowed product modification and use.',
+    ],
+    ['img', '/images/MainPageInstruction_5.png'],
+  ],
+  [
+    [
+      'text',
+      'For each product purchase you are eligible and receive DAPP tokens',
+    ],
+    ['img', '/images/MainPageInstruction_6.png'],
+    [
+      'text',
+      '1 DAPP token is equal to 1 USD spent on cashback distributed to previous buyers. And you can also stake DAPP tokens and receive cashback from each next product purchase on Dapppad. Press the “Cashback” button',
+    ],
+    ['img', '/images/MainPageInstruction_6-2.png'],
+  ],
+  [
+    [
+      'text',
+      'Press “STAKE” and stake your DAPP token current balance and approve staking transaction in MetaMask',
+    ],
+    ['img', '/images/MainPageInstruction_7.png'],
+  ],
+  [
+    [
+      'text',
+      'After each next purchase by anyone else on Dapppad you are eligible to receive cashback rewards on your staked DAPP tokens and may claim these rewards by clicking “Claim” button',
+    ],
+    ['img', '/images/MainPageInstruction_8.png'],
+  ],
+  [
+    [
+      'link',
+      'The more you buy on Dapppad the more DAPP tokens you receive. The more DAPP tokens you receive and stake the more cashbacks from future Dapppad sales you receive. You may always withdraw the DAPP token from staking on Cashback page <a class="main-page__instruction-block-link" href="cashback">here</a>.',
+    ],
+    ['img', '/images/MainPageInstruction_9.png'],
+  ],
+]
+
+const handleShowMore = () => {
+  countOfCards.value += 3
+
+  if (countOfCards.value > productCards.length)
+    countOfCards.value = productCards.length
+}
+
+const handleShowLess = () => {
+  if (
+    countOfCards.value === productCards.length &&
+    productCards.length % 3 !== 0
+  )
+    countOfCards.value -= productCards.length % 3
+  else countOfCards.value -= 3
+
+  if (countOfCards.value < 3) countOfCards.value = 3
+}
 </script>
 
 <template>
   <div class="main-page">
     <img
-      class="main-page__title-img"
-      :src="breakpoints.isSmall.value ? ImgMainTitleMobile : ImgMainTitle"
+      src="/images/MainPageAdditional_1.png"
+      class="main-page__additional-img main-page__additional-img--first"
     />
-    <div class="main-page__content">
-      <div class="main-page__rows">
-        <div class="main-page__row">
-          <app-block class="main-page__row-block">
-            <div class="main-page__row-block-inner">
-              <span class="main-page__row-title">
-                {{ $t('main-page.first-block-title') }}
-              </span>
-              <span class="main-page__row-description">
-                {{ $t('main-page.first-block-description') }}
-              </span>
-              <app-button
-                class="main-page__row-button"
-                :text="$t('main-page.first-block-btn')"
-                size="small"
-                @click="
-                  router.push({
-                    name: $routes.categories,
-                    params: { id: CATEGORIES_IDS.tokens },
-                  })
-                "
-              />
-            </div>
-          </app-block>
-          <img
-            class="main-page__row-img"
-            :src="
-              breakpoints.isMedium.value ? ImgMainPage1Mobile : ImgMainPage1
-            "
-          />
-        </div>
-        <div class="main-page__row main-page__row--inverted">
-          <app-block class="main-page__row-block">
-            <div class="main-page__row-block-inner">
-              <span class="main-page__row-title">
-                {{ $t('main-page.second-block-title') }}
-              </span>
-              <span class="main-page__row-description">
-                {{ $t('main-page.second-block-description') }}
-              </span>
-              <app-button
-                class="main-page__row-button"
-                :text="$t('main-page.second-block-btn')"
-                size="small"
-                @click="
-                  router.push({
-                    name: $routes.product,
-                    params: { id: PRODUCT_IDS.erc20Base },
-                  })
-                "
-              />
-            </div>
-          </app-block>
-          <img class="main-page__row-img" src="/static/images/MainPage_2.png" />
-        </div>
-        <div class="main-page__row">
-          <app-block class="main-page__row-block">
-            <div class="main-page__row-block-inner">
-              <span class="main-page__row-title">
-                {{ $t('main-page.third-block-title') }}
-              </span>
-              <span class="main-page__row-description">
-                {{ $t('main-page.third-block-description') }}
-              </span>
-              <app-button
-                class="main-page__row-button"
-                :text="$t('main-page.third-block-btn')"
-                size="small"
-                @click="
-                  router.push({
-                    name: $routes.product,
-                    params: { id: PRODUCT_IDS.erc721Base },
-                  })
-                "
-              />
-            </div>
-          </app-block>
-          <img
-            class="main-page__row-img main-page__row-img--mobile-up"
-            src="/static/images/MainPage_3.png"
-          />
-        </div>
-        <div class="main-page__row main-page__row--inverted">
-          <div class="main-page__row-block">
-            <div class="main-page__row-block-inner">
-              <span class="main-page__row-title">
-                {{ $t('main-page.fourth-block-title') }}
-              </span>
-              <span class="main-page__row-description">
-                {{ $t('main-page.fourth-block-description') }}
-              </span>
-              <app-button
-                class="main-page__row-button"
-                :text="$t('main-page.fourth-block-btn')"
-                size="small"
-                :href="'https://distributedlab.com/'"
-              />
-            </div>
-          </div>
-          <img
-            class="main-page__row-img main-page__row-img--low-translate"
-            src="/static/images/MainPage_4.png"
-          />
-        </div>
-      </div>
-      <div class="main-page__people">
-        <app-block class="main-page__people-block">
-          <div class="main-page__people-item">
-            <img
-              class="main-page__people-img"
-              src="/static/images/MainPage_People1.png"
-            />
-            <div class="main-page__people-description">
-              <div class="main-page__people-title">
-                <div class="main-page__people-name">
-                  {{ $t('main-page.first-people-name') }}
-                </div>
-                <div class="main-page__people-surname">
-                  {{ $t('main-page.first-people-surname') }}
-                </div>
-              </div>
-              <div class="main-page__people-subtitle">
-                {{ $t('main-page.first-people-subtitle') }}
-              </div>
-            </div>
-          </div>
-        </app-block>
-        <app-block class="main-page__people-block">
-          <div class="main-page__people-item">
-            <img
-              class="main-page__people-img"
-              src="/static/images/MainPage_People2.png"
-            />
-            <div class="main-page__people-description">
-              <div class="main-page__people-title">
-                <div class="main-page__people-name">
-                  {{ $t('main-page.second-people-name') }}
-                </div>
-                <div class="main-page__people-surname">
-                  {{ $t('main-page.second-people-surname') }}
-                </div>
-              </div>
-              <div class="main-page__people-subtitle">
-                {{ $t('main-page.second-people-subtitle') }}
-              </div>
-            </div>
-          </div>
-        </app-block>
-        <app-block class="main-page__people-block">
-          <div class="main-page__people-item">
-            <img
-              class="main-page__people-img"
-              src="/static/images/MainPage_People3.png"
-            />
-            <div class="main-page__people-description">
-              <div class="main-page__people-title">
-                <div class="main-page__people-name">
-                  {{ $t('main-page.third-people-name') }}
-                </div>
-                <div class="main-page__people-surname">
-                  {{ $t('main-page.third-people-surname') }}
-                </div>
-              </div>
-              <div class="main-page__people-subtitle">
-                {{ $t('main-page.third-people-subtitle') }}
-              </div>
-            </div>
-          </div>
+    <img
+      src="/images/MainPageAdditional_2.png"
+      class="main-page__additional-img main-page__additional-img--second"
+    />
+    <img
+      src="/images/MainPageAdditional_3.png"
+      class="main-page__additional-img main-page__additional-img--third"
+    />
+    <img
+      src="/images/MainPageAdditional_4.png"
+      class="main-page__additional-img main-page__additional-img--fourth"
+    />
+    <h1 class="app__module-title main-page__heading">
+      {{ $t('main-page.our-products') }}
+    </h1>
+    <div class="main-page__product-cards">
+      <div class="main-page__product-card-wrp">
+        <app-block
+          v-for="card in productCards.slice(0, countOfCards)"
+          :key="card.id"
+        >
+          <product-card :data="card" />
         </app-block>
       </div>
-      <span class="main-page__under-people-description">
-        {{ $t('main-page.people-description') }}
-      </span>
-      <img class="main-page__sphere-logo" src="/static/images/MainPage_5.svg" />
+      <div class="main-page__product-buttons">
+        <app-button
+          v-if="countOfCards !== productCards.length"
+          class="main-page__product-btn"
+          color="tertiary"
+          size="large"
+          :text="$t('main-page.show-more-btn')"
+          @click="handleShowMore"
+        />
+        <app-button
+          v-if="countOfCards !== 3"
+          class="main-page__product-btn"
+          color="tertiary"
+          size="large"
+          :text="$t('main-page.show-less-btn')"
+          @click="handleShowLess"
+        />
+      </div>
     </div>
+    <h1 class="app__module-title main-page__heading">
+      {{ $t('main-page.instruction-lbl') }}
+    </h1>
+    <div class="main-page__instruction">
+      <app-block
+        class="main-page__instruction-block-wrp"
+        v-for="(block, blockInd) in instruction"
+        :key="blockInd"
+      >
+        <div class="main-page__instruction-block">
+          <div
+            class="main-page__instruction-block-row"
+            v-for="(row, rowInd) in block"
+            :key="rowInd"
+          >
+            <div
+              class="main-page__instruction-block-number"
+              v-if="rowInd === 0"
+            >
+              {{ blockInd + 1 }}
+            </div>
+            <div
+              v-if="row[0] === 'text'"
+              class="main-page__instruction-block-row-text"
+            >
+              {{ row[1] }}
+            </div>
+            <!-- eslint-disable -->
+            <div
+              v-else-if="row[0] === 'link'"
+              class="main-page__instruction-block-row-text"
+              v-html="row[1]"
+            />
+            <!-- eslint-enable -->
+            <img
+              v-else-if="row[0] === 'img'"
+              class="main-page__instruction-block-row-image"
+              :src="row[1]"
+            />
+          </div>
+        </div>
+      </app-block>
+    </div>
+    <img class="main-page__logo" src="/images/MainPageLogo.svg" alt="" />
   </div>
 </template>
 
-<style lang="scss" scoped>
-.main-page__title-img {
-  width: 100%;
-}
+<style lang="scss">
+$z-index: 1;
 
-.main-page__content {
+.main-page {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: toRem(70);
 }
 
-.main-page__row-block-inner {
+.main-page__heading {
+  padding: toRem(50) 0;
+  z-index: $z-index;
+}
+
+.main-page__product-cards {
   display: flex;
   flex-direction: column;
-  gap: toRem(30);
-  padding: toRem(40) toRem(70);
-
-  @include respond-to(xmedium) {
-    padding: toRem(40) toRem(60);
-  }
-
-  @include respond-to(small) {
-    padding: toRem(40) toRem(30);
-  }
-}
-
-.main-page__row-img {
-  transform: translateX(-#{toRem(125)});
-  max-width: toRem(544);
-
-  @include respond-to(medium) {
-    width: 100%;
-    transform: translate(0, 25%);
-
-    &--mobile-up {
-      transform: translateY(15%);
-    }
-  }
-}
-
-.main-page__row {
-  display: flex;
-  justify-content: space-between;
+  gap: toRem(36);
   align-items: center;
-  position: relative;
-
-  &--inverted {
-    flex-direction: row-reverse;
-
-    .main-page__row-block-inner {
-      align-items: end;
-      text-align: end;
-
-      @include respond-to(medium) {
-        align-items: start;
-        text-align: start;
-      }
-    }
-
-    .main-page__row-img {
-      transform: translateX(25%);
-
-      @include respond-to(medium) {
-        transform: translate(0, 17.5%);
-      }
-
-      &--low-translate {
-        transform: translateX(10%);
-
-        @include respond-to(medium) {
-          padding-top: toRem(70);
-        }
-      }
-    }
-  }
-
-  @include respond-to(medium) {
-    flex-direction: column-reverse;
-  }
+  padding-bottom: toRem(50);
+  z-index: $z-index;
 }
 
-.main-page__row-block {
-  max-width: toRem(1125);
-  width: 100%;
-}
-
-.main-page__row-title {
-  font-family: var(--app-font-family-secondary);
-  font-weight: 900;
-  font-size: toRem(70);
-
-  @include respond-to(medium) {
-    font-size: toRem(36);
-  }
-}
-
-$description-z-index: 5;
-
-.main-page__row-description {
-  font-size: toRem(20);
-  line-height: toRem(26);
-  z-index: $description-z-index;
-
-  @include respond-to(medium) {
-    font-size: toRem(16);
-  }
-}
-
-.main-page__row-button {
-  @include respond-to(medium) {
-    width: 100%;
-  }
-}
-
-.main-page__people {
+.main-page__product-card-wrp {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
 
-  @include respond-to(xmedium) {
+  @include respond-to(medium) {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
   }
 }
 
-.main-page__people-block {
-  &:not(:last-child) {
-    padding-right: 0;
-
-    @include respond-to(xmedium) {
-      padding-right: toRem(1);
-      padding-bottom: 0;
-    }
-  }
-}
-
-.main-page__people-item {
+.main-page__product-buttons {
   display: flex;
-  flex-direction: column;
   gap: toRem(40);
-  padding: toRem(40) toRem(46);
 
-  @include respond-to(small) {
-    padding: toRem(40) toRem(20);
+  @include respond-to(medium) {
+    flex-direction: column;
+    width: 100%;
+    gap: toRem(24);
   }
 }
 
-.main-page__people-img {
-  @include respond-to(large) {
+.main-page__product-btn {
+  width: toRem(400);
+  padding: toRem(16) 0;
+
+  @include respond-to(medium) {
     width: 100%;
   }
 }
 
-.main-page__people-description {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: toRem(10);
-}
-
-.main-page__people-title {
-  font-family: var(--app-font-family-secondary);
-  font-size: toRem(36);
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  text-align: center;
-  word-spacing: toRem(99999);
-
-  @include respond-to(xmedium) {
-    font-size: toRem(30);
-    font-weight: 700;
-    word-spacing: normal;
-  }
-}
-
-.main-page__under-people-description {
-  max-width: toRem(990);
-  text-align: center;
-  font-size: toRem(20);
-  line-height: toRem(26);
+.main-page__instruction {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  z-index: $z-index;
 
   @include respond-to(medium) {
-    font-size: toRem(16);
+    grid-template-columns: 1fr;
   }
 }
 
-.main-page__sphere-logo {
-  max-width: toRem(375);
+.main-page__instruction-block {
+  padding: toRem(20);
+  display: flex;
+  flex-direction: column;
+  gap: toRem(20);
+}
+
+.main-page__instruction-block-row-text {
   width: 100%;
-  padding: 0 toRem(40) toRem(70);
+  padding-top: toRem(8);
+  line-height: 1.3;
+}
+
+.main-page__instruction-block-wrp {
+  &:last-child:nth-child(2n + 1) {
+    grid-column: 1 / -1;
+
+    .main-page__instruction-block {
+      flex-direction: row;
+      gap: toRem(200);
+
+      .main-page__instruction-block-row-text {
+        max-width: toRem(485);
+        align-self: start;
+      }
+
+      @include respond-to(medium) {
+        flex-direction: column;
+        gap: toRem(20);
+      }
+    }
+  }
+}
+
+.main-page__instruction-block-row {
+  display: flex;
+  gap: toRem(16);
+  align-items: center;
+  justify-content: center;
+}
+
+.main-page__instruction-block-number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: start;
+  min-width: toRem(50);
+  min-height: toRem(50);
+  max-width: toRem(50);
+  max-height: toRem(50);
+  background-color: var(--primary-main);
+  color: var(--text-primary-invert-main);
+  font-size: toRem(30);
+  font-family: var(--app-font-family-secondary);
+  font-weight: 700;
+}
+
+.main-page__instruction-block-row-image {
+  max-width: 80%;
+
+  @include respond-to(medium) {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.main-page__instruction-block-link {
+  color: var(--secondary-main);
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+.main-page__logo {
+  width: 100%;
+  max-width: toRem(300);
+  padding: toRem(75) 0;
+  align-self: center;
+}
+
+.main-page__additional-img {
+  position: absolute;
+
+  &--first {
+    right: 0;
+    opacity: 0.5;
+    filter: blur(#{toRem(5)});
+  }
+
+  &--second {
+    left: 0;
+    top: toRem(770);
+  }
+
+  &--third {
+    right: 0;
+    top: toRem(1270);
+    opacity: 0.5;
+    filter: blur(#{toRem(5)});
+  }
+
+  &--fourth {
+    right: 0;
+    top: toRem(3300);
+  }
 }
 </style>

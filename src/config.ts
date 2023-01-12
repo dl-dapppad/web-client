@@ -10,6 +10,7 @@ export const config = {
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
   AVAILABLE_CHAINS: [ETHEREUM_CHAINS.goerli] as string[],
   URL_SUBGRAPH: import.meta.env.VITE_APP_URL_SUBGRAPH,
+  ETHERSCAN_API_KEY: import.meta.env.VITE_APP_ETHERSCAN_API_KEY,
   RPC_URL: {
     [ETHEREUM_CHAINS.goerli as string]: import.meta.env.VITE_APP_RPC_URL_GOERLI,
   },

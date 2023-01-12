@@ -9,7 +9,7 @@ export const existGuard = (
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) => {
-  const posts = postsData as Post[]
+  const posts = postsData as unknown as Post[]
 
   if (!to?.params?.id) next(ROUTE_NAMES.notFound)
 
@@ -17,13 +17,6 @@ export const existGuard = (
   if (!post) next(ROUTE_NAMES.notFound)
 
   if (
-    post?.type === 'category' &&
-    !['categories', 'category'].includes(to.name as string)
-  )
-    next(ROUTE_NAMES.notFound)
-
-  if (
-    post?.type === 'product' &&
     !['product', 'product-deploy', 'product-edit'].includes(to.name as string)
   )
     next(ROUTE_NAMES.notFound)

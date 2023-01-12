@@ -406,8 +406,8 @@ onMounted(() => init())
                       <span class="app__row-title">
                         {{
                           $t('product-deploy.default.product-swap-price', {
-                            fromSymbol: productPaymentToken.symbol,
-                            toSymbol: selectedPaymentToken.symbol,
+                            fromSymbol: selectedPaymentToken.symbol,
+                            toSymbol: productPaymentToken.symbol,
                           })
                         }}
                       </span>

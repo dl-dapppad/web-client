@@ -164,7 +164,18 @@ const init = async () => {
 }
 
 const updateBalance = async () => {
-  if (!overviewRows.value || !provider.value.selectedAddress) return
+  if (!overviewRows.value) return
+  await erc20?.updateTotalSupply()
+
+  overviewRows.value[
+    overviewRows.value.map(i => i.id).indexOf('total-supply')
+  ].value = formatAmount(
+    erc20.totalSupply.value,
+    erc20?.decimals.value,
+    erc20?.symbol.value,
+  )
+
+  if (!provider.value.selectedAddress) return
 
   overviewRows.value[
     overviewRows.value.map(i => i.id).indexOf('balance')

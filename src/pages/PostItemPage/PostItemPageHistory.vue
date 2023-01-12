@@ -17,6 +17,14 @@ import { config } from '@/config'
 import { WINDOW_BREAKPOINTS } from '@/enums'
 import { formatAmount, formatDMYTime } from '@/helpers'
 
+enum EMITS {
+  updateHistoryState = 'update-history-state',
+}
+
+const emits = defineEmits<{
+  (e: EMITS.updateHistoryState, value: boolean): void
+}>()
+
 type History = {
   data: ApolloDeployedProducts | undefined
   loaded: boolean
@@ -79,6 +87,7 @@ const initApollo = () => {
   if (!alias.value || !provider.value.chainId) return
 
   history.value.loaded = false
+  emits(EMITS.updateHistoryState, history.value.loaded)
 
   apollo.getDeployedProducts(
     alias.value,
@@ -105,7 +114,13 @@ watch(apollo.deployedProducts, () => {
   }
 
   history.value.loaded = true
+  emits(EMITS.updateHistoryState, history.value.loaded)
 })
+
+watch(
+  () => route.params.id,
+  () => init(),
+)
 
 init()
 </script>

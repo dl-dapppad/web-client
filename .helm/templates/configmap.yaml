@@ -13,6 +13,7 @@ data:
                                 VITE_APP_AVAILABLE_CHAINS: ['5'],
                                 VITE_APP_URL_SUBGRAPH:
                                   'https://api.thegraph.com/subgraphs/name/fedoken/dapppad-v1',
+                                VITE_APP_ETHERSCAN_API_KEY: '83IDGPBDEWFRWHYE1W5MK6K1F5FN296596',
                                 VITE_APP_RPC_URL: {
                                   '5': 'https://goerli.infura.io/v3/',
                                 },

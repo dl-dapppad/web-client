@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
@@ -11,24 +11,22 @@ import {
   useProductFactory,
   useFarming,
   Product,
-  useProduct,
   useChart,
 } from '@/composables'
 import {
   AppButton,
   AppBlock,
-  Icon,
   LineChart,
   InfoTooltip,
   AddressCopy,
   Loader,
+  ProductChecklist,
+  GasFee,
 } from '@/common'
 import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
-import { InputField } from '@/fields'
-import { useI18n } from 'vue-i18n'
 
-defineProps<{
+const props = defineProps<{
   post: Post
 }>()
 
@@ -40,12 +38,7 @@ const dapp = useErc20()
 const paymentToken = useErc20()
 const factory = useProductFactory()
 const farming = useFarming()
-const composableProduct = useProduct()
 
-const { t } = useI18n()
-
-const addressSearchInput = ref('')
-const addressSearchButtonDisabled = ref(false)
 const alias = ref('')
 const product = ref<Product>(factory.getEmptyProduct())
 const cashback = ref('0')
@@ -54,16 +47,12 @@ const chart = useChart()
 
 const isProductLoaded = ref(false)
 
-const clickContractSearch = () => {
-  addressSearchButtonDisabled.value = true
-  composableProduct.handleContractSearch(addressSearchInput.value)
-  addressSearchButtonDisabled.value = false
-}
-
 const init = async () => {
   if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) return
 
   try {
+    isProductLoaded.value = false
+
     alias.value = config.PRODUCT_ALIASES[route.params.id as string]
     if (!alias.value) return
 
@@ -94,49 +83,26 @@ const init = async () => {
   }
 }
 
+watch(
+  () => props.post,
+  () => init(),
+)
+
 init()
 </script>
 
 <template>
   <div class="post-item-page-checkout">
     <template v-if="alias">
-      <app-block class="post-item-page-checkout__block-wrp">
+      <app-block class="post-item-page-checkout__block-second">
         <div class="post-item-page-checkout__block">
-          <div class="post-item-page-checkout__block-product">
-            <div class="post-item-page-checkout__block-lbl">
-              <icon
-                class="post-item-page-checkout__block-lbl-icon"
-                :name="$icons.checkCircleFilled"
-              />
-              {{ $t('post-item-page-checkout.have-product-lbl') }}
-            </div>
-            <div class="post-item-page-checkout__block-address-wrp">
-              <div class="post-item-page-checkout__block-input-wrp">
-                <input-field
-                  class="app__module-field post-item-page-checkout__block-input"
-                  scheme="secondary"
-                  v-model="addressSearchInput"
-                  :label="t('post-item-page-checkout.have-product-input-lbl')"
-                />
-                <info-tooltip
-                  class="post-item-page-checkout__block-tooltip"
-                  :text="
-                    t('post-item-page-checkout.have-product-input-tooltip-txt')
-                  "
-                  move-side="right"
-                />
-              </div>
-              <app-button
-                class="post-checkout__block-search-btn"
-                :icon-right="$icons.searchFilled"
-                :disabled="addressSearchButtonDisabled || !addressSearchInput"
-                @click="clickContractSearch"
-              />
-            </div>
-          </div>
+          <product-checklist
+            :post-id="route.params.id"
+            :is-shown-other-products="true"
+          />
         </div>
       </app-block>
-      <app-block class="post-item-page-checkout__block-second">
+      <app-block>
         <div class="post-item-page-checkout__block">
           <div class="app__metadata">
             <div class="app__metadata-row">
@@ -154,7 +120,7 @@ init()
               <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ product.salesCount }}
               </span>
-              <loader v-else />
+              <loader class="post-item-page-checkout__loader" v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -167,7 +133,7 @@ init()
               <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ formatPercent(product.decreasePercent) }}
               </span>
-              <loader v-else />
+              <loader class="post-item-page-checkout__loader" v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -180,38 +146,8 @@ init()
               <span v-if="isProductLoaded" class="app__metadata-value">
                 {{ formatPercent(product.cashbackPercent) }}
               </span>
-              <loader v-else />
+              <loader class="post-item-page-checkout__loader" v-else />
             </div>
-          </div>
-          <div class="app__metadata">
-            <div class="post-item-page-checkout__block-row">
-              <span class="app__metadata-lbl">
-                {{ $t('post-item-page-checkout.implementation-address-lbl') }}
-              </span>
-              <address-copy
-                v-if="isProductLoaded"
-                :address="product.implementation"
-                class="app__link--accented"
-              />
-              <loader v-else />
-            </div>
-            <div class="post-item-page-checkout__block-row">
-              <span class="app__metadata-lbl">
-                {{ $t('post-item-page-checkout.factory-address-lbl') }}
-              </span>
-              <address-copy
-                v-if="isProductLoaded"
-                :address="factory.address.value"
-                class="app__link--accented"
-              />
-              <loader v-else />
-            </div>
-          </div>
-        </div>
-      </app-block>
-      <app-block>
-        <div class="post-item-page-checkout__block">
-          <div class="app__metadata">
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
                 <info-tooltip
@@ -234,7 +170,7 @@ init()
                   </span>
                 </span>
               </span>
-              <loader v-else />
+              <loader class="post-item-page-checkout__loader" v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
@@ -253,16 +189,16 @@ init()
                   </span>
                 </span>
               </span>
-              <loader v-else />
+              <loader class="post-item-page-checkout__loader" v-else />
             </div>
             <div class="app__metadata-row">
               <span class="app__metadata-lbl">
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
-                  :text="$t('post-item-page-checkout.distribution-tooltip')"
+                  :text="$t('post-item-page-checkout.cashback-tooltip')"
                   :move-side="'right'"
                 />
-                {{ $t('post-item-page-checkout.distribution-lbl') }}
+                {{ $t('post-item-page-checkout.cashback-lbl') }}
               </span>
               <span v-if="isProductLoaded" class="app__metadata-value">
                 <span class="app__price">
@@ -272,48 +208,81 @@ init()
                   </span>
                 </span>
               </span>
-              <loader v-else />
+              <loader class="post-item-page-checkout__loader" v-else />
             </div>
           </div>
-          <div class="post-item-page-checkout__buy-wrp">
-            <div class="app__metadata-row">
+          <div class="app__metadata">
+            <div class="post-item-page-checkout__block-row">
               <span class="app__metadata-lbl">
-                {{ $t('post-item-page-checkout.current-price-lbl') }}
+                {{ $t('post-item-page-checkout.implementation-address-lbl') }}
               </span>
-              <span
+              <address-copy
                 v-if="isProductLoaded"
-                class="app__metadata-value app__metadata-value--big"
-              >
-                <span class="app__price app__price--big">
-                  {{
-                    formatAmount(
-                      product.currentPrice,
-                      paymentToken?.decimals.value ?? '0',
-                    )
-                  }}
-                  <span class="app__price-asset">
-                    {{ paymentToken?.symbol.value }}
-                  </span>
-                </span>
-              </span>
-              <loader v-else />
+                :address="product.implementation"
+                class="app__link--accented"
+              />
+              <loader class="post-item-page-checkout__address-loader" v-else />
             </div>
-            <app-button
-              class="post-item-page-checkout__buy-link"
-              size="large"
-              :text="$t('post-item-page-checkout.buy-now-link')"
-              :route="{
-                name: $routes.productDeploy,
-                params: { id: route.params.id },
-              }"
-            />
-            <div class="post-item-page-checkout__buy-description">
-              {{ $t('post-item-page-checkout.buy-description-lbl') }}
+            <div class="post-item-page-checkout__block-row">
+              <span class="app__metadata-lbl">
+                {{ $t('post-item-page-checkout.factory-address-lbl') }}
+              </span>
+              <address-copy
+                v-if="isProductLoaded"
+                :address="factory.address.value"
+                class="app__link--accented"
+              />
+              <loader class="post-item-page-checkout__address-loader" v-else />
             </div>
           </div>
         </div>
       </app-block>
       <app-block class="post-item-page-checkout__block-wrp">
+        <div class="post-item-page-checkout__block-price">
+          <div class="post-item-page-checkout__price-wrp">
+            <span class="app__metadata-lbl">
+              {{ $t('post-item-page-checkout.current-price-lbl') }}
+            </span>
+            <div class="post-item-page-checkout__price">
+              <div
+                v-if="isProductLoaded"
+                class="post-item-page-checkout__price-value"
+              >
+                {{
+                  formatAmount(
+                    product.currentPrice,
+                    paymentToken?.decimals.value ?? '0',
+                  )
+                }}
+                <span class="post-item-page-checkout__price-curr">
+                  {{ paymentToken?.symbol.value }}
+                </span>
+              </div>
+              <loader class="post-item-page-checkout__deploy-loader" v-else />
+              <div
+                v-if="isProductLoaded"
+                class="post-item-page-checkout__price-gas"
+              >
+                <gas-fee :id="route.params.id" />
+              </div>
+              <loader class="post-item-page-checkout__deploy-loader" v-else />
+            </div>
+          </div>
+          <app-button
+            class="post-item-page-checkout__buy-link"
+            size="large"
+            :text="$t('post-item-page-checkout.buy-now-link')"
+            :route="{
+              name: $routes.productDeploy,
+              params: { id: route.params.id },
+            }"
+          />
+          <div class="post-item-page-checkout__buy-description">
+            {{ $t('post-item-page-checkout.buy-description-lbl') }}
+          </div>
+        </div>
+      </app-block>
+      <app-block class="post-item-page-checkout__block-chart-wrp">
         <div class="post-item-page-checkout__block-chart">
           <div class="app__metadata">
             <h2 class="post-item-page-checkout__block-title">
@@ -360,9 +329,17 @@ init()
   gap: toRem(40);
   height: 100%;
 
-  &--chart {
-    padding: toRem(70) toRem(165);
+  @include respond-to(medium) {
+    padding: toRem(30) toRem(20);
   }
+}
+
+.post-item-page-checkout__block-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: toRem(40) toRem(110);
+  gap: toRem(10);
 
   @include respond-to(medium) {
     padding: toRem(30) toRem(20);
@@ -393,85 +370,6 @@ init()
   @include respond-to(medium) {
     padding: toRem(30) toRem(20);
   }
-}
-
-.post-item-page-checkout__block-product {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  @include respond-to(medium) {
-    flex-direction: column;
-    gap: toRem(25);
-
-    & > *:not([disabled]) {
-      max-width: 100%;
-    }
-  }
-}
-
-.post-item-page-checkout__block-lbl {
-  display: flex;
-  align-items: center;
-  gap: toRem(12);
-  font-size: toRem(20);
-
-  @include respond-to(medium) {
-    font-size: toRem(16);
-  }
-}
-
-.post-item-page-checkout__block-address-wrp {
-  width: 100%;
-  max-width: toRem(430);
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  gap: toRem(10);
-
-  @include respond-to(small) {
-    flex-direction: column;
-  }
-}
-
-.post-item-page-checkout__block-input-wrp {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  flex-direction: row-reverse;
-  gap: toRem(10);
-
-  @include respond-to(medium) {
-    width: calc(100% - #{toRem(66)});
-  }
-
-  @include respond-to(small) {
-    width: 100%;
-  }
-}
-
-.post-item-page-checkout__block-tooltip {
-  @include respond-to(small) {
-    justify-self: start;
-  }
-}
-
-.post-checkout__block-search-btn {
-  padding: toRem(17);
-  font-size: toRem(15);
-  order: -1;
-
-  @include respond-to(small) {
-    order: 0;
-    width: 100%;
-  }
-}
-
-.post-item-page-checkout__block-lbl-icon {
-  min-height: toRem(20);
-  min-width: toRem(20);
-  max-height: toRem(20);
-  max-width: toRem(20);
 }
 
 .post-item-page-checkout__buy-wrp {
@@ -513,9 +411,13 @@ init()
 }
 
 .post-item-page-checkout__buy-link {
-  width: 100%;
+  width: toRem(500);
   padding-top: toRem(11);
   padding-bottom: toRem(11);
+
+  @include respond-to(medium) {
+    width: 100%;
+  }
 }
 
 .post-item-page-checkout__buy-description {
@@ -539,12 +441,75 @@ init()
   }
 }
 
-.post-item-page-checkout__block-wrp {
+.post-item-page-checkout__price-wrp {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  width: toRem(500);
+
+  @include respond-to(medium) {
+    width: 100%;
+  }
+}
+
+.post-item-page-checkout__price-icon {
+  max-width: toRem(14);
+  max-height: toRem(14);
+  min-width: toRem(14);
+  min-height: toRem(14);
+}
+
+.post-item-page-checkout__price {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: toRem(4);
+}
+
+.post-item-page-checkout__price-value {
+  font-size: toRem(24);
+  font-weight: 700;
+  font-family: var(--app-font-family-secondary);
+  color: var(--secondary-main);
+
+  @include respond-to(medium) {
+    font-size: toRem(20);
+  }
+}
+
+.post-item-page-checkout__price-curr {
+  font-size: 0.5em;
+  font-family: var(--app-font-family-primary);
+}
+
+.post-item-page-checkout__price-gas {
+  font-size: toRem(12);
+}
+
+.post-item-page-checkout__block-chart-wrp {
   grid-column: 1 / -1;
   padding: 0 toRem(1);
 }
 
+.post-item-page-checkout__block-wrp {
+  grid-column: 1 / -1;
+  padding: 0 toRem(1) toRem(1);
+}
+
 .post-item-page-checkout__metadata-tooltip {
   transform: translateX(-#{toRem(6)});
+}
+
+.post-item-page-checkout__address-loader {
+  max-width: toRem(200);
+}
+
+.post-item-page-checkout__deploy-loader {
+  min-width: toRem(100);
+  min-height: toRem(18);
+}
+
+.post-item-page-checkout__loader {
+  min-height: toRem(24);
 }
 </style>

@@ -16,18 +16,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/MainPage.vue'),
   },
   {
-    path: '/categories/:id',
-    name: ROUTE_NAMES.categories,
-    beforeEnter: existGuard,
-    component: () => import('@/pages/PostsPage.vue'),
-  },
-  {
-    path: '/category/:id',
-    name: ROUTE_NAMES.category,
-    beforeEnter: existGuard,
-    component: () => import('@/pages/PostItemPage.vue'),
-  },
-  {
     path: '/product/:id',
     name: ROUTE_NAMES.product,
     beforeEnter: existGuard,
@@ -46,9 +34,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/forms/EditForm.vue'),
   },
   {
-    path: '/farming',
-    name: ROUTE_NAMES.farming,
-    component: () => import('@/pages/FarmingPage.vue'),
+    path: '/cashback',
+    name: ROUTE_NAMES.cashback,
+    component: () => import('@/pages/CashbackPage.vue'),
   },
   {
     path: '/404',

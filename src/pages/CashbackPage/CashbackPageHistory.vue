@@ -107,45 +107,45 @@ const historyData = [
 </script>
 
 <template>
-  <div class="farming-history">
-    <div class="farming-history__title">
-      {{ $t('farming-history.title') }}
+  <div class="cashback-history">
+    <div class="cashback-history__title">
+      {{ $t('cashback-history.title') }}
     </div>
-    <div class="farming-history__controls">
+    <div class="cashback-history__controls">
       <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
       <switch-field
         v-model="isMyHistory"
-        :left-lbl="$t('farming-history.switch-left-lbl')"
-        :right-lbl="$t('farming-history.switch-right-lbl')"
+        :left-lbl="$t('cashback-history.switch-left-lbl')"
+        :right-lbl="$t('cashback-history.switch-right-lbl')"
       />
     </div>
     <app-block>
-      <div class="farming-history__grid">
+      <div class="cashback-history__grid">
         <div
-          class="farming-history__grid-row farming-history__grid-row--titled"
+          class="cashback-history__grid-row cashback-history__grid-row--titled"
         >
-          <span class="farming-history__grid-row-value">
-            {{ $t('farming-history.grid-address-lbl') }}
+          <span class="cashback-history__grid-row-value">
+            {{ $t('cashback-history.grid-address-lbl') }}
           </span>
-          <span class="farming-history__grid-row-value">
-            {{ $t('farming-history.grid-date-lbl') }}
+          <span class="cashback-history__grid-row-value">
+            {{ $t('cashback-history.grid-date-lbl') }}
           </span>
-          <span class="farming-history__grid-row-value">
-            {{ $t('farming-history.grid-amount-lbl') }}
+          <span class="cashback-history__grid-row-value">
+            {{ $t('cashback-history.grid-amount-lbl') }}
           </span>
         </div>
         <div
           v-for="(row, ind) of historyData"
           :key="ind"
-          class="farming-history__grid-row"
+          class="cashback-history__grid-row"
         >
-          <span class="farming-history__grid-row-value">
+          <span class="cashback-history__grid-row-value">
             {{ row.address }}
           </span>
-          <span class="farming-history__grid-row-value">
+          <span class="cashback-history__grid-row-value">
             {{ row.time }}
           </span>
-          <span class="farming-history__grid-row-value">
+          <span class="cashback-history__grid-row-value">
             {{ row.count }}
           </span>
         </div>
@@ -155,7 +155,7 @@ const historyData = [
 </template>
 
 <style lang="scss" scoped>
-.farming-history__title {
+.cashback-history__title {
   font-family: var(--app-font-family-secondary);
   padding: 0 0 toRem(20) 0;
   font-size: toRem(30);
@@ -164,17 +164,17 @@ const historyData = [
   letter-spacing: 0.1em;
 }
 
-.farming-history__controls {
+.cashback-history__controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.farming-history__grid {
+.cashback-history__grid {
   padding: toRem(40);
 }
 
-.farming-history__grid-row {
+.cashback-history__grid-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   padding: toRem(20) toRem(10);
@@ -190,7 +190,7 @@ const historyData = [
   }
 }
 
-.farming-history__grid-row-value {
+.cashback-history__grid-row-value {
   padding-right: toRem(10);
   overflow: hidden;
 
