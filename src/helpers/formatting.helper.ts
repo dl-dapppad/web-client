@@ -38,3 +38,6 @@ export function cropAddress(address: string, showFirstSymbols = 5): string {
     ? address
     : `${address.slice(0, showFirstSymbols)}...${address.slice(-4)}`
 }
+
+export const toCamelCase = (str: string) =>
+  str.replace(/-./g, x => x[1].toUpperCase())

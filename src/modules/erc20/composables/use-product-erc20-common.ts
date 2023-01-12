@@ -15,6 +15,10 @@ export interface ProductErc20CommonContract {
   totalSupply: Ref<string>
   init: (address: string) => void
   loadDetails: () => Promise<void>
+  encodeFunctionData: (
+    initializeDataValues: unknown[],
+    functionMethod?: string,
+  ) => string
   updateName: () => Promise<void>
   updateSymbol: () => Promise<void>
   updateDecimals: () => Promise<void>
@@ -74,6 +78,15 @@ export const useProductErc20Common = (
       updateOwner(),
       updateTotalSupply(),
     ])
+  }
+
+  const encodeFunctionData = (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    initializeDataValues: unknown[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    functionMethod?: string,
+  ): string => {
+    return ''
   }
 
   const updateName = async (): Promise<void> => {
@@ -182,6 +195,7 @@ export const useProductErc20Common = (
     owner,
     totalSupply,
 
+    encodeFunctionData,
     updateName,
     updateSymbol,
     updateDecimals,

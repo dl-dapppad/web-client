@@ -34,7 +34,8 @@
     "provider-unconnected": "Please, connect your MetaMask wallet.",
     "address-invalid": "The smart contract address is not correct.",
     "address-not-found": "No product with this address was found.",
-    "can-not-create-initialize-data": "Initialize data can't be created for this product."
+    "can-not-create-initialize-data": "Initialize data can't be created for this product.",
+    "product-not-found": "Product isn't found."
   },
   "notification": {
     "default-title-success": "Success!",
@@ -152,7 +153,7 @@
       "title": "Deploy",
       "subtitle": "Token",
       "description": "You are going to deploy some token.",
-      "btn-lbl": "Buy",
+      "btn-lbl": "Deploy",
       "payment-group": "Payment info",
       "payment-lbl": "Payment token",
       "payment-info": "Select the token you want to pay with",
@@ -169,8 +170,8 @@
       "name-info": "Enter the NFT name",
       "symbol-lbl": "NFT symbol",
       "symbol-info": "Enter the NFT symbol",
-      "btn-lbl": "Buy",
-      "deploy-success-message": "Congratulations! You’ve just deployed your contract for Fungible Tokens!"
+      "btn-lbl": "Deploy",
+      "deploy-success-message": "Congratulations! You’ve just deployed your contract for Non Fungible Tokens!"
     },
     "erc20-common": {
       "description": "Deploy your product on chain. The first time you will need to make two transactions. The first will allow us to take payment for the product, the second will perform the deployment of the smart contract in the network. Afterwards, only one transaction will be necessary.",
@@ -188,8 +189,8 @@
       "mint-amount-info": "Enter the initial mint amount",
       "mint-receiver-lbl": "Mint receiver",
       "mint-receiver-info": "Enter the tokens receiver",
-      "btn-lbl": "Buy",
-      "deploy-success-message": "Congratulations! You’ve just deployed your contract for Non Fungible Tokens!"
+      "btn-lbl": "Deploy",
+      "deploy-success-message": "Congratulations! You’ve just deployed your contract for Fungible Tokens!"
     },
     "modal": {
       "name-lbl": "Name",

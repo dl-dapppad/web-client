@@ -188,6 +188,44 @@ export const useProduct = () => {
   const makeProductPath = (product: string) =>
     /-/.test(product) ? [product.split('-')[0], product] : [product]
 
+  const getUseOfErc20Product = (productId: string) => {
+    const { t } = i18n.global
+
+    switch (productId) {
+      case PRODUCT_IDS.erc20Base:
+        return useProductErc20Base()
+      case PRODUCT_IDS.erc20Mint:
+        return useProductErc20Mint()
+      case PRODUCT_IDS.erc20Burn:
+        return useProductErc20Burn()
+      case PRODUCT_IDS.erc20MintBurn:
+        return useProductErc20MintBurn()
+      case PRODUCT_IDS.erc20MintBurnCap:
+        return useProductErc20MintBurnCap()
+      case PRODUCT_IDS.erc20MintCap:
+        return useProductErc20MintCap()
+      default:
+        throw new Error(t('errors.product-not-found'))
+    }
+  }
+
+  const getUseOfErc721Product = (productId: string) => {
+    const { t } = i18n.global
+
+    switch (productId) {
+      case PRODUCT_IDS.erc721Base:
+        return useProductErc721Base()
+      case PRODUCT_IDS.erc721Enum:
+        return useProductErc721Enum()
+      case PRODUCT_IDS.erc721Burn:
+        return useProductErc721Burn()
+      case PRODUCT_IDS.erc721BurnEnum:
+        return useProductErc721BurnEnum()
+      default:
+        throw new Error(t('errors.product-not-found'))
+    }
+  }
+
   const _isApproved = async (
     paymentToken: Erc20Contract,
     address: string,
@@ -210,39 +248,20 @@ export const useProduct = () => {
     const { t } = i18n.global
 
     let product
-    switch (productId) {
-      case PRODUCT_IDS.erc20Base:
-        product = useProductErc20Base()
-        break
-      case PRODUCT_IDS.erc20Mint:
-        product = useProductErc20Mint()
-        break
-      case PRODUCT_IDS.erc20Burn:
-        product = useProductErc20Burn()
-        break
-      case PRODUCT_IDS.erc20MintBurn:
-        product = useProductErc20MintBurn()
-        break
-      case PRODUCT_IDS.erc20MintBurnCap:
-        product = useProductErc20MintBurnCap()
-        break
-      case PRODUCT_IDS.erc20MintCap:
-        product = useProductErc20MintCap()
-        break
-      case PRODUCT_IDS.erc721Base:
-        product = useProductErc721Base()
-        break
-      case PRODUCT_IDS.erc721Enum:
-        product = useProductErc721Enum()
-        break
-      case PRODUCT_IDS.erc721Burn:
-        product = useProductErc721Burn()
-        break
-      case PRODUCT_IDS.erc721BurnEnum:
-        product = useProductErc721BurnEnum()
-        break
-      default:
-        throw new Error(t('errors.can-not-create-initialize-data'))
+    try {
+      product = getUseOfErc20Product(productId)
+      // eslint-disable-next-line no-empty
+    } catch {}
+
+    if (!product) {
+      try {
+        product = getUseOfErc721Product(productId)
+        // eslint-disable-next-line no-empty
+      } catch {}
+    }
+
+    if (!product) {
+      throw new Error(t('errors.can-not-create-initialize-data'))
     }
 
     return product.encodeFunctionData(initializeData)
@@ -255,5 +274,7 @@ export const useProduct = () => {
     getAvailablePaymentTokenList,
     getSelectedPaymentTokenInfo,
     makeProductPath,
+    getUseOfErc20Product,
+    getUseOfErc721Product,
   }
 }

@@ -68,9 +68,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -114,9 +114,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -160,9 +160,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -206,9 +206,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -252,9 +252,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -298,9 +298,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -344,9 +344,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -401,9 +401,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -457,9 +457,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],
@@ -513,9 +513,9 @@
     "chartTitle": "Product Price Bonding Curve",
     "chartDescription": "Bonding curve represents how product price is changed depending the number of product bought. With each purchase product is price decreasing until the minimum price is reached.",
     "infoDescriptionContent": [
-      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
-      ["title", "About Upgradability"],
-      ["paragraph-16", "First, you need to note that in this case, the word “upgradable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
+      ["paragraph-16", "This smart contract use a UUPS (Universal Upgradeable Proxy Standard) proxy pattern, in other words, the owner of the contract has the option to update the logic of the contract."],
+      ["title", "About Upgradeability"],
+      ["paragraph-16", "First, you need to note that in this case, the word “upgradeable” doesn’t mean mutable. One of the basic rules of EVM is that once a contract is deployed, it cannot be changed. Instead, an upgradeable smart contract uses a special proxy pattern. The latter involves deploying proxy contracts and implementation contracts (logic contracts). Only the contract owner has the ability to perform an update, if this function is not necessary, the ownership of the contract must be transferred to a null address."],
       ["title", "Contract Verification on Blockchain Explorer "],
       ["unordered-list-16", ["Open your smart contract in block explorer", "Click on tab 'Contract', there you can see bytecode", "Click on button 'Is this a Proxy?'", "Click 'Verify' button"]]
     ],

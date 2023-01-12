@@ -2,6 +2,7 @@ import { ComputedRef } from 'vue'
 import { ValidationRule } from '@vuelidate/core'
 
 export type Input = {
+  name: string
   value?: string
   label?: string
   tooltip?: string

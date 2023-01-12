@@ -66,7 +66,7 @@ enum EVENTS {
 }
 
 const emits = defineEmits<{
-  (e: EVENTS.submit, data: string[]): void
+  (e: EVENTS.submit, data: Map<string, string>): void
   (e: EVENTS.updateisSuccessModalShown, val: boolean): void
 }>()
 
@@ -149,15 +149,23 @@ const isBalanceInsuficient = computed(() => {
 })
 
 const submit = () => {
-  let result: string[] = []
-  JSON.parse(JSON.stringify(form.data)).map((el: string[]) => {
-    result = result.concat(el)
-  })
-
-  result[0] =
+  const result = new Map<string, string>()
+  result.set(
+    'payment-token-addr',
     paymentTokens.value.addresses[
-      paymentTokens.value.symbols.findIndex(symbol => symbol === result[0])
-    ]
+      paymentTokens.value.symbols.findIndex(
+        symbol => symbol === form.data[0][0],
+      )
+    ],
+  )
+  result.set('product-price', form.data[0][1])
+
+  form.data.forEach((category, catInd) => {
+    if (catInd)
+      category.forEach((input, inpInd) =>
+        result.set(props.categories[catInd - 1].inputs[inpInd].name, input),
+      )
+  })
 
   emits(EVENTS.submit, result)
 }
@@ -268,7 +276,7 @@ onMounted(() => init())
             })
           "
         />
-        <h2 class="app__module-title" @click="updateIsShownModal(true)">
+        <h2 class="app__module-title">
           {{
             headingData?.title
               ? headingData.title
@@ -413,7 +421,10 @@ onMounted(() => init())
                         <span>{{ selectedPaymentToken.symbol }}</span>
                       </div>
                     </div>
-                    <div v-if="selectedPaymentToken.balance" class="app__row">
+                    <div
+                      v-if="selectedPaymentToken.balance"
+                      class="app__row base-deploy-form__balance"
+                    >
                       <span class="app__row-title">
                         {{ $t('product-deploy.default.payment-balance') }}
                       </span>
@@ -545,5 +556,9 @@ onMounted(() => init())
 <style lang="scss" scoped>
 .deploy-form__mint-block {
   padding-bottom: 0;
+}
+
+.base-deploy-form__balance {
+  line-height: 1.3;
 }
 </style>
