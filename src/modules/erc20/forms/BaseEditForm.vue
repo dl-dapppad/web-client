@@ -132,11 +132,10 @@ const init = async () => {
   )
 
   if (provider.value.selectedAddress) {
-    ;[balance.value] = (await Promise.all([
-      erc20.balanceOf(provider.value.selectedAddress),
-      erc20.loadDetails(),
-    ])) as string[]
+    balance.value = await erc20.balanceOf(provider.value.selectedAddress)
   }
+
+  await erc20.loadDetails()
 
   overviewRows.value.forEach(item => {
     if (!defaultRows.includes(item.id)) return
