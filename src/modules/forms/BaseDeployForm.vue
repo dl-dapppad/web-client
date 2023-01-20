@@ -552,10 +552,8 @@ onMounted(() => init())
                       </div>
                     </div>
                     <loader v-else class="base-deploy-form__balance-loader" />
-                    <!-- eslint-disable -->
                     <div v-if="form.data[0][0] !== productPaymentToken.symbol">
                       <div class="app__row" v-if="isPaymentLoaded">
-                        <!-- eslint-enable -->
                         <span class="app__row-title">
                           {{
                             $t('product-deploy.default.product-swap-price', {
@@ -687,7 +685,7 @@ onMounted(() => init())
                     <div class="base-deploy-form__discount-manual">
                       <div
                         v-for="(item, idx) in discount.products"
-                        class="app__row"
+                        class="app__row base-deploy-form__discount-manual-row"
                         :key="idx"
                       >
                         <div class="base-deploy-form__discount-manual-key">
@@ -713,8 +711,9 @@ onMounted(() => init())
                             }} </span
                           >{{ `)` }}
                         </div>
+                        <!--eslint-disable -->
                         <input-field
-                          class="base-deploy-form__discount-manual-input"
+                          class="base-deploy-form__discount-manual-input app__module-field"
                           :label="
                             $t(
                               'product-deploy.default.discount-manual-inp-lbl',
@@ -726,6 +725,7 @@ onMounted(() => init())
                           scheme="secondary"
                           v-model="item.value"
                         />
+                        <!--eslint-enable -->
                       </div>
                     </div>
                   </template>
@@ -879,11 +879,20 @@ onMounted(() => init())
   color: var(--text-secondary-main);
   line-height: 1.3;
   letter-spacing: 0.1em;
+
+  @include respond-to(medium) {
+    font-size: toRem(14);
+  }
 }
 
 .base-deploy-form__discount-switch {
   display: flex;
   gap: toRem(12);
+  font-size: toRem(16);
+
+  @include respond-to(medium) {
+    font-size: toRem(14);
+  }
 }
 
 .base-deploy-form__discount-manual {
@@ -894,10 +903,20 @@ onMounted(() => init())
 
 .base-deploy-form__discount-manual-key {
   color: var(--text-secondary-main);
+
+  @include respond-to(medium) {
+    font-size: toRem(14);
+  }
 }
 
 .base-deploy-form__discount-manual-title {
   font-weight: 700;
+  font-size: inherit;
+
+  @include respond-to(medium) {
+    display: block;
+    padding: 0 0 toRem(5) 0;
+  }
 }
 
 .base-deploy-form__discount-manual-available {
@@ -906,5 +925,20 @@ onMounted(() => init())
 
 .base-deploy-form__discount-manual-input {
   max-width: toRem(200);
+
+  @include respond-to(medium) {
+    max-width: 100%;
+    width: 100%;
+    padding-right: toRem(28);
+  }
+}
+
+.base-deploy-form__discount-manual-row {
+  @include respond-to(medium) {
+    flex-direction: column;
+    align-items: start;
+    gap: toRem(12);
+    padding: toRem(20) 0 0 0;
+  }
 }
 </style>

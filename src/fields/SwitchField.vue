@@ -107,4 +107,8 @@ const handleChange = (event: Event) => {
   clip: rect(0 0 0 0);
   overflow: hidden;
 }
+
+.switch-field__lbl {
+  font-size: inherit;
+}
 </style>

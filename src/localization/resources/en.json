@@ -188,7 +188,7 @@
       "mint-tokens-btn": "Mint Tokens",
       "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}",
       "discount-checkbox-lbl": "Use discount",
-      "discount-input-lbl": "Amount of discount",
+      "discount-input-lbl": "Amount",
       "discount-tooltip-lbl": "Amount of discount",
       "discount-available-lbl": "Available on account",
       "discount-price-lbl": "Product price with discount",
