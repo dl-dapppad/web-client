@@ -22,7 +22,8 @@ onMounted(() => {
     tooltipElem.value.getBoundingClientRect().left <= windowWidth.value / 2
 
   isTotallyMovingRight.value =
-    tooltipElem.value.getBoundingClientRect().left < 100
+    tooltipElem.value.getBoundingClientRect().left < 100 &&
+    tooltipElem.value.getBoundingClientRect().left !== 0
 })
 </script>
 

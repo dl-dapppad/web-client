@@ -186,7 +186,16 @@
       "product-price": "Product price",
       "empty-balance-lbl": "Your balance is empty",
       "mint-tokens-btn": "Mint Tokens",
-      "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}"
+      "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}",
+      "discount-checkbox-lbl": "Use discount",
+      "discount-input-lbl": "Amount of discount",
+      "discount-tooltip-lbl": "Amount of discount",
+      "discount-available-lbl": "Available on account",
+      "discount-price-lbl": "Product price with discount",
+      "discount-manual-lbl": "Your cashback will be distributed automatically, but you can choose to distribute it manually",
+      "discount-manual-switch-lbl": "Manual withdrawal",
+      "discount-manual-available-lbl": "available",
+      "discount-manual-inp-lbl": "Amount ({symbol})"
     },
     "erc721-common": {
       "description": "Deploy your product on chain. The first time you will need to make two transactions. The first will allow us to take payment for the product, the second will perform the deployment of the smart contract in the network. Afterwards, only one transaction will be necessary.",

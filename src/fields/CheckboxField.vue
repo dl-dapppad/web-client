@@ -103,8 +103,7 @@ export default defineComponent({
   height: toRem(18);
   transition: var(--field-transition-duration) ease-in;
   transition-property: border-color, box-shadow, background-color;
-  border-radius: toRem(3);
-  box-shadow: inset 0 0 0 toRem(2) var(--field-border);
+  box-shadow: inset 0 0 0 toRem(2) var(--primary-main);
 }
 
 .checkbox-field__frame {
@@ -116,7 +115,7 @@ export default defineComponent({
   color: var(--field-bg);
 
   .checkbox-field--checked & {
-    background-color: var(--primary-main);
+    background-color: var(--secondary-main);
   }
 }
 
@@ -126,9 +125,10 @@ export default defineComponent({
 }
 
 .checkbox-field__label {
+  @include field-text;
+
   display: inline-flex;
   user-select: none;
-
-  @include field-text;
+  font-size: inherit;
 }
 </style>

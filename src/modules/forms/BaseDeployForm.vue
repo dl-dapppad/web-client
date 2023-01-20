@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, Ref, reactive, onMounted } from 'vue'
+import { ref, computed, Ref, reactive, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { ValidationRule } from '@vuelidate/core'
@@ -13,7 +13,7 @@ import {
   Loader,
   Modal,
 } from '@/common'
-import { SelectField, InputField } from '@/fields'
+import { SelectField, InputField, CheckboxField, SwitchField } from '@/fields'
 import {
   Product,
   useFormValidation,
@@ -88,6 +88,37 @@ const selectedPaymentToken = ref({
 })
 const selectedProduct = ref<Product>()
 const useFormArray = [] as UseForm[]
+const isPaymentLoaded = ref(true)
+
+const discount = ref<{
+  isDiscountUsed: boolean
+  usedDiscount: string
+  products: {
+    title?: string
+    discount?: string
+    value: string
+  }[]
+}>({
+  isDiscountUsed: false,
+  usedDiscount: '',
+  products: [
+    {
+      title: 'ERC-20 Mint Burn',
+      discount: '10000000000000000000',
+      value: '',
+    },
+    {
+      title: 'ERC-20 Mintable',
+      discount: '30000000000000000000',
+      value: '',
+    },
+    {
+      title: 'ERC-20 Mint Burn Cap',
+      discount: '341757683104456907300',
+      value: '',
+    },
+  ],
+})
 
 // data to useForm
 const form = reactive({
@@ -127,6 +158,36 @@ form.data.forEach((category, i) => {
   useFormArray[i].isFieldsValid = isFieldsValid
 })
 
+const availableDiscount = computed(() => {
+  let result = '0'
+
+  discount.value.products.forEach(
+    item => (result = new BN(result).add(item.discount as string).toString()),
+  )
+
+  return result.toString()
+})
+
+const maxUsedDiscount = computed(() => {
+  return new BN(
+    new BN(availableDiscount.value).compare(
+      selectedProduct.value?.currentPrice as string,
+    ) === 1
+      ? (selectedProduct.value?.currentPrice as string)
+      : availableDiscount.value,
+  )
+    .fromFraction()
+    .toString()
+})
+
+const productPriceWithDiscount = computed(() =>
+  new BN(selectedProduct.value?.currentPrice as string).sub(
+    new BN(
+      discount.value.usedDiscount === '' ? 0 : discount.value.usedDiscount,
+    ).toFraction(),
+  ),
+)
+
 const isAllFieldsValid = computed(() => {
   let result = true
   useFormArray.forEach(
@@ -158,6 +219,7 @@ const submit = () => {
       )
     ],
   )
+
   result.set('product-price', form.data[0][1])
 
   form.data.forEach((category, catInd) => {
@@ -175,6 +237,10 @@ const updateIsShownModal = (val: boolean) => {
 }
 
 const updatePayment = async (selectedSymbol: string | number) => {
+  isPaymentLoaded.value = false
+
+  form.data[0][0] = selectedSymbol as string
+
   const selectedIndex = paymentTokens.value.symbols.findIndex(
     symbol => symbol === selectedSymbol,
   )
@@ -209,8 +275,9 @@ const updatePayment = async (selectedSymbol: string | number) => {
     }
   }
 
-  form.data[0][0] = selectedSymbol as string
   form.data[0][1] = selectedPaymentToken.value.amount
+
+  isPaymentLoaded.value = true
 }
 
 const mintToken = async () => {
@@ -255,7 +322,100 @@ const init = async () => {
   productPaymentToken.value.amount = selectedProduct.value.currentPrice
 
   await farming.loadDetails()
+
+  discount.value.products.forEach(item => {
+    watch(
+      () => item.value,
+      async () => {
+        item.value =
+          new BN((await item.discount) as string)
+            .fromFraction()
+            .compare(item.value === '' ? 0 : item.value) === 1
+            ? item.value
+            : new BN(item.discount as string).fromFraction().toString()
+
+        let sum = new BN(0)
+
+        discount.value.products.forEach(
+          item => (sum = sum.add(item.value === '' ? 0 : item.value)),
+        )
+
+        discount.value.usedDiscount = sum.toString()
+      },
+    )
+  })
 }
+
+watch(
+  () => discount.value.usedDiscount,
+  async () => {
+    if (discount.value.usedDiscount === '') {
+      discount.value.products.forEach(item => (item.value = ''))
+      return
+    }
+
+    discount.value.usedDiscount =
+      new BN(await discount.value.usedDiscount).compare(
+        maxUsedDiscount.value,
+      ) === 1
+        ? maxUsedDiscount.value
+        : discount.value.usedDiscount
+
+    let sum = new BN(0)
+
+    discount.value.products.forEach(
+      item => (sum = sum.add(item.value === '' ? 0 : item.value)),
+    )
+
+    const sumOfDiscounts = sum.toString()
+
+    const compareSumAndUse = new BN(sumOfDiscounts).compare(
+      discount.value.usedDiscount,
+    )
+
+    if (compareSumAndUse === 0) return
+
+    let diff: BN
+
+    if (compareSumAndUse === 1) {
+      diff = new BN(sumOfDiscounts).sub(discount.value.usedDiscount)
+
+      discount.value.products.forEach(item => {
+        if (new BN(item.value === '' ? 0 : item.value).compare(diff) === -1) {
+          diff = diff.sub(item.value === '' ? 0 : item.value)
+          item.value = ''
+        } else {
+          item.value = new BN(item.value === '' ? 0 : item.value)
+            .sub(diff)
+            .toString()
+          diff = new BN(0)
+        }
+
+        if (item.value === '0') item.value = ''
+      })
+    } else {
+      diff = new BN(discount.value.usedDiscount).sub(sumOfDiscounts)
+
+      discount.value.products.forEach(item => {
+        const freeDiscount = new BN(item.discount as string)
+          .fromFraction()
+          .sub(item.value === '' ? 0 : item.value)
+
+        if (diff.compare(freeDiscount) === 1) {
+          diff = diff.sub(freeDiscount)
+          item.value = new BN(item.discount as string).fromFraction().toString()
+        } else {
+          item.value = new BN(item.value === '' ? 0 : item.value)
+            .add(diff)
+            .toString()
+          diff = new BN(0)
+        }
+
+        if (item.value === '0') item.value = ''
+      })
+    }
+  },
+)
 
 onMounted(() => init())
 </script>
@@ -372,15 +532,12 @@ onMounted(() => init())
                       />
                     </div>
                   </div>
-                  <!-- eslint-disable -->
                   <template
                     v-if="
-                      selectedPaymentToken.balance &&
-                      selectedProduct?.currentPrice
+                      form.data[0][0] !== '' && selectedProduct?.currentPrice
                     "
                   >
-                    <!-- eslint-enable -->
-                    <div class="app__row">
+                    <div class="app__row" v-if="isPaymentLoaded">
                       <span class="app__row-title">
                         {{ $t('product-deploy.default.product-price') }}
                       </span>
@@ -394,57 +551,185 @@ onMounted(() => init())
                         <span>{{ productPaymentToken.symbol }}</span>
                       </div>
                     </div>
+                    <loader v-else class="base-deploy-form__balance-loader" />
                     <!-- eslint-disable -->
-                    <div
-                      v-if="
-                        selectedPaymentToken.symbol !==
-                        productPaymentToken.symbol
-                      "
-                      class="app__row"
-                    >
-                      <!-- eslint-enable -->
-                      <span class="app__row-title">
-                        {{
-                          $t('product-deploy.default.product-swap-price', {
-                            fromSymbol: selectedPaymentToken.symbol,
-                            toSymbol: productPaymentToken.symbol,
-                          })
-                        }}
-                      </span>
-                      <div class="app__balance">
-                        {{
-                          formatAmount(
-                            selectedPaymentToken.amount,
-                            selectedPaymentToken.decimals,
-                          )
-                        }}
-                        <span>{{ selectedPaymentToken.symbol }}</span>
+                    <div v-if="form.data[0][0] !== productPaymentToken.symbol">
+                      <div class="app__row" v-if="isPaymentLoaded">
+                        <!-- eslint-enable -->
+                        <span class="app__row-title">
+                          {{
+                            $t('product-deploy.default.product-swap-price', {
+                              fromSymbol: selectedPaymentToken.symbol,
+                              toSymbol: productPaymentToken.symbol,
+                            })
+                          }}
+                        </span>
+                        <div class="app__balance">
+                          {{
+                            formatAmount(
+                              selectedPaymentToken.amount,
+                              selectedPaymentToken.decimals,
+                            )
+                          }}
+                          <span>{{ selectedPaymentToken.symbol }}</span>
+                        </div>
                       </div>
+                      <loader
+                        v-else-if="
+                          paymentTokens.symbols.findIndex(
+                            symbol => symbol === form.data[0][0],
+                          ) !== 0
+                        "
+                        class="base-deploy-form__balance-loader"
+                      />
                     </div>
-                    <div
-                      v-if="selectedPaymentToken.balance"
-                      class="app__row base-deploy-form__balance"
-                    >
-                      <span class="app__row-title">
-                        {{ $t('product-deploy.default.payment-balance') }}
-                      </span>
+                    <div v-if="selectedPaymentToken.balance">
                       <div
-                        class="app__balance app__balance-small"
-                        :class="{
-                          'app__balance-insufficient': isBalanceInsuficient,
-                        }"
+                        class="app__row base-deploy-form__balance"
+                        v-if="isPaymentLoaded"
                       >
-                        {{
-                          formatAmount(
-                            selectedPaymentToken.balance,
-                            selectedPaymentToken.decimals,
-                          )
-                        }}
-                        <span>{{ selectedPaymentToken.symbol }}</span>
+                        <span class="app__row-title">
+                          {{ $t('product-deploy.default.payment-balance') }}
+                        </span>
+                        <div
+                          class="app__balance app__balance-small"
+                          :class="{
+                            'app__balance-insufficient': isBalanceInsuficient,
+                          }"
+                        >
+                          {{
+                            formatAmount(
+                              selectedPaymentToken.balance,
+                              selectedPaymentToken.decimals,
+                            )
+                          }}
+                          <span>{{ selectedPaymentToken.symbol }}</span>
+                        </div>
                       </div>
+                      <loader v-else class="base-deploy-form__balance-loader" />
                     </div>
                   </template>
                 </div>
+              </div>
+            </template>
+          </collapse>
+          <collapse
+            class="app__form-control base-deploy-form__discount"
+            :is-close-by-click-outside="false"
+          >
+            <template #head="{ collapse }">
+              <div class="base-deploy-form__discount-checkbox">
+                <checkbox-field
+                  class=""
+                  v-model="discount.isDiscountUsed"
+                  :label="$t('product-deploy.default.discount-checkbox-lbl')"
+                  @click="collapse.toggle"
+                />
+              </div>
+            </template>
+            <template #default>
+              <div class="app__field-row">
+                <input-field
+                  class="app__module-field"
+                  v-model="discount.usedDiscount"
+                  scheme="secondary"
+                  :label="$t('product-deploy.default.discount-input-lbl')"
+                />
+                <div class="app__field-tooltip">
+                  <info-tooltip
+                    :text="$t('product-deploy.default.discount-tooltip-lbl')"
+                    :move-side="'left'"
+                  />
+                </div>
+              </div>
+              <div class="base-deploy-form__discount-block">
+                <div class="app__row">
+                  <span class="app__row-title">
+                    {{ $t('product-deploy.default.discount-available-lbl') }}
+                  </span>
+                  <div class="app__balance">
+                    {{ formatAmount(availableDiscount) }}
+                    <span>{{ productPaymentToken.symbol }}</span>
+                  </div>
+                </div>
+                <div class="app__row">
+                  <span class="app__row-title">
+                    {{ $t('product-deploy.default.discount-price-lbl') }}
+                  </span>
+                  <div class="app__balance">
+                    {{
+                      formatAmount(
+                        productPriceWithDiscount.toString(),
+                        productPaymentToken.decimals,
+                      )
+                    }}
+                    <span>{{ productPaymentToken.symbol }}</span>
+                  </div>
+                </div>
+                <div class="app__row base-deploy-form__discount-manual-lbl">
+                  {{ $t('product-deploy.default.discount-manual-lbl') }}
+                </div>
+                <collapse :is-close-by-click-outside="false">
+                  <template #head="{ collapse }">
+                    <div class="base-deploy-form__discount-switch">
+                      <switch-field
+                        :right-lbl="
+                          $t(
+                            'product-deploy.default.discount-manual-switch-lbl',
+                          )
+                        "
+                        v-model="collapse.isOpen"
+                        @click="collapse.toggle"
+                      />
+                    </div>
+                  </template>
+                  <template #default>
+                    <div class="base-deploy-form__discount-manual">
+                      <div
+                        v-for="(item, idx) in discount.products"
+                        class="app__row"
+                        :key="idx"
+                      >
+                        <div class="base-deploy-form__discount-manual-key">
+                          <span class="base-deploy-form__discount-manual-title">
+                            {{ item.title }}
+                          </span>
+                          <!--eslint-disable -->
+                          {{
+                            ` (${$t(
+                              'product-deploy.default.discount-manual-available-lbl',
+                            )} `
+                          }}
+                          <!--eslint-enable -->
+                          <span
+                            class="base-deploy-form__discount-manual-available"
+                          >
+                            {{
+                              formatAmount(
+                                item.discount,
+                                productPaymentToken.decimals,
+                                productPaymentToken.symbol,
+                              )
+                            }} </span
+                          >{{ `)` }}
+                        </div>
+                        <input-field
+                          class="base-deploy-form__discount-manual-input"
+                          :label="
+                            $t(
+                              'product-deploy.default.discount-manual-inp-lbl',
+                              {
+                                symbol: productPaymentToken.symbol,
+                              },
+                            )
+                          "
+                          scheme="secondary"
+                          v-model="item.value"
+                        />
+                      </div>
+                    </div>
+                  </template>
+                </collapse>
               </div>
             </template>
           </collapse>
@@ -506,6 +791,7 @@ onMounted(() => init())
               </div>
             </template>
           </collapse>
+          <!-- eslint-disable -->
           <app-button
             v-if="!button?.isHidden?.value"
             class="app__submit-btn app__submit-btn--cutted"
@@ -516,8 +802,13 @@ onMounted(() => init())
                 : $t('product-deploy.default.btn-lbl')
             "
             size="small"
-            :disabled="isBalanceInsuficient || !isAllFieldsValid"
+            :disabled="
+              isBalanceInsuficient ||
+              !isAllFieldsValid ||
+              !provider.selectedAddress
+            "
           />
+          <!-- eslint-enable -->
           <div v-else class="app__deploy-loader">
             <loader :scheme="SCHEMES.cubes" />
             <p>{{ $t('product-deploy.tx-processing') }}</p>
@@ -560,5 +851,60 @@ onMounted(() => init())
 
 .base-deploy-form__balance {
   line-height: 1.3;
+}
+
+.base-deploy-form__balance-loader {
+  padding: toRem(10) toRem(28) 0 0;
+  width: 100%;
+}
+
+.base-deploy-form__discount {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(30);
+}
+
+.base-deploy-form__discount-block {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(20);
+}
+
+.base-deploy-form__discount-checkbox {
+  font-size: toRem(16);
+  display: flex;
+}
+
+.base-deploy-form__discount-manual-lbl {
+  color: var(--text-secondary-main);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+}
+
+.base-deploy-form__discount-switch {
+  display: flex;
+  gap: toRem(12);
+}
+
+.base-deploy-form__discount-manual {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(6);
+}
+
+.base-deploy-form__discount-manual-key {
+  color: var(--text-secondary-main);
+}
+
+.base-deploy-form__discount-manual-title {
+  font-weight: 700;
+}
+
+.base-deploy-form__discount-manual-available {
+  color: var(--secondary-main);
+}
+
+.base-deploy-form__discount-manual-input {
+  max-width: toRem(200);
 }
 </style>

@@ -3,6 +3,10 @@ defineProps<{
   modelValue: boolean
   leftLbl?: string
   rightLbl?: string
+  label?: {
+    type: string
+    default: ''
+  }
 }>()
 
 enum EVENTS {
@@ -21,34 +25,36 @@ const handleChange = (event: Event) => {
 </script>
 
 <template>
-  <div class="switch-field">
+  <label class="switch-field" :class="{ 'switch-field--checked': modelValue }">
+    <input
+      v-bind="$attrs"
+      class="switch-field__input"
+      type="checkbox"
+      :checked="modelValue"
+      :name="$attrs.name || label"
+      :value="modelValue"
+      @change="handleChange"
+    />
+
     <span class="switch-field__lbl" v-if="leftLbl">
       {{ leftLbl }}
     </span>
     <div class="switch-field__switch">
-      <input
+      <span
         class="switch-field__checkbox"
         :checked="modelValue"
         type="checkbox"
-        @change="handleChange"
       />
     </div>
     <span class="switch-field__lbl" v-if="rightLbl">
       {{ rightLbl }}
     </span>
-  </div>
+  </label>
 </template>
 
 <style lang="scss" scoped>
-.switch-field {
-  display: flex;
-  align-items: center;
-  gap: toRem(20);
-}
-
 .switch-field__checkbox {
   display: flex;
-  cursor: pointer;
   position: relative;
   border-radius: toRem(100);
   width: toRem(52);
@@ -70,20 +76,35 @@ const handleChange = (event: Event) => {
     background-color: var(--text-primary-invert-main);
     transition: 0.2s;
   }
+}
 
-  &:checked {
-    background-color: var(--secondary-main);
+.switch-field {
+  display: flex;
+  align-items: center;
+  gap: inherit;
+  cursor: pointer;
 
-    &:after {
-      left: 70%;
+  &--checked {
+    .switch-field__checkbox {
+      background-color: var(--secondary-main);
+
+      &:after {
+        left: 70%;
+      }
     }
   }
 }
 
-.switch-field__lbl {
-  font-family: var(--app-font-family-secondary);
-  font-size: toRem(16);
-  font-weight: 700;
-  letter-spacing: 0.1em;
+.switch-field__input {
+  position: absolute;
+  width: toRem(1);
+  height: toRem(1);
+  margin: calc(#{toRem(1)} * -1);
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
 }
 </style>

@@ -163,17 +163,20 @@ export const useProduct = () => {
     }
 
     const { provider } = storeToRefs(useWeb3ProvidersStore())
-    if (!provider.value.selectedAddress) return data
 
     const erc20 = useErc20(address)
-    const [balance] = await Promise.all([
-      erc20.balanceOf(provider.value.selectedAddress),
-      erc20.loadDetails(),
-    ])
+    await erc20.loadDetails()
 
     data.symbol = erc20.symbol.value
     data.decimals = String(erc20.decimals.value)
-    data.balance = balance
+
+    if (provider.value.selectedAddress) {
+      const balance = await erc20.balanceOf(
+        provider.value?.selectedAddress as string,
+      )
+
+      data.balance = balance
+    }
 
     if (!isSwapToken) return data
 

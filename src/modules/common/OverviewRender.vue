@@ -5,7 +5,7 @@ import { OverviewRow } from '@/modules/types'
 
 withDefaults(
   defineProps<{
-    isLoaded: boolean
+    isLoaded?: boolean
     rows?: Array<OverviewRow>
   }>(),
   {
