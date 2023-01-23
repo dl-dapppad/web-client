@@ -2,7 +2,13 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
-import { required, isAddress, numeric, maxBNValue } from '@/validators'
+import {
+  required,
+  isAddress,
+  numeric,
+  maxBNValue,
+  greaterThen,
+} from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
 import { ProductErc20BaseContract } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
 import { BN } from '@/utils'
@@ -51,7 +57,12 @@ const formData = {
     {
       label: t('transfer-form.amount-lbl'),
       tooltip: t('transfer-form.amount-info'),
-      validators: [required, numeric, maxBNValue(props.balance)],
+      validators: [
+        required,
+        numeric,
+        maxBNValue(props.balance),
+        greaterThen(0),
+      ],
     },
   ],
   button: t('transfer-form.btn-lbl'),

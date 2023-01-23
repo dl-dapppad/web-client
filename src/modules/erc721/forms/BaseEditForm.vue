@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
@@ -110,9 +110,7 @@ const overviewRows = ref<Array<OverviewRowWithId>>([
   },
 ])
 
-const init = async () => {
-  emits(EVENTS.init)
-
+const updateOverview = async () => {
   erc721?.init(route.params.contractAddress as string)
 
   await erc721?.loadDetails()
@@ -138,6 +136,17 @@ const init = async () => {
     }
   })
 
+  overviewRows.value[
+    overviewRows.value.map(i => i.id).indexOf('base-u-r-i')
+  ].type =
+    erc721?.baseURI.value === '' ? OVERVIEW_ROW.default : OVERVIEW_ROW.link
+}
+
+const init = async () => {
+  emits(EVENTS.init)
+
+  await updateOverview()
+
   props?.writeForms?.forEach(item =>
     write.value.splice(item.index, 0, { slot: item.slot }),
   )
@@ -145,11 +154,6 @@ const init = async () => {
   props?.readForms?.forEach(item =>
     read.value.splice(item.index, 0, { slot: item.slot }),
   )
-
-  overviewRows.value[
-    overviewRows.value.map(i => i.id).indexOf('base-u-r-i')
-  ].type =
-    erc721?.baseURI.value === '' ? OVERVIEW_ROW.default : OVERVIEW_ROW.link
 
   isLoaded.value = true
 }
@@ -197,6 +201,13 @@ const headingData = {
   description: t('product-edit.erc721-common.description'),
   overviewLbl: t('product-edit.erc721-common.overview'),
 }
+
+watch(
+  () => provider.value.selectedAddress,
+  () => {
+    updateOverview()
+  },
+)
 
 init()
 </script>

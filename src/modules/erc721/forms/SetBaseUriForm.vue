@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { txWrapper } from '@/helpers'
-import { required, url } from '@/validators'
+import { required, ipfsAndUrl } from '@/validators'
 import { ProductInteractionForm } from '@/modules/forms'
 import { ProductErc721BaseContract } from '@/modules/erc721/erc721-base/composables/use-product-erc721-base'
 
@@ -42,7 +42,7 @@ const formData = {
     {
       label: t('base-uri-form.uri-lbl'),
       tooltip: t('base-uri-form.uri-info'),
-      validators: [required, url],
+      validators: [required, ipfsAndUrl],
     },
   ],
   button: t('base-uri-form.btn-lbl'),

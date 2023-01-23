@@ -67,7 +67,7 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
       >
         <input-field
           class="app__module-field"
-          v-model="form.fields[ind]"
+          v-model.trim="form.fields[ind]"
           :label="input.label ? input.label : undefined"
           :error-message="getFieldErrorMessage(`${ind}`)"
           scheme="secondary"
@@ -119,7 +119,8 @@ const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
               class="app__link--accented"
               :address="result.data.value"
               :href="result.data.value"
-              :is-cropped="false"
+              :is-cropped="result.data.value.length > 30"
+              :show-first-cropp-symbols="20"
             />
           </div>
         </div>

@@ -8,7 +8,9 @@
     "field-error_minValue": "Value can't be less than {min}",
     "field-error_integer": "Value must be an integer",
     "field-error_url": "Value must be an URL",
-    "field-error_maxBNValue": "Value can't be more than your balance"
+    "field-error_maxBNValue": "Value can't be more than your balance",
+    "field-error_greaterThen": "Value should be more than {min}",
+    "field-error_ipfsAndUrl": "Value should be URL of in format ipfs://..."
   },
   "errors": {
     "default": "Oops... Something went wrong",

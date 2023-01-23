@@ -10,7 +10,7 @@ import {
   sameAs as _sameAs,
   url as _url,
 } from '@vuelidate/validators'
-import { ValidationRule } from '@vuelidate/core'
+import { ValidationRule, ValidationRuleWithParams } from '@vuelidate/core'
 import { Ref } from 'vue'
 import { createI18nMessage, MessageProps } from '@vuelidate/validators'
 import { get } from 'lodash-es'
@@ -61,8 +61,33 @@ export const maxBNValue = (maxAmount: BN | number | string) =>
     },
   })
 
+export const greaterThen = (minAmount: BN | number | string) =>
+  <ValidationRuleWithParams<{ min: string }>>withI18nMessage({
+    $validator: (num: BN | number | string) =>
+      new BN(num).compare(minAmount) === 1,
+    $message: ({ $params: { min } }) => min,
+    $params: {
+      type: 'greaterThen',
+      min:
+        typeof minAmount === 'object'
+          ? minAmount.toString()
+          : String(minAmount),
+    },
+  })
+
 export const sameAs = (field: Ref): ValidationRule => {
   return <ValidationRule>withI18nMessage(_sameAs(field, get(field, '_key')))
 }
 
 export const url = <ValidationRule>withI18nMessage(_url)
+
+export const ipfsAndUrl = <ValidationRule>withI18nMessage({
+  $validator: (link: string) => {
+    return (
+      _url.$validator(link, link, link) || /^ipfs:\/\/[a-zA-Z0-9]+/.test(link)
+    )
+  },
+  $params: {
+    type: 'ipfsAndUrl',
+  },
+})

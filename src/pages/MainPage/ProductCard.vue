@@ -178,6 +178,7 @@ init()
 }
 
 .product-card__price-txt {
+  line-height: toRem(24);
   font-size: toRem(20);
   font-weight: 700;
   font-family: var(--app-font-family-secondary);

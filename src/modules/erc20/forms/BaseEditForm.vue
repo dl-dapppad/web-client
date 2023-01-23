@@ -108,6 +108,10 @@ const formBalance = computed(() => {
   return new BN(balance.value).fromFraction(erc20?.decimals.value).toString()
 })
 
+props?.writeForms?.forEach(item =>
+  write.value.splice(item.index, 0, { slot: item.slot }),
+)
+
 const isLoaded = ref(false)
 
 const formOverviewData = ref({
@@ -122,14 +126,8 @@ const headingData = {
   overviewLbl: t('product-edit.erc20-common.overview'),
 }
 
-const init = async () => {
-  emits(EVENTS.init)
-
+const updateOverview = async () => {
   erc20?.init(route.params.contractAddress as string)
-
-  props.overviewRows?.forEach(item =>
-    overviewRows.value.splice(item.index, 0, item.row),
-  )
 
   if (provider.value.selectedAddress) {
     balance.value = await erc20.balanceOf(provider.value.selectedAddress)
@@ -154,10 +152,18 @@ const init = async () => {
       item.value = erc20[toCamelCase(item.id)].value as string
     }
   })
+}
 
-  props?.writeForms?.forEach(item =>
-    write.value.splice(item.index, 0, { slot: item.slot }),
+const init = async () => {
+  isLoaded.value = false
+
+  emits(EVENTS.init)
+
+  props.overviewRows?.forEach(item =>
+    overviewRows.value.splice(item.index, 0, item.row),
   )
+
+  await updateOverview()
 
   isLoaded.value = true
 }
@@ -196,7 +202,7 @@ const updateOwner = async () => {
 watch(
   () => provider.value.selectedAddress,
   () => {
-    init()
+    updateOverview()
   },
 )
 

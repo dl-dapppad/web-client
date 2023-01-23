@@ -211,7 +211,13 @@ init()
     </template>
     <loader v-else class="loader__history" />
     <template v-if="history.loaded">
-      <div v-if="pagination.totalPages > 1" class="product-history__pagination">
+      <div
+        v-if="pagination.totalPages > 1"
+        class="product-history__pagination"
+        :style="{
+          width: `${width}px`,
+        }"
+      >
         <app-pagination
           :pages="pagination.totalPages"
           :current-page="pagination.currentPage"
@@ -293,7 +299,7 @@ init()
 
 .loader__history {
   margin-top: toRem(30);
-  height: toRem(361);
+  height: toRem(372);
 }
 
 .loader__pagination {

@@ -5,7 +5,13 @@ import { storeToRefs } from 'pinia'
 
 import { i18n } from '@/localization'
 import { useWeb3ProvidersStore } from '@/store'
-import { required, isAddress, numeric, maxValue } from '@/validators'
+import {
+  required,
+  isAddress,
+  numeric,
+  maxValue,
+  greaterThen,
+} from '@/validators'
 import { BN } from '@/utils'
 import { OverviewRowWithId, Input } from '@/modules/types'
 import { OVERVIEW_ROW } from '@/modules/enums'
@@ -167,6 +173,9 @@ const categoriesData = [
     ] as Input[],
   },
 ]
+
+if (!route.params.id.includes('mint'))
+  categoriesData[1].inputs[1].validators?.push(greaterThen(0))
 
 const init = () => {
   props.additionalModalRows?.forEach(item =>

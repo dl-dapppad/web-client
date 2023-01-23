@@ -182,20 +182,20 @@ const handleShowLess = () => {
       </div>
       <div class="main-page__product-buttons">
         <app-button
-          v-if="countOfCards !== productCards.length"
-          class="main-page__product-btn"
-          color="tertiary"
-          size="large"
-          :text="$t('main-page.show-more-btn')"
-          @click="handleShowMore"
-        />
-        <app-button
           v-if="countOfCards !== 3"
           class="main-page__product-btn"
           color="tertiary"
           size="large"
           :text="$t('main-page.show-less-btn')"
           @click="handleShowLess"
+        />
+        <app-button
+          v-if="countOfCards !== productCards.length"
+          class="main-page__product-btn"
+          color="tertiary"
+          size="large"
+          :text="$t('main-page.show-more-btn')"
+          @click="handleShowMore"
         />
       </div>
     </div>
