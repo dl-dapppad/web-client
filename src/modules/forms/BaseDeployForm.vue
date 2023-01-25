@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, Ref, reactive, onMounted, watch } from 'vue'
+import { ref, computed, Ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { ValidationRule } from '@vuelidate/core'
@@ -13,7 +13,7 @@ import {
   Loader,
   Modal,
 } from '@/common'
-import { SelectField, InputField, CheckboxField, SwitchField } from '@/fields'
+import { InputField } from '@/fields'
 import {
   Product,
   useFormValidation,
@@ -21,7 +21,7 @@ import {
   useFarming,
   useProduct,
 } from '@/composables'
-import { formatAmount, txWrapper } from '@/helpers'
+import { txWrapper } from '@/helpers'
 import { config } from '@/config'
 import { BN } from '@/utils'
 import { required } from '@/validators'
@@ -30,6 +30,8 @@ import { ETHEREUM_CHAINS } from '@/enums'
 import { SCHEMES } from '@/common/Loader.vue'
 import { DeploySuccessMessage } from '@/modules/common'
 import { Input, ModalText, OverviewRow, UseForm } from '@/modules/types'
+
+import BaseDeployFormPrice from '@/modules/forms/BaseDeployForm/BaseDeployFormPrice.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -90,35 +92,14 @@ const selectedProduct = ref<Product>()
 const useFormArray = [] as UseForm[]
 const isPaymentLoaded = ref(true)
 
-const discount = ref<{
-  isDiscountUsed: boolean
-  usedDiscount: string
-  products: {
-    title?: string
-    discount?: string
+const isBalanceInsuficient = ref(false)
+const isDiscountUsed = ref(false)
+const discount = ref<
+  {
+    id: string
     value: string
   }[]
-}>({
-  isDiscountUsed: false,
-  usedDiscount: '',
-  products: [
-    {
-      title: 'ERC-20 Mint Burn',
-      discount: '10000000000000000000',
-      value: '',
-    },
-    {
-      title: 'ERC-20 Mintable',
-      discount: '30000000000000000000',
-      value: '',
-    },
-    {
-      title: 'ERC-20 Mint Burn Cap',
-      discount: '341757683104456907300',
-      value: '',
-    },
-  ],
-})
+>([])
 
 // data to useForm
 const form = reactive({
@@ -158,55 +139,12 @@ form.data.forEach((category, i) => {
   useFormArray[i].isFieldsValid = isFieldsValid
 })
 
-const availableDiscount = computed(() => {
-  let result = '0'
-
-  discount.value.products.forEach(
-    item => (result = new BN(result).add(item.discount as string).toString()),
-  )
-
-  return result.toString()
-})
-
-const maxUsedDiscount = computed(() => {
-  return new BN(
-    new BN(availableDiscount.value).compare(
-      selectedProduct.value?.currentPrice as string,
-    ) === 1
-      ? (selectedProduct.value?.currentPrice as string)
-      : availableDiscount.value,
-  )
-    .fromFraction()
-    .toString()
-})
-
-const productPriceWithDiscount = computed(() =>
-  new BN(selectedProduct.value?.currentPrice as string).sub(
-    new BN(
-      discount.value.usedDiscount === '' ? 0 : discount.value.usedDiscount,
-    ).toFraction(),
-  ),
-)
-
 const isAllFieldsValid = computed(() => {
   let result = true
   useFormArray.forEach(
     UseFormObj => (result &&= UseFormObj.isFieldsValid.value),
   )
   return result
-})
-
-const isBalanceInsuficient = computed(() => {
-  if (!selectedProduct.value) return false
-
-  const currentPrice = new BN(selectedProduct.value?.currentPrice)
-    .fromFraction(productPaymentToken.value.decimals)
-    .toString()
-  const paymentBalance = new BN(selectedPaymentToken.value.balance)
-    .fromFraction(selectedPaymentToken.value.decimals)
-    .toString()
-
-  return new BN(currentPrice).compare(paymentBalance) === 1
 })
 
 const submit = () => {
@@ -322,100 +260,7 @@ const init = async () => {
   productPaymentToken.value.amount = selectedProduct.value.currentPrice
 
   await farming.loadDetails()
-
-  discount.value.products.forEach(item => {
-    watch(
-      () => item.value,
-      async () => {
-        item.value =
-          new BN((await item.discount) as string)
-            .fromFraction()
-            .compare(item.value === '' ? 0 : item.value) === 1
-            ? item.value
-            : new BN(item.discount as string).fromFraction().toString()
-
-        let sum = new BN(0)
-
-        discount.value.products.forEach(
-          item => (sum = sum.add(item.value === '' ? 0 : item.value)),
-        )
-
-        discount.value.usedDiscount = sum.toString()
-      },
-    )
-  })
 }
-
-watch(
-  () => discount.value.usedDiscount,
-  async () => {
-    if (discount.value.usedDiscount === '') {
-      discount.value.products.forEach(item => (item.value = ''))
-      return
-    }
-
-    discount.value.usedDiscount =
-      new BN(await discount.value.usedDiscount).compare(
-        maxUsedDiscount.value,
-      ) === 1
-        ? maxUsedDiscount.value
-        : discount.value.usedDiscount
-
-    let sum = new BN(0)
-
-    discount.value.products.forEach(
-      item => (sum = sum.add(item.value === '' ? 0 : item.value)),
-    )
-
-    const sumOfDiscounts = sum.toString()
-
-    const compareSumAndUse = new BN(sumOfDiscounts).compare(
-      discount.value.usedDiscount,
-    )
-
-    if (compareSumAndUse === 0) return
-
-    let diff: BN
-
-    if (compareSumAndUse === 1) {
-      diff = new BN(sumOfDiscounts).sub(discount.value.usedDiscount)
-
-      discount.value.products.forEach(item => {
-        if (new BN(item.value === '' ? 0 : item.value).compare(diff) === -1) {
-          diff = diff.sub(item.value === '' ? 0 : item.value)
-          item.value = ''
-        } else {
-          item.value = new BN(item.value === '' ? 0 : item.value)
-            .sub(diff)
-            .toString()
-          diff = new BN(0)
-        }
-
-        if (item.value === '0') item.value = ''
-      })
-    } else {
-      diff = new BN(discount.value.usedDiscount).sub(sumOfDiscounts)
-
-      discount.value.products.forEach(item => {
-        const freeDiscount = new BN(item.discount as string)
-          .fromFraction()
-          .sub(item.value === '' ? 0 : item.value)
-
-        if (diff.compare(freeDiscount) === 1) {
-          diff = diff.sub(freeDiscount)
-          item.value = new BN(item.discount as string).fromFraction().toString()
-        } else {
-          item.value = new BN(item.value === '' ? 0 : item.value)
-            .add(diff)
-            .toString()
-          diff = new BN(0)
-        }
-
-        if (item.value === '0') item.value = ''
-      })
-    }
-  },
-)
 
 onMounted(() => init())
 </script>
@@ -491,248 +336,12 @@ onMounted(() => init())
     >
       <div class="app__module-content">
         <div class="app__module-content-inner">
-          <collapse
-            class="app__form-control"
-            is-opened-by-default
-            :is-close-by-click-outside="false"
-          >
-            <template #head="{ collapse }">
-              <app-button
-                class="app__module-content-title"
-                scheme="default"
-                color="default"
-                size="default"
-                @click="collapse.toggle"
-              >
-                <icon
-                  class="app__title-icon"
-                  :name="
-                    collapse.isOpen
-                      ? $icons.arrowUpTriangle
-                      : $icons.arrowDownTriangle
-                  "
-                />
-                {{ $t('product-deploy.default.payment-group') }}
-              </app-button>
-            </template>
-            <template #default>
-              <div class="app__form-control app__collapsed-fields">
-                <div class="app__select-wrp">
-                  <div class="app__field-row">
-                    <select-field
-                      class="app__module-field"
-                      :model-value="form.data[0][0]"
-                      :label="$t('product-deploy.default.payment-lbl')"
-                      :value-options="paymentTokens.symbols"
-                      @update:model-value="updatePayment"
-                    />
-                    <div class="app__field-tooltip">
-                      <info-tooltip
-                        :text="$t('product-deploy.default.payment-info')"
-                      />
-                    </div>
-                  </div>
-                  <template
-                    v-if="
-                      form.data[0][0] !== '' && selectedProduct?.currentPrice
-                    "
-                  >
-                    <div class="app__row" v-if="isPaymentLoaded">
-                      <span class="app__row-title">
-                        {{ $t('product-deploy.default.product-price') }}
-                      </span>
-                      <div class="app__balance">
-                        {{
-                          formatAmount(
-                            selectedProduct.currentPrice,
-                            productPaymentToken.decimals,
-                          )
-                        }}
-                        <span>{{ productPaymentToken.symbol }}</span>
-                      </div>
-                    </div>
-                    <loader v-else class="base-deploy-form__balance-loader" />
-                    <div v-if="form.data[0][0] !== productPaymentToken.symbol">
-                      <div class="app__row" v-if="isPaymentLoaded">
-                        <span class="app__row-title">
-                          {{
-                            $t('product-deploy.default.product-swap-price', {
-                              fromSymbol: selectedPaymentToken.symbol,
-                              toSymbol: productPaymentToken.symbol,
-                            })
-                          }}
-                        </span>
-                        <div class="app__balance">
-                          {{
-                            formatAmount(
-                              selectedPaymentToken.amount,
-                              selectedPaymentToken.decimals,
-                            )
-                          }}
-                          <span>{{ selectedPaymentToken.symbol }}</span>
-                        </div>
-                      </div>
-                      <loader
-                        v-else-if="
-                          paymentTokens.symbols.findIndex(
-                            symbol => symbol === form.data[0][0],
-                          ) !== 0
-                        "
-                        class="base-deploy-form__balance-loader"
-                      />
-                    </div>
-                    <div v-if="selectedPaymentToken.balance">
-                      <div
-                        class="app__row base-deploy-form__balance"
-                        v-if="isPaymentLoaded"
-                      >
-                        <span class="app__row-title">
-                          {{ $t('product-deploy.default.payment-balance') }}
-                        </span>
-                        <div
-                          class="app__balance app__balance-small"
-                          :class="{
-                            'app__balance-insufficient': isBalanceInsuficient,
-                          }"
-                        >
-                          {{
-                            formatAmount(
-                              selectedPaymentToken.balance,
-                              selectedPaymentToken.decimals,
-                            )
-                          }}
-                          <span>{{ selectedPaymentToken.symbol }}</span>
-                        </div>
-                      </div>
-                      <loader v-else class="base-deploy-form__balance-loader" />
-                    </div>
-                  </template>
-                </div>
-              </div>
-            </template>
-          </collapse>
-          <collapse
-            class="app__form-control base-deploy-form__discount"
-            :is-close-by-click-outside="false"
-          >
-            <template #head="{ collapse }">
-              <div class="base-deploy-form__discount-checkbox">
-                <checkbox-field
-                  class=""
-                  v-model="discount.isDiscountUsed"
-                  :label="$t('product-deploy.default.discount-checkbox-lbl')"
-                  @click="collapse.toggle"
-                />
-              </div>
-            </template>
-            <template #default>
-              <div class="app__field-row">
-                <input-field
-                  class="app__module-field"
-                  v-model="discount.usedDiscount"
-                  scheme="secondary"
-                  :label="$t('product-deploy.default.discount-input-lbl')"
-                />
-                <div class="app__field-tooltip">
-                  <info-tooltip
-                    :text="$t('product-deploy.default.discount-tooltip-lbl')"
-                    :move-side="'left'"
-                  />
-                </div>
-              </div>
-              <div class="base-deploy-form__discount-block">
-                <div class="app__row">
-                  <span class="app__row-title">
-                    {{ $t('product-deploy.default.discount-available-lbl') }}
-                  </span>
-                  <div class="app__balance">
-                    {{ formatAmount(availableDiscount) }}
-                    <span>{{ productPaymentToken.symbol }}</span>
-                  </div>
-                </div>
-                <div class="app__row">
-                  <span class="app__row-title">
-                    {{ $t('product-deploy.default.discount-price-lbl') }}
-                  </span>
-                  <div class="app__balance">
-                    {{
-                      formatAmount(
-                        productPriceWithDiscount.toString(),
-                        productPaymentToken.decimals,
-                      )
-                    }}
-                    <span>{{ productPaymentToken.symbol }}</span>
-                  </div>
-                </div>
-                <div class="app__row base-deploy-form__discount-manual-lbl">
-                  {{ $t('product-deploy.default.discount-manual-lbl') }}
-                </div>
-                <collapse :is-close-by-click-outside="false">
-                  <template #head="{ collapse }">
-                    <div class="base-deploy-form__discount-switch">
-                      <switch-field
-                        :right-lbl="
-                          $t(
-                            'product-deploy.default.discount-manual-switch-lbl',
-                          )
-                        "
-                        v-model="collapse.isOpen"
-                        @click="collapse.toggle"
-                      />
-                    </div>
-                  </template>
-                  <template #default>
-                    <div class="base-deploy-form__discount-manual">
-                      <div
-                        v-for="(item, idx) in discount.products"
-                        class="app__row base-deploy-form__discount-manual-row"
-                        :key="idx"
-                      >
-                        <div class="base-deploy-form__discount-manual-key">
-                          <span class="base-deploy-form__discount-manual-title">
-                            {{ item.title }}
-                          </span>
-                          <!--eslint-disable -->
-                          {{
-                            ` (${$t(
-                              'product-deploy.default.discount-manual-available-lbl',
-                            )} `
-                          }}
-                          <!--eslint-enable -->
-                          <span
-                            class="base-deploy-form__discount-manual-available"
-                          >
-                            {{
-                              formatAmount(
-                                item.discount,
-                                productPaymentToken.decimals,
-                                productPaymentToken.symbol,
-                              )
-                            }} </span
-                          >{{ `)` }}
-                        </div>
-                        <!--eslint-disable -->
-                        <input-field
-                          class="base-deploy-form__discount-manual-input app__module-field"
-                          :label="
-                            $t(
-                              'product-deploy.default.discount-manual-inp-lbl',
-                              {
-                                symbol: productPaymentToken.symbol,
-                              },
-                            )
-                          "
-                          scheme="secondary"
-                          v-model="item.value"
-                        />
-                        <!--eslint-enable -->
-                      </div>
-                    </div>
-                  </template>
-                </collapse>
-              </div>
-            </template>
-          </collapse>
+          <base-deploy-form-price
+            v-model:isBalanceInsuficient="isBalanceInsuficient"
+            v-model:data="form.data[0]"
+            v-model:discountData="discount"
+            v-model:isDiscountUsed="isDiscountUsed"
+          />
           <collapse
             v-for="(category, categoryInd) of categories"
             class="app__form-control"
@@ -847,98 +456,5 @@ onMounted(() => init())
 <style lang="scss" scoped>
 .deploy-form__mint-block {
   padding-bottom: 0;
-}
-
-.base-deploy-form__balance {
-  line-height: 1.3;
-}
-
-.base-deploy-form__balance-loader {
-  padding: toRem(10) toRem(28) 0 0;
-  width: 100%;
-}
-
-.base-deploy-form__discount {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(30);
-}
-
-.base-deploy-form__discount-block {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(20);
-}
-
-.base-deploy-form__discount-checkbox {
-  font-size: toRem(16);
-  display: flex;
-}
-
-.base-deploy-form__discount-manual-lbl {
-  color: var(--text-secondary-main);
-  line-height: 1.3;
-  letter-spacing: 0.1em;
-
-  @include respond-to(medium) {
-    font-size: toRem(14);
-  }
-}
-
-.base-deploy-form__discount-switch {
-  display: flex;
-  gap: toRem(12);
-  font-size: toRem(16);
-
-  @include respond-to(medium) {
-    font-size: toRem(14);
-  }
-}
-
-.base-deploy-form__discount-manual {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(6);
-}
-
-.base-deploy-form__discount-manual-key {
-  color: var(--text-secondary-main);
-
-  @include respond-to(medium) {
-    font-size: toRem(14);
-  }
-}
-
-.base-deploy-form__discount-manual-title {
-  font-weight: 700;
-  font-size: inherit;
-
-  @include respond-to(medium) {
-    display: block;
-    padding: 0 0 toRem(5) 0;
-  }
-}
-
-.base-deploy-form__discount-manual-available {
-  color: var(--secondary-main);
-}
-
-.base-deploy-form__discount-manual-input {
-  max-width: toRem(200);
-
-  @include respond-to(medium) {
-    max-width: 100%;
-    width: 100%;
-    padding-right: toRem(28);
-  }
-}
-
-.base-deploy-form__discount-manual-row {
-  @include respond-to(medium) {
-    flex-direction: column;
-    align-items: start;
-    gap: toRem(12);
-    padding: toRem(20) 0 0 0;
-  }
 }
 </style>
