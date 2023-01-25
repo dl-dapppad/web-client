@@ -199,13 +199,13 @@ const updatePayment = async (selectedSymbol: string | number) => {
 }
 
 const toggleIfLoggedIn = (func: () => void) => {
-  emits(EVENTS.updateisDiscountUsed, !props.isDiscountUsed)
-
   if (
     provider?.value.selectedAddress &&
     ![undefined, ''].includes(props.data[0])
-  )
+  ) {
     func()
+    emits(EVENTS.updateisDiscountUsed, !props.isDiscountUsed)
+  }
 }
 
 const emitDiscountData = () =>
