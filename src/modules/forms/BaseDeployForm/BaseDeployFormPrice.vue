@@ -419,35 +419,6 @@ init()
                 </div>
               </div>
               <loader v-else class="base-deploy-form-price__balance-loader" />
-              <div v-if="data[0] !== productPaymentToken.symbol">
-                <div class="app__row" v-if="isPaymentLoaded">
-                  <span class="app__row-title">
-                    {{
-                      $t('product-deploy.default.product-swap-price', {
-                        fromSymbol: selectedPaymentToken.symbol,
-                        toSymbol: productPaymentToken.symbol,
-                      })
-                    }}
-                  </span>
-                  <div class="app__balance">
-                    {{
-                      formatAmount(
-                        selectedPaymentToken.amount,
-                        selectedPaymentToken.decimals,
-                      )
-                    }}
-                    <span>{{ selectedPaymentToken.symbol }}</span>
-                  </div>
-                </div>
-                <loader
-                  v-else-if="
-                    paymentTokens.symbols.findIndex(
-                      symbol => symbol === data[0],
-                    ) !== 0
-                  "
-                  class="base-deploy-form-price__balance-loader"
-                />
-              </div>
               <div v-if="selectedPaymentToken.balance">
                 <div
                   class="app__row base-deploy-form-price__balance"
@@ -509,27 +480,29 @@ init()
               </div>
             </div>
             <div class="base-deploy-form-price__discount-block">
-              <div class="app__row">
-                <span class="app__row-title">
-                  {{ $t('product-deploy.default.discount-available-lbl') }}
-                </span>
-                <div class="app__balance">
-                  {{ formatAmount(availableDiscount) }}
-                  <span>{{ productPaymentToken.symbol }}</span>
+              <div class="base-deploy-form-price__row-wrp">
+                <div class="app__row">
+                  <span class="app__row-title">
+                    {{ $t('product-deploy.default.discount-available-lbl') }}
+                  </span>
+                  <div class="app__balance">
+                    {{ formatAmount(availableDiscount) }}
+                    <span>{{ productPaymentToken.symbol }}</span>
+                  </div>
                 </div>
-              </div>
-              <div class="app__row">
-                <span class="app__row-title">
-                  {{ $t('product-deploy.default.discount-price-lbl') }}
-                </span>
-                <div class="app__balance">
-                  {{
-                    formatAmount(
-                      productPriceWithDiscount.toString(),
-                      productPaymentToken.decimals,
-                    )
-                  }}
-                  <span>{{ productPaymentToken.symbol }}</span>
+                <div class="app__row">
+                  <span class="app__row-title">
+                    {{ $t('product-deploy.default.discount-price-lbl') }}
+                  </span>
+                  <div class="app__balance">
+                    {{
+                      formatAmount(
+                        productPriceWithDiscount.toString(),
+                        productPaymentToken.decimals,
+                      )
+                    }}
+                    <span>{{ productPaymentToken.symbol }}</span>
+                  </div>
                 </div>
               </div>
               <div class="app__row base-deploy-form-price__manual-lbl">
@@ -619,6 +592,11 @@ init()
   display: flex;
   flex-direction: column;
   gap: toRem(20);
+}
+
+.base-deploy-form-price__row-wrp {
+  display: flex;
+  flex-direction: column;
 }
 
 .base-deploy-form-price__discount-checkbox {

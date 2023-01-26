@@ -192,7 +192,7 @@
       "discount-tooltip-lbl": "Amount of discount",
       "discount-available-lbl": "Available on account",
       "discount-price-lbl": "Product price with discount",
-      "discount-manual-lbl": "Your cashback will be distributed automatically, but you can choose to distribute it manually",
+      "discount-manual-lbl": "The discount is automatically applied to the cashback pools with the highest cashback amount. For manual withdrawal activate \"Manual withdrawal\".",
       "discount-manual-switch-lbl": "Manual withdrawal",
       "discount-manual-available-lbl": "available",
       "discount-manual-inp-lbl": "Amount ({symbol})"
