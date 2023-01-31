@@ -32,6 +32,7 @@ const props = withDefaults(
     href?: string
     iconLeft?: ICON_NAMES
     iconRight?: ICON_NAMES
+    isVertical?: boolean
   }>(),
   {
     text: '',
@@ -77,7 +78,11 @@ const buttonClasses = computed(() =>
         <slot />
       </template>
       <template v-else>
-        <span v-if="text" class="app-button__text">
+        <span
+          v-if="text"
+          class="app-button__text"
+          :class="{ 'app-button__text--non-vertical': !isVertical }"
+        >
           {{ text }}
         </span>
       </template>
@@ -91,7 +96,11 @@ const buttonClasses = computed(() =>
         <slot />
       </template>
       <template v-else>
-        <span v-if="text" class="app-button__text">
+        <span
+          v-if="text"
+          class="app-button__text"
+          :class="{ 'app-button__text--non-vertical': !isVertical }"
+        >
           {{ text }}
         </span>
       </template>
@@ -111,7 +120,11 @@ const buttonClasses = computed(() =>
         <slot />
       </template>
       <template v-else>
-        <span v-if="text" class="app-button__text">
+        <span
+          v-if="text"
+          class="app-button__text"
+          :class="{ 'app-button__text--non-vertical': !isVertical }"
+        >
           {{ text }}
         </span>
       </template>
@@ -271,8 +284,8 @@ const buttonClasses = computed(() =>
   &--borderless {
     --app-button-borderless-bg: var(--primary-main);
     --app-button-borderless-bg-hover: var(--secondary-main);
-    --app-button-borderless-bg-active: var(--secondary-dark);
-    --app-button-borderless-bg-focus: var(--secondary-main);
+    --app-button-borderless-bg-active: var(--primary-main);
+    --app-button-borderless-bg-focus: var(--primary-main);
 
     --app-button-borderless-text: var(--text-primary-invert-main);
     --app-button-borderless-text-hover: var(--text-primary-invert-dark);
@@ -502,7 +515,10 @@ const buttonClasses = computed(() =>
   pointer-events: none;
   word-break: break-all;
   min-width: 0;
-  height: 100%;
+
+  &--non-vertical {
+    height: 100%;
+  }
 
   @include text-ellipsis;
 }

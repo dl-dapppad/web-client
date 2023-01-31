@@ -1,21 +1,20 @@
 <script lang="ts" setup>
-import { ref, watch, reactive, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { AppButton, Icon, AppBlock, Modal, AddressCopy, Loader } from '@/common'
-import { InputField } from '@/fields'
-import { getMaxUint256, txWrapper } from '@/helpers'
-import { formatAmount } from '@/helpers'
+import { AppButton, Icon, AppBlock, AddressCopy, Tabs } from '@/common'
+import { formatAmount, cropAddress } from '@/helpers'
 import { ICON_NAMES } from '@/enums'
 import { i18n } from '@/localization'
-import {
-  useErc20,
-  useFarming,
-  InvestInfo,
-  useFormValidation,
-} from '@/composables'
-import { required, numeric } from '@/validators'
+import { useErc20, useFarming, useBreakpoints } from '@/composables'
 import { BN } from '@/utils'
+import { Post } from '@/types'
+
+import postsData from '@/assets/posts.json'
+import Highcharts from 'highcharts'
+
+const posts = postsData as unknown as Post[]
+const breakpoints = useBreakpoints()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
@@ -25,205 +24,269 @@ const farming = useFarming()
 const investmentToken = useErc20()
 const rewardToken = useErc20()
 
-const isModalStakingShown = ref(false)
-const isModalWithdrawingShown = ref(false)
-const isModalClaimingShown = ref(false)
-
-const investmentBalance = ref('0')
-const investInfo = ref<InvestInfo>({
-  amount: '0',
-  rewards: '0',
-})
-
-const rewardBalance = ref('0')
 const isLoaded = ref(false)
 
-const stakingForm = reactive({ amount: '' })
-const stakingValidation = useFormValidation(stakingForm, {
-  amount: {
-    required,
-    numeric,
-  },
-})
-
-const withdrawForm = reactive({ amount: '' })
-const withdrawValidation = useFormValidation(withdrawForm, {
-  amount: {
-    required,
-    numeric,
-  },
-})
+const cardsData = ref<
+  {
+    tab: number
+    id: string
+    points: {
+      user: string
+      total: string
+      other?: {
+        address: string
+        value: string
+      }[]
+    }
+    cashback: string
+    chart?: {
+      address: string
+      value: string
+      color: string
+    }[]
+  }[]
+>([])
+const chartElems = ref<HTMLElement[]>([])
 
 const init = async () => {
   await farming.loadDetails()
 
   investmentToken.init(farming.investmentToken.value)
   rewardToken.init(farming.rewardToken.value)
-  await Promise.all([investmentToken.loadDetails(), rewardToken.loadDetails()])
-
-  await updateBalanceState()
-
-  isLoaded.value = true
-}
-
-const isClaimAvailable = computed(() =>
-  investInfo.value?.rewards
-    ? new BN(investInfo.value?.rewards).compare(0) === 1
-    : false,
-)
-
-const isWithdrawAvailable = computed(() =>
-  investInfo.value.amount
-    ? new BN(investInfo.value?.amount).compare(0) === 1
-    : false,
-)
-
-const updateBalanceState = async () => {
-  if (!provider.value.selectedAddress) return
-
-  const [
-    accountInvestInfo,
-    reward,
-    investmnetBalanceAmount,
-    rewardBalanceAmount,
-  ] = await Promise.all([
-    farming.accountInvestInfo(provider.value.selectedAddress),
-    farming.getRewards(provider.value.selectedAddress),
-    investmentToken.balanceOf(provider.value.selectedAddress),
-    rewardToken.balanceOf(provider.value.selectedAddress),
+  await Promise.all([
+    investmentToken.loadDetails(),
+    rewardToken.loadDetails(),
     farming.loadDetails(),
     account.value.updateDappBalance(),
   ])
 
-  investInfo.value.amount = accountInvestInfo.amount
-  investInfo.value.rewards = reward
-  investmentBalance.value = investmnetBalanceAmount
-  rewardBalance.value = rewardBalanceAmount
-}
+  cardsData.value = [
+    {
+      tab: 1,
+      id: 'erc20-mint-burn-cap',
+      points: {
+        user: '37269000000000000000',
+        total: '250820000000000000000',
+        other: [
+          {
+            address: '0x7e228741405606640dc2C44aDff3D8E203b96c2e',
+            value: '100000000000000000000',
+          },
+          {
+            address: '0x32b7de6bBe841c125f8e17815Ef8f17242EEA540',
+            value: '75000000000000000000',
+          },
+          {
+            address: '0x00DdD0140545f5711e99603853cB29972F3Fe2E3',
+            value: '38551000000000000000',
+          },
+        ],
+      },
+      cashback: '20123400000000000000',
+    },
+    {
+      tab: 1,
+      id: 'erc721-burn-enum',
+      points: {
+        user: '45332000000000000000',
+        total: '280820000000000000000',
+        other: [
+          {
+            address: '0x7e228741405606640dc2C44aDff3D8E203b96c2e',
+            value: '235488000000000000000',
+          },
+        ],
+      },
+      cashback: '8782400000000000000',
+    },
+  ]
 
-const clickMaxStakingAmount = () => {
-  stakingForm.amount = new BN(investmentBalance.value)
-    .fromFraction(investmentToken.decimals.value)
-    .toString()
-}
+  cardsData.value.forEach(item => {
+    item.chart = []
 
-const clickMaxWithdrawAmount = () => {
-  withdrawForm.amount = new BN(investInfo.value.amount)
-    .fromFraction(investmentToken.decimals.value)
-    .toString()
-}
-
-const submitClaim = async () => {
-  if (!provider.value.selectedAddress) return
-
-  await txWrapper(farming.claim, { account: provider.value.selectedAddress })
-  await updateBalanceState()
-
-  isModalClaimingShown.value = false
-}
-
-const submitStaking = async () => {
-  if (!provider.value.selectedAddress) return
-
-  const amount = new BN(stakingForm.amount)
-    .toFraction(investmentToken.decimals.value)
-    .toString()
-
-  const allowance = await investmentToken.allowance(
-    provider.value.selectedAddress,
-    farming.address.value,
-  )
-
-  if (new BN(allowance).compare(amount) < 0) {
-    await txWrapper(investmentToken.approve, {
-      spender: farming.address.value,
-      amount: getMaxUint256(),
+    item.chart.push({
+      address: 'Your share',
+      value: item.points.user,
+      color: '#ffa700',
     })
-  }
 
-  await txWrapper(farming.invest, { amount })
-  await updateBalanceState()
+    if (item.points.other && item.points.other?.length >= 2) {
+      const sortedOther = item.points.other?.sort(
+        (a, b) => new BN(a.value).compare(b.value) * -1,
+      )
 
-  isModalStakingShown.value = false
-}
+      item.chart.push(
+        {
+          address: sortedOther[0].address,
+          value: sortedOther[0].value,
+          color: '#656c77',
+        },
+        {
+          address: sortedOther[1].address,
+          value: sortedOther[1].value,
+          color: '#898f9a',
+        },
+      )
 
-const submitWithdraw = async () => {
-  if (!provider.value.selectedAddress) return
-
-  const amount = new BN(withdrawForm.amount)
-    .toFraction(investmentToken.decimals.value)
-    .toString()
-
-  await txWrapper(farming.withdraw, {
-    amount,
-    receiver: provider.value.selectedAddress,
+      if (item.points.other.length > 2) {
+        item.chart.push({
+          address: 'Others',
+          value: new BN(item.points.total)
+            .sub(item.points.user)
+            .sub(sortedOther[0].value)
+            .sub(sortedOther[1].value)
+            .toString(),
+          color: '#b5bbc7',
+        })
+      }
+    } else if (item.points.other && item.points.other?.length === 1) {
+      item.chart.push({
+        address: item.points.other[0].address,
+        value: item.points.other[0].value,
+        color: '#656c77',
+      })
+    }
   })
-  await updateBalanceState()
 
-  isModalWithdrawingShown.value = false
+  isLoaded.value = true
 }
 
-const handleInputAmount = (
-  maxWeiValue: string,
-  inputAmount: string,
-): string => {
-  const maxValue = new BN(maxWeiValue).fromFraction(
-    investmentToken.decimals.value,
-  )
+const initCharts = () => {
+  cardsData.value.forEach(item => {
+    const chart = chartElems.value.find(
+      el => el.id === `casback-page__card-content-chart--${item.id}`,
+    )
+    if (!chart || chart.firstChild) return
 
-  return maxValue.compare(inputAmount) === -1
-    ? maxValue.toString()
-    : inputAmount
+    Highcharts.chart(
+      chart,
+      {
+        chart: {
+          type: 'pie',
+          backgroundColor: 'none',
+          plotBackgroundColor: undefined,
+          style: {
+            fontFamily: 'Montserrat',
+          },
+          height: '160px',
+          width: 160,
+        },
+        title: {
+          text: formatAmount(item.points.total),
+          align: 'center',
+          verticalAlign: 'middle',
+          y: 10,
+          style: {
+            color: 'var(--text-primary-main)',
+            fontWeight: '700',
+            fontSize: '1rem',
+            'letter-spacing': '0.1em',
+          },
+        },
+        subtitle: {
+          text: 'points',
+          align: 'center',
+          verticalAlign: 'middle',
+          y: 30,
+          style: {
+            color: 'var(--text-primary-main)',
+            fontWeight: '400',
+            fontSize: '1rem',
+            'letter-spacing': '0.1em',
+          },
+        },
+        credits: {
+          enabled: false,
+        },
+        accessibility: {
+          enabled: false,
+        },
+        plotOptions: {
+          pie: {
+            innerSize: '65%',
+            shadow: false,
+            center: ['50%', '50%'],
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: false,
+            },
+          },
+          series: {
+            animation: {
+              duration: 750,
+              easing: 'easeOutQuad',
+            },
+          },
+        },
+        tooltip: {
+          valueSuffix: '%',
+          formatter: function () {
+            return `Points: ${formatAmount(
+              formatAmount(String(this.y), 1),
+              -1,
+            )}`
+          },
+        },
+        series: [
+          {
+            animation: {
+              duration: 750,
+              easing: 'easeOutQuad',
+            },
+            data: item.chart?.map(dataItem => {
+              return {
+                name: dataItem.address,
+                y: Number(new BN(dataItem.value).fromFraction().toString()),
+                color: dataItem.color,
+              }
+            }),
+            size: '140px',
+            startAngle: 0,
+            type: 'pie',
+          },
+        ],
+      },
+      () => ({}),
+    )
+  })
 }
 
 watch(
   () => provider.value.selectedAddress,
   () => {
-    updateBalanceState()
+    init()
   },
 )
 
 watch(
-  () => isModalStakingShown.value,
+  () => isLoaded.value,
   () => {
-    stakingValidation.resetField('amount')
-    stakingForm.amount = ''
+    if (typeof chartElems.value[0] === 'object') initCharts()
   },
 )
 
 watch(
-  () => stakingForm.amount,
-  async () => {
-    const maxWeiValue = await investmentToken.balanceOf(
-      provider?.value?.selectedAddress as string,
-    )
-
-    stakingForm.amount = handleInputAmount(maxWeiValue, stakingForm.amount)
-  },
-)
-
-watch(
-  () => isModalWithdrawingShown.value,
+  () => chartElems.value,
   () => {
-    withdrawValidation.resetField('amount')
-    withdrawForm.amount = ''
+    if (isLoaded.value && typeof chartElems.value[0] === 'object') initCharts()
   },
-)
-
-watch(
-  () => withdrawForm.amount,
-  async () => {
-    const maxWeiValue = (
-      await farming.accountInvestInfo(
-        provider?.value?.selectedAddress as string,
-      )
-    ).amount
-
-    withdrawForm.amount = handleInputAmount(maxWeiValue, withdrawForm.amount)
-  },
+  { deep: true },
 )
 
 init()
+
+const TABS_DATA = [
+  {
+    title: t('cashback-page.tabs-chart'),
+    icon: ICON_NAMES.chartPie,
+    number: 1,
+  },
+  {
+    title: t('cashback-page.tabs-history'),
+    icon: ICON_NAMES.chartBar,
+    number: 2,
+  },
+]
 </script>
 
 <template>
@@ -250,424 +313,160 @@ init()
           {{ $t('cashback-page.subtitle') }}
         </div>
       </div>
-      <div class="cashback-page__tables">
-        <div class="cashback-page__table-wrp">
-          <div class="cashback-page__table">
-            <app-block class="cashback-page__table-block">
-              <div class="cashback-page__table-item">
-                <div class="cashback-page__table-title">
-                  <icon
-                    class="cashback-page__table-icon cashback-page__dark-icon"
-                    :name="ICON_NAMES.circleFilled"
-                  />
-                  <i18n-t keypath="cashback-page.balance-lbl" tag="span">
-                    <template #curr>
-                      {{ investmentToken.symbol.value }}
-                    </template>
-                  </i18n-t>
-                </div>
-                <div class="cashback-page__table-body">
-                  <template v-if="isLoaded">
-                    <span class="cashback-page__table-count">
-                      {{
-                        formatAmount(
-                          account.dappBalance,
-                          investmentToken?.decimals.value,
-                        )
-                      }}
-                    </span>
-                    <span class="cashback-page__table-currency">
-                      {{ investmentToken.symbol.value }}
-                    </span>
-                  </template>
-                  <loader v-else />
-                </div>
-              </div>
-            </app-block>
-            <app-block class="cashback-page__table-block">
-              <div class="cashback-page__table-item">
-                <div class="cashback-page__table-title">
-                  <icon
-                    class="cashback-page__table-icon"
-                    :name="ICON_NAMES.coins"
-                  />
-                  {{ t('cashback-page.total-stake-lbl') }}
-                </div>
-                <div class="cashback-page__table-body">
-                  <template v-if="isLoaded">
-                    <span class="cashback-page__table-count">
-                      {{
-                        formatAmount(
-                          farming.totalInvestedAmount.value,
-                          investmentToken.decimals.value,
-                        )
-                      }}
-                    </span>
-                    <span class="cashback-page__table-currency">
-                      {{ investmentToken.symbol.value }}
-                    </span>
-                  </template>
-                  <loader v-else />
-                </div>
-              </div>
-            </app-block>
-            <app-block class="cashback-page__table-block">
-              <div class="cashback-page__table-item">
-                <div class="cashback-page__table-title">
-                  <icon
-                    class="cashback-page__table-icon"
-                    :name="ICON_NAMES.coin"
-                  />
-                  {{ t('cashback-page.my-stake-lbl') }}
-                </div>
-                <div class="cashback-page__table-body">
-                  <template v-if="isLoaded">
-                    <span class="cashback-page__table-count">
-                      {{
-                        formatAmount(
-                          investInfo.amount,
-                          investmentToken.decimals.value,
-                        )
-                      }}
-                    </span>
-                    <span class="cashback-page__table-currency">
-                      {{ investmentToken.symbol.value }}
-                    </span>
-                  </template>
-                  <loader v-else />
-                </div>
-              </div>
-            </app-block>
-            <app-block class="cashback-page__table-block">
-              <div
-                class="cashback-page__table-buttons"
-                :class="{
-                  'cashback-page__table-buttons--no-withdraw':
-                    !isWithdrawAvailable || !isLoaded,
-                }"
-              >
-                <app-button
-                  v-if="isWithdrawAvailable && isLoaded"
-                  class="cashback-page__btn cashback-page__btn--white"
-                  :text="t('cashback-page.withdraw-btn')"
-                  size="large"
-                  color="tertiary"
-                  scheme="borderless"
-                  modification="border-rounded"
-                  @click="isModalWithdrawingShown = true"
-                />
-                <app-button
-                  class="cashback-page__btn"
-                  :text="t('cashback-page.stake-btn')"
-                  :disabled="account.isDappBalanceEmpty"
-                  size="large"
-                  scheme="borderless"
-                  modification="border-rounded"
-                  @click="isModalStakingShown = true"
-                />
-              </div>
-            </app-block>
+      <div class="cashback-page__cards">
+        <div
+          class="cahback-page__card"
+          v-for="(card, ind) in cardsData"
+          :key="ind"
+        >
+          <div class="cashback-page__card-title">
+            {{ posts.find(el => el.id === card.id)?.title }}
           </div>
-          <div class="cashback-page__token-info-wrp">
-            <div class="cashback-page__token-info">
-              <template v-if="isLoaded">
-                <span class="cashback-page__table-desc-text">
-                  {{
-                    `${$t('cashback-page.stake-address-lbl')} (${
-                      investmentToken.symbol.value
-                    })`
-                  }}
+          <div class="cashback-page__card-inner">
+            <app-block class="cashback-page__card-points">
+              <div class="cashback-page__card-first-row-inner">
+                <div class="cashback-page__card-first-row-title">
+                  <icon
+                    :name="$icons.tag"
+                    class="cashback-page__card-first-row-icon"
+                  />
+                  {{ $t('cashback-page.card-points') }}
+                </div>
+                <span class="cashbcak-page__card-value">
+                  {{ formatAmount(card.points.user) }}
                 </span>
-                <address-copy
-                  class="app__link--accented cashback-page__table-desc-address"
-                  :address="investmentToken.address.value"
-                />
-              </template>
-              <loader v-else />
-            </div>
-          </div>
-        </div>
-        <div class="cashback-page__table-wrp">
-          <div
-            class="cashback-page__table"
-            :class="{
-              'cashback-page__claim-not-available':
-                !isClaimAvailable || !isLoaded,
-            }"
-          >
-            <app-block class="cashback-page__table-block">
-              <div class="cashback-page__table-item">
-                <div class="cashback-page__table-title">
-                  <icon
-                    class="cashback-page__table-icon cashback-page__dark-icon"
-                    :name="ICON_NAMES.daiCoin"
-                  />
-                  <i18n-t keypath="cashback-page.balance-lbl" tag="span">
-                    <template #curr>
-                      {{ rewardToken.symbol.value }}
-                    </template>
-                  </i18n-t>
-                </div>
-                <div class="cashback-page__table-body">
-                  <template v-if="isLoaded">
-                    <span class="cashback-page__table-count">
-                      {{
-                        formatAmount(rewardBalance, rewardToken?.decimals.value)
-                      }}
-                    </span>
-                    <span class="cashback-page__table-currency">
-                      {{ rewardToken.symbol.value }}
-                    </span>
-                  </template>
-                  <loader v-else />
-                </div>
               </div>
             </app-block>
-            <app-block class="cashback-page__table-block">
-              <div class="cashback-page__table-item">
-                <div class="cashback-page__table-title">
+            <app-block class="cashback-page__card-cashback">
+              <div class="cashback-page__card-first-row-inner">
+                <div class="cashback-page__card-first-row-title">
                   <icon
-                    class="cashback-page__table-icon"
-                    :name="ICON_NAMES.gift"
+                    :name="$icons.gift"
+                    class="cashback-page__card-first-row-icon"
                   />
-                  {{ t('cashback-page.total-reward-lbl') }}
+                  {{ $t('cashback-page.card-cashback') }}
                 </div>
-                <div class="cashback-page__table-body">
-                  <template v-if="isLoaded">
-                    <span class="cashback-page__table-count">
-                      {{
-                        formatAmount(
-                          farming.totalRewardAmount.value,
-                          rewardToken.decimals.value,
-                        )
-                      }}
-                    </span>
-                    <span class="cashback-page__table-currency">
-                      {{ rewardToken.symbol.value }}
-                    </span>
-                  </template>
-                  <loader v-else />
-                </div>
-              </div>
-            </app-block>
-            <app-block class="cashback-page__table-block">
-              <!-- eslint-disable -->
-              <div
-                class="cashback-page__table-item cashback-page__table-item--colored"
-              >
+                <!-- eslint-disable -->
+                <span
+                  class="cashbcak-page__card-value cashbcak-page__card-value--accented"
+                >
+                  {{ formatAmount(card.cashback, 0, 'USD', 3) }}
+                </span>
                 <!-- eslint-enable -->
-                <div class="cashback-page__table-title">
-                  <icon
-                    class="cashback-page__table-icon"
-                    :name="ICON_NAMES.checkCircleFilled"
+              </div>
+            </app-block>
+            <tabs
+              :is-vertical="!breakpoints.isMedium.value"
+              :is-stretched-horizontal="breakpoints.isMedium.value"
+              :tabs-data="TABS_DATA"
+              v-model="card.tab"
+              active-color="tertiary"
+              non-active-color="primary"
+              class="cashback-page__card-tabs"
+            />
+            <app-block class="cashback-page__card-content-wrp">
+              <div class="cashback-page__card-content">
+                <div
+                  class="cashback-page__card-content-chart"
+                  v-if="card.tab === 1"
+                >
+                  <div
+                    class="cashback-page__card-chart"
+                    :id="`casback-page__card-content-chart--${card.id}`"
+                    ref="chartElems"
                   />
-                  {{ t('cashback-page.current-rewards-lbl') }}
+                  <div class="cashback-page__card-legend">
+                    <div
+                      class="cashback-page__card-legend-item"
+                      v-for="(row, idx) in card.chart"
+                      :key="idx"
+                    >
+                      <div class="cashback-page__card-legend-key">
+                        <div
+                          class="cashback-page__card-legend-circle"
+                          :style="{ backgroundColor: row.color }"
+                        ></div>
+                        <div
+                          class="cashback-page__card-legend-addr"
+                          :class="{
+                            'cashback-page__card-legend-addr--accented':
+                              idx === 0,
+                          }"
+                        >
+                          {{
+                            [0, 3].includes(idx)
+                              ? row.address
+                              : cropAddress(row.address, 3)
+                          }}
+                        </div>
+                      </div>
+                      <div class="cashback-page__card-legend-value">
+                        {{
+                          `${
+                            Math.round(
+                              (Number(row.value) / Number(card.points.total)) *
+                                100000,
+                            ) / 1000
+                          }%`
+                        }}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="cashback-page__table-body">
-                  <template v-if="isLoaded">
-                    <span class="cashback-page__table-count">
-                      {{
-                        formatAmount(
-                          investInfo.rewards,
-                          rewardToken.decimals.value,
-                        )
-                      }}
-                    </span>
-                    <span class="cashback-page__table-currency">
-                      {{ rewardToken.symbol.value }}
-                    </span>
-                  </template>
-                  <loader v-else />
+                <div
+                  class="cashback-page__card-content-history"
+                  v-else-if="card.tab === 2"
+                >
+                  <div class="cashback-page__card-history">
+                    <!-- eslint-disable -->
+                    <div
+                      class="cashback-page__card-history-row cashback-page__card-history-row--titled"
+                    >
+                      <!-- eslint-enable -->
+                      <span class="cashback-page__card-history-row-item">
+                        {{ $t('cashback-page.history-address') }}
+                      </span>
+                      <span class="cashback-page__card-history-row-item">
+                        {{ $t('cashback-page.history-points') }}
+                      </span>
+                      <span class="cashback-page__card-history-row-item">
+                        {{ $t('cashback-page.history-share') }}
+                      </span>
+                    </div>
+                    <div
+                      class="cashback-page__card-history-row"
+                      v-for="(row, idx) in card.points.other"
+                      :key="idx"
+                    >
+                      <span class="cashback-page__card-history-row-item">
+                        <!-- eslint-disable -->
+                        <address-copy
+                          class="app__link--low app__link--accented"
+                          :address="row.address"
+                        />
+                        <!-- eslint-enable -->
+                      </span>
+                      <span class="cashback-page__card-history-row-item">
+                        {{ formatAmount(row.value) }}
+                      </span>
+                      <span class="cashback-page__card-history-row-item">
+                        {{
+                          `${
+                            Math.round(
+                              (row.value / card.points.total) * 100000,
+                            ) / 1000
+                          }%`
+                        }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </app-block>
-            <template v-if="isClaimAvailable && isLoaded">
-              <app-block>
-                <app-button
-                  class="cashback-page__btn"
-                  :text="t('cashback-page.claim-btn')"
-                  size="large"
-                  scheme="borderless"
-                  modification="border-rounded"
-                  @click="isModalClaimingShown = true"
-                />
-              </app-block>
-            </template>
-          </div>
-          <div class="cashback-page__token-info-wrp">
-            <div class="cashback-page__token-info">
-              <template v-if="isLoaded">
-                <span class="cashback-page__table-desc-text">
-                  {{
-                    `${$t('cashback-page.reward-address-lbl')} (${
-                      rewardToken.symbol.value
-                    })`
-                  }}
-                </span>
-                <address-copy
-                  class="app__link--accented cashback-page__table-desc-address"
-                  :address="rewardToken.address.value"
-                />
-              </template>
-              <loader v-else />
-            </div>
           </div>
         </div>
       </div>
     </div>
-    <modal v-model:is-shown="isModalWithdrawingShown">
-      <template #default="{ modal }">
-        <div class="cashback-page__modal">
-          <div class="cashback-page__modal-title-wrp">
-            <div class="cashback-page__modal-title">
-              <icon class="cashback-page__modal-icon" :name="$icons.hands" />
-              {{ $t('cashback-page.withdrawing-modal-title') }}
-            </div>
-            <app-button
-              class="cashback-page__modal-close"
-              size="small"
-              scheme="default"
-              :icon-right="$icons.x"
-              @click="modal.close"
-            />
-          </div>
-          <p class="cashback-page__modal-paragraph">
-            {{ $t('cashback-page.withdrawing-modal-text') }}
-          </p>
-          <div class="cashback-page__modal-row">
-            <span class="cashback-page__modal-row-key">
-              {{ $t('cashback-page.withdrawing-modal-row-key') }}
-            </span>
-            <span class="cashback-page__modal-row-value">
-              {{
-                formatAmount(investInfo.amount, investmentToken.decimals.value)
-              }}
-              <span class="cashback-page__modal-row-currency">
-                {{ investmentToken.symbol.value }}
-              </span>
-            </span>
-          </div>
-          <div class="cashback-page__modal-input">
-            <input-field
-              class="app__module-field"
-              v-model="withdrawForm.amount"
-              scheme="secondary"
-              :label="t('cashback-page.withdrawing-modal-input-label')"
-              :error-message="withdrawValidation.getFieldErrorMessage('amount')"
-              @blur="withdrawValidation.touchField('amount')"
-            />
-            <app-button
-              class="cashback-page__modal-max-btn"
-              :text="t('cashback-page.withdrawing-modal-input-btn-lbl')"
-              @click="clickMaxWithdrawAmount"
-            />
-          </div>
-          <app-button
-            class="cashback-page__modal-btn"
-            size="large"
-            :text="t('cashback-page.withdrawing-page-btn-lbl')"
-            :disabled="!withdrawValidation.isFieldsValid.value"
-            @click="submitWithdraw"
-          />
-        </div>
-      </template>
-    </modal>
-    <modal v-model:is-shown="isModalStakingShown">
-      <template #default="{ modal }">
-        <div class="cashback-page__modal">
-          <div class="cashback-page__modal-title-wrp">
-            <div class="cashback-page__modal-title">
-              <icon class="cashback-page__modal-icon" :name="$icons.coin" />
-              {{ $t('cashback-page.staking-modal-title') }}
-            </div>
-            <app-button
-              class="cashback-page__modal-close"
-              size="small"
-              scheme="default"
-              :icon-right="$icons.x"
-              @click="modal.close"
-            />
-          </div>
-          <p class="cashback-page__modal-paragraph">
-            {{ $t('cashback-page.staking-modal-text-first') }}
-          </p>
-          <div class="cashback-page__modal-row">
-            <span class="cashback-page__modal-row-key">
-              {{ $t('cashback-page.staking-modal-row-key') }}
-            </span>
-            <span class="cashback-page__modal-row-value">
-              {{
-                formatAmount(investmentBalance, investmentToken.decimals.value)
-              }}
-              <span class="cashback-page__modal-row-currency">
-                {{ investmentToken.symbol.value }}
-              </span>
-            </span>
-          </div>
-          <div class="cashback-page__modal-input">
-            <input-field
-              class="app__module-field"
-              v-model="stakingForm.amount"
-              scheme="secondary"
-              :label="t('cashback-page.staking-modal-input-label')"
-              :error-message="stakingValidation.getFieldErrorMessage('amount')"
-              @blur="stakingValidation.touchField('amount')"
-            />
-            <app-button
-              class="cashback-page__modal-max-btn"
-              :text="t('cashback-page.staking-modal-input-btn-lbl')"
-              @click="clickMaxStakingAmount"
-            />
-          </div>
-          <app-button
-            class="cashback-page__modal-btn"
-            size="large"
-            :text="t('cashback-page.staking-page-btn-lbl')"
-            :disabled="!stakingValidation.isFieldsValid.value"
-            @click="submitStaking"
-          />
-        </div>
-      </template>
-    </modal>
-    <modal v-model:is-shown="isModalClaimingShown">
-      <template #default="{ modal }">
-        <div class="cashback-page__modal" v-if="isLoaded">
-          <div class="cashback-page__modal-title-wrp">
-            <div class="cashback-page__modal-title">
-              <icon class="cashback-page__modal-icon" :name="$icons.hands" />
-              {{ $t('cashback-page.claiming-modal-title') }}
-            </div>
-            <app-button
-              class="cashback-page__modal-close"
-              size="small"
-              scheme="default"
-              :icon-right="$icons.x"
-              @click="modal.close"
-            />
-          </div>
-          <p class="cashback-page__modal-paragraph">
-            {{ $t('cashback-page.claiming-modal-text') }}
-          </p>
-          <div class="cashback-page__modal-row">
-            <span class="cashback-page__modal-row-key">
-              {{ $t('cashback-page.claiming-modal-row-key') }}
-            </span>
-            <span class="cashback-page__modal-row-value">
-              {{ formatAmount(investInfo.rewards, rewardToken.decimals.value) }}
-              <span class="cashback-page__modal-row-currency">
-                {{ rewardToken.symbol.value }}
-              </span>
-            </span>
-          </div>
-          <app-button
-            class="cashback-page__modal-btn"
-            size="large"
-            :text="t('cashback-page.claiming-page-btn-lbl')"
-            @click="submitClaim"
-          />
-        </div>
-      </template>
-    </modal>
   </div>
 </template>
 
@@ -701,405 +500,193 @@ init()
   padding: 0;
 }
 
-.cashback-page__tables {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(40);
+.cashback-page__cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: toRem(22);
 
-  @include respond-to(medium) {
-    flex-direction: column-reverse;
+  @include respond-to(large) {
+    grid-template-columns: 1fr;
   }
 }
 
-.cashback-page__title-wrp {
+.cahback-page__card {
   display: flex;
   flex-direction: column;
   gap: toRem(20);
 }
 
-.cashback-page__title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-
-  @include respond-to(medium) {
-    justify-content: start;
-
-    & > * {
-      margin-left: toRem(10);
-    }
-  }
-}
-
-.cashback-page__heading {
+.cashback-page__card-title {
+  font-size: toRem(36);
   font-family: var(--app-font-family-secondary);
-  font-weight: 900;
-  font-size: toRem(70);
-  letter-spacing: 0.1em;
+  font-weight: 700;
 
   @include respond-to(medium) {
-    font-size: toRem(36);
+    font-size: toRem(24);
   }
 }
 
-.cashback-page__title-icon {
-  width: toRem(16);
-  height: toRem(16);
-}
-
-.cashback-page__table {
+.cashback-page__card-inner {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-
-  & > .cashback-page__table-block:not(:last-child) {
-    padding-right: toRem(0);
-  }
+  grid-template-columns: toRem(100) 1fr 50%;
 
   @include respond-to(medium) {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, 1fr);
-
-    & > .cashback-page__table-block:not(:last-child) {
-      padding-right: toRem(1);
-      padding-bottom: toRem(0);
-    }
   }
 }
 
-.cashback-page__table-title {
+.cashback-page__card-points {
+  grid-column: 1 / 3;
+  padding-bottom: 0;
+
+  @include respond-to(medium) {
+    grid-column: auto;
+  }
+}
+
+.cashback-page__card-cashback {
+  padding: toRem(1) toRem(1) 0 0;
+
+  @include respond-to(medium) {
+    padding: toRem(1) toRem(1) 0 toRem(1);
+  }
+}
+
+.cashback-page__card-first-row-inner {
   display: flex;
-  gap: toRem(14);
+  flex-direction: column;
+  justify-content: center;
+  gap: toRem(8);
+  padding: toRem(20) toRem(30);
+  height: 100%;
+}
+
+.cashback-page__card-first-row-title {
+  display: flex;
+  gap: toRem(12);
   font-size: toRem(16);
-  font-family: var(--app-font-family-secondary);
-  font-weight: 600;
-  color: var(--text-secondary-main);
-}
-
-.cashback-page__table-icon {
-  min-width: toRem(16);
-  min-height: toRem(16);
-  max-width: toRem(16);
-  max-height: toRem(16);
-}
-
-.cashback-page__under-table-icon {
-  min-width: toRem(12);
-  min-height: toRem(12);
-  max-width: toRem(12);
-  max-height: toRem(12);
-  color: var(--text-primary-main);
-}
-
-.cashback-page__dark-icon {
-  color: var(--primary-main);
-}
-
-.cashback-page__table-item {
-  padding: toRem(30) toRem(20);
-  display: flex;
-  flex-direction: column;
-  gap: toRem(10);
-  border-radius: toRem(12);
-
-  &--colored {
-    background-color: var(--secondary-main);
-    color: var(--text-primary-invert-main);
-
-    & .cashback-page__table-title {
-      color: var(--text-primary-invert-main);
-
-      & .cashback-page__table-icon {
-        color: var(--text-primary-invert-main);
-      }
-    }
-  }
-}
-
-.cashback-page__table-body {
-  display: flex;
-  align-items: flex-end;
-  gap: toRem(6);
-
-  .vue-skeletor {
-    height: toRem(20);
-  }
-}
-
-.cashback-page__table-count {
-  font-weight: 800;
-  font-size: toRem(20);
-}
-
-.cashback-page__table-currency {
-  font-weight: 700;
-  font-size: toRem(12);
-}
-
-.cashback-page__table-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100%;
-  background-color: var(--primary-main);
-
-  &--no-withdraw {
-    grid-template-columns: 1fr;
-  }
-}
-
-.cashback-page__btn {
-  width: 100%;
-  height: 100%;
-  padding: toRem(1);
-
-  &--white {
-    background-color: var(--background-secondary);
-  }
-}
-
-.cashback-page__table-desc-text {
-  padding: toRem(14) 0;
-  font-size: toRem(12);
-  color: var(--text-secondary-main);
-  font-weight: 700;
-}
-
-.cashback-page__table-desc-address {
-  justify-self: end;
-}
-
-.cashback-page__charts-history-wrp {
-  display: flex;
-  flex-direction: column;
-}
-
-.cashback-page__charts {
-  display: grid;
-  grid-template-columns: minmax(#{toRem(346)}, 1fr) minmax(#{toRem(693)}, 2fr);
-}
-
-.cashback-page__chart {
-  padding: toRem(40);
-}
-
-.cashback-page__history {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: start;
-}
-
-.cashback-page__history-item {
-  padding: toRem(40);
-  display: flex;
-  flex-direction: column;
-  gap: toRem(30);
-}
-
-.cashback-page__history-title {
-  display: flex;
-  justify-content: space-between;
-}
-
-.cashback-page__history-heading {
-  font-family: var(--app-font-family-secondary);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  font-size: toRem(20);
-}
-
-.cashback-page__history-currency {
-  font-weight: 700;
-  font-size: toRem(14);
-  display: flex;
-  gap: toRem(10);
   align-items: center;
 }
 
-.cashback-page__history-currency-icon {
-  height: toRem(24);
-  width: toRem(24);
+.cashback-page__card-first-row-icon {
+  max-width: toRem(17);
+  max-height: toRem(17);
 }
 
-.cashback-page__history-table {
-  display: flex;
-  flex-direction: column;
-}
-
-.cashback-page__history-time {
-  padding: toRem(20) 0 toRem(10);
+.cashbcak-page__card-value {
   font-weight: 700;
-  font-family: var(--app-font-family-secondary);
-  color: var(--text-secondary-main);
-}
+  font-size: toRem(20);
 
-.cashback-page__history-icon {
-  width: toRem(16);
-  height: toRem(16);
-}
-
-.cashback-page__row {
-  padding: toRem(20) toRem(10);
-  display: flex;
-  justify-content: space-between;
-  border-bottom: toRem(1) solid var(--border-primary-main);
-  font-weight: 700;
-
-  &--selected {
+  &--accented {
     color: var(--secondary-main);
   }
 }
 
-.cashback-page__row-key {
-  display: flex;
-  gap: toRem(5);
-  align-items: center;
+.cashback-page__card-tabs {
+  font-weight: 400;
+
+  @include respond-to(medium) {
+    min-height: toRem(90);
+  }
 }
 
-.cashback-page__modal {
+.cashback-page__card-content-wrp {
+  grid-column: 2 / 4;
+  padding-left: 0;
+
+  @include respond-to(medium) {
+    grid-column: auto;
+    padding-left: toRem(1);
+  }
+}
+
+.cashback-page__card-content {
+  height: 100%;
+}
+
+.cashback-page__card-content-chart {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: toRem(36);
+  padding: 0 toRem(24);
+
+  @include respond-to(medium) {
+    flex-direction: column;
+    gap: toRem(20);
+    padding: toRem(30) toRem(20);
+  }
+}
+
+.cashback-page__card-chart {
+  max-height: toRem(214);
+}
+
+.cashback-page__card-legend {
   display: flex;
   flex-direction: column;
-  gap: toRem(40);
-  background-color: var(--background-primary);
-  padding: toRem(20) toRem(40);
-  width: toRem(550);
+  gap: toRem(16);
+  flex-grow: 1;
 
   @include respond-to(medium) {
     width: 100%;
-    padding: toRem(20);
-    gap: toRem(30);
   }
 }
 
-.cashback-page__modal-title-wrp {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.cashback-page__modal-title {
-  display: flex;
-  align-items: center;
-  gap: toRem(18);
-  font-family: var(--app-font-family-secondary);
-  font-size: toRem(30);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-
-  @include respond-to(medium) {
-    font-size: toRem(20);
-  }
-}
-
-.cashback-page__modal-icon {
-  width: toRem(30);
-  height: toRem(30);
-  color: var(--secondary-main);
-}
-
-.cashback-page__modal-close {
-  padding: 0;
-  width: toRem(20);
-  height: toRem(20);
-  color: var(--text-secondary-main);
-  cursor: pointer;
-}
-
-.cashback-page__modal-paragraph {
-  line-height: toRem(20);
-
-  @include respond-to(medium) {
-    font-size: toRem(14);
-  }
-}
-
-.cashback-page__modal-row {
+.cashback-page__card-legend-item {
   display: flex;
   justify-content: space-between;
-
-  @include respond-to(medium) {
-    flex-direction: column;
-    gap: toRem(10);
-  }
-}
-
-.cashback-page__modal-row-key {
-  font-size: toRem(14);
-  color: var(--text-secondary-main);
-  font-weight: 700;
-
-  @include respond-to(medium) {
-    font-size: toRem(12);
-  }
-}
-
-.cashback-page__modal-row-value {
-  font-size: toRem(16);
-  font-weight: 700;
-}
-
-.cashback-page__modal-row-currency {
   font-size: toRem(12);
 }
 
-.cashback-page__modal-input {
+.cashback-page__card-legend-key {
   display: flex;
+  align-items: center;
   gap: toRem(10);
 }
 
-.cashback-page__modal-max-btn {
-  padding: 0 toRem(20);
-  font-size: toRem(14);
-  max-height: toRem(56);
+.cashback-page__card-legend-circle {
+  width: toRem(10);
+  height: toRem(10);
+  border-radius: toRem(10);
+}
 
-  @include respond-to(xsmall) {
-    padding: 0 toRem(10);
+.cashback-page__card-legend-addr {
+  color: var(--text-secondary-main);
+
+  &--accented {
+    color: var(--text-primary-main);
   }
 }
 
-.cashback-page__modal-btn {
-  width: 100%;
-  height: toRem(52);
-  padding-top: toRem(16);
-  padding-bottom: toRem(16);
+.cashback-page__card-content-history {
+  height: 100%;
+  padding: toRem(23) toRem(43);
 }
 
-.cashback-page__history-grid {
-  padding-top: toRem(30);
-}
-
-.cashback-page__claim-not-available {
-  grid-template-columns: repeat(3, 1fr);
-
-  @include respond-to(medium) {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, 1fr);
-  }
-}
-
-.cashback-page__token-info-wrp {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: toRem(5) 0;
-
-  @include respond-to(medium) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.cashback-page__token-info {
+.cashback-page__card-history {
+  height: 100%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: toRem(15);
+}
 
-  .loader {
-    height: toRem(40);
+.cashback-page__card-history-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
 
-    .vue-skeletor {
-      border-radius: 0;
-    }
+  &--titled {
+    padding-bottom: toRem(6);
+    color: var(--text-secondary-main);
   }
+}
 
-  @include respond-to(medium) {
-    flex-direction: column;
+.cashback-page__card-history-row-item {
+  font-size: toRem(12);
+  font-weight: 400;
+
+  &:last-child {
+    text-align: end;
   }
 }
 </style>

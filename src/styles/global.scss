@@ -229,6 +229,10 @@ a {
   &--accented {
     color: var(--secondary-main);
   }
+
+  &--low {
+    font-weight: 400;
+  }
 }
 
 .app__link-icon {
