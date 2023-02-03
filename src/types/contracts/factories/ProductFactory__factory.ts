@@ -47,6 +47,18 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "bytes32",
+        name: "productAlias",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "payer",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "address",
         name: "proxy",
         type: "address",
@@ -103,25 +115,6 @@ const _abi = [
       },
     ],
     name: "Initialized",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferred",
     type: "event",
   },
   {
@@ -234,16 +227,67 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "DEFAULT_ADMIN_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "PRODUCT_FACTORY_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "accessControl_",
+        type: "address",
+      },
+    ],
     name: "ProductFactory_init",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "accessControl_",
+        type: "address",
+      },
+    ],
     name: "__ProductFactoryConfig_init",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "accessControl",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -276,6 +320,16 @@ const _abi = [
         name: "initializeData_",
         type: "bytes",
       },
+      {
+        internalType: "bytes32[]",
+        name: "discountAliases_",
+        type: "bytes32[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "discounts_",
+        type: "uint256[]",
+      },
     ],
     name: "deploy",
     outputs: [
@@ -285,7 +339,7 @@ const _abi = [
         type: "address",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -365,12 +419,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "owner",
+    name: "isNotUpgradeable",
     outputs: [
       {
-        internalType: "address",
+        internalType: "bool",
         name: "",
-        type: "address",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -453,7 +507,20 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "renounceOwnership",
+    name: "removeUpgradeability",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "accessControl_",
+        type: "address",
+      },
+    ],
+    name: "setAccessControl",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -556,12 +623,42 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "bytes32",
+        name: "alias_",
+        type: "bytes32",
+      },
+      {
         internalType: "address",
-        name: "newOwner",
+        name: "implementation_",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "currentPrice_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "minPrice_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint128",
+        name: "decreasePercent_",
+        type: "uint128",
+      },
+      {
+        internalType: "uint128",
+        name: "cashbackPercent_",
+        type: "uint128",
+      },
+      {
+        internalType: "bool",
+        name: "isActive_",
+        type: "bool",
+      },
     ],
-    name: "transferOwnership",
+    name: "setupProduct",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

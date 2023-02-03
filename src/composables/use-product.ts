@@ -9,12 +9,9 @@ import { config } from '@/config'
 import { getMaxUint256, txWrapper } from '@/helpers'
 import { BN } from '@/utils'
 import {
+  useSystemContracts,
   useErc20,
-  useProductFactory,
   Erc20Contract,
-  useFarming,
-  Product,
-  usePayment,
   useApollo,
 } from '@/composables'
 
@@ -31,7 +28,9 @@ import { useProductErc721BurnEnum } from '@/modules/erc721/erc721-burn-enum/comp
 
 export const useProduct = () => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
+
   const router = useRouter()
+  const systemContracts = useSystemContracts()
 
   const handleContractSearch = async (address: string) => {
     const apollo = useApollo()
@@ -66,6 +65,8 @@ export const useProduct = () => {
     productPrice: string,
     paymentTokenAddress: string,
     initializeData: unknown[],
+    discountAliases: string[],
+    discountValues: string[],
   ): Promise<string> => {
     const { t } = i18n.global
 
@@ -74,68 +75,60 @@ export const useProduct = () => {
       return ''
     }
 
+    await systemContracts.loadDetails()
+
     const alias = config.PRODUCT_ALIASES[productId as string]
 
-    const factory = useProductFactory()
-    const paymentContract = await factory.payment()
-
-    const paymentToken = useErc20(paymentTokenAddress)
     const isApproved = await _isApproved(
-      paymentToken,
+      useErc20(paymentTokenAddress),
       provider.value.selectedAddress as string,
-      paymentContract,
+      systemContracts.payment.address.value,
       productPrice,
     )
     if (!isApproved) return ''
 
     const encodedInitializeData = _getInitializeData(productId, initializeData)
-    const potentialContractAddress = await factory.getPotentialContractAddress(
-      alias,
-      encodedInitializeData,
-      provider.value.selectedAddress,
-    )
+    const potentialContractAddress =
+      await systemContracts.factory.getPotentialContractAddress(
+        alias,
+        encodedInitializeData,
+        provider.value.selectedAddress,
+      )
 
-    const txSucces = await txWrapper(factory.deploy, {
+    const txSucces = await txWrapper(systemContracts.factory.deploy, {
       alias,
       paymentTokenAddress,
       encodedInitializeData,
+      discountAliases,
+      discountValues,
     })
 
     if (!txSucces) return ''
 
-    await useAccountStore().updateDappBalance()
+    await useAccountStore().updateCashbackInfo()
 
     return potentialContractAddress
-  }
-
-  const getProductInfo = async (alias: string): Promise<Product> => {
-    const factory = useProductFactory()
-
-    return factory.products(alias)
   }
 
   const getAvailablePaymentTokenList = async (): Promise<
     Record<string, Array<string>>
   > => {
-    const farming = useFarming()
-    const factory = useProductFactory()
+    await systemContracts.loadDetails()
 
-    let paymentContractAddress = ''
-    const [address] = await Promise.all([
-      factory.payment(),
-      farming.loadDetails(),
-    ])
-    paymentContractAddress = address
-
-    const payment = usePayment(paymentContractAddress)
-    const paymentTokensAddresses = await payment.getPaymentTokens()
-    const tokensAddresses = [
-      farming.rewardToken.value,
-      ...paymentTokensAddresses,
-    ]
+    const paymentTokensAddresses = []
+    for (let i = 0; i < 100; i++) {
+      try {
+        const tokenAddress = await systemContracts.payment.getPaymentToken(i)
+        paymentTokensAddresses.push(tokenAddress)
+      } catch {
+        break
+      }
+    }
 
     const requests: Promise<void>[] = []
-    const paymentTokens = tokensAddresses.map(address => useErc20(address))
+    const paymentTokens = paymentTokensAddresses.map(address =>
+      useErc20(address),
+    )
     paymentTokens.forEach(token => requests.push(token.loadDetails()))
 
     await Promise.all(requests)
@@ -152,17 +145,12 @@ export const useProduct = () => {
 
   const getSelectedPaymentTokenInfo = async (
     address: string,
-    isSwapToken = false,
-    swapAmount = '0',
   ): Promise<Record<string, string>> => {
     const data = {
       symbol: '',
       decimals: '',
       balance: '',
-      amount: '0',
     }
-
-    const { provider } = storeToRefs(useWeb3ProvidersStore())
 
     const erc20 = useErc20(address)
     await erc20.loadDetails()
@@ -178,14 +166,13 @@ export const useProduct = () => {
       data.balance = balance
     }
 
-    if (!isSwapToken) return data
-
-    const factory = useProductFactory()
-    const paymentContractAddress = await factory.payment()
-    const payment = usePayment(paymentContractAddress)
-    data.amount = await payment.getInputSwapAmount(address, swapAmount)
-
     return data
+  }
+
+  const getProductIdByAlias = (alias: string): PRODUCT_IDS => {
+    return Object.keys(config.PRODUCT_ALIASES).find(
+      key => config.PRODUCT_ALIASES[key] === alias,
+    ) as PRODUCT_IDS
   }
 
   const makeProductPath = (product: string) =>
@@ -272,10 +259,10 @@ export const useProduct = () => {
 
   return {
     handleContractSearch,
-    getProductInfo,
     deploy,
     getAvailablePaymentTokenList,
     getSelectedPaymentTokenInfo,
+    getProductIdByAlias,
     makeProductPath,
     getUseOfErc20Product,
     getUseOfErc721Product,

@@ -57,6 +57,17 @@ const listeners = computed(() => ({
     const eventTarget = event.target as HTMLInputElement
     if (isNumberType.value) {
       eventTarget.value = normalizeRange(eventTarget.value)
+      if (!/^[0-9]\d*(\.|\.\d+)?$/.test(eventTarget.value)) {
+        if (eventTarget.value === '') {
+          eventTarget.value = ''
+        } else {
+          eventTarget.value = props.modelValue as string
+        }
+      }
+
+      if (/\.[0-9]{18}\d/.test(eventTarget.value)) {
+        eventTarget.value = props.modelValue as string
+      }
     }
     if (props.modelValue === eventTarget.value) return
 
@@ -103,6 +114,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
       <div v-if="$slots.nodeLeft" class="input-field__node-left-wrp">
         <slot name="nodeLeft" />
       </div>
+      <!--eslint-disable -->
       <input
         class="input-field__input"
         :id="`input-field--${uid}`"
@@ -111,11 +123,18 @@ const setHeightCSSVar = (element: HTMLElement) => {
         :value="modelValue"
         :placeholder="placeholder"
         :tabindex="isDisabled || isReadonly ? -1 : $attrs.tabindex"
-        :type="isPasswordType && isPasswordShown ? 'text' : type"
+        :type="
+          isPasswordType && isPasswordShown
+            ? 'text'
+            : type === 'number'
+            ? ''
+            : type
+        "
         :min="min"
         :max="max"
         :disabled="isDisabled || isReadonly"
       />
+       <!--eslint-enable -->
       <label
         v-if="label"
         :for="`input-field--${uid}`"

@@ -9,8 +9,8 @@ export const useAccountStore = defineStore('account-store', {
     async updateNativeBalance() {
       this.account.updateNativeBalance()
     },
-    async updateDappBalance() {
-      this.account.updateDappBalance()
+    async updateCashbackInfo() {
+      this.account.updateCashbackInfo()
     },
   },
 })

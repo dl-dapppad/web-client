@@ -6,13 +6,7 @@ import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
 import { formatAmount, formatPercent, ErrorHandler } from '@/helpers'
 import { Post } from '@/types'
-import {
-  useErc20,
-  useProductFactory,
-  useFarming,
-  Product,
-  useChart,
-} from '@/composables'
+import { useSystemContracts, Product, useChart } from '@/composables'
 import {
   AppButton,
   AppBlock,
@@ -23,7 +17,6 @@ import {
   ProductChecklist,
   GasFee,
 } from '@/common'
-import { CONTRACT_NAMES } from '@/enums'
 import { config } from '@/config'
 
 const props = defineProps<{
@@ -34,13 +27,10 @@ const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const route = useRoute()
-const dapp = useErc20()
-const paymentToken = useErc20()
-const factory = useProductFactory()
-const farming = useFarming()
+const systemContracts = useSystemContracts()
 
 const alias = ref('')
-const product = ref<Product>(factory.getEmptyProduct())
+const product = ref<Product>(systemContracts.factory.getEmptyProduct())
 const cashback = ref('0')
 
 const chart = useChart()
@@ -56,27 +46,19 @@ const init = async () => {
     alias.value = config.PRODUCT_ALIASES[route.params.id as string]
     if (!alias.value) return
 
-    dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
-
-    const [productData, cashbackAmount] = await Promise.all([
-      factory.products(alias.value),
-      factory.getCashback(alias.value),
-      dapp.loadDetails(),
-      farming.loadDetails(),
+    const [product_, cashback_] = await Promise.all([
+      systemContracts.factory.products(alias.value),
+      systemContracts.factory.getCashback(alias.value),
+      systemContracts.loadDetails(),
     ])
-
-    product.value = productData
-    cashback.value = cashbackAmount
-
-    paymentToken.init(farming.rewardToken.value)
-    await paymentToken.loadDetails()
+    product.value = product_
+    cashback.value = cashback_
 
     isProductLoaded.value = true
 
     chart.updateChartData(
       product.value,
-      paymentToken.decimals.value,
-      paymentToken.symbol.value,
+      systemContracts.pointToken.symbol.value,
     )
   } catch (error) {
     ErrorHandler.process(error)
@@ -97,7 +79,7 @@ init()
       <app-block class="post-item-page-checkout__block-second">
         <div class="post-item-page-checkout__block">
           <product-checklist
-            :post-id="route.params.id"
+            :post-id="route.params.id as string"
             :is-shown-other-products="true"
           />
         </div>
@@ -139,19 +121,6 @@ init()
               <span class="app__metadata-lbl">
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
-                  :text="$t('post-item-page-checkout.cashback-percent-tooltip')"
-                />
-                {{ $t('post-item-page-checkout.cashback-percent-lbl') }}
-              </span>
-              <span v-if="isProductLoaded" class="app__metadata-value">
-                {{ formatPercent(product.cashbackPercent) }}
-              </span>
-              <loader class="post-item-page-checkout__loader" v-else />
-            </div>
-            <div class="app__metadata-row">
-              <span class="app__metadata-lbl">
-                <info-tooltip
-                  class="post-item-page-checkout__metadata-tooltip"
                   :text="$t('post-item-page-checkout.minimal-price-tooltip')"
                   :move-side="'right'"
                 />
@@ -159,14 +128,9 @@ init()
               </span>
               <span v-if="isProductLoaded" class="app__metadata-value">
                 <span class="app__price">
-                  {{
-                    formatAmount(
-                      product.minPrice,
-                      paymentToken?.decimals.value ?? '0',
-                    )
-                  }}
+                  {{ formatAmount(product.minPrice) }}
                   <span class="app__price-asset">
-                    {{ paymentToken?.symbol.value }}
+                    {{ systemContracts.pointToken.symbol.value }}
                   </span>
                 </span>
               </span>
@@ -176,18 +140,12 @@ init()
               <span class="app__metadata-lbl">
                 <info-tooltip
                   class="post-item-page-checkout__metadata-tooltip"
-                  :text="$t('post-item-page-checkout.reward-tooltip')"
-                  :move-side="'right'"
+                  :text="$t('post-item-page-checkout.cashback-percent-tooltip')"
                 />
-                {{ $t('post-item-page-checkout.reward-lbl') }}
+                {{ $t('post-item-page-checkout.cashback-percent-lbl') }}
               </span>
               <span v-if="isProductLoaded" class="app__metadata-value">
-                <span class="app__price">
-                  {{ formatAmount(cashback, dapp?.decimals.value ?? '0') }}
-                  <span class="app__price-asset">
-                    {{ dapp?.symbol.value }}
-                  </span>
-                </span>
+                {{ formatPercent(product.cashbackPercent) }}
               </span>
               <loader class="post-item-page-checkout__loader" v-else />
             </div>
@@ -202,9 +160,9 @@ init()
               </span>
               <span v-if="isProductLoaded" class="app__metadata-value">
                 <span class="app__price">
-                  {{ formatAmount(cashback, paymentToken?.decimals.value) }}
+                  {{ formatAmount(cashback) }}
                   <span class="app__price-asset">
-                    {{ paymentToken?.symbol.value }}
+                    {{ systemContracts.pointToken.symbol.value }}
                   </span>
                 </span>
               </span>
@@ -229,7 +187,7 @@ init()
               </span>
               <address-copy
                 v-if="isProductLoaded"
-                :address="factory.address.value"
+                :address="systemContracts.factory.address.value"
                 class="app__link--accented"
               />
               <loader class="post-item-page-checkout__address-loader" v-else />
@@ -248,14 +206,9 @@ init()
                 v-if="isProductLoaded"
                 class="post-item-page-checkout__price-value"
               >
-                {{
-                  formatAmount(
-                    product.currentPrice,
-                    paymentToken?.decimals.value ?? '0',
-                  )
-                }}
+                {{ formatAmount(product.currentPrice) }}
                 <span class="post-item-page-checkout__price-curr">
-                  {{ paymentToken?.symbol.value }}
+                  {{ systemContracts.pointToken.symbol.value }}
                 </span>
               </div>
               <loader class="post-item-page-checkout__deploy-loader" v-else />
@@ -263,7 +216,7 @@ init()
                 v-if="isProductLoaded"
                 class="post-item-page-checkout__price-gas"
               >
-                <gas-fee :id="route.params.id" />
+                <gas-fee :id="(route.params.id as string)" />
               </div>
               <loader class="post-item-page-checkout__deploy-loader" v-else />
             </div>

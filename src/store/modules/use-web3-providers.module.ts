@@ -4,12 +4,17 @@ import { DesignatedProvider, Chain } from '@/types'
 import { PROVIDERS } from '@/enums'
 import { i18n } from '@/localization'
 import { config } from '@/config'
+import { api } from '@/api'
 import chainsData from '@/assets/chains.json'
 
 export const useWeb3ProvidersStore = defineStore('web3-providers-store', {
   state: () => ({
     providers: [] as DesignatedProvider[],
     provider: useProvider(),
+    gasPrice: {
+      requested: false,
+      value: '0',
+    },
   }),
   getters: {
     currentChain: state => {
@@ -63,6 +68,14 @@ export const useWeb3ProvidersStore = defineStore('web3-providers-store', {
     },
     addProvider(provider: DesignatedProvider) {
       this.providers.push(provider)
+    },
+    async detectGasPrice() {
+      if (!this.provider.chainId || this.gasPrice.requested) return
+
+      this.gasPrice.requested = true
+
+      const url = config.GAS_PRICE_URL[this.provider.chainId]
+      this.gasPrice.value = (await api.get(url)).data.estimatedBaseFee
     },
   },
 })

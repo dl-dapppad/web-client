@@ -27,21 +27,17 @@ export const useChart = () => {
 
   const chartData = ref<ChartData>(getChartDataEmpty())
 
-  const updateChartData = (
-    product: Product,
-    decimals: number,
-    currencySymbol: string,
-  ): void => {
+  const updateChartData = (product: Product, currencySymbol: string): void => {
     const _chartData = getChartDataEmpty()
     _chartData.values = []
     _chartData.currencySymbol = currencySymbol
 
     const basePrice = Number(
-      new BN(product.currentPrice).fromFraction(decimals).toString(),
+      new BN(product.currentPrice).fromFraction(18).toString(),
     )
 
     const minPrice = Number(
-      new BN(product.minPrice).fromFraction(decimals).toString(),
+      new BN(product.minPrice).fromFraction(18).toString(),
     )
     let currentPrice = basePrice
     const decreasePercent = Number(

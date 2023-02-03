@@ -7,9 +7,8 @@ import { useI18n } from 'vue-i18n'
 
 import { useWeb3ProvidersStore } from '@/store'
 import {
-  useErc20,
-  useFarming,
   useApollo,
+  useSystemContracts,
   ApolloDeployedProducts,
 } from '@/composables'
 import { AppPagination, AddressCopy, Loader, AppButton } from '@/common'
@@ -39,7 +38,6 @@ const { t } = useI18n({
       'product-history.buyer-address': 'Buyer address',
       'product-history.product-address': 'Product address',
       'product-history.time': 'Time',
-      'product-history.cashback': 'Cashback',
       'product-history.distributed': 'Distributed',
       'product-history.price': 'Price',
       'product-history.not-found': 'History of buying is empty. Be the first!',
@@ -52,8 +50,7 @@ const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { width: windowWidth } = useWindowSize()
 
 const route = useRoute()
-const farming = useFarming()
-const paymentToken = useErc20()
+const systemContracts = useSystemContracts()
 const apollo = useApollo()
 
 const width = computed(() => {
@@ -78,9 +75,7 @@ const pagination = ref({
 const init = async () => {
   initApollo()
 
-  await farming.loadDetails()
-  paymentToken.init(farming.rewardToken.value)
-  await paymentToken.loadDetails()
+  await systemContracts.loadDetails()
 }
 
 const initApollo = () => {
@@ -150,9 +145,9 @@ init()
             <span class="product-history__grid-row-value">
               {{ t('product-history.price') }}
             </span>
-            <span class="product-history__grid-row-value">
+            <!-- <span class="product-history__grid-row-value">
               {{ t('product-history.distributed') }}
-            </span>
+            </span> -->
             <span class="product-history__grid-row-value">
               {{ t('product-history.time') }}
             </span>
@@ -164,7 +159,7 @@ init()
           >
             <span class="product-history__grid-row-value">
               <address-copy
-                :address="row.deployer ?? ''"
+                :address="row.user?.address ?? ''"
                 class="app__link--accented"
               />
             </span>
@@ -178,20 +173,20 @@ init()
               {{
                 formatAmount(
                   row.price ?? '0',
-                  paymentToken.decimals.value,
-                  paymentToken.symbol.value,
+                  18,
+                  systemContracts.pointToken.symbol.value,
                 )
               }}
             </span>
-            <span class="product-history__grid-row-value">
+            <!-- <span class="product-history__grid-row-value">
               {{
                 formatAmount(
                   row.cashback ?? '0',
-                  paymentToken.decimals.value,
-                  paymentToken.symbol.value,
+                  18,
+                  systemContracts.pointToken.symbol.value,
                 )
               }}
-            </span>
+            </span> -->
             <span class="product-history__grid-row-value">
               {{ formatDMYTime(Number(row.timestamp)) }}
             </span>
@@ -254,7 +249,7 @@ init()
 .product-history__grid-row {
   display: grid;
   align-items: center;
-  grid-template-columns: 1.3fr 1.3fr 1.2fr 1.2fr 1.5fr toRem(72);
+  grid-template-columns: 1.3fr 1.3fr 1.2fr 1.2fr toRem(72);
   padding: toRem(20) 0;
   font-weight: 700;
   font-size: toRem(16);

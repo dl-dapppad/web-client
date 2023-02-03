@@ -8,19 +8,20 @@ export const config = {
   APP_NAME: import.meta.env.VITE_APP_NAME,
   LOG_LEVEL: 'trace' as LogLevelDesc,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
-  AVAILABLE_CHAINS: [ETHEREUM_CHAINS.goerli] as string[],
+  AVAILABLE_CHAINS: [ETHEREUM_CHAINS.mumbai] as string[],
   URL_SUBGRAPH: import.meta.env.VITE_APP_URL_SUBGRAPH,
   ETHERSCAN_API_KEY: import.meta.env.VITE_APP_ETHERSCAN_API_KEY,
   RPC_URL: {
-    [ETHEREUM_CHAINS.goerli as string]: import.meta.env.VITE_APP_RPC_URL_GOERLI,
+    [ETHEREUM_CHAINS.mumbai as string]: import.meta.env.VITE_APP_RPC_URL_MUMBAI,
+  },
+  GAS_PRICE_URL: {
+    [ETHEREUM_CHAINS.mumbai as string]: import.meta.env
+      .VITE_APP_MUMBAI_GAS_PRICE_URL,
   },
   CONTRACTS: {
-    [ETHEREUM_CHAINS.goerli as string]: {
-      [CONTRACT_NAMES.DAPP]: import.meta.env.VITE_APP_CONTRACT_GOERLI_DAPP,
-      [CONTRACT_NAMES.FARMING]: import.meta.env
-        .VITE_APP_CONTRACT_GOERLI_FARMING,
+    [ETHEREUM_CHAINS.mumbai as string]: {
       [CONTRACT_NAMES.PRODUCT_FACTORY]: import.meta.env
-        .VITE_APP_CONTRACT_GOERLI_PRODUCT_FACTORY,
+        .VITE_APP_CONTRACT_MUMBAI_PRODUCT_FACTORY,
     },
   },
   PRODUCT_ALIASES: {

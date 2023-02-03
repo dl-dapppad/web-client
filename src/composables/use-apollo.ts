@@ -6,16 +6,22 @@ import { provideApolloClient } from '@/apollo'
 type ApolloDeployedProduct = {
   id?: string
   alias?: string
-  deployer?: string
+  user?: {
+    address: string
+  }
   proxy?: string
   timestamp?: string
   price?: string
-  cashback?: string
 }
 
 export type ApolloDeployedProducts = {
   products: ApolloDeployedProduct[] | undefined
   totalCount: number
+}
+
+export type ApolloAccountPools = {
+  product: string
+  totalPoints: string
 }
 
 export const useApollo = () => {
@@ -24,6 +30,7 @@ export const useApollo = () => {
     products: undefined,
     totalCount: 0,
   })
+  const accountPools = ref<ApolloAccountPools[]>([])
 
   const getProduct = (address: string) => {
     provideApolloClient()
@@ -51,16 +58,17 @@ export const useApollo = () => {
     const { result, error } = useQuery(
       gql`
         query {
-          products (where: {alias: "${alias}"}, first: ${first}, skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
+          productSales (where: {id_contains: "${alias}"}, first: ${first}, skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
             id
-            deployer
-            proxy
+            user: userToProduct {
+              address: user
+            }
+            proxy: productProxyAddress
             timestamp
-            price
-            cashback
+            price: initialPrice
           }
           productCounter (id: "${alias}") {
-            count
+            count: productSalesCount
           }
         }
       `,
@@ -68,9 +76,31 @@ export const useApollo = () => {
 
     watch([result], () => {
       deployedProducts.value = {
-        products: result.value.products,
+        products: result.value.productSales,
         totalCount: result.value.productCounter?.count ?? 0,
       }
+    })
+
+    watch([error], () => {
+      console.error(error.value?.message)
+    })
+  }
+
+  const getAccountPools = (account: string) => {
+    provideApolloClient()
+    const { result, error } = useQuery(
+      gql`
+        query {
+          userToProducts (where: {user: "${account}"}, orderBy: totalPoints, orderDirection: desc) {
+            product
+            totalPoints
+          }
+        }
+      `,
+    )
+
+    watch([result], () => {
+      accountPools.value = result.value.userToProducts
     })
 
     watch([error], () => {
@@ -81,8 +111,10 @@ export const useApollo = () => {
   return {
     deployedProduct,
     deployedProducts,
+    accountPools,
 
     getProduct,
     getDeployedProducts,
+    getAccountPools,
   }
 }

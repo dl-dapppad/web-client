@@ -6,8 +6,6 @@ import { EIP1193, EIP1474, PRODUCT_IDS } from '@/enums'
 import { BN } from '@/utils'
 import { Bus, ErrorHandler } from '@/helpers'
 import { useAccountStore, useWeb3ProvidersStore } from '@/store'
-import { api } from '@/api'
-import { config } from '@/config'
 
 export const connectEthAccounts = async (
   provider: ethers.providers.Web3Provider,
@@ -95,7 +93,7 @@ export const getMaxUint256 = (): string => {
 export const txWrapper = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback: any,
-  args?: Record<string, string>,
+  args?: Record<string, string | string[]>,
 ): Promise<boolean> => {
   try {
     const { t } = i18n.global
@@ -180,13 +178,7 @@ export const handleTxErrorMessage = (msg: string): string => {
   return arr[0].replaceAll("'", '')
 }
 
-export const getTxGasPrice = async (productId: string) => {
-  const gasPrice = (
-    await api.get(
-      `https://api-goerli.etherscan.io/api?module=proxy&action=eth_gasPrice&apikey=${config.ETHERSCAN_API_KEY}`,
-    )
-  ).data.result
-
+export const getTxGasPrice = (productId: string, gasPrice: string) => {
   let avgUsageByTxn = 0
   switch (productId) {
     case PRODUCT_IDS.erc20Base:
@@ -223,5 +215,5 @@ export const getTxGasPrice = async (productId: string) => {
       avgUsageByTxn = 500000
   }
 
-  return new BN(gasPrice).fromFraction().mul(avgUsageByTxn)
+  return new BN(gasPrice).mul(avgUsageByTxn)
 }

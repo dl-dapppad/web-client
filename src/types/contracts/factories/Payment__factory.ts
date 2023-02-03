@@ -45,24 +45,11 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "distributor",
+        name: "cashback",
         type: "address",
       },
     ],
-    name: "DistributorChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "holder",
-        type: "address",
-      },
-    ],
-    name: "HolderChanged",
+    name: "CashbackChanged",
     type: "event",
   },
   {
@@ -82,18 +69,36 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
-        name: "token",
+        name: "payer",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "paymentToken",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "productAlias",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "priceInPaymentToken",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "cashbackInPaymentToken",
+        type: "uint256",
+      },
     ],
-    name: "MintTokenChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [],
     name: "Payed",
     type: "event",
   },
@@ -127,75 +132,26 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "previousAdminRole",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "newAdminRole",
-        type: "bytes32",
+        indexed: false,
+        internalType: "address",
+        name: "pointToken",
+        type: "address",
       },
     ],
-    name: "RoleAdminChanged",
+    name: "PointTokenChanged",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "sender",
+        name: "treasury",
         type: "address",
       },
     ],
-    name: "RoleGranted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-    ],
-    name: "RoleRevoked",
+    name: "TreasuryChanged",
     type: "event",
   },
   {
@@ -239,7 +195,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "FACTORY_ROLE",
+    name: "FACTORY_CONTRACT_ROLE",
     outputs: [
       {
         internalType: "bytes32",
@@ -252,6 +208,25 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "PAYMENT_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "accessControl_",
+        type: "address",
+      },
+    ],
     name: "Payment_init",
     outputs: [],
     stateMutability: "nonpayable",
@@ -259,7 +234,39 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "distributor",
+    name: "accessControl",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "cashback",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "index_",
+        type: "uint256",
+      },
+    ],
+    name: "getPaymentToken",
     outputs: [
       {
         internalType: "address",
@@ -279,11 +286,55 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "amountOut_",
+        name: "price_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "cashback_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "discount_",
         type: "uint256",
       },
     ],
-    name: "getInputSwapAmount",
+    name: "getPriceWithDiscount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "receiveToken_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "swapToken_",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "swapAmount_",
+        type: "uint256",
+      },
+    ],
+    name: "getSwapAmount",
     outputs: [
       {
         internalType: "uint256",
@@ -296,68 +347,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getPaymentTokens",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "",
-        type: "address[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-    ],
-    name: "getRoleAdmin",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "grantRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "hasRole",
+    name: "isNotUpgradeable",
     outputs: [
       {
         internalType: "bool",
@@ -369,33 +359,12 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "holder",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "mintToken",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
+      {
+        internalType: "bytes32",
+        name: "product_",
+        type: "bytes32",
+      },
       {
         internalType: "address",
         name: "paymentToken_",
@@ -408,18 +377,71 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "paymentAmount_",
+        name: "price_",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "cashbackAmount_",
+        name: "cashback_",
         type: "uint256",
+      },
+      {
+        internalType: "bytes32[]",
+        name: "discountProducts_",
+        type: "bytes32[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "discounts_",
+        type: "uint256[]",
       },
     ],
     name: "pay",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "product_",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "paymentToken_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "payer_",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "price_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "cashback_",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes32[]",
+        name: "discountProducts_",
+        type: "bytes32[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "discounts_",
+        type: "uint256[]",
+      },
+    ],
+    name: "payNative",
+    outputs: [],
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -433,24 +455,27 @@ const _abi = [
     name: "paymentTokenSwapInfo",
     outputs: [
       {
+        internalType: "uint24",
+        name: "poolFee",
+        type: "uint24",
+      },
+      {
+        internalType: "uint24",
+        name: "secondsAgo",
+        type: "uint24",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "pointToken",
+    outputs: [
+      {
         internalType: "address",
-        name: "router",
+        name: "",
         type: "address",
-      },
-      {
-        internalType: "uint160",
-        name: "sqrtPriceLimitX96",
-        type: "uint160",
-      },
-      {
-        internalType: "uint24",
-        name: "fee",
-        type: "uint24",
-      },
-      {
-        internalType: "uint24",
-        name: "multiplier",
-        type: "uint24",
       },
     ],
     stateMutability: "view",
@@ -470,37 +495,8 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "renounceRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "revokeRole",
+    inputs: [],
+    name: "removeUpgradeability",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -509,11 +505,11 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "newDistributor_",
+        name: "accessControl_",
         type: "address",
       },
     ],
-    name: "setDistributor",
+    name: "setAccessControl",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -522,55 +518,27 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "holder_",
+        name: "cashback_",
         type: "address",
       },
     ],
-    name: "setHolder",
+    name: "setCashback",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "mintToken_",
-        type: "address",
-      },
-    ],
-    name: "setMintToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "tokens_",
-        type: "address[]",
-      },
       {
         components: [
           {
-            internalType: "address",
-            name: "router",
-            type: "address",
-          },
-          {
-            internalType: "uint160",
-            name: "sqrtPriceLimitX96",
-            type: "uint160",
-          },
-          {
             internalType: "uint24",
-            name: "fee",
+            name: "poolFee",
             type: "uint24",
           },
           {
             internalType: "uint24",
-            name: "multiplier",
+            name: "secondsAgo",
             type: "uint24",
           },
         ],
@@ -579,12 +547,43 @@ const _abi = [
         type: "tuple[]",
       },
       {
+        internalType: "address[]",
+        name: "tokens_",
+        type: "address[]",
+      },
+      {
         internalType: "bool[]",
         name: "statuses_",
         type: "bool[]",
       },
     ],
     name: "setPaymentTokens",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "pointToken_",
+        type: "address",
+      },
+    ],
+    name: "setPointToken",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "treasury_",
+        type: "address",
+      },
+    ],
+    name: "setTreasury",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -605,6 +604,34 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "pointToken_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "cashback_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "treasury_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "uniPriceOracle_",
+        type: "address",
+      },
+    ],
+    name: "setup",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "bytes4",
         name: "interfaceId",
         type: "bytes4",
@@ -616,6 +643,19 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "treasury",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -664,6 +704,10 @@ const _abi = [
     outputs: [],
     stateMutability: "payable",
     type: "function",
+  },
+  {
+    stateMutability: "payable",
+    type: "receive",
   },
 ];
 

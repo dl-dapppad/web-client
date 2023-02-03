@@ -2,7 +2,7 @@ import { BN } from '../utils'
 
 export const formatAmount = (
   amount: number | string,
-  decimals = 0,
+  decimals = 18,
   symbol?: string,
   decimalPlaces = 4,
 ): string => {

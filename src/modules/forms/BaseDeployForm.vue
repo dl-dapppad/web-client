@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, Ref, reactive, onMounted } from 'vue'
+import { ref, computed, Ref, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { ValidationRule } from '@vuelidate/core'
@@ -14,15 +14,8 @@ import {
   Modal,
 } from '@/common'
 import { InputField } from '@/fields'
-import {
-  Product,
-  useFormValidation,
-  useErc20Mock,
-  useFarming,
-  useProduct,
-} from '@/composables'
+import { useFormValidation, useErc20Mock } from '@/composables'
 import { txWrapper } from '@/helpers'
-import { config } from '@/config'
 import { BN } from '@/utils'
 import { required } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
@@ -35,8 +28,6 @@ import BaseDeployFormPrice from '@/modules/forms/BaseDeployForm/BaseDeployFormPr
 
 const router = useRouter()
 const route = useRoute()
-const farming = useFarming()
-const product = useProduct()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
@@ -72,34 +63,8 @@ const emits = defineEmits<{
   (e: EVENTS.updateisSuccessModalShown, val: boolean): void
 }>()
 
-const paymentTokens = ref<Record<string, Array<string>>>({
-  symbols: [],
-  addresses: [],
-})
-const productPaymentToken = ref({
-  balance: '',
-  symbol: '',
-  decimals: 0,
-  amount: '0',
-})
-const selectedPaymentToken = ref({
-  balance: '',
-  symbol: '',
-  decimals: 0,
-  amount: '0',
-})
-const selectedProduct = ref<Product>()
 const useFormArray = [] as UseForm[]
-const isPaymentLoaded = ref(true)
-
 const isBalanceInsuficient = ref(false)
-const isDiscountUsed = ref(false)
-const discount = ref<
-  {
-    id: string
-    value: string
-  }[]
->([])
 
 // data to useForm
 const form = reactive({
@@ -141,24 +106,60 @@ form.data.forEach((category, i) => {
 
 const isAllFieldsValid = computed(() => {
   let result = true
-  useFormArray.forEach(
-    UseFormObj => (result &&= UseFormObj.isFieldsValid.value),
-  )
+  useFormArray.forEach(UseFormObj => {
+    return (result &&= UseFormObj.isFieldsValid.value)
+  })
   return result
 })
 
-const submit = () => {
-  const result = new Map<string, string>()
-  result.set(
-    'payment-token-addr',
-    paymentTokens.value.addresses[
-      paymentTokens.value.symbols.findIndex(
-        symbol => symbol === form.data[0][0],
-      )
-    ],
-  )
+const updateIsShownModal = (val: boolean) => {
+  emits(EVENTS.updateisSuccessModalShown, val)
+}
 
-  result.set('product-price', form.data[0][1])
+const mintToken = async () => {
+  if (provider.value.chainId != ETHEREUM_CHAINS.mumbai) return
+
+  const erc20Mock = useErc20Mock()
+  erc20Mock.init(form.data[0][0])
+  await erc20Mock.updateDecimals()
+
+  await txWrapper(erc20Mock.mint, {
+    to: provider.value.selectedAddress as string,
+    amount: new BN('50').toFraction(erc20Mock.decimals.value).toString(),
+  })
+
+  location.reload()
+}
+
+const productPriceWithDiscount = ref('0')
+const discounts = ref<Map<string, string>>()
+
+const onUpdatePaymentToken = (newPaymentTokenAddress: string) => {
+  form.data[0][0] = newPaymentTokenAddress
+}
+
+const onUpdateProductPriceWithDiscount = (
+  newProductPriceWithDiscount: string,
+) => {
+  productPriceWithDiscount.value = newProductPriceWithDiscount
+}
+
+const onUpdateDiscounts = (newDiscounts: Map<string, string>) => {
+  discounts.value = newDiscounts
+}
+
+const onUpdateIsBalanceInsuficient = (newIsBalanceInsuficient: boolean) => {
+  isBalanceInsuficient.value = newIsBalanceInsuficient
+}
+
+const submit = () => {
+  let result = new Map<string, string>()
+  if (discounts.value) {
+    result = new Map<string, string>([...Array.from(discounts.value.entries())])
+  }
+
+  result.set('payment-token', form.data[0][0])
+  result.set('product-price', productPriceWithDiscount.value)
 
   form.data.forEach((category, catInd) => {
     if (catInd)
@@ -169,100 +170,6 @@ const submit = () => {
 
   emits(EVENTS.submit, result)
 }
-
-const updateIsShownModal = (val: boolean) => {
-  emits(EVENTS.updateisSuccessModalShown, val)
-}
-
-const updatePayment = async (selectedSymbol: string | number) => {
-  isPaymentLoaded.value = false
-
-  form.data[0][0] = selectedSymbol as string
-
-  const selectedIndex = paymentTokens.value.symbols.findIndex(
-    symbol => symbol === selectedSymbol,
-  )
-  const selectedAddress = paymentTokens.value.addresses[selectedIndex]
-
-  let symbol, decimals, balance, amount
-  if (selectedIndex === 0) {
-    ;({ symbol, decimals, balance, amount } =
-      await product.getSelectedPaymentTokenInfo(selectedAddress))
-
-    selectedPaymentToken.value = {
-      ...selectedPaymentToken.value,
-      symbol,
-      decimals: Number(decimals),
-      balance,
-      amount: selectedProduct.value?.currentPrice ?? '0',
-    }
-  } else {
-    ;({ symbol, decimals, balance, amount } =
-      await product.getSelectedPaymentTokenInfo(
-        selectedAddress,
-        true,
-        selectedProduct.value?.currentPrice ?? '0',
-      ))
-
-    selectedPaymentToken.value = {
-      ...selectedPaymentToken.value,
-      symbol,
-      decimals: Number(decimals),
-      balance,
-      amount,
-    }
-  }
-
-  form.data[0][1] = selectedPaymentToken.value.amount
-
-  isPaymentLoaded.value = true
-}
-
-const mintToken = async () => {
-  if (provider.value.chainId != ETHEREUM_CHAINS.goerli) return
-
-  const tokenAddress =
-    paymentTokens.value.addresses[
-      paymentTokens.value.symbols.findIndex(
-        symbol => symbol === form.data[0][0],
-      )
-    ]
-
-  const erc20Mock = useErc20Mock()
-  erc20Mock.init(tokenAddress)
-  await erc20Mock.updateDecimals()
-
-  await txWrapper(erc20Mock.mint, {
-    to: provider.value.selectedAddress as string,
-    amount: new BN('10000').toFraction(erc20Mock.decimals.value).toString(),
-  })
-
-  await updatePayment(form.data[0][0])
-}
-
-const init = async () => {
-  const { symbols, addresses } = await product.getAvailablePaymentTokenList()
-
-  paymentTokens.value.symbols = symbols
-  paymentTokens.value.addresses = addresses
-
-  const alias = config.PRODUCT_ALIASES[route.params.id as string]
-  selectedProduct.value = await product.getProductInfo(alias)
-
-  if (!addresses.length) return
-
-  const { symbol, decimals, balance } =
-    await product.getSelectedPaymentTokenInfo(addresses[0])
-
-  productPaymentToken.value.symbol = symbol
-  productPaymentToken.value.decimals = Number(decimals)
-  productPaymentToken.value.balance = balance
-  productPaymentToken.value.amount = selectedProduct.value.currentPrice
-
-  await farming.loadDetails()
-}
-
-onMounted(() => init())
 </script>
 
 <template>
@@ -305,11 +212,11 @@ onMounted(() => init())
       </span>
     </div>
     <app-block
-      v-if="provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient"
+      v-if="provider.chainId == ETHEREUM_CHAINS.mumbai && isBalanceInsuficient"
       class="deploy-form__mint-block"
       :class="{
         'app__module-content-wrp':
-          provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient,
+          provider.chainId == ETHEREUM_CHAINS.mumbai && isBalanceInsuficient,
       }"
     >
       <div class="app__module-content">
@@ -330,17 +237,19 @@ onMounted(() => init())
     <app-block
       :class="{
         'app__module-content-wrp': !(
-          provider.chainId == ETHEREUM_CHAINS.goerli && isBalanceInsuficient
+          provider.chainId == ETHEREUM_CHAINS.mumbai && isBalanceInsuficient
         ),
       }"
     >
       <div class="app__module-content">
         <div class="app__module-content-inner">
           <base-deploy-form-price
-            v-model:isBalanceInsuficient="isBalanceInsuficient"
-            v-model:data="form.data[0]"
-            v-model:discountData="discount"
-            v-model:isDiscountUsed="isDiscountUsed"
+            @update:payment-token="onUpdatePaymentToken"
+            @update:product-price-with-discount="
+              onUpdateProductPriceWithDiscount
+            "
+            @update:discounts="onUpdateDiscounts"
+            @update:is-balance-insuficient="onUpdateIsBalanceInsuficient"
           />
           <collapse
             v-for="(category, categoryInd) of categories"
@@ -411,11 +320,7 @@ onMounted(() => init())
                 : $t('product-deploy.default.btn-lbl')
             "
             size="small"
-            :disabled="
-              isBalanceInsuficient ||
-              !isAllFieldsValid ||
-              !provider.selectedAddress
-            "
+            :disabled="!isAllFieldsValid"
           />
           <!-- eslint-enable -->
           <div v-else class="app__deploy-loader">

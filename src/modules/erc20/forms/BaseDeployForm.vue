@@ -193,10 +193,12 @@ const init = () => {
 
 const submit = async (values: Map<string, string>) => {
   if (!(values instanceof Map)) return
-  const paymentTokenAddress = values.get('payment-token-addr') as string
+
+  const paymentTokenAddress = values.get('payment-token') as string
   const productPrice = values.get('product-price') as string
   const decimals = values.get('decimals') as string
 
+  // Start setup deploy args for `init` method in contract
   const args: string[] = []
   initializeArgs.value.forEach(item => {
     const deployArg = ref<string>(values.get(item.id) as string)
@@ -207,6 +209,16 @@ const submit = async (values: Map<string, string>) => {
     }
     args.push(deployArg.value)
   })
+  // End
+
+  const discountAliases: string[] = []
+  const discountValues: string[] = []
+  for (const key of values.keys()) {
+    if (key.includes('0x')) {
+      discountAliases.push(key)
+      discountValues.push(values.get(key) as string)
+    }
+  }
 
   txProcessing.value = true
   potentialContractAddress.value = await product.deploy(
@@ -214,6 +226,8 @@ const submit = async (values: Map<string, string>) => {
     productPrice,
     paymentTokenAddress,
     args,
+    discountAliases,
+    discountValues,
   )
 
   if (!potentialContractAddress.value) {

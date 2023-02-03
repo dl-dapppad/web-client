@@ -11,11 +11,11 @@ import {
   AddressCopy,
   InvalidBrowserModal,
 } from '@/common'
-import { useErc20, useProduct, useBreakpoints } from '@/composables'
+import { useProduct, useBreakpoints, useSystemContracts } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
 import { useWeb3ProvidersStore, useAccountStore } from '@/store'
-import { CONTRACT_NAMES, ETHEREUM_CHAINS } from '@/enums'
+import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
 
@@ -28,7 +28,7 @@ const web3Store = useWeb3ProvidersStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
-const dapp = useErc20()
+const systemContracts = useSystemContracts()
 const composableProduct = useProduct()
 const breakpoints = useBreakpoints()
 
@@ -70,10 +70,7 @@ const init = async () => {
     ? PROVIDER_TYPE.browser
     : PROVIDER_TYPE.rpc
 
-  if (!selectedAddress) return
-
-  dapp.init(config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.DAPP])
-  await dapp.loadDetails()
+  await systemContracts.loadDetails()
 }
 
 const trySwitchChain = async (chainId: string | number) => {
@@ -146,9 +143,9 @@ init()
           />
           {{
             formatAmount(
-              account.dappBalance,
-              dapp?.decimals.value,
-              dapp?.symbol.value,
+              account.accountCashback,
+              18,
+              systemContracts.pointToken.symbol.value,
             )
           }}
         </span>

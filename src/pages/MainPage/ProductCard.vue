@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { Icon, ProductChecklist, AppButton, Loader, GasFee } from '@/common'
-import { useFarming, useErc20, useProductFactory, Product } from '@/composables'
+import { useSystemContracts, Product } from '@/composables'
 import { Post } from '@/types'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -24,14 +24,12 @@ const post = posts.find(el => el.id === props.data.id)
 
 const img = `/images/${props.data.id.split('-')[0]}.png`
 
-const paymentToken = useErc20()
+const systemContracts = useSystemContracts()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const web3Store = useWeb3ProvidersStore()
 
-const factory = useProductFactory()
-const product = ref<Product>(factory.getEmptyProduct())
-const farming = useFarming()
+const product = ref<Product>(systemContracts.factory.getEmptyProduct())
 const alias = ref('')
 const isProductLoaded = ref(false)
 
@@ -42,14 +40,9 @@ const init = async () => {
     alias.value = config.PRODUCT_ALIASES[props.data.id as string]
     if (!alias.value) return
 
-    const productData = await factory.products(alias.value)
-    await farming.loadDetails()
+    await systemContracts.loadDetails()
 
-    product.value = productData
-
-    paymentToken.init(farming.rewardToken.value)
-    await paymentToken.loadDetails()
-
+    product.value = await systemContracts.factory.products(alias.value)
     isProductLoaded.value = true
   } catch (error) {
     ErrorHandler.process(error)
@@ -85,14 +78,9 @@ init()
         </div>
         <div class="product-card__price">
           <div v-if="isProductLoaded" class="product-card__price-value">
-            {{
-              formatAmount(
-                product.currentPrice,
-                paymentToken?.decimals.value ?? '0',
-              )
-            }}
+            {{ formatAmount(product.currentPrice) }}
             <span class="product-card__price-curr">
-              {{ paymentToken?.symbol.value }}
+              {{ systemContracts.pointToken.symbol.value }}
             </span>
           </div>
           <loader v-else class="product-card__price-loader" />

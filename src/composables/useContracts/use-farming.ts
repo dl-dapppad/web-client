@@ -5,8 +5,6 @@ import { ContractTransaction } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
 import { errors } from '@/errors'
 import { Farming, Farming__factory } from '@/types'
-import { CONTRACT_NAMES } from '@/enums'
-import { config } from '@/config'
 
 export interface InvestInfo {
   amount: string
@@ -47,8 +45,9 @@ export const useFarming = (): FarmingContract => {
   const init = (): void => {
     if (!provider.value.chainId) return
 
-    address.value =
-      config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.FARMING]
+    address.value = ''
+    // address.value =
+    //   config.CONTRACTS[provider.value.chainId][CONTRACT_NAMES.FARMING]
 
     if (provider.value.currentProvider) {
       _instance.value = Farming__factory.connect(

@@ -30,44 +30,43 @@ import type {
 
 export declare namespace IPayment {
   export type SwapInfoStruct = {
-    router: PromiseOrValue<string>;
-    sqrtPriceLimitX96: PromiseOrValue<BigNumberish>;
-    fee: PromiseOrValue<BigNumberish>;
-    multiplier: PromiseOrValue<BigNumberish>;
+    poolFee: PromiseOrValue<BigNumberish>;
+    secondsAgo: PromiseOrValue<BigNumberish>;
   };
 
-  export type SwapInfoStructOutput = [string, BigNumber, number, number] & {
-    router: string;
-    sqrtPriceLimitX96: BigNumber;
-    fee: number;
-    multiplier: number;
+  export type SwapInfoStructOutput = [number, number] & {
+    poolFee: number;
+    secondsAgo: number;
   };
 }
 
 export interface PaymentInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "FACTORY_ROLE()": FunctionFragment;
-    "Payment_init()": FunctionFragment;
-    "distributor()": FunctionFragment;
-    "getInputSwapAmount(address,uint256)": FunctionFragment;
-    "getPaymentTokens()": FunctionFragment;
-    "getRoleAdmin(bytes32)": FunctionFragment;
-    "grantRole(bytes32,address)": FunctionFragment;
-    "hasRole(bytes32,address)": FunctionFragment;
-    "holder()": FunctionFragment;
-    "mintToken()": FunctionFragment;
-    "pay(address,address,uint256,uint256)": FunctionFragment;
+    "FACTORY_CONTRACT_ROLE()": FunctionFragment;
+    "PAYMENT_ROLE()": FunctionFragment;
+    "Payment_init(address)": FunctionFragment;
+    "accessControl()": FunctionFragment;
+    "cashback()": FunctionFragment;
+    "getPaymentToken(uint256)": FunctionFragment;
+    "getPriceWithDiscount(address,uint256,uint256,uint256)": FunctionFragment;
+    "getSwapAmount(address,address,uint256)": FunctionFragment;
+    "isNotUpgradeable()": FunctionFragment;
+    "pay(bytes32,address,address,uint256,uint256,bytes32[],uint256[])": FunctionFragment;
+    "payNative(bytes32,address,address,uint256,uint256,bytes32[],uint256[])": FunctionFragment;
     "paymentTokenSwapInfo(address)": FunctionFragment;
+    "pointToken()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
-    "renounceRole(bytes32,address)": FunctionFragment;
-    "revokeRole(bytes32,address)": FunctionFragment;
-    "setDistributor(address)": FunctionFragment;
-    "setHolder(address)": FunctionFragment;
-    "setMintToken(address)": FunctionFragment;
-    "setPaymentTokens(address[],(address,uint160,uint24,uint24)[],bool[])": FunctionFragment;
+    "removeUpgradeability()": FunctionFragment;
+    "setAccessControl(address)": FunctionFragment;
+    "setCashback(address)": FunctionFragment;
+    "setPaymentTokens((uint24,uint24)[],address[],bool[])": FunctionFragment;
+    "setPointToken(address)": FunctionFragment;
+    "setTreasury(address)": FunctionFragment;
     "setUniPriceOracle(address)": FunctionFragment;
+    "setup(address,address,address,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "treasury()": FunctionFragment;
     "uniPriceOracle()": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
@@ -76,27 +75,30 @@ export interface PaymentInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
-      | "FACTORY_ROLE"
+      | "FACTORY_CONTRACT_ROLE"
+      | "PAYMENT_ROLE"
       | "Payment_init"
-      | "distributor"
-      | "getInputSwapAmount"
-      | "getPaymentTokens"
-      | "getRoleAdmin"
-      | "grantRole"
-      | "hasRole"
-      | "holder"
-      | "mintToken"
+      | "accessControl"
+      | "cashback"
+      | "getPaymentToken"
+      | "getPriceWithDiscount"
+      | "getSwapAmount"
+      | "isNotUpgradeable"
       | "pay"
+      | "payNative"
       | "paymentTokenSwapInfo"
+      | "pointToken"
       | "proxiableUUID"
-      | "renounceRole"
-      | "revokeRole"
-      | "setDistributor"
-      | "setHolder"
-      | "setMintToken"
+      | "removeUpgradeability"
+      | "setAccessControl"
+      | "setCashback"
       | "setPaymentTokens"
+      | "setPointToken"
+      | "setTreasury"
       | "setUniPriceOracle"
+      | "setup"
       | "supportsInterface"
+      | "treasury"
       | "uniPriceOracle"
       | "upgradeTo"
       | "upgradeToAndCall"
@@ -107,46 +109,69 @@ export interface PaymentInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "FACTORY_ROLE",
+    functionFragment: "FACTORY_CONTRACT_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PAYMENT_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "Payment_init",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "accessControl",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "cashback", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "distributor",
-    values?: undefined
+    functionFragment: "getPaymentToken",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getInputSwapAmount",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    functionFragment: "getPriceWithDiscount",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
-    functionFragment: "getPaymentTokens",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRoleAdmin",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "grantRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hasRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "holder", values?: undefined): string;
-  encodeFunctionData(functionFragment: "mintToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "pay",
+    functionFragment: "getSwapAmount",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isNotUpgradeable",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "pay",
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "payNative",
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>[],
+      PromiseOrValue<BigNumberish>[]
     ]
   ): string;
   encodeFunctionData(
@@ -154,45 +179,59 @@ export interface PaymentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "pointToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "renounceRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    functionFragment: "removeUpgradeability",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "revokeRole",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setDistributor",
+    functionFragment: "setAccessControl",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setHolder",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMintToken",
+    functionFragment: "setCashback",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPaymentTokens",
     values: [
-      PromiseOrValue<string>[],
       IPayment.SwapInfoStruct[],
+      PromiseOrValue<string>[],
       PromiseOrValue<boolean>[]
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPointToken",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTreasury",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setUniPriceOracle",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setup",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "treasury", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "uniPriceOracle",
     values?: undefined
@@ -211,7 +250,11 @@ export interface PaymentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "FACTORY_ROLE",
+    functionFragment: "FACTORY_CONTRACT_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PAYMENT_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -219,46 +262,47 @@ export interface PaymentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "distributor",
+    functionFragment: "accessControl",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "cashback", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPaymentToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getInputSwapAmount",
+    functionFragment: "getPriceWithDiscount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getPaymentTokens",
+    functionFragment: "getSwapAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getRoleAdmin",
+    functionFragment: "isNotUpgradeable",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "holder", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mintToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pay", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "payNative", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "paymentTokenSwapInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pointToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "renounceRole",
+    functionFragment: "removeUpgradeability",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setDistributor",
+    functionFragment: "setAccessControl",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setHolder", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setMintToken",
+    functionFragment: "setCashback",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -266,13 +310,23 @@ export interface PaymentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPointToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTreasury",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setUniPriceOracle",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setup", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "treasury", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "uniPriceOracle",
     data: BytesLike
@@ -286,32 +340,26 @@ export interface PaymentInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
-    "DistributorChanged(address)": EventFragment;
-    "HolderChanged(address)": EventFragment;
+    "CashbackChanged(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "MintTokenChanged(address)": EventFragment;
-    "Payed()": EventFragment;
+    "Payed(address,address,bytes32,uint256,uint256)": EventFragment;
     "PaymentTokenAdded(address)": EventFragment;
     "PaymentTokenRemoved(address)": EventFragment;
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
-    "RoleGranted(bytes32,address,address)": EventFragment;
-    "RoleRevoked(bytes32,address,address)": EventFragment;
+    "PointTokenChanged(address)": EventFragment;
+    "TreasuryChanged(address)": EventFragment;
     "UniswapPriceOracleChanged(address)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "DistributorChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "HolderChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "CashbackChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MintTokenChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Payed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PointTokenChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TreasuryChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UniswapPriceOracleChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
@@ -337,23 +385,15 @@ export type BeaconUpgradedEvent = TypedEvent<
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
-export interface DistributorChangedEventObject {
-  distributor: string;
+export interface CashbackChangedEventObject {
+  cashback: string;
 }
-export type DistributorChangedEvent = TypedEvent<
+export type CashbackChangedEvent = TypedEvent<
   [string],
-  DistributorChangedEventObject
+  CashbackChangedEventObject
 >;
 
-export type DistributorChangedEventFilter =
-  TypedEventFilter<DistributorChangedEvent>;
-
-export interface HolderChangedEventObject {
-  holder: string;
-}
-export type HolderChangedEvent = TypedEvent<[string], HolderChangedEventObject>;
-
-export type HolderChangedEventFilter = TypedEventFilter<HolderChangedEvent>;
+export type CashbackChangedEventFilter = TypedEventFilter<CashbackChangedEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -362,19 +402,17 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface MintTokenChangedEventObject {
-  token: string;
+export interface PayedEventObject {
+  payer: string;
+  paymentToken: string;
+  productAlias: string;
+  priceInPaymentToken: BigNumber;
+  cashbackInPaymentToken: BigNumber;
 }
-export type MintTokenChangedEvent = TypedEvent<
-  [string],
-  MintTokenChangedEventObject
+export type PayedEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  PayedEventObject
 >;
-
-export type MintTokenChangedEventFilter =
-  TypedEventFilter<MintTokenChangedEvent>;
-
-export interface PayedEventObject {}
-export type PayedEvent = TypedEvent<[], PayedEventObject>;
 
 export type PayedEventFilter = TypedEventFilter<PayedEvent>;
 
@@ -400,42 +438,26 @@ export type PaymentTokenRemovedEvent = TypedEvent<
 export type PaymentTokenRemovedEventFilter =
   TypedEventFilter<PaymentTokenRemovedEvent>;
 
-export interface RoleAdminChangedEventObject {
-  role: string;
-  previousAdminRole: string;
-  newAdminRole: string;
+export interface PointTokenChangedEventObject {
+  pointToken: string;
 }
-export type RoleAdminChangedEvent = TypedEvent<
-  [string, string, string],
-  RoleAdminChangedEventObject
+export type PointTokenChangedEvent = TypedEvent<
+  [string],
+  PointTokenChangedEventObject
 >;
 
-export type RoleAdminChangedEventFilter =
-  TypedEventFilter<RoleAdminChangedEvent>;
+export type PointTokenChangedEventFilter =
+  TypedEventFilter<PointTokenChangedEvent>;
 
-export interface RoleGrantedEventObject {
-  role: string;
-  account: string;
-  sender: string;
+export interface TreasuryChangedEventObject {
+  treasury: string;
 }
-export type RoleGrantedEvent = TypedEvent<
-  [string, string, string],
-  RoleGrantedEventObject
+export type TreasuryChangedEvent = TypedEvent<
+  [string],
+  TreasuryChangedEventObject
 >;
 
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
-
-export interface RoleRevokedEventObject {
-  role: string;
-  account: string;
-  sender: string;
-}
-export type RoleRevokedEvent = TypedEvent<
-  [string, string, string],
-  RoleRevokedEventObject
->;
-
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+export type TreasuryChangedEventFilter = TypedEventFilter<TreasuryChangedEvent>;
 
 export interface UniswapPriceOracleChangedEventObject {
   uniswapPriceOracle: string;
@@ -484,96 +506,100 @@ export interface Payment extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    FACTORY_ROLE(overrides?: CallOverrides): Promise<[string]>;
+    FACTORY_CONTRACT_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    PAYMENT_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     Payment_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    distributor(overrides?: CallOverrides): Promise<[string]>;
+    accessControl(overrides?: CallOverrides): Promise<[string]>;
 
-    getInputSwapAmount(
-      paymentToken_: PromiseOrValue<string>,
-      amountOut_: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    cashback(overrides?: CallOverrides): Promise<[string]>;
 
-    getPaymentTokens(overrides?: CallOverrides): Promise<[string[]]>;
-
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+    getPaymentToken(
+      index_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    getPriceWithDiscount(
+      paymentToken_: PromiseOrValue<string>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discount_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
+    getSwapAmount(
+      receiveToken_: PromiseOrValue<string>,
+      swapToken_: PromiseOrValue<string>,
+      swapAmount_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    isNotUpgradeable(overrides?: CallOverrides): Promise<[boolean]>;
+
+    pay(
+      product_: PromiseOrValue<BytesLike>,
+      paymentToken_: PromiseOrValue<string>,
+      payer_: PromiseOrValue<string>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discountProducts_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    holder(overrides?: CallOverrides): Promise<[string]>;
-
-    mintToken(overrides?: CallOverrides): Promise<[string]>;
-
-    pay(
+    payNative(
+      product_: PromiseOrValue<BytesLike>,
       paymentToken_: PromiseOrValue<string>,
       payer_: PromiseOrValue<string>,
-      paymentAmount_: PromiseOrValue<BigNumberish>,
-      cashbackAmount_: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discountProducts_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     paymentTokenSwapInfo(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, number, number] & {
-        router: string;
-        sqrtPriceLimitX96: BigNumber;
-        fee: number;
-        multiplier: number;
-      }
-    >;
+    ): Promise<[number, number] & { poolFee: number; secondsAgo: number }>;
+
+    pointToken(overrides?: CallOverrides): Promise<[string]>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
-    renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    removeUpgradeability(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    setAccessControl(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setDistributor(
-      newDistributor_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setHolder(
-      holder_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setMintToken(
-      mintToken_: PromiseOrValue<string>,
+    setCashback(
+      cashback_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPaymentTokens(
-      tokens_: PromiseOrValue<string>[],
       swapInfos_: IPayment.SwapInfoStruct[],
+      tokens_: PromiseOrValue<string>[],
       statuses_: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setPointToken(
+      pointToken_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTreasury(
+      treasury_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -582,10 +608,20 @@ export interface Payment extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setup(
+      pointToken_: PromiseOrValue<string>,
+      cashback_: PromiseOrValue<string>,
+      treasury_: PromiseOrValue<string>,
+      uniPriceOracle_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    treasury(overrides?: CallOverrides): Promise<[string]>;
 
     uniPriceOracle(overrides?: CallOverrides): Promise<[string]>;
 
@@ -603,96 +639,100 @@ export interface Payment extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  FACTORY_ROLE(overrides?: CallOverrides): Promise<string>;
+  FACTORY_CONTRACT_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  PAYMENT_ROLE(overrides?: CallOverrides): Promise<string>;
 
   Payment_init(
+    accessControl_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  distributor(overrides?: CallOverrides): Promise<string>;
+  accessControl(overrides?: CallOverrides): Promise<string>;
 
-  getInputSwapAmount(
-    paymentToken_: PromiseOrValue<string>,
-    amountOut_: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  cashback(overrides?: CallOverrides): Promise<string>;
 
-  getPaymentTokens(overrides?: CallOverrides): Promise<string[]>;
-
-  getRoleAdmin(
-    role: PromiseOrValue<BytesLike>,
+  getPaymentToken(
+    index_: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  grantRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
+  getPriceWithDiscount(
+    paymentToken_: PromiseOrValue<string>,
+    price_: PromiseOrValue<BigNumberish>,
+    cashback_: PromiseOrValue<BigNumberish>,
+    discount_: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber]>;
+
+  getSwapAmount(
+    receiveToken_: PromiseOrValue<string>,
+    swapToken_: PromiseOrValue<string>,
+    swapAmount_: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  isNotUpgradeable(overrides?: CallOverrides): Promise<boolean>;
+
+  pay(
+    product_: PromiseOrValue<BytesLike>,
+    paymentToken_: PromiseOrValue<string>,
+    payer_: PromiseOrValue<string>,
+    price_: PromiseOrValue<BigNumberish>,
+    cashback_: PromiseOrValue<BigNumberish>,
+    discountProducts_: PromiseOrValue<BytesLike>[],
+    discounts_: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  hasRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  holder(overrides?: CallOverrides): Promise<string>;
-
-  mintToken(overrides?: CallOverrides): Promise<string>;
-
-  pay(
+  payNative(
+    product_: PromiseOrValue<BytesLike>,
     paymentToken_: PromiseOrValue<string>,
     payer_: PromiseOrValue<string>,
-    paymentAmount_: PromiseOrValue<BigNumberish>,
-    cashbackAmount_: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    price_: PromiseOrValue<BigNumberish>,
+    cashback_: PromiseOrValue<BigNumberish>,
+    discountProducts_: PromiseOrValue<BytesLike>[],
+    discounts_: PromiseOrValue<BigNumberish>[],
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   paymentTokenSwapInfo(
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, number, number] & {
-      router: string;
-      sqrtPriceLimitX96: BigNumber;
-      fee: number;
-      multiplier: number;
-    }
-  >;
+  ): Promise<[number, number] & { poolFee: number; secondsAgo: number }>;
+
+  pointToken(overrides?: CallOverrides): Promise<string>;
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
-  renounceRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
+  removeUpgradeability(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  revokeRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
+  setAccessControl(
+    accessControl_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setDistributor(
-    newDistributor_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setHolder(
-    holder_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setMintToken(
-    mintToken_: PromiseOrValue<string>,
+  setCashback(
+    cashback_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPaymentTokens(
-    tokens_: PromiseOrValue<string>[],
     swapInfos_: IPayment.SwapInfoStruct[],
+    tokens_: PromiseOrValue<string>[],
     statuses_: PromiseOrValue<boolean>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setPointToken(
+    pointToken_: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTreasury(
+    treasury_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -701,10 +741,20 @@ export interface Payment extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setup(
+    pointToken_: PromiseOrValue<string>,
+    cashback_: PromiseOrValue<string>,
+    treasury_: PromiseOrValue<string>,
+    uniPriceOracle_: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   supportsInterface(
     interfaceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  treasury(overrides?: CallOverrides): Promise<string>;
 
   uniPriceOracle(overrides?: CallOverrides): Promise<string>;
 
@@ -722,94 +772,98 @@ export interface Payment extends BaseContract {
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    FACTORY_ROLE(overrides?: CallOverrides): Promise<string>;
+    FACTORY_CONTRACT_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    Payment_init(overrides?: CallOverrides): Promise<void>;
+    PAYMENT_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    distributor(overrides?: CallOverrides): Promise<string>;
-
-    getInputSwapAmount(
-      paymentToken_: PromiseOrValue<string>,
-      amountOut_: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPaymentTokens(overrides?: CallOverrides): Promise<string[]>;
-
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    Payment_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    accessControl(overrides?: CallOverrides): Promise<string>;
+
+    cashback(overrides?: CallOverrides): Promise<string>;
+
+    getPaymentToken(
+      index_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<string>;
 
-    holder(overrides?: CallOverrides): Promise<string>;
+    getPriceWithDiscount(
+      paymentToken_: PromiseOrValue<string>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discount_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
 
-    mintToken(overrides?: CallOverrides): Promise<string>;
+    getSwapAmount(
+      receiveToken_: PromiseOrValue<string>,
+      swapToken_: PromiseOrValue<string>,
+      swapAmount_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isNotUpgradeable(overrides?: CallOverrides): Promise<boolean>;
 
     pay(
+      product_: PromiseOrValue<BytesLike>,
       paymentToken_: PromiseOrValue<string>,
       payer_: PromiseOrValue<string>,
-      paymentAmount_: PromiseOrValue<BigNumberish>,
-      cashbackAmount_: PromiseOrValue<BigNumberish>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discountProducts_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    payNative(
+      product_: PromiseOrValue<BytesLike>,
+      paymentToken_: PromiseOrValue<string>,
+      payer_: PromiseOrValue<string>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discountProducts_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     paymentTokenSwapInfo(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, number, number] & {
-        router: string;
-        sqrtPriceLimitX96: BigNumber;
-        fee: number;
-        multiplier: number;
-      }
-    >;
+    ): Promise<[number, number] & { poolFee: number; secondsAgo: number }>;
+
+    pointToken(overrides?: CallOverrides): Promise<string>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
-    renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    removeUpgradeability(overrides?: CallOverrides): Promise<void>;
+
+    setAccessControl(
+      accessControl_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setDistributor(
-      newDistributor_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setHolder(
-      holder_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMintToken(
-      mintToken_: PromiseOrValue<string>,
+    setCashback(
+      cashback_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPaymentTokens(
-      tokens_: PromiseOrValue<string>[],
       swapInfos_: IPayment.SwapInfoStruct[],
+      tokens_: PromiseOrValue<string>[],
       statuses_: PromiseOrValue<boolean>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPointToken(
+      pointToken_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTreasury(
+      treasury_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -818,10 +872,20 @@ export interface Payment extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setup(
+      pointToken_: PromiseOrValue<string>,
+      cashback_: PromiseOrValue<string>,
+      treasury_: PromiseOrValue<string>,
+      uniPriceOracle_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    treasury(overrides?: CallOverrides): Promise<string>;
 
     uniPriceOracle(overrides?: CallOverrides): Promise<string>;
 
@@ -854,22 +918,26 @@ export interface Payment extends BaseContract {
       beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
 
-    "DistributorChanged(address)"(
-      distributor?: null
-    ): DistributorChangedEventFilter;
-    DistributorChanged(distributor?: null): DistributorChangedEventFilter;
-
-    "HolderChanged(address)"(holder?: null): HolderChangedEventFilter;
-    HolderChanged(holder?: null): HolderChangedEventFilter;
+    "CashbackChanged(address)"(cashback?: null): CashbackChangedEventFilter;
+    CashbackChanged(cashback?: null): CashbackChangedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "MintTokenChanged(address)"(token?: null): MintTokenChangedEventFilter;
-    MintTokenChanged(token?: null): MintTokenChangedEventFilter;
-
-    "Payed()"(): PayedEventFilter;
-    Payed(): PayedEventFilter;
+    "Payed(address,address,bytes32,uint256,uint256)"(
+      payer?: PromiseOrValue<string> | null,
+      paymentToken?: null,
+      productAlias?: null,
+      priceInPaymentToken?: null,
+      cashbackInPaymentToken?: null
+    ): PayedEventFilter;
+    Payed(
+      payer?: PromiseOrValue<string> | null,
+      paymentToken?: null,
+      productAlias?: null,
+      priceInPaymentToken?: null,
+      cashbackInPaymentToken?: null
+    ): PayedEventFilter;
 
     "PaymentTokenAdded(address)"(token?: null): PaymentTokenAddedEventFilter;
     PaymentTokenAdded(token?: null): PaymentTokenAddedEventFilter;
@@ -879,38 +947,13 @@ export interface Payment extends BaseContract {
     ): PaymentTokenRemovedEventFilter;
     PaymentTokenRemoved(token?: null): PaymentTokenRemovedEventFilter;
 
-    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
-    ): RoleAdminChangedEventFilter;
-    RoleAdminChanged(
-      role?: PromiseOrValue<BytesLike> | null,
-      previousAdminRole?: PromiseOrValue<BytesLike> | null,
-      newAdminRole?: PromiseOrValue<BytesLike> | null
-    ): RoleAdminChangedEventFilter;
+    "PointTokenChanged(address)"(
+      pointToken?: null
+    ): PointTokenChangedEventFilter;
+    PointTokenChanged(pointToken?: null): PointTokenChangedEventFilter;
 
-    "RoleGranted(bytes32,address,address)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
-    ): RoleGrantedEventFilter;
-    RoleGranted(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
-    ): RoleGrantedEventFilter;
-
-    "RoleRevoked(bytes32,address,address)"(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
-    ): RoleRevokedEventFilter;
-    RoleRevoked(
-      role?: PromiseOrValue<BytesLike> | null,
-      account?: PromiseOrValue<string> | null,
-      sender?: PromiseOrValue<string> | null
-    ): RoleRevokedEventFilter;
+    "TreasuryChanged(address)"(treasury?: null): TreasuryChangedEventFilter;
+    TreasuryChanged(treasury?: null): TreasuryChangedEventFilter;
 
     "UniswapPriceOracleChanged(address)"(
       uniswapPriceOracle?: null
@@ -930,49 +973,61 @@ export interface Payment extends BaseContract {
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    FACTORY_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+    FACTORY_CONTRACT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PAYMENT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     Payment_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    distributor(overrides?: CallOverrides): Promise<BigNumber>;
+    accessControl(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getInputSwapAmount(
+    cashback(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPaymentToken(
+      index_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPriceWithDiscount(
       paymentToken_: PromiseOrValue<string>,
-      amountOut_: PromiseOrValue<BigNumberish>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discount_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getPaymentTokens(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+    getSwapAmount(
+      receiveToken_: PromiseOrValue<string>,
+      swapToken_: PromiseOrValue<string>,
+      swapAmount_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    holder(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mintToken(overrides?: CallOverrides): Promise<BigNumber>;
+    isNotUpgradeable(overrides?: CallOverrides): Promise<BigNumber>;
 
     pay(
+      product_: PromiseOrValue<BytesLike>,
       paymentToken_: PromiseOrValue<string>,
       payer_: PromiseOrValue<string>,
-      paymentAmount_: PromiseOrValue<BigNumberish>,
-      cashbackAmount_: PromiseOrValue<BigNumberish>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discountProducts_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    payNative(
+      product_: PromiseOrValue<BytesLike>,
+      paymentToken_: PromiseOrValue<string>,
+      payer_: PromiseOrValue<string>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discountProducts_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     paymentTokenSwapInfo(
@@ -980,39 +1035,38 @@ export interface Payment extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    pointToken(overrides?: CallOverrides): Promise<BigNumber>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    removeUpgradeability(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    setAccessControl(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setDistributor(
-      newDistributor_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setHolder(
-      holder_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setMintToken(
-      mintToken_: PromiseOrValue<string>,
+    setCashback(
+      cashback_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPaymentTokens(
-      tokens_: PromiseOrValue<string>[],
       swapInfos_: IPayment.SwapInfoStruct[],
+      tokens_: PromiseOrValue<string>[],
       statuses_: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setPointToken(
+      pointToken_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTreasury(
+      treasury_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1021,10 +1075,20 @@ export interface Payment extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setup(
+      pointToken_: PromiseOrValue<string>,
+      cashback_: PromiseOrValue<string>,
+      treasury_: PromiseOrValue<string>,
+      uniPriceOracle_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    treasury(overrides?: CallOverrides): Promise<BigNumber>;
 
     uniPriceOracle(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1045,49 +1109,63 @@ export interface Payment extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    FACTORY_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    FACTORY_CONTRACT_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    PAYMENT_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     Payment_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    distributor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    accessControl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getInputSwapAmount(
+    cashback(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getPaymentToken(
+      index_: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPriceWithDiscount(
       paymentToken_: PromiseOrValue<string>,
-      amountOut_: PromiseOrValue<BigNumberish>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discount_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getPaymentTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getRoleAdmin(
-      role: PromiseOrValue<BytesLike>,
+    getSwapAmount(
+      receiveToken_: PromiseOrValue<string>,
+      swapToken_: PromiseOrValue<string>,
+      swapAmount_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    grantRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    hasRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    holder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    mintToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isNotUpgradeable(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pay(
+      product_: PromiseOrValue<BytesLike>,
       paymentToken_: PromiseOrValue<string>,
       payer_: PromiseOrValue<string>,
-      paymentAmount_: PromiseOrValue<BigNumberish>,
-      cashbackAmount_: PromiseOrValue<BigNumberish>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discountProducts_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    payNative(
+      product_: PromiseOrValue<BytesLike>,
+      paymentToken_: PromiseOrValue<string>,
+      payer_: PromiseOrValue<string>,
+      price_: PromiseOrValue<BigNumberish>,
+      cashback_: PromiseOrValue<BigNumberish>,
+      discountProducts_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     paymentTokenSwapInfo(
@@ -1095,39 +1173,38 @@ export interface Payment extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    pointToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    removeUpgradeability(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    revokeRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    setAccessControl(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setDistributor(
-      newDistributor_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setHolder(
-      holder_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMintToken(
-      mintToken_: PromiseOrValue<string>,
+    setCashback(
+      cashback_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPaymentTokens(
-      tokens_: PromiseOrValue<string>[],
       swapInfos_: IPayment.SwapInfoStruct[],
+      tokens_: PromiseOrValue<string>[],
       statuses_: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPointToken(
+      pointToken_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTreasury(
+      treasury_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1136,10 +1213,20 @@ export interface Payment extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setup(
+      pointToken_: PromiseOrValue<string>,
+      cashback_: PromiseOrValue<string>,
+      treasury_: PromiseOrValue<string>,
+      uniPriceOracle_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    treasury(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     uniPriceOracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

@@ -1,4 +1,4 @@
-import { ref, Ref } from 'vue'
+import { ref, Ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ContractTransaction } from 'ethers'
 
@@ -20,7 +20,7 @@ export interface Product {
 
 export interface ProductFactoryContract {
   address: Ref<string>
-  init: (contractAddress: string) => void
+  init: () => void
   getEmptyProduct: () => Product
   payment: () => Promise<string>
   products: (alias: string) => Promise<Product>
@@ -115,20 +115,24 @@ export const useProductFactory = (): ProductFactoryContract => {
   }
 
   const deploy = async (
-    args: Record<string, string>,
+    args: Record<string, string | string[]>,
   ): Promise<ContractTransaction> => {
     if (!_instance_rw.value) throw new errors.ProviderNotSupportedError()
 
     const tx = await _instance_rw.value.deploy(
-      args.alias,
-      args.paymentTokenAddress,
-      args.encodedInitializeData,
+      args.alias as string,
+      args.paymentTokenAddress as string,
+      args.encodedInitializeData as string,
+      args.discountAliases as string[],
+      args.discountValues as string[],
     )
 
     return tx
   }
 
   init()
+
+  watch(() => [provider.value.selectedAddress, provider.value.chainId], init)
 
   return {
     init,

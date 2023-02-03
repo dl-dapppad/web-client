@@ -30,60 +30,80 @@ import type {
 
 export interface ProductFactoryInterface extends utils.Interface {
   functions: {
-    "ProductFactory_init()": FunctionFragment;
-    "__ProductFactoryConfig_init()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "PRODUCT_FACTORY_ROLE()": FunctionFragment;
+    "ProductFactory_init(address)": FunctionFragment;
+    "__ProductFactoryConfig_init(address)": FunctionFragment;
+    "accessControl()": FunctionFragment;
     "addProduct(bytes32)": FunctionFragment;
-    "deploy(bytes32,address,bytes)": FunctionFragment;
+    "deploy(bytes32,address,bytes,bytes32[],uint256[])": FunctionFragment;
     "getCashback(bytes32)": FunctionFragment;
     "getNewPrice(bytes32)": FunctionFragment;
     "getPotentialContractAddress(bytes32,bytes)": FunctionFragment;
     "getProducts()": FunctionFragment;
-    "owner()": FunctionFragment;
+    "isNotUpgradeable()": FunctionFragment;
     "payment()": FunctionFragment;
     "products(bytes32)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
+    "removeUpgradeability()": FunctionFragment;
+    "setAccessControl(address)": FunctionFragment;
     "setImplementation(bytes32,address)": FunctionFragment;
     "setPayment(address)": FunctionFragment;
     "setPercents(bytes32,uint128,uint128)": FunctionFragment;
     "setPrices(bytes32,uint256,uint256)": FunctionFragment;
     "setStatus(bytes32,bool)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
+    "setupProduct(bytes32,address,uint256,uint256,uint128,uint128,bool)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "DEFAULT_ADMIN_ROLE"
+      | "PRODUCT_FACTORY_ROLE"
       | "ProductFactory_init"
       | "__ProductFactoryConfig_init"
+      | "accessControl"
       | "addProduct"
       | "deploy"
       | "getCashback"
       | "getNewPrice"
       | "getPotentialContractAddress"
       | "getProducts"
-      | "owner"
+      | "isNotUpgradeable"
       | "payment"
       | "products"
       | "proxiableUUID"
-      | "renounceOwnership"
+      | "removeUpgradeability"
+      | "setAccessControl"
       | "setImplementation"
       | "setPayment"
       | "setPercents"
       | "setPrices"
       | "setStatus"
-      | "transferOwnership"
+      | "setupProduct"
       | "upgradeTo"
       | "upgradeToAndCall"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "ProductFactory_init",
+    functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "PRODUCT_FACTORY_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ProductFactory_init",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "__ProductFactoryConfig_init",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "accessControl",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -95,7 +115,9 @@ export interface ProductFactoryInterface extends utils.Interface {
     values: [
       PromiseOrValue<BytesLike>,
       PromiseOrValue<string>,
-      PromiseOrValue<BytesLike>
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>[],
+      PromiseOrValue<BigNumberish>[]
     ]
   ): string;
   encodeFunctionData(
@@ -114,7 +136,10 @@ export interface ProductFactoryInterface extends utils.Interface {
     functionFragment: "getProducts",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isNotUpgradeable",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "payment", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "products",
@@ -125,8 +150,12 @@ export interface ProductFactoryInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
+    functionFragment: "removeUpgradeability",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAccessControl",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setImplementation",
@@ -157,8 +186,16 @@ export interface ProductFactoryInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    functionFragment: "setupProduct",
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeTo",
@@ -170,11 +207,23 @@ export interface ProductFactoryInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PRODUCT_FACTORY_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "ProductFactory_init",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "__ProductFactoryConfig_init",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "accessControl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addProduct", data: BytesLike): Result;
@@ -195,7 +244,10 @@ export interface ProductFactoryInterface extends utils.Interface {
     functionFragment: "getProducts",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isNotUpgradeable",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "payment", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "products", data: BytesLike): Result;
   decodeFunctionResult(
@@ -203,7 +255,11 @@ export interface ProductFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "removeUpgradeability",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAccessControl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -218,7 +274,7 @@ export interface ProductFactoryInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "setPrices", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setStatus", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "setupProduct",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
@@ -230,10 +286,9 @@ export interface ProductFactoryInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
-    "Deployed(address,address,uint256,uint256)": EventFragment;
+    "Deployed(bytes32,address,address,address,uint256,uint256)": EventFragment;
     "ImplementationChanged(bytes32,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
     "PaymentChanged(address)": EventFragment;
     "PercentsChanged(bytes32,uint256,uint256)": EventFragment;
     "PricesChanged(bytes32,uint256,uint256)": EventFragment;
@@ -247,7 +302,6 @@ export interface ProductFactoryInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Deployed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ImplementationChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PercentsChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PricesChanged"): EventFragment;
@@ -278,13 +332,15 @@ export type BeaconUpgradedEvent = TypedEvent<
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
 export interface DeployedEventObject {
+  productAlias: string;
+  payer: string;
   proxy: string;
   paymentToken: string;
   price: BigNumber;
   cashback: BigNumber;
 }
 export type DeployedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
+  [string, string, string, string, BigNumber, BigNumber],
   DeployedEventObject
 >;
 
@@ -308,18 +364,6 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface OwnershipTransferredEventObject {
-  previousOwner: string;
-  newOwner: string;
-}
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
-
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface PaymentChangedEventObject {
   payment: string;
@@ -407,13 +451,21 @@ export interface ProductFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    PRODUCT_FACTORY_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     ProductFactory_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     __ProductFactoryConfig_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    accessControl(overrides?: CallOverrides): Promise<[string]>;
 
     addProduct(
       alias_: PromiseOrValue<BytesLike>,
@@ -424,7 +476,9 @@ export interface ProductFactory extends BaseContract {
       alias_: PromiseOrValue<BytesLike>,
       paymentToken_: PromiseOrValue<string>,
       initializeData_: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      discountAliases_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getCashback(
@@ -445,7 +499,7 @@ export interface ProductFactory extends BaseContract {
 
     getProducts(overrides?: CallOverrides): Promise<[string[]]>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    isNotUpgradeable(overrides?: CallOverrides): Promise<[boolean]>;
 
     payment(overrides?: CallOverrides): Promise<[string]>;
 
@@ -474,7 +528,12 @@ export interface ProductFactory extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
-    renounceOwnership(
+    removeUpgradeability(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setAccessControl(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -509,8 +568,14 @@ export interface ProductFactory extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+    setupProduct(
+      alias_: PromiseOrValue<BytesLike>,
+      implementation_: PromiseOrValue<string>,
+      currentPrice_: PromiseOrValue<BigNumberish>,
+      minPrice_: PromiseOrValue<BigNumberish>,
+      decreasePercent_: PromiseOrValue<BigNumberish>,
+      cashbackPercent_: PromiseOrValue<BigNumberish>,
+      isActive_: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -526,13 +591,21 @@ export interface ProductFactory extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  PRODUCT_FACTORY_ROLE(overrides?: CallOverrides): Promise<string>;
+
   ProductFactory_init(
+    accessControl_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   __ProductFactoryConfig_init(
+    accessControl_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  accessControl(overrides?: CallOverrides): Promise<string>;
 
   addProduct(
     alias_: PromiseOrValue<BytesLike>,
@@ -543,7 +616,9 @@ export interface ProductFactory extends BaseContract {
     alias_: PromiseOrValue<BytesLike>,
     paymentToken_: PromiseOrValue<string>,
     initializeData_: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    discountAliases_: PromiseOrValue<BytesLike>[],
+    discounts_: PromiseOrValue<BigNumberish>[],
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getCashback(
@@ -564,7 +639,7 @@ export interface ProductFactory extends BaseContract {
 
   getProducts(overrides?: CallOverrides): Promise<string[]>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
+  isNotUpgradeable(overrides?: CallOverrides): Promise<boolean>;
 
   payment(overrides?: CallOverrides): Promise<string>;
 
@@ -585,7 +660,12 @@ export interface ProductFactory extends BaseContract {
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
-  renounceOwnership(
+  removeUpgradeability(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setAccessControl(
+    accessControl_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -620,8 +700,14 @@ export interface ProductFactory extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
+  setupProduct(
+    alias_: PromiseOrValue<BytesLike>,
+    implementation_: PromiseOrValue<string>,
+    currentPrice_: PromiseOrValue<BigNumberish>,
+    minPrice_: PromiseOrValue<BigNumberish>,
+    decreasePercent_: PromiseOrValue<BigNumberish>,
+    cashbackPercent_: PromiseOrValue<BigNumberish>,
+    isActive_: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -637,9 +723,21 @@ export interface ProductFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    ProductFactory_init(overrides?: CallOverrides): Promise<void>;
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    __ProductFactoryConfig_init(overrides?: CallOverrides): Promise<void>;
+    PRODUCT_FACTORY_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    ProductFactory_init(
+      accessControl_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    __ProductFactoryConfig_init(
+      accessControl_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    accessControl(overrides?: CallOverrides): Promise<string>;
 
     addProduct(
       alias_: PromiseOrValue<BytesLike>,
@@ -650,6 +748,8 @@ export interface ProductFactory extends BaseContract {
       alias_: PromiseOrValue<BytesLike>,
       paymentToken_: PromiseOrValue<string>,
       initializeData_: PromiseOrValue<BytesLike>,
+      discountAliases_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -671,7 +771,7 @@ export interface ProductFactory extends BaseContract {
 
     getProducts(overrides?: CallOverrides): Promise<string[]>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
+    isNotUpgradeable(overrides?: CallOverrides): Promise<boolean>;
 
     payment(overrides?: CallOverrides): Promise<string>;
 
@@ -700,7 +800,12 @@ export interface ProductFactory extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    removeUpgradeability(overrides?: CallOverrides): Promise<void>;
+
+    setAccessControl(
+      accessControl_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setImplementation(
       alias_: PromiseOrValue<BytesLike>,
@@ -733,8 +838,14 @@ export interface ProductFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+    setupProduct(
+      alias_: PromiseOrValue<BytesLike>,
+      implementation_: PromiseOrValue<string>,
+      currentPrice_: PromiseOrValue<BigNumberish>,
+      minPrice_: PromiseOrValue<BigNumberish>,
+      decreasePercent_: PromiseOrValue<BigNumberish>,
+      cashbackPercent_: PromiseOrValue<BigNumberish>,
+      isActive_: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -767,14 +878,18 @@ export interface ProductFactory extends BaseContract {
       beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
 
-    "Deployed(address,address,uint256,uint256)"(
-      proxy?: PromiseOrValue<string> | null,
+    "Deployed(bytes32,address,address,address,uint256,uint256)"(
+      productAlias?: PromiseOrValue<BytesLike> | null,
+      payer?: PromiseOrValue<string> | null,
+      proxy?: null,
       paymentToken?: null,
       price?: null,
       cashback?: null
     ): DeployedEventFilter;
     Deployed(
-      proxy?: PromiseOrValue<string> | null,
+      productAlias?: PromiseOrValue<BytesLike> | null,
+      payer?: PromiseOrValue<string> | null,
+      proxy?: null,
       paymentToken?: null,
       price?: null,
       cashback?: null
@@ -791,15 +906,6 @@ export interface ProductFactory extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
 
     "PaymentChanged(address)"(payment?: null): PaymentChangedEventFilter;
     PaymentChanged(payment?: null): PaymentChangedEventFilter;
@@ -844,13 +950,21 @@ export interface ProductFactory extends BaseContract {
   };
 
   estimateGas: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PRODUCT_FACTORY_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     ProductFactory_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     __ProductFactoryConfig_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    accessControl(overrides?: CallOverrides): Promise<BigNumber>;
 
     addProduct(
       alias_: PromiseOrValue<BytesLike>,
@@ -861,7 +975,9 @@ export interface ProductFactory extends BaseContract {
       alias_: PromiseOrValue<BytesLike>,
       paymentToken_: PromiseOrValue<string>,
       initializeData_: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      discountAliases_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getCashback(
@@ -882,7 +998,7 @@ export interface ProductFactory extends BaseContract {
 
     getProducts(overrides?: CallOverrides): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+    isNotUpgradeable(overrides?: CallOverrides): Promise<BigNumber>;
 
     payment(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -893,7 +1009,12 @@ export interface ProductFactory extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    renounceOwnership(
+    removeUpgradeability(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setAccessControl(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -928,8 +1049,14 @@ export interface ProductFactory extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+    setupProduct(
+      alias_: PromiseOrValue<BytesLike>,
+      implementation_: PromiseOrValue<string>,
+      currentPrice_: PromiseOrValue<BigNumberish>,
+      minPrice_: PromiseOrValue<BigNumberish>,
+      decreasePercent_: PromiseOrValue<BigNumberish>,
+      cashbackPercent_: PromiseOrValue<BigNumberish>,
+      isActive_: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -946,13 +1073,25 @@ export interface ProductFactory extends BaseContract {
   };
 
   populateTransaction: {
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    PRODUCT_FACTORY_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     ProductFactory_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     __ProductFactoryConfig_init(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    accessControl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addProduct(
       alias_: PromiseOrValue<BytesLike>,
@@ -963,7 +1102,9 @@ export interface ProductFactory extends BaseContract {
       alias_: PromiseOrValue<BytesLike>,
       paymentToken_: PromiseOrValue<string>,
       initializeData_: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      discountAliases_: PromiseOrValue<BytesLike>[],
+      discounts_: PromiseOrValue<BigNumberish>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getCashback(
@@ -984,7 +1125,7 @@ export interface ProductFactory extends BaseContract {
 
     getProducts(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isNotUpgradeable(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     payment(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -995,7 +1136,12 @@ export interface ProductFactory extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    renounceOwnership(
+    removeUpgradeability(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAccessControl(
+      accessControl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1030,8 +1176,14 @@ export interface ProductFactory extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
+    setupProduct(
+      alias_: PromiseOrValue<BytesLike>,
+      implementation_: PromiseOrValue<string>,
+      currentPrice_: PromiseOrValue<BigNumberish>,
+      minPrice_: PromiseOrValue<BigNumberish>,
+      decreasePercent_: PromiseOrValue<BigNumberish>,
+      cashbackPercent_: PromiseOrValue<BigNumberish>,
+      isActive_: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

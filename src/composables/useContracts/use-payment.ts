@@ -6,8 +6,15 @@ import { Payment, Payment__factory } from '@/types'
 export interface PaymentContract {
   address: Ref<string>
   init: (address: string) => void
-  getPaymentTokens: () => Promise<string[]>
-  getInputSwapAmount: (address: string, swapAmount: string) => Promise<string>
+  pointToken: () => Promise<string>
+  cashback: () => Promise<string>
+  getPaymentToken: (index: number) => Promise<string>
+  getPriceWithDiscount: (
+    paymentToken: string,
+    price: string,
+    cashback: string,
+    discount: string,
+  ) => Promise<string>
 }
 
 export const usePayment = (contractAddress?: string): PaymentContract => {
@@ -35,22 +42,52 @@ export const usePayment = (contractAddress?: string): PaymentContract => {
     }
   }
 
-  const getPaymentTokens = async (): Promise<string[]> => {
-    if (!_instance.value) return []
+  const pointToken = async (): Promise<string> => {
+    if (!_instance.value) return ''
 
-    return _instance.value.getPaymentTokens()
+    return _instance.value.pointToken()
   }
 
-  const getInputSwapAmount = async (
-    address: string,
-    swapAmount: string,
+  const cashback = async (): Promise<string> => {
+    if (!_instance.value) return ''
+
+    return _instance.value.cashback()
+  }
+
+  const getPaymentToken = async (index: number): Promise<string> => {
+    if (!_instance.value) return ''
+
+    return _instance.value.getPaymentToken(index)
+  }
+
+  const getPriceWithDiscount = async (
+    paymentToken: string,
+    price: string,
+    cashback: string,
+    discount: string,
   ): Promise<string> => {
-    if (!_instance.value) return '0'
+    if (!_instance.value) return ''
 
-    return (
-      await _instance.value.getInputSwapAmount(address, swapAmount)
-    ).toString()
+    const res = await _instance.value.getPriceWithDiscount(
+      paymentToken,
+      price,
+      cashback,
+      discount,
+    )
+
+    return res[0].toString()
   }
+
+  // const getInputSwapAmount = async (
+  //   address: string,
+  //   swapAmount: string,
+  // ): Promise<string> => {
+  //   if (!_instance.value) return '0'
+
+  //   return (
+  //     await _instance.value.getInputSwapAmount(address, swapAmount)
+  //   ).toString()
+  // }
 
   if (contractAddress) init(contractAddress)
 
@@ -59,7 +96,9 @@ export const usePayment = (contractAddress?: string): PaymentContract => {
 
     address,
 
-    getPaymentTokens,
-    getInputSwapAmount,
+    pointToken,
+    cashback,
+    getPaymentToken,
+    getPriceWithDiscount,
   }
 }

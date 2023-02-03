@@ -1,358 +1,260 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import { AppButton, Collapse, Icon, InfoTooltip, Loader } from '@/common'
 import { SelectField, InputField, CheckboxField, SwitchField } from '@/fields'
 import { BN } from '@/utils'
-import { Product, useProduct } from '@/composables'
+import { useProduct, useSystemContracts } from '@/composables'
 import { config } from '@/config'
 import { formatAmount } from '@/helpers'
-import { useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore, useAccountStore } from '@/store'
 import { Post } from '@/types'
 
 import postsData from '@/assets/posts.json'
 
 const posts = postsData as unknown as Post[]
 
-const props = defineProps<{
-  isBalanceInsuficient: boolean
-  data: string[]
-  isDiscountUsed: boolean
-}>()
-
 enum EVENTS {
+  updatePaymentToken = 'update:paymentToken',
+  updateProductPriceWithDiscount = 'update:productPriceWithDiscount',
+  updateDiscounts = 'update:discounts',
   updateIsBalanceInsuficient = 'update:isBalanceInsuficient',
-  updateData = 'update:data',
-  updateDiscountData = 'update:discountData',
-  updateisDiscountUsed = 'update:isDiscountUsed',
 }
 
 const emits = defineEmits<{
-  (e: EVENTS.updateIsBalanceInsuficient, isBalanceInsuficient: boolean): void
-  (e: EVENTS.updateData, data: string[]): void
+  (e: EVENTS.updatePaymentToken, paymentTokenAddress: string): void
   (
-    e: EVENTS.updateDiscountData,
-    data: {
-      id: string
-      value: string
-    }[],
+    e: EVENTS.updateProductPriceWithDiscount,
+    productPriceWithDiscount: string,
   ): void
-  (e: EVENTS.updateisDiscountUsed, isDiscountUsed: boolean): void
+  (e: EVENTS.updateDiscounts, discounts: Map<string, string>): void
+  (e: EVENTS.updateIsBalanceInsuficient, isBalanceInsuficient: boolean): void
 }>()
 
-const product = useProduct()
-const route = useRoute()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
+const { account } = storeToRefs(useAccountStore())
+
+const route = useRoute()
+const systemContracts = useSystemContracts()
+const product = useProduct()
 
 const paymentTokens = ref<Record<string, Array<string>>>({
   symbols: [],
   addresses: [],
 })
-const productPaymentToken = ref({
-  balance: '',
-  symbol: '',
-  decimals: 0,
-  amount: '0',
-})
-const selectedPaymentToken = ref({
-  balance: '',
-  symbol: '',
-  decimals: 0,
-  amount: '0',
-})
 
-const selectedProduct = ref<Product>()
-const isPaymentLoaded = ref(false)
+const selectedPaymentToken = ref({
+  address: '',
+  balance: '',
+  symbol: '',
+  decimals: 0,
+})
 
 const discount = ref<{
   usedDiscount: string
-  products: {
-    id?: string
-    discount?: string
+  maxDiscount: string
+  pools: {
+    title: string
+    alias: string
+    discount: string
     value: string
   }[]
 }>({
   usedDiscount: '',
-  products: [
-    {
-      id: 'erc20-mint-burn',
-      discount: '10000000000000000000',
-      value: '',
-    },
-    {
-      id: 'erc20-mint',
-      discount: '30000000000000000000',
-      value: '',
-    },
-    {
-      id: 'erc721-enum',
-      discount: '341757683104456907300',
-      value: '',
-    },
-  ],
+  maxDiscount: '0',
+  pools: [],
 })
 
-const maxUsedDiscount = computed(() => {
-  return new BN(
-    new BN(availableDiscount.value).compare(
-      selectedProduct.value?.currentPrice as string,
-    ) === 1
-      ? (selectedProduct.value?.currentPrice as string)
-      : availableDiscount.value,
-  )
-    .fromFraction()
-    .toString()
-})
-
-const availableDiscount = computed(() => {
-  let result = '0'
-
-  discount.value.products.forEach(
-    item => (result = new BN(result).add(item.discount as string).toString()),
-  )
-
-  return result.toString()
-})
-
-const productPriceWithDiscount = computed(() =>
-  new BN(selectedProduct.value?.currentPrice as string).sub(
-    new BN(
-      discount.value.usedDiscount === '' ? 0 : discount.value.usedDiscount,
-    ).toFraction(),
-  ),
-)
-
-const isBalanceInsuficientCalc = computed(() => {
-  if (!selectedProduct.value) return false
-
-  const currentPrice = new BN(selectedProduct.value?.currentPrice)
-    .fromFraction(productPaymentToken.value.decimals)
-    .toString()
-  const paymentBalance = new BN(selectedPaymentToken.value.balance)
-    .fromFraction(selectedPaymentToken.value.decimals)
-    .toString()
-
-  const isBalanceInsuficient =
-    new BN(currentPrice).compare(paymentBalance) === 1
-
-  emits(EVENTS.updateIsBalanceInsuficient, isBalanceInsuficient)
-
-  return isBalanceInsuficient
-})
+const productPrice = ref('0')
+const productPriceWithDiscount = ref('0')
+const isDiscountCheckboxActive = ref(false)
+const loading = ref(true)
+const isPaymentLoaded = ref(false)
+const isBalanceInsuficient = ref(false)
 
 const updatePayment = async (selectedSymbol: string | number) => {
   isPaymentLoaded.value = false
 
-  emits(
-    EVENTS.updateData,
-    props.data.map((val, ind) => {
-      if (ind === 0) return selectedSymbol as string
-      else return val
-    }),
-  )
-
+  // Start setup `selectedPaymentToken`
   const selectedIndex = paymentTokens.value.symbols.findIndex(
     symbol => symbol === selectedSymbol,
   )
   const selectedAddress = paymentTokens.value.addresses[selectedIndex]
 
-  let symbol, decimals, balance, amount
-  if (selectedIndex === 0) {
-    ;({ symbol, decimals, balance, amount } =
-      await product.getSelectedPaymentTokenInfo(selectedAddress))
+  const { symbol, decimals, balance } =
+    await product.getSelectedPaymentTokenInfo(selectedAddress)
 
-    selectedPaymentToken.value = {
-      ...selectedPaymentToken.value,
-      symbol,
-      decimals: Number(decimals),
-      balance,
-      amount: selectedProduct.value?.currentPrice ?? '0',
-    }
-  } else {
-    ;({ symbol, decimals, balance, amount } =
-      await product.getSelectedPaymentTokenInfo(
-        selectedAddress,
-        true,
-        selectedProduct.value?.currentPrice ?? '0',
-      ))
-
-    selectedPaymentToken.value = {
-      ...selectedPaymentToken.value,
-      symbol,
-      decimals: Number(decimals),
-      balance,
-      amount,
-    }
+  selectedPaymentToken.value = {
+    address: selectedAddress,
+    symbol,
+    decimals: Number(decimals),
+    balance,
   }
+  // End
 
-  emits(
-    EVENTS.updateData,
-    props.data.map((val, ind) => {
-      if (ind === 1) return selectedPaymentToken.value.amount
-      else return val
-    }),
+  // Recalculate product price with current payment `selectedAddress`
+  // and without discount
+  const alias = config.PRODUCT_ALIASES[route.params.id as string]
+  const productInfo = await systemContracts.factory.products(alias)
+  productPrice.value = await systemContracts.payment.getPriceWithDiscount(
+    selectedAddress,
+    productInfo.currentPrice,
+    '0',
+    '0',
   )
+  // End
+
+  isBalanceInsuficient.value =
+    new BN(productInfo.currentPrice)
+      .fromFraction()
+      .compare(
+        new BN(selectedPaymentToken.value.balance).fromFraction(
+          selectedPaymentToken.value.decimals,
+        ),
+      ) === 1
 
   isPaymentLoaded.value = true
+
+  emits(EVENTS.updateIsBalanceInsuficient, isBalanceInsuficient.value)
+  emits(EVENTS.updatePaymentToken, selectedAddress)
+
+  updateProductPriceWithDiscount()
 }
 
-const toggleIfLoggedIn = (func: () => void) => {
-  if (
-    provider?.value.selectedAddress &&
-    ![undefined, ''].includes(props.data[0])
-  ) {
-    func()
-    emits(EVENTS.updateisDiscountUsed, !props.isDiscountUsed)
-  }
-}
-
-const emitDiscountData = () =>
-  emits(
-    EVENTS.updateDiscountData,
-    discount.value.products.map(item => {
-      return {
-        id: item.id as string,
-        value: new BN(item.value === '' ? 0 : item.value)
-          .toFraction()
-          .toString(),
-      }
-    }),
-  )
-
-const init = async () => {
-  isPaymentLoaded.value = false
-
-  const { symbols, addresses } = await product.getAvailablePaymentTokenList()
-
-  paymentTokens.value.symbols = symbols
-  paymentTokens.value.addresses = addresses
-
+const updateProductPriceWithDiscount = async () => {
   const alias = config.PRODUCT_ALIASES[route.params.id as string]
-  selectedProduct.value = await product.getProductInfo(alias)
+  const productInfo = await systemContracts.factory.products(alias)
 
-  if (!addresses.length) return
+  const totalDiscount = discount.value.pools
+    .reduce(
+      (total, pool) => new BN(total).add(pool.value === '' ? '0' : pool.value),
+      new BN(0),
+    )
+    .toFraction()
+    .toString()
 
-  const { symbol, decimals, balance } =
-    await product.getSelectedPaymentTokenInfo(addresses[0])
+  productPriceWithDiscount.value =
+    await systemContracts.payment.getPriceWithDiscount(
+      selectedPaymentToken.value.address,
+      productInfo.currentPrice,
+      '0',
+      totalDiscount,
+    )
 
-  productPaymentToken.value.symbol = symbol
-  productPaymentToken.value.decimals = Number(decimals)
-  productPaymentToken.value.balance = balance
-  productPaymentToken.value.amount = selectedProduct.value.currentPrice
+  emits(EVENTS.updateProductPriceWithDiscount, productPriceWithDiscount.value)
+}
 
-  discount.value.products.forEach(item => {
-    watch(
-      () => item.value,
-      async () => {
-        item.value =
-          new BN((await item.discount) as string)
-            .fromFraction()
-            .compare(item.value === '' ? 0 : item.value) === 1
-            ? item.value
-            : new BN(item.discount as string).fromFraction().toString()
+const toggleUseDiscount = (func: () => void) => {
+  isDiscountCheckboxActive.value = !isDiscountCheckboxActive.value
+  func()
+}
 
-        let sum = new BN(0)
-
-        discount.value.products.forEach(
-          item => (sum = sum.add(item.value === '' ? 0 : item.value)),
-        )
-
-        discount.value.usedDiscount = sum.toString()
-
-        emitDiscountData()
-      },
+const emitUpdateDiscounts = () => {
+  const emitData = new Map()
+  discount.value.pools.forEach(pool => {
+    emitData.set(
+      pool.alias,
+      new BN(pool.value === '' ? '0' : pool.value).toFraction().toString(),
     )
   })
 
-  isPaymentLoaded.value = true
+  emits(EVENTS.updateDiscounts, emitData)
+}
+
+const onUsedDiscountChange = (input: string | number) => {
+  // Return if empty input
+  // Return if `0.` or `123.`
+  if (input === '' || /^[0-9]*\.$/.test(input as string)) {
+    discount.value.pools.forEach(pool => (pool.value = '0'))
+    return
+  }
+
+  discount.value.pools.forEach(pool => {
+    // If `input` > `pool.discount`
+    if (new BN(input).compare(pool.discount) === 1) {
+      pool.value = pool.discount
+      input = new BN(input).sub(pool.discount).toString()
+    } else {
+      pool.value = input as string
+      input = 0
+    }
+  })
+
+  updateProductPriceWithDiscount()
+  emitUpdateDiscounts()
+}
+
+const onProductDiscountChange = (input: string | number) => {
+  // Return if empty input
+  // Return if `0.` or `123.`
+  if (input === '' || /^[0-9]*\.$/.test(input as string)) {
+    return
+  }
+
+  let sum = new BN(0)
+  discount.value.pools.forEach(pool => {
+    sum = sum.add(pool.value === '' ? '0' : pool.value)
+  })
+
+  discount.value.usedDiscount = sum.toString()
+
+  updateProductPriceWithDiscount()
+  emitUpdateDiscounts()
+}
+
+const initDiscount = async () => {
+  discount.value.pools = []
+
+  account.value.accountCashbackPools.forEach(pool => {
+    if (pool.cashback === '0') return
+
+    const produtId = product.getProductIdByAlias(pool.alias)
+    discount.value.pools.push({
+      title: posts.find(el => el.id === produtId)?.title ?? '',
+      alias: pool.alias,
+      discount: new BN(pool.cashback).fromFraction().toString(),
+      value: '0',
+    })
+  })
+
+  discount.value.maxDiscount = new BN(account.value.accountCashback)
+    .fromFraction()
+    .toString()
+}
+
+const init = async () => {
+  await systemContracts.loadDetails()
+
+  const { symbols, addresses } = await product.getAvailablePaymentTokenList()
+  paymentTokens.value.symbols = symbols
+  paymentTokens.value.addresses = addresses
+
+  initDiscount()
+
+  loading.value = false
 }
 
 watch(
-  () => discount.value.usedDiscount,
-  async () => {
-    if (discount.value.usedDiscount === '') {
-      discount.value.products.forEach(item => (item.value = ''))
-      emitDiscountData()
-      return
-    }
-
-    discount.value.usedDiscount =
-      new BN(await discount.value.usedDiscount).compare(
-        maxUsedDiscount.value,
-      ) === 1
-        ? maxUsedDiscount.value
-        : discount.value.usedDiscount
-
-    let sum = new BN(0)
-
-    discount.value.products.forEach(
-      item => (sum = sum.add(item.value === '' ? 0 : item.value)),
-    )
-
-    const sumOfDiscounts = sum.toString()
-
-    const compareSumAndUse = new BN(sumOfDiscounts).compare(
-      discount.value.usedDiscount,
-    )
-
-    if (compareSumAndUse === 0) return
-
-    let diff: BN
-
-    if (compareSumAndUse === 1) {
-      diff = new BN(sumOfDiscounts).sub(discount.value.usedDiscount)
-
-      discount.value.products.forEach(item => {
-        if (new BN(item.value === '' ? 0 : item.value).compare(diff) === -1) {
-          diff = diff.sub(item.value === '' ? 0 : item.value)
-          item.value = ''
-        } else {
-          item.value = new BN(item.value === '' ? 0 : item.value)
-            .sub(diff)
-            .toString()
-          diff = new BN(0)
-        }
-
-        if (item.value === '0') item.value = ''
-      })
-
-      emitDiscountData()
-    } else {
-      diff = new BN(discount.value.usedDiscount).sub(sumOfDiscounts)
-
-      discount.value.products.forEach(item => {
-        const freeDiscount = new BN(item.discount as string)
-          .fromFraction()
-          .sub(item.value === '' ? 0 : item.value)
-
-        if (diff.compare(freeDiscount) === 1) {
-          diff = diff.sub(freeDiscount)
-          item.value = new BN(item.discount as string).fromFraction().toString()
-        } else {
-          item.value = new BN(item.value === '' ? 0 : item.value)
-            .add(diff)
-            .toString()
-          diff = new BN(0)
-        }
-
-        if (item.value === '0') item.value = ''
-      })
-
-      emitDiscountData()
+  () => [provider.value.selectedAddress, provider.value.chainId],
+  () => {
+    if (selectedPaymentToken.value.symbol) {
+      updatePayment(selectedPaymentToken.value.symbol)
     }
   },
 )
 
 watch(
-  () => isBalanceInsuficientCalc.value,
-  () =>
-    emits(EVENTS.updateIsBalanceInsuficient, isBalanceInsuficientCalc.value),
+  () => account.value.accountCashbackPools,
+  () => {
+    initDiscount()
+  },
 )
 
 init()
 </script>
+
 <template>
   <div class="base-deploy-form-price app__form-control">
     <collapse
@@ -382,10 +284,10 @@ init()
       <template #default>
         <div class="app__form-control app__collapsed-fields">
           <div class="app__select-wrp">
-            <div class="app__field-row">
+            <div v-if="!loading" class="app__field-row">
               <select-field
                 class="app__module-field"
-                :model-value="data[0]"
+                :model-value="selectedPaymentToken.symbol"
                 :label="$t('product-deploy.default.payment-lbl')"
                 :value-options="paymentTokens.symbols"
                 @update:model-value="updatePayment"
@@ -396,81 +298,86 @@ init()
                 />
               </div>
             </div>
-            <!-- eslint-disable -->
-            <template
-              v-if="
-                ![undefined, ''].includes(data[0]) &&
-                selectedProduct?.currentPrice
-              "
+            <loader v-else class="base-deploy-form-price__input-loader" />
+            <div
+              class="app__row"
+              v-if="isPaymentLoaded && provider.selectedAddress"
             >
-              <!-- eslint-enable -->
-              <div class="app__row" v-if="isPaymentLoaded">
-                <span class="app__row-title">
-                  {{ $t('product-deploy.default.product-price') }}
-                </span>
-                <div class="app__balance">
-                  {{
-                    formatAmount(
-                      selectedProduct.currentPrice,
-                      productPaymentToken.decimals,
-                    )
-                  }}
-                  <span>{{ productPaymentToken.symbol }}</span>
-                </div>
+              <span class="app__row-title">
+                {{ $t('product-deploy.default.product-price') }}
+              </span>
+              <div class="app__balance">
+                {{ formatAmount(productPrice, selectedPaymentToken.decimals) }}
+                <span>{{ selectedPaymentToken.symbol }}</span>
               </div>
-              <loader v-else class="base-deploy-form-price__balance-loader" />
-              <div v-if="selectedPaymentToken.balance">
-                <div
-                  class="app__row base-deploy-form-price__balance"
-                  v-if="isPaymentLoaded"
-                >
-                  <span class="app__row-title">
-                    {{ $t('product-deploy.default.payment-balance') }}
-                  </span>
-                  <div
-                    class="app__balance app__balance-small"
-                    :class="{
-                      'app__balance-insufficient': isBalanceInsuficient,
-                    }"
-                  >
-                    {{
-                      formatAmount(
-                        selectedPaymentToken.balance,
-                        selectedPaymentToken.decimals,
-                      )
-                    }}
-                    <span>{{ selectedPaymentToken.symbol }}</span>
-                  </div>
-                </div>
-                <loader v-else class="base-deploy-form-price__balance-loader" />
+            </div>
+            <div
+              class="app__row base-deploy-form-price__balance"
+              v-if="isPaymentLoaded && provider.selectedAddress"
+            >
+              <span class="app__row-title">
+                {{ $t('product-deploy.default.payment-balance') }}
+              </span>
+              <div
+                class="app__balance app__balance-small"
+                :class="{
+                  'app__balance-insufficient': isBalanceInsuficient,
+                }"
+              >
+                {{
+                  formatAmount(
+                    selectedPaymentToken.balance,
+                    selectedPaymentToken.decimals,
+                  )
+                }}
+                <span>{{ selectedPaymentToken.symbol }}</span>
               </div>
-            </template>
+            </div>
           </div>
         </div>
         <collapse
           class="app__form-control base-deploy-form-price__discount"
           :is-close-by-click-outside="false"
         >
-          <template #head="{ collapse }">
+          <!--eslint-disable -->
+          <template
+            #head="{ collapse }"
+            v-if="
+              isPaymentLoaded &&
+              provider.selectedAddress &&
+              account.accountCashback !== '0'
+            "
+          >
+          <!--eslint-enablee -->
             <div class="base-deploy-form-price__discount-checkbox">
+              <!--eslint-disable -->
               <checkbox-field
                 class=""
-                :model-value="isDiscountUsed"
+                :model-value="isDiscountCheckboxActive"
                 :label="$t('product-deploy.default.discount-checkbox-lbl')"
                 :disabled="
-                  !provider.selectedAddress || [undefined, ''].includes(data[0])
+                  selectedPaymentToken.address === '' ||
+                  account.accountCashback === '0'
                 "
-                @click="toggleIfLoggedIn(collapse.toggle)"
+                @click="toggleUseDiscount(collapse.toggle)"
               />
+              <!--eslint-enablee -->
             </div>
           </template>
-          <template #default>
+          <template #default  v-if="
+              isPaymentLoaded &&
+              provider.selectedAddress &&
+              account.accountCashback !== '0'
+            ">
             <div class="app__field-row base-deploy-form-price__amount-input">
               <input-field
                 class="app__module-field"
-                v-model="discount.usedDiscount"
                 scheme="secondary"
+                v-model="discount.usedDiscount"
+                type="number"
+                :max="discount.maxDiscount"
                 :label="$t('product-deploy.default.discount-input-lbl')"
+                @update:model-value="onUsedDiscountChange"
               />
               <div class="app__field-tooltip">
                 <info-tooltip
@@ -486,8 +393,8 @@ init()
                     {{ $t('product-deploy.default.discount-available-lbl') }}
                   </span>
                   <div class="app__balance">
-                    {{ formatAmount(availableDiscount) }}
-                    <span>{{ productPaymentToken.symbol }}</span>
+                    {{ formatAmount(account.accountCashback) }}
+                    <span>{{ systemContracts.pointToken.symbol.value }}</span>
                   </div>
                 </div>
                 <div class="app__row">
@@ -497,11 +404,11 @@ init()
                   <div class="app__balance">
                     {{
                       formatAmount(
-                        productPriceWithDiscount.toString(),
-                        productPaymentToken.decimals,
+                        productPriceWithDiscount,
+                        selectedPaymentToken.decimals,
                       )
                     }}
-                    <span>{{ productPaymentToken.symbol }}</span>
+                    <span>{{ selectedPaymentToken.symbol }}</span>
                   </div>
                 </div>
               </div>
@@ -523,17 +430,17 @@ init()
                 <template #default>
                   <div class="base-deploy-form-price__manual">
                     <div
-                      v-for="(item, idx) in discount.products"
+                      v-for="(pool, idx) in discount.pools"
                       class="app__row base-deploy-form-price__manual-row"
                       :key="idx"
                     >
                       <div class="base-deploy-form-price__manual-key">
                         <span class="base-deploy-form-price__manual-title">
-                          {{ posts.find(el => el.id === item.id)?.title ?? '' }}
+                          {{ pool.title }}
                         </span>
                         <!--eslint-disable -->
                         {{
-                          ` (${$t(
+                          `(${$t(
                             'product-deploy.default.discount-manual-available-lbl',
                           )} `
                         }}
@@ -541,9 +448,9 @@ init()
                         <span class="base-deploy-form-price__manual-available">
                           {{
                             formatAmount(
-                              item.discount,
-                              productPaymentToken.decimals,
-                              productPaymentToken.symbol,
+                              pool.discount,
+                              0,
+                              systemContracts.pointToken.symbol.value,
                             )
                           }} </span
                         >{{ `)` }}
@@ -551,13 +458,16 @@ init()
                       <!--eslint-disable -->
                       <input-field
                         class="base-deploy-form-price__manual-input app__module-field"
+                        scheme="secondary"
+                        v-model="pool.value"
+                        type="number"
+                        :max="pool.discount"
                         :label="
                           $t('product-deploy.default.discount-manual-inp-lbl', {
-                            symbol: productPaymentToken.symbol,
+                            symbol: systemContracts.pointToken.symbol.value,
                           })
                         "
-                        scheme="secondary"
-                        v-model="item.value"
+                        @update:model-value="onProductDiscountChange"
                       />
                       <!--eslint-enable -->
                     </div>
@@ -582,6 +492,12 @@ init()
   width: 100%;
 }
 
+.base-deploy-form-price__input-loader {
+  padding-right: toRem(28);
+  height: toRem(56);
+  width: 100%;
+}
+
 .base-deploy-form-price__discount {
   display: flex;
   flex-direction: column;
@@ -602,6 +518,7 @@ init()
 .base-deploy-form-price__discount-checkbox {
   font-size: toRem(16);
   display: flex;
+  margin-top: toRem(30);
 }
 
 .base-deploy-form-price__manual-lbl {
@@ -675,6 +592,10 @@ init()
 }
 
 .base-deploy-form-price__amount-input {
-  padding-top: toRem(6);
+  margin-top: toRem(6);
+}
+
+.app__collapsed-fields {
+  margin-bottom: 0;
 }
 </style>

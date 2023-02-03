@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Loader } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { getTxGasPrice } from '@/helpers'
@@ -14,10 +14,22 @@ const isFeeLoaded = ref(false)
 const web3Store = useWeb3ProvidersStore()
 
 const init = async () => {
-  fee.value = (await getTxGasPrice(props.id)).round(3, 2).toString()
+  await web3Store.detectGasPrice()
+
+  calculateGas()
+}
+
+const calculateGas = () => {
+  if (web3Store.gasPrice.value === '0') return
+
+  fee.value = getTxGasPrice(props.id, web3Store.gasPrice.value)
+    .round(3, 2)
+    .toString()
 
   isFeeLoaded.value = true
 }
+
+watch(() => web3Store.gasPrice.value, calculateGas)
 
 init()
 </script>

@@ -125,7 +125,8 @@ export class BN {
   }
 
   fromFraction(decimals?: number): BN {
-    const fr = decimals ? new BN(0.1).pow(decimals) : BN.FROM_WEI_FACTOR
+    const fr =
+      decimals !== undefined ? new BN(0.1).pow(decimals) : BN.FROM_WEI_FACTOR
     return this.mul(fr)
   }
 
