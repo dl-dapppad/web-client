@@ -421,6 +421,7 @@ const TABS_DATA = [
                     <!-- eslint-disable -->
                     <div
                       class="cashback-page__card-history-row cashback-page__card-history-row--titled"
+                      v-if="!breakpoints.isMedium.value"
                     >
                       <!-- eslint-enable -->
                       <span class="cashback-page__card-history-row-item">
@@ -438,16 +439,34 @@ const TABS_DATA = [
                       v-for="(row, idx) in card.points.other"
                       :key="idx"
                     >
+                      <!-- eslint-disable -->
+                      <span
+                        class="cashback-page__card-history-row-item cashback-page__card-history-row-item--accented"
+                        v-if="breakpoints.isMedium.value"
+                      >
+                        {{ $t('cashback-page.history-address') }}
+                      </span>
                       <span class="cashback-page__card-history-row-item">
-                        <!-- eslint-disable -->
                         <address-copy
-                          class="app__link--low app__link--accented"
+                          class="app__link--low app__link--accented cashback-page__history-address"
                           :address="row.address"
                         />
-                        <!-- eslint-enable -->
+                      </span>
+                      <span
+                        class="cashback-page__card-history-row-item cashback-page__card-history-row-item--accented"
+                        v-if="breakpoints.isMedium.value"
+                      >
+                        {{ $t('cashback-page.history-points') }}
                       </span>
                       <span class="cashback-page__card-history-row-item">
                         {{ formatAmount(row.value) }}
+                      </span>
+                      <span
+                        class="cashback-page__card-history-row-item cashback-page__card-history-row-item--accented"
+                        v-if="breakpoints.isMedium.value"
+                      >
+                        <!--eslint-enable -->
+                        {{ $t('cashback-page.history-share') }}
                       </span>
                       <span class="cashback-page__card-history-row-item">
                         {{
@@ -662,6 +681,10 @@ const TABS_DATA = [
 .cashback-page__card-content-history {
   height: 100%;
   padding: toRem(23) toRem(43);
+
+  @include respond-to(medium) {
+    padding: toRem(30) toRem(20);
+  }
 }
 
 .cashback-page__card-history {
@@ -669,6 +692,10 @@ const TABS_DATA = [
   display: flex;
   flex-direction: column;
   gap: toRem(15);
+
+  @include respond-to(medium) {
+    gap: toRem(21);
+  }
 }
 
 .cashback-page__card-history-row {
@@ -679,14 +706,34 @@ const TABS_DATA = [
     padding-bottom: toRem(6);
     color: var(--text-secondary-main);
   }
+
+  @include respond-to(medium) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-row-gap: toRem(6);
+  }
 }
 
 .cashback-page__card-history-row-item {
   font-size: toRem(12);
   font-weight: 400;
 
+  &:nth-child(2n + 2) {
+    justify-self: end;
+  }
+
   &:last-child {
     text-align: end;
+  }
+
+  &--accented {
+    color: var(--text-secondary-main);
+  }
+}
+
+.cashback-page__history-address {
+  @include respond-to(xsmall) {
+    font-size: toRem(10);
   }
 }
 </style>
