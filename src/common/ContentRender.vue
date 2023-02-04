@@ -158,14 +158,10 @@ $page-padding-right: toRem(165);
 
 .content-render__consolas {
   font-family: var(--app-font-family-tertiary);
-  font-size: toRem(20);
+  font-size: toRem(16);
   line-height: 1.3;
   letter-spacing: 0.1em;
   font-weight: 700;
-
-  @include respond-to(medium) {
-    font-size: toRem(16);
-  }
 }
 
 .content-render__unordered-list {
@@ -175,7 +171,7 @@ $page-padding-right: toRem(165);
 
 .content-render__paragraph {
   padding-top: toRem(30);
-  font-size: toRem(20);
+  font-size: toRem(16);
   line-height: 1.3;
   letter-spacing: 0.1em;
   word-break: break-word;
@@ -186,7 +182,6 @@ $page-padding-right: toRem(165);
 
   &--small {
     padding-top: toRem(30);
-    font-size: toRem(16);
     line-height: 1.3;
     letter-spacing: 0.1em;
     word-break: break-word;
@@ -200,7 +195,7 @@ $page-padding-right: toRem(165);
 .content-render__paragraph-secondary {
   padding-top: toRem(30);
   color: var(--text-secondary-main);
-  font-size: toRem(20);
+  font-size: toRem(16);
   line-height: 1.3;
   letter-spacing: 0.1em;
 
@@ -214,13 +209,9 @@ $page-padding-right: toRem(165);
   font-family: var(--app-font-family-tertiary);
   color: var(--text-secondary-main);
   font-weight: 700;
-  font-size: toRem(20);
+  font-size: toRem(16);
   line-height: 1.3;
   letter-spacing: 0.1em;
-
-  @include respond-to(medium) {
-    font-size: toRem(16);
-  }
 }
 
 .content-render__title {
@@ -254,7 +245,7 @@ $page-padding-right: toRem(165);
   color: var(--text-primary-main);
 
   &--low {
-    font-size: toRem(20);
+    font-size: toRem(16);
 
     @include respond-to(medium) {
       font-size: toRem(18);
@@ -318,12 +309,8 @@ a.content-render__img-links-item {
 }
 
 .content-render__unordered-list-text {
-  font-size: toRem(20);
+  font-size: toRem(16);
   line-height: toRem(26);
-
-  @include respond-to(medium) {
-    font-size: toRem(16);
-  }
 }
 
 .content-render__unordered-list-icon {

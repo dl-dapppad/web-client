@@ -123,9 +123,6 @@ const updatePayment = async (selectedSymbol: string | number) => {
 }
 
 const updateProductPriceWithDiscount = async () => {
-  const alias = config.PRODUCT_ALIASES[route.params.id as string]
-  const productInfo = await systemContracts.factory.products(alias)
-
   const totalDiscount = discount.value.pools
     .reduce(
       (total, pool) => new BN(total).add(pool.value === '' ? '0' : pool.value),
@@ -137,7 +134,7 @@ const updateProductPriceWithDiscount = async () => {
   productPriceWithDiscount.value =
     await systemContracts.payment.getPriceWithDiscount(
       selectedPaymentToken.value.address,
-      productInfo.currentPrice,
+      productPriceInPointToken.value,
       '0',
       totalDiscount,
     )
@@ -233,6 +230,11 @@ const init = async () => {
   const { symbols, addresses } = await product.getAvailablePaymentTokenList()
   paymentTokens.value.symbols = symbols
   paymentTokens.value.addresses = addresses
+
+  if (productPriceInPointToken.value === '0') {
+    emits(EVENTS.updatePaymentToken, addresses[0])
+    emits(EVENTS.updateProductPriceWithDiscount, '0')
+  }
 
   initDiscount()
 

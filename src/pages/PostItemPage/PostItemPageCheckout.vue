@@ -386,7 +386,7 @@ init()
 }
 
 .post-item-page-checkout__block-description {
-  font-size: toRem(20);
+  font-size: toRem(16);
   line-height: 1.3;
 
   @include respond-to(medium) {

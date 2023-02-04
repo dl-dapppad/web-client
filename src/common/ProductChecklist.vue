@@ -30,10 +30,9 @@ init()
 
 const erc20Checklist = [
   'owner',
-  'transfer-ownership',
   'approve',
   'transfer',
-  'transfer-from',
+  'initial-mint',
   'mint',
   'burn',
   'cap',
@@ -41,13 +40,11 @@ const erc20Checklist = [
 
 const erc721Checklist = [
   'owner',
-  'transfer-ownership',
-  'set-base-u-r-i',
   'approve',
-  'approve-all',
+  'transfer',
+  'set-base-u-r-i',
   'mint',
   'burn',
-  'safe-transfer',
   'enum',
 ]
 
