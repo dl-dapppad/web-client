@@ -26,48 +26,48 @@ export const useAccount = () => {
     updateNativeBalance()
   }
 
-  const updateCashbackInfo = () => {
+  const updateCashbackInfo = async () => {
     if (!provider.value.selectedAddress) return
 
-    apollo.getAccountPools(provider.value.selectedAddress)
+    accountCashbackPools.value = []
+    const apooloRes = await apollo.getAccountPools(
+      provider.value.selectedAddress,
+    )
 
-    watch(apollo.accountPools, async () => {
-      if (!provider.value.selectedAddress) return
-      const account = provider.value.selectedAddress
+    const account = provider.value.selectedAddress
 
-      await systemContracts.loadDetails()
+    await systemContracts.loadDetails()
 
-      const requests: Promise<string>[] = []
-      apollo.accountPools.value.forEach(accountPool => {
-        requests.push(
-          systemContracts.cashback.getAccountCashback(
-            accountPool.product,
-            account,
-          ),
-        )
-      })
-
-      const pools: AccountCashbackPool[] = []
-      await Promise.all(requests).then(res => {
-        res.forEach((cashback, i) => {
-          pools.push({
-            alias: apollo.accountPools.value[i].product,
-            cashback,
-            totalPoints: apollo.accountPools.value[i].totalPoints,
-          })
-        })
-
-        return
-      })
-
-      accountCashbackPools.value = pools
-      accountCashback.value = pools
-        .reduce(
-          (totalCashback, pool) => new BN(totalCashback).add(pool.cashback),
-          new BN(0),
-        )
-        .toString()
+    const requests: Promise<string>[] = []
+    apooloRes.forEach(accountPool => {
+      requests.push(
+        systemContracts.cashback.getAccountCashback(
+          accountPool.product,
+          account,
+        ),
+      )
     })
+
+    const pools: AccountCashbackPool[] = []
+    await Promise.all(requests).then(res => {
+      res.forEach((cashback, i) => {
+        pools.push({
+          alias: apooloRes[i].product,
+          cashback,
+          totalPoints: apooloRes[i].totalPoints,
+        })
+      })
+
+      return
+    })
+
+    accountCashbackPools.value = pools
+    accountCashback.value = pools
+      .reduce(
+        (totalCashback, pool) => new BN(totalCashback).add(pool.cashback),
+        new BN(0),
+      )
+      .toString()
   }
 
   const updateNativeBalance = async () => {

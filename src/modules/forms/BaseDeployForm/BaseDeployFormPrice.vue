@@ -67,6 +67,7 @@ const discount = ref<{
   pools: [],
 })
 
+const productPriceInPointToken = ref('0')
 const productPrice = ref('0')
 const productPriceWithDiscount = ref('0')
 const isDiscountCheckboxActive = ref(false)
@@ -96,18 +97,16 @@ const updatePayment = async (selectedSymbol: string | number) => {
 
   // Recalculate product price with current payment `selectedAddress`
   // and without discount
-  const alias = config.PRODUCT_ALIASES[route.params.id as string]
-  const productInfo = await systemContracts.factory.products(alias)
   productPrice.value = await systemContracts.payment.getPriceWithDiscount(
     selectedAddress,
-    productInfo.currentPrice,
+    productPriceInPointToken.value,
     '0',
     '0',
   )
   // End
 
   isBalanceInsuficient.value =
-    new BN(productInfo.currentPrice)
+    new BN(productPrice.value)
       .fromFraction()
       .compare(
         new BN(selectedPaymentToken.value.balance).fromFraction(
@@ -225,6 +224,10 @@ const initDiscount = async () => {
 }
 
 const init = async () => {
+  const alias = config.PRODUCT_ALIASES[route.params.id as string]
+  const productInfo = await systemContracts.factory.products(alias)
+  productPriceInPointToken.value = productInfo.currentPrice
+
   await systemContracts.loadDetails()
 
   const { symbols, addresses } = await product.getAvailablePaymentTokenList()
@@ -256,7 +259,10 @@ init()
 </script>
 
 <template>
-  <div class="base-deploy-form-price app__form-control">
+  <div
+    class="base-deploy-form-price app__form-control"
+    v-if="productPriceInPointToken !== '0'"
+  >
     <collapse
       class="app__form-control"
       is-opened-by-default

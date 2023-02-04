@@ -30,6 +30,7 @@ export const useProduct = () => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
 
   const router = useRouter()
+  const apollo = useApollo()
   const systemContracts = useSystemContracts()
 
   const handleContractSearch = async (address: string) => {
@@ -44,8 +45,9 @@ export const useProduct = () => {
         return
       }
 
+      const alias = apollo.deployedProduct.value?.alias?.slice(0, -8)
       const filtered = Object.entries(config.PRODUCT_ALIASES).filter(
-        ([, value]) => value === apollo.deployedProduct.value?.alias,
+        ([, value]) => value === alias,
       )
 
       if (!filtered || !filtered.length) {
@@ -113,17 +115,9 @@ export const useProduct = () => {
   const getAvailablePaymentTokenList = async (): Promise<
     Record<string, Array<string>>
   > => {
-    await systemContracts.loadDetails()
-
-    const paymentTokensAddresses = []
-    for (let i = 0; i < 100; i++) {
-      try {
-        const tokenAddress = await systemContracts.payment.getPaymentToken(i)
-        paymentTokensAddresses.push(tokenAddress)
-      } catch {
-        break
-      }
-    }
+    const paymentTokensAddresses = (await apollo.getPaymentTokens()).map(
+      apolloPaymentToken => apolloPaymentToken.token,
+    )
 
     const requests: Promise<void>[] = []
     const paymentTokens = paymentTokensAddresses.map(address =>

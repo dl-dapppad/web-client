@@ -278,14 +278,15 @@
   },
   "cashback-page": {
     "title": "Cashback",
-    "subtitle": "Stake your DAPP tokens and receive cashback rewards from each subsequent product sale.",
+    "subtitle": "Points are awarded for each product purchase, they determine your share of cashback, which will be distributed at the next purchase of the same product. The amount of points you receive directly depends on how much you spend on the product. The earlier or the more often you bought the product, the more points will be added to your address. Cashback in its turn depends on the points and is granted for each product separately. Cashback can be used as a discount on the purchase of any product and can only be used at the address to which it was credited upon purchase.",
+    "no-pools": "Cashback not found =(",
     "card-points": "Your Points",
     "card-cashback": "Cashback",
     "tabs-chart": "Chart",
-    "tabs-history": "History",
-    "history-address": "Buyer address",
-    "history-points": "Points",
-    "history-share": "Share"
+    "tabs-rating": "Rating",
+    "rating-address": "Buyer address",
+    "rating-points": "Points",
+    "rating-share": "Share"
   },
   "cashback-history": {
     "title": "History",
