@@ -47,8 +47,8 @@ stages:
 
 Build:
   stage: build-and-publish
-  #tags:
-  #  - tokend
+  tags:
+    - dapppad
   <<: *before_script_templ
   script:
     - type werf && source $(werf ci-env gitlab --as-file)
@@ -61,8 +61,8 @@ Build:
 
 Build Tag:
   stage: build-and-publish
-  #tags:
-  #  - tokend
+  tags:
+    - dapppad
   only:
     - tags
   <<: *before_script_templ
@@ -77,8 +77,8 @@ Build Tag:
 
 Lint and Test:
   stage: lint-and-test
-  #tags:
-  #  - tokend
+  tags:
+    - dapppad
   only:
     - merge_requests
   services:
@@ -125,7 +125,7 @@ Lint and Test:
 Cleanup:
   stage: cleanup
   tags:
-    - tokend
+    - dapppad
   <<: *before_script_templ
   script:
     - type werf && source $(werf ci-env gitlab --as-file)
