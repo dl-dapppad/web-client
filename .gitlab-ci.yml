@@ -1,8 +1,8 @@
 default:
-image:
-  name: "tokend/werf:0.0.3"
-  entrypoint: [""]
-services:
+  image:
+    name: "tokend/werf:0.0.3"
+    entrypoint: [""]
+  services:
   - docker:18-dind
 
 
@@ -22,67 +22,68 @@ variables:
 
 .before_script_template: &before_script_templ
   before_script:
-    - werf version
-    - docker version
-    - echo $CI_REGISTRY
-    - echo $CI_REGISTRY_USER
-    - echo $CI_REGISTRY_PASSWORD
-    - echo $WERF_IMAGES_REPO
-    - echo $WERF_ADD_CUSTOM_TAG_1
+  - werf version
+  - docker version
+  - echo $CI_REGISTRY
+  - echo $CI_REGISTRY_USER
+  - echo $CI_REGISTRY_PASSWORD
+  - echo $WERF_IMAGES_REPO
+  - echo $WERF_ADD_CUSTOM_TAG_1
 
 stages:
-  - build-and-publish
-  - lint-and-test
-  #- publish
-  #- deploy
-  - cleanup
+- build-and-publish
+- lint-and-test
+#- publish
+#- deploy
+- cleanup
 
 Build:
   stage: build-and-publish
   tags:
-    - dapppad
-  <<: *before_script_templ
+  - dapppad
+  !!merge <<: *before_script_templ
   script:
-    - type werf && source $(werf ci-env gitlab --as-file)
-    - werf build --dev=true --report-path=images-report.json
-    - docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
-    - docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME
-    - docker push $IMAGE_NAME
+  - type werf && source $(werf ci-env gitlab --as-file)
+  - werf cleanup
+  - werf build --dev=true --report-path=images-report.json
+  - docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
+  - docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME
+  - docker push $IMAGE_NAME
   except: [schedules]
   interruptible: true
 
 Build Tag:
   stage: build-and-publish
   tags:
-    - dapppad
+  - dapppad
   only:
-    - tags
-  <<: *before_script_templ
+  - tags
+  !!merge <<: *before_script_templ
   script:
-    - type werf && source $(werf ci-env gitlab --as-file)
-    - werf cleanup
-    - werf build --dev=true --report-path=images-report.json
-    - docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
-    - docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME_TAG
-    - docker push $IMAGE_NAME_TAG
+  - type werf && source $(werf ci-env gitlab --as-file)
+  - werf cleanup
+  - werf build --dev=true --report-path=images-report.json
+  - docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
+  - docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME_TAG
+  - docker push $IMAGE_NAME_TAG
   except: [schedules]
   interruptible: true
 
 Lint and Test:
   stage: lint-and-test
   tags:
-    - dapppad
+  - dapppad
   only:
-    - merge_requests
+  - merge_requests
   services:
-    - docker:18-dind
+  - docker:18-dind
   image:
     name: "registry.gitlab.com/tokend/devops/docker-containers:front14-a7d73669fd1fa97a461226c292357bc33d478070"
     entrypoint: [""]
   script:
-    - yarn install
-    - yarn test
-    - yarn lint
+  - yarn install
+  - yarn test
+  - yarn lint
   except: [schedules]
   interruptible: true
 
@@ -118,12 +119,12 @@ Lint and Test:
 Cleanup:
   stage: cleanup
   tags:
-    - dapppad
-  <<: *before_script_templ
+  - dapppad
+  !!merge <<: *before_script_templ
   script:
-    - type werf && source $(werf ci-env gitlab --as-file)
-    - docker login -u nobody -p ${WERF_IMAGES_CLEANUP_PASSWORD} ${WERF_IMAGES_REPO}
-    - werf cleanup
+  - type werf && source $(werf ci-env gitlab --as-file)
+  - docker login -u nobody -p ${WERF_IMAGES_CLEANUP_PASSWORD} ${WERF_IMAGES_REPO}
+  - werf cleanup
   only: [schedules]
   interruptible: true
 
