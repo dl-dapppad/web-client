@@ -44,7 +44,7 @@ Build:
   <<: *before_script_templ
   script:
     - type werf && source $(werf ci-env gitlab --as-file)
-    - werf build --debug --report-path=images-report.json
+    - werf build --dev=true --report-path=images-report.json
     - docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
     - docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME
     - docker push $IMAGE_NAME
@@ -60,7 +60,7 @@ Build Tag:
   <<: *before_script_templ
   script:
     - type werf && source $(werf ci-env gitlab --as-file)
-    - werf build --debug --report-path=images-report.json
+    - werf build --dev=true --report-path=images-report.json
     - docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
     - docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME_TAG
     - docker push $IMAGE_NAME_TAG
