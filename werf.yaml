@@ -24,7 +24,7 @@ shell: # Shell сборочные инструкции.
 
 ---
 image: web
-from: nginx:stable-alpine
+from: amd64/nginx:latest
 docker:
   WORKDIR: /usr/share/nginx
 git:
