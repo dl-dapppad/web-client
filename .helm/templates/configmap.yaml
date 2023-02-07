@@ -14,7 +14,7 @@ data:
                                 VITE_APP_URL_SUBGRAPH:
                                   'https://api.thegraph.com/subgraphs/name/fedoken/dapppad-v2',
                                 VITE_APP_RPC_URL: {
-                                  '80001': 'https://goerli.infura.io/v3/',
+                                  '80001': 'https://polygon-mumbai.infura.io/v3/875e92049d46477ba5fd3a0d22f7b7c3',
                                 },
                                 VITE_APP_GAS_PRICE_URL: {
                                   '80001': 'https://gasstation-mumbai.matic.today/v2',
