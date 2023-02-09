@@ -6,4 +6,5 @@ export enum ROUTE_NAMES {
   productEdit = 'product-edit',
   notFound = 'not-found',
   cashback = 'cashback',
+  termsOfUse = 'terms-of-use',
 }
