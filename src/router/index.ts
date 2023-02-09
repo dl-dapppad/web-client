@@ -39,6 +39,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/CashbackPage.vue'),
   },
   {
+    path: '/terms-of-use',
+    name: ROUTE_NAMES.termsOfUse,
+    component: () => import('@/pages/PostItemPage.vue'),
+  },
+  {
     path: '/404',
     name: ROUTE_NAMES.notFound,
     component: () => import('@/pages/Page404.vue'),

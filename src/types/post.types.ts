@@ -7,4 +7,12 @@ export type Post = {
   chartDescription: string
   content: [string, string][]
   infoDescriptionContent?: [string, string][]
+  categoryContent?: [
+    string,
+    (
+      | string
+      | string[]
+      | [string, string | [string, string[] | (string | string[])[]][]][]
+    ),
+  ][]
 }
