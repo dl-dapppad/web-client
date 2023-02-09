@@ -53,7 +53,7 @@ const instruction = [
   [
     [
       'text',
-      'To start working with Dapppad, connect your MetaMask wallet and switch to Goerli test network',
+      'To start working with Dapppad, connect your MetaMask wallet switch to the desired network',
     ],
     ['img', '/images/MainPageInstruction_1.png'],
   ],
@@ -72,7 +72,7 @@ const instruction = [
     ['img', '/images/MainPageInstruction_3.png'],
     [
       'text',
-      'For Goerli test net you can mint payment token if you don’t have one. This option will be available after selecting a payment token.',
+      'For test net you can mint payment token if you don’t have one. This option will be available after selecting a payment token.',
     ],
     ['img', '/images/MainPageInstruction_3-2.png'],
   ],
@@ -99,35 +99,16 @@ const instruction = [
   [
     [
       'text',
-      'For each product purchase you are eligible and receive DAPP tokens',
+      'Points are awarded for each product purchase, they determine your share of cashback, which will be distributed at the next purchase of the same product.',
     ],
     ['img', '/images/MainPageInstruction_6.png'],
-    [
-      'text',
-      '1 DAPP token is equal to 1 USD spent on cashback distributed to previous buyers. And you can also stake DAPP tokens and receive cashback from each next product purchase on Dapppad. Press the “Cashback” button',
-    ],
-    ['img', '/images/MainPageInstruction_6-2.png'],
   ],
   [
     [
       'text',
-      'Press “STAKE” and stake your DAPP token current balance and approve staking transaction in MetaMask',
+      'The amount of points you receive directly depends on how much you spend on the product. The earlier or the more often you bought the product, the more points will be added to your address. Cashback in its turn depends on the points and is granted for each product separately. Cashback can be used as a discount on the purchase of any product and can only be used at the address to which it was credited upon purchase.',
     ],
     ['img', '/images/MainPageInstruction_7.png'],
-  ],
-  [
-    [
-      'text',
-      'After each next purchase by anyone else on Dapppad you are eligible to receive cashback rewards on your staked DAPP tokens and may claim these rewards by clicking “Claim” button',
-    ],
-    ['img', '/images/MainPageInstruction_8.png'],
-  ],
-  [
-    [
-      'link',
-      'The more you buy on Dapppad the more DAPP tokens you receive. The more DAPP tokens you receive and stake the more cashbacks from future Dapppad sales you receive. You may always withdraw the DAPP token from staking on Cashback page <a class="main-page__instruction-block-link" href="cashback">here</a>.',
-    ],
-    ['img', '/images/MainPageInstruction_9.png'],
   ],
 ]
 
@@ -312,7 +293,9 @@ $z-index: 1;
   padding: toRem(20);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: toRem(20);
+  height: 100%;
 }
 
 .main-page__instruction-block-row-text {
@@ -321,32 +304,27 @@ $z-index: 1;
   line-height: 1.3;
 }
 
-.main-page__instruction-block-wrp {
-  &:last-child:nth-child(2n + 1) {
-    grid-column: 1 / -1;
-
-    .main-page__instruction-block {
-      flex-direction: row;
-      gap: toRem(200);
-
-      .main-page__instruction-block-row-text {
-        max-width: toRem(485);
-        align-self: start;
-      }
-
-      @include respond-to(medium) {
-        flex-direction: column;
-        gap: toRem(20);
-      }
-    }
-  }
-}
-
 .main-page__instruction-block-row {
   display: flex;
   gap: toRem(16);
   align-items: center;
   justify-content: center;
+}
+
+.main-page__instruction-block-wrp {
+  &:last-child:nth-child(2n + 1) {
+    grid-column: 1 / -1;
+
+    .main-page__instruction-block {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      align-items: start;
+
+      .main-page__instruction-block-row:last-child {
+        padding-left: toRem(20);
+      }
+    }
+  }
 }
 
 .main-page__instruction-block-number {
