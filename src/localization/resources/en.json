@@ -92,7 +92,7 @@
   },
   "app-footer": {
     "terms-link": "Terms of Use and Privacy Policy",
-    "gitlab-link": "GitLab"
+    "github-link": "GitHub"
   },
   "posts-page": {
     "show-more-btn": "Show More",
@@ -186,6 +186,7 @@
       "product-swap-price": "Price including swap from {fromSymbol} to {toSymbol}",
       "discount-checkbox-lbl": "Use discount",
       "discount-input-lbl": "Amount",
+      "discount-input-max": "Max",
       "discount-tooltip-lbl": "Amount of discount",
       "discount-available-lbl": "Available on account",
       "discount-price-lbl": "Product price with discount",
@@ -193,6 +194,10 @@
       "discount-manual-switch-lbl": "Manual withdrawal",
       "discount-manual-available-lbl": "available",
       "discount-manual-inp-lbl": "Amount ({symbol})"
+    },
+    "errors": {
+      "wrong-mint-amount": "Mint amount is too big!",
+      "mint-amount-more-than-cap": "Mint amount can't be more than max token supply"
     },
     "erc721-common": {
       "description": "The process of deploying a smart contract on the network starts with setting the initial parameters of the smart contract, such as the name, symbol, etc. Once the initial parameters have been set, you must then select a payment method and, if necessary, apply any discounts. In the case of the first purchase, it will be necessary to perform a \"approve\", this will allow the smart contract to carry out the payment. Finally, the smart contract can be deployed to the network. This involves sending the compiled code of the contract to the network, where it will be added to the blockchain and executed by the network's nodes. At this point, the smart contract becomes fully operational and is accessible by anyone on the network.",

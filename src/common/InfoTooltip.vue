@@ -53,6 +53,7 @@ onMounted(() => {
 .info-tooltip__message {
   background-color: var(--secondary-main);
   color: var(--text-primary-invert-main);
+  font-family: var(--app-font-family-secondary);
   font-size: toRem(13);
   font-weight: 400;
   padding: toRem(12) toRem(24);

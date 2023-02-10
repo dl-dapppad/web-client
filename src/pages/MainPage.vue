@@ -377,6 +377,10 @@ $z-index: 1;
   &--second {
     left: 0;
     top: toRem(770);
+
+    @include respond-to(xsmall) {
+      width: 100%;
+    }
   }
 
   &--third {

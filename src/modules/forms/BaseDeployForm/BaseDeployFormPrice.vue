@@ -164,13 +164,34 @@ const emitUpdateDiscounts = () => {
   emits(EVENTS.updateDiscounts, emitData)
 }
 
+const handleMaxDiscount = () => {
+  const maxDiscount = new BN(account.value.accountCashback)
+    .fromFraction()
+    .toString()
+
+  let input: string | number = maxDiscount
+
+  discount.value.pools.forEach(pool => {
+    pool.value = pool.discount
+    input = new BN(input).sub(pool.discount).toString()
+  })
+
+  updateProductPriceWithDiscount()
+  emitUpdateDiscounts()
+
+  discount.value.usedDiscount = maxDiscount
+}
+
 const onUsedDiscountChange = (input: string | number) => {
-  // Return if empty input
   // Return if `0.` or `123.`
-  if (input === '' || /^[0-9]*\.$/.test(input as string)) {
+  if (input === '') {
     discount.value.pools.forEach(pool => (pool.value = '0'))
+    updateProductPriceWithDiscount()
+    emitUpdateDiscounts()
     return
   }
+
+  if (/^[0-9]*\.$/.test(input as string)) return
 
   discount.value.pools.forEach(pool => {
     // If `input` > `pool.discount`
@@ -188,11 +209,8 @@ const onUsedDiscountChange = (input: string | number) => {
 }
 
 const onProductDiscountChange = (input: string | number) => {
-  // Return if empty input
   // Return if `0.` or `123.`
-  if (input === '' || /^[0-9]*\.$/.test(input as string)) {
-    return
-  }
+  if (input === '' || /^[0-9]*\.$/.test(input as string)) return
 
   let sum = new BN(0)
   discount.value.pools.forEach(pool => {
@@ -360,7 +378,7 @@ init()
               account.accountCashback !== '0'
             "
           >
-          <!--eslint-enablee -->
+            <!--eslint-enablee -->
             <div class="base-deploy-form-price__discount-checkbox">
               <!--eslint-disable -->
               <checkbox-field
@@ -376,11 +394,14 @@ init()
               <!--eslint-enablee -->
             </div>
           </template>
-          <template #default  v-if="
+          <template
+            #default
+            v-if="
               isPaymentLoaded &&
               provider.selectedAddress &&
               account.accountCashback !== '0'
-            ">
+            "
+          >
             <div class="app__field-row base-deploy-form-price__amount-input">
               <input-field
                 class="app__module-field"
@@ -390,7 +411,16 @@ init()
                 :max="discount.maxDiscount"
                 :label="$t('product-deploy.default.discount-input-lbl')"
                 @update:model-value="onUsedDiscountChange"
-              />
+              >
+                <template #nodeRight>
+                  <app-button
+                    class="base-deploy-form-price__discount-max-btn"
+                    :text="$t('product-deploy.default.discount-input-max')"
+                    scheme="default"
+                    @click="handleMaxDiscount"
+                  />
+                </template>
+              </input-field>
               <div class="app__field-tooltip">
                 <info-tooltip
                   :text="$t('product-deploy.default.discount-tooltip-lbl')"
@@ -448,7 +478,7 @@ init()
                     >
                       <div class="base-deploy-form-price__manual-key">
                         <span class="base-deploy-form-price__manual-title">
-                          {{ pool.title }}
+                          {{ `${pool.title} ` }}
                         </span>
                         <!--eslint-disable -->
                         {{
@@ -553,6 +583,15 @@ init()
   }
 }
 
+.base-deploy-form-price__discount-max-btn {
+  padding: 0;
+  font-size: toRem(16);
+
+  @include respond-to(xsmall) {
+    font-size: toRem(12);
+  }
+}
+
 .base-deploy-form-price__manual {
   display: flex;
   flex-direction: column;
@@ -585,7 +624,7 @@ init()
   min-width: toRem(200);
   max-width: toRem(200);
 
-  @include respond-to(medium) {
+  @include respond-to(xmedium) {
     max-width: 100%;
     width: 100%;
     padding-right: toRem(28);
@@ -595,11 +634,13 @@ init()
 .base-deploy-form-price__manual-row {
   display: flex;
   gap: toRem(12);
+  padding-right: toRem(24);
 
-  @include respond-to(medium) {
+  @include respond-to(xmedium) {
     flex-direction: column;
     align-items: start;
     padding: toRem(20) 0 0 0;
+    gap: toRem(24);
   }
 }
 
