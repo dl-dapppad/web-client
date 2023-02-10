@@ -11,6 +11,7 @@ import {
   numeric,
   maxValue,
   greaterThen,
+  maxLength,
 } from '@/validators'
 import { BN } from '@/utils'
 import { OverviewRowWithId, Input } from '@/modules/types'
@@ -19,6 +20,7 @@ import { BaseDeployForm } from '@/modules/forms'
 import { useProduct } from '@/composables'
 import postsData from '@/assets/posts.json'
 import { Post } from '@/types'
+import { Bus } from '@/helpers'
 
 const props = defineProps<{
   deployArray?: {
@@ -138,13 +140,13 @@ const categoriesData = [
         name: 'name',
         label: t('product-deploy.erc20-common.name-lbl'),
         tooltip: t('product-deploy.erc20-common.name-info'),
-        validators: [required],
+        validators: [required, maxLength(128)],
       },
       {
         name: 'symbol',
         label: t('product-deploy.erc20-common.symbol-lbl'),
         tooltip: t('product-deploy.erc20-common.symbol-info'),
-        validators: [required],
+        validators: [required, maxLength(32)],
       },
       {
         name: 'decimals',
@@ -174,10 +176,10 @@ const categoriesData = [
   },
 ]
 
-if (!route.params.id.includes('mint'))
-  categoriesData[1].inputs[1].validators?.push(greaterThen(0))
-
 const init = () => {
+  if (!route.params.id.includes('mint'))
+    categoriesData[1].inputs[1].validators?.push(greaterThen(0))
+
   props.additionalModalRows?.forEach(item =>
     overviewRows.value.splice(item.index, 0, item.row),
   )
@@ -206,6 +208,26 @@ const submit = async (values: Map<string, string>) => {
   const paymentTokenAddress = values.get('payment-token') as string
   const productPrice = values.get('product-price') as string
   const decimals = values.get('decimals') as string
+
+  // Mint amount can't be more than (2 ** 256 - 1)*(0.1 ** `decimals`)
+  if (
+    new BN(values.get('mint-amount') as string).compare(
+      new BN(2).pow(256).sub(1).fromFraction(Number(decimals)),
+    ) === 1
+  ) {
+    Bus.warning(t('product-deploy.errors.wrong-mint-amount'))
+    return
+  }
+
+  if (
+    route.params.id.includes('cap') &&
+    new BN(values.get('mint-amount') as string).compare(
+      values.get('cap') as string,
+    ) === 1
+  ) {
+    Bus.warning(t('product-deploy.errors.mint-amount-more-than-cap'))
+    return
+  }
 
   // Start setup deploy args for `init` method in contract
   const args: string[] = []

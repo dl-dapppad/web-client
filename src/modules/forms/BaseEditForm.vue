@@ -229,7 +229,11 @@ watch(
         }}
       </h3>
       <!-- eslint-enable -->
-      <tabs v-model="currentTabNumber" :tabs-data="FORM_TABS" />
+      <tabs
+        class="base-edit-form__tabs"
+        v-model="currentTabNumber"
+        :tabs-data="FORM_TABS"
+      />
       <app-block>
         <div
           v-if="currentTabNumber === FORM_TABS[0].number"
@@ -290,5 +294,9 @@ watch(
   @include respond-to(medium) {
     font-size: toRem(12);
   }
+}
+
+.base-edit-form__tabs {
+  font-weight: 700;
 }
 </style>

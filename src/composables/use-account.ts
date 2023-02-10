@@ -19,10 +19,11 @@ export const useAccount = () => {
   const nativeBalance = ref('0')
   const accountCashbackPools = ref<AccountCashbackPool[]>([])
   const accountCashback = ref('0')
+  const isLoaded = ref(false)
 
   const init = async () => {
-    updateCashbackInfo()
-    updateNativeBalance()
+    isLoaded.value = false
+    await Promise.all([updateCashbackInfo(), updateNativeBalance()])
   }
 
   const updateCashbackInfo = async () => {
@@ -62,6 +63,8 @@ export const useAccount = () => {
         new BN(0),
       )
       .toString()
+
+    isLoaded.value = true
   }
 
   const updateNativeBalance = async () => {
@@ -83,6 +86,7 @@ export const useAccount = () => {
     nativeBalance,
     accountCashbackPools,
     accountCashback,
+    isLoaded,
 
     updateNativeBalance,
     updateCashbackInfo,

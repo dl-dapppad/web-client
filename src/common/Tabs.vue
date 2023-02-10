@@ -92,7 +92,6 @@ const emit = defineEmits<{
     justify-content: center;
     width: 100%;
     flex-direction: column;
-    font-weight: 400;
     font-size: toRem(16);
     padding: toRem(25) toRem(12);
     height: 100%;

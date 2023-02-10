@@ -107,11 +107,14 @@ const handlePaginationChange = async (index: number, page: number) => {
 }
 
 const init = async () => {
+  cardsData.value = []
+
   if (
     !account.value.accountCashbackPools.length ||
     !provider.value?.selectedAddress ||
     !contracts.loaded
   ) {
+    isLoaded.value = account.value.isLoaded
     return
   }
 
@@ -329,7 +332,7 @@ const initCharts = () => {
   })
 }
 
-watch(() => [account.value.accountCashbackPools], init)
+watch(() => [account.value.isLoaded, provider.value.selectedAddress], init)
 
 watch(
   () => [chartElems.value, isLoaded.value],
@@ -456,11 +459,11 @@ init()
                   >
                     <div class="cashback-page__card-rating">
                       <!-- eslint-disable -->
-                    <div
-                      class="cashback-page__card-rating-row cashback-page__card-rating-row--titled"
-                      v-if="!breakpoints.isMedium.value"
-                    >
-                      <!-- eslint-enable -->
+                      <div
+                        class="cashback-page__card-rating-row cashback-page__card-rating-row--titled"
+                        v-if="!breakpoints.isMedium.value"
+                      >
+                        <!-- eslint-enable -->
                         <span class="cashback-page__card-rating-row-item">
                           {{ $t('cashback-page.rating-address') }}
                         </span>
@@ -477,32 +480,32 @@ init()
                         :key="idx"
                       >
                         <!-- eslint-disable -->
-                      <span
-                        class="cashback-page__card-rating-row-item cashback-page__card-rating-row-item--accented"
-                        v-if="breakpoints.isMedium.value"
-                      >
-                        {{ $t('cashback-page.rating-address') }}
-                      </span>
-                      <span class="cashback-page__card-rating-row-item">
-                        <address-copy
-                          class="app__link--low app__link--accented cashback-page__rating-address"
-                          :address="row.address"
-                        />
-                      </span>
-                      <span
-                        class="cashback-page__card-rating-row-item cashback-page__card-rating-row-item--accented"
-                        v-if="breakpoints.isMedium.value"
-                      >
-                        {{ $t('cashback-page.rating-points') }}
-                      </span>
-                      <span class="cashback-page__card-rating-row-item">
-                        {{ formatAmount(row.value) }}
-                      </span>
-                      <span
-                        class="cashback-page__card-rating-row-item cashback-page__card-rating-row-item--accented"
-                        v-if="breakpoints.isMedium.value"
-                      >
-                        <!--eslint-enable -->
+                        <span
+                          class="cashback-page__card-rating-row-item cashback-page__card-rating-row-item--accented"
+                          v-if="breakpoints.isMedium.value"
+                        >
+                          {{ $t('cashback-page.rating-address') }}
+                        </span>
+                        <span class="cashback-page__card-rating-row-item">
+                          <address-copy
+                            class="app__link--low app__link--accented cashback-page__rating-address"
+                            :address="row.address"
+                          />
+                        </span>
+                        <span
+                          class="cashback-page__card-rating-row-item cashback-page__card-rating-row-item--accented"
+                          v-if="breakpoints.isMedium.value"
+                        >
+                          {{ $t('cashback-page.rating-points') }}
+                        </span>
+                        <span class="cashback-page__card-rating-row-item">
+                          {{ formatAmount(row.value) }}
+                        </span>
+                        <span
+                          class="cashback-page__card-rating-row-item cashback-page__card-rating-row-item--accented"
+                          v-if="breakpoints.isMedium.value"
+                        >
+                          <!--eslint-enable -->
                           {{ $t('cashback-page.rating-share') }}
                         </span>
                         <span class="cashback-page__card-rating-row-item">

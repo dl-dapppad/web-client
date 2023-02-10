@@ -12,17 +12,17 @@ const breakpoints = useBreakpoints()
       class="app-footer__terms-link"
       :text="$t('app-footer.terms-link')"
       :size="breakpoints.isXSmall.value ? 'small' : 'medium'"
-      :route="$routes.termsOfUse"
+      :route="{ name: $routes.termsOfUse }"
       target="blank"
       color="default"
       scheme="default"
     />
     <app-button
-      class="app-footer__gitlab-link"
-      :icon-left="$icons.gitlab"
-      :text="$t('app-footer.gitlab-link')"
+      class="app-footer__github-link"
+      :icon-left="$icons.github"
+      :text="$t('app-footer.github-link')"
       :size="breakpoints.isXSmall.value ? 'small' : 'medium'"
-      href="https://gitlab.com/dapppad"
+      href="https://github.com/dl-dapppad"
       target="blank"
       color="default"
       scheme="default"
@@ -54,7 +54,7 @@ const breakpoints = useBreakpoints()
   }
 }
 
-.app-footer__gitlab-link {
+.app-footer__github-link {
   font-size: toRem(12);
   line-height: 1;
   font-weight: 700;

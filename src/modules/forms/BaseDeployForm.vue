@@ -320,7 +320,7 @@ const submit = () => {
                 : $t('product-deploy.default.btn-lbl')
             "
             size="small"
-            :disabled="!isAllFieldsValid"
+            :disabled="!isAllFieldsValid || isBalanceInsuficient"
           />
           <!-- eslint-enable -->
           <div v-else class="app__deploy-loader">

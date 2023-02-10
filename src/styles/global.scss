@@ -155,6 +155,14 @@ a {
   & > .loader {
     max-width: toRem(150);
   }
+
+  &--mobile-break-line {
+    @include respond-to(medium) {
+      flex-direction: column;
+      gap: toRem(10);
+      align-items: start;
+    }
+  }
 }
 
 .app__metadata-lbl {
