@@ -1,19 +1,18 @@
 import { watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore, useAccountStore } from '@/store'
+import {
+  useWeb3ProvidersStore,
+  useAccountStore,
+  useContractsStore,
+} from '@/store'
 import { i18n } from '@/localization'
 import { Bus } from '@/helpers'
 import { ROUTE_NAMES, PRODUCT_IDS } from '@/enums'
 import { config } from '@/config'
 import { getMaxUint256, txWrapper } from '@/helpers'
 import { BN } from '@/utils'
-import {
-  useSystemContracts,
-  useErc20,
-  Erc20Contract,
-  useApollo,
-} from '@/composables'
+import { useErc20, Erc20Contract, useApollo } from '@/composables'
 
 import { useProductErc20Base } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
 import { useProductErc20Mint } from '@/modules/erc20/erc20-mint/composables/use-product-erc20-mint'
@@ -28,10 +27,10 @@ import { useProductErc721BurnEnum } from '@/modules/erc721/erc721-burn-enum/comp
 
 export const useProduct = () => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
+  const contracts = useContractsStore()
 
   const router = useRouter()
   const apollo = useApollo()
-  const systemContracts = useSystemContracts()
 
   const handleContractSearch = async (address: string) => {
     const apollo = useApollo()
@@ -77,27 +76,27 @@ export const useProduct = () => {
       return ''
     }
 
-    await systemContracts.loadDetails()
+    if (!contracts.loaded) await contracts.load()
 
     const alias = config.PRODUCT_ALIASES[productId as string]
 
     const isApproved = await _isApproved(
       useErc20(paymentTokenAddress),
       provider.value.selectedAddress as string,
-      systemContracts.payment.address.value,
+      contracts.payment.address,
       productPrice,
     )
     if (!isApproved) return ''
 
     const encodedInitializeData = _getInitializeData(productId, initializeData)
     const potentialContractAddress =
-      await systemContracts.factory.getPotentialContractAddress(
+      await contracts.factory.getPotentialContractAddress(
         alias,
         encodedInitializeData,
         provider.value.selectedAddress,
       )
 
-    const txSucces = await txWrapper(systemContracts.factory.deploy, {
+    const txSucces = await txWrapper(contracts.factory.deploy, {
       alias,
       paymentTokenAddress,
       encodedInitializeData,

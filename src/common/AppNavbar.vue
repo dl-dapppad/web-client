@@ -11,10 +11,14 @@ import {
   AddressCopy,
   InvalidBrowserModal,
 } from '@/common'
-import { useProduct, useBreakpoints, useSystemContracts } from '@/composables'
+import { useProduct, useBreakpoints } from '@/composables'
 import { formatAmount, ErrorHandler } from '@/helpers'
 import { InputField } from '@/fields'
-import { useWeb3ProvidersStore, useAccountStore } from '@/store'
+import {
+  useWeb3ProvidersStore,
+  useAccountStore,
+  useContractsStore,
+} from '@/store'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { localizeChain } from '@/localization'
 import { config } from '@/config'
@@ -25,10 +29,10 @@ enum PROVIDER_TYPE {
 }
 
 const web3Store = useWeb3ProvidersStore()
+const contracts = useContractsStore()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
 
-const systemContracts = useSystemContracts()
 const composableProduct = useProduct()
 const breakpoints = useBreakpoints()
 
@@ -69,8 +73,6 @@ const init = async () => {
   selectedProvider.value = selectedAddress
     ? PROVIDER_TYPE.browser
     : PROVIDER_TYPE.rpc
-
-  await systemContracts.loadDetails()
 }
 
 const trySwitchChain = async (chainId: string | number) => {
@@ -145,7 +147,7 @@ init()
             formatAmount(
               account.accountCashback,
               18,
-              systemContracts.pointToken.symbol.value,
+              contracts.pointToken.symbol,
             )
           }}
         </span>

@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
 
-import { useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore, useContractsStore } from '@/store'
 import { formatAmount, formatPercent, ErrorHandler } from '@/helpers'
 import { Post } from '@/types'
-import { useSystemContracts, Product, useChart } from '@/composables'
+import { Product, useChart } from '@/composables'
 import {
   AppButton,
   AppBlock,
@@ -24,13 +23,12 @@ const props = defineProps<{
 }>()
 
 const web3Store = useWeb3ProvidersStore()
-const { provider } = storeToRefs(useWeb3ProvidersStore())
+const contracts = useContractsStore()
 
 const route = useRoute()
-const systemContracts = useSystemContracts()
 
 const alias = ref('')
-const product = ref<Product>(systemContracts.factory.getEmptyProduct())
+const product = ref<Product>(contracts.factory.getEmptyProduct())
 const cashback = ref('0')
 
 const chart = useChart()
@@ -38,7 +36,7 @@ const chart = useChart()
 const isProductLoaded = ref(false)
 
 const init = async () => {
-  if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) return
+  if (!contracts.loaded) return
 
   try {
     isProductLoaded.value = false
@@ -47,28 +45,21 @@ const init = async () => {
     if (!alias.value) return
 
     const [product_, cashback_] = await Promise.all([
-      systemContracts.factory.products(alias.value),
-      systemContracts.factory.getCashback(alias.value),
-      systemContracts.loadDetails(),
+      contracts.factory.products(alias.value),
+      contracts.factory.getCashback(alias.value),
     ])
     product.value = product_
     cashback.value = cashback_
 
     isProductLoaded.value = true
 
-    chart.updateChartData(
-      product.value,
-      systemContracts.pointToken.symbol.value,
-    )
+    chart.updateChartData(product.value, contracts.pointToken.symbol)
   } catch (error) {
     ErrorHandler.process(error)
   }
 }
 
-watch(
-  () => props.post,
-  () => init(),
-)
+watch(() => [props.post, contracts.loaded], init)
 
 init()
 </script>
@@ -130,7 +121,7 @@ init()
                 <span class="app__price">
                   {{ formatAmount(product.minPrice) }}
                   <span class="app__price-asset">
-                    {{ systemContracts.pointToken.symbol.value }}
+                    {{ contracts.pointToken.symbol }}
                   </span>
                 </span>
               </span>
@@ -162,7 +153,7 @@ init()
                 <span class="app__price">
                   {{ formatAmount(cashback) }}
                   <span class="app__price-asset">
-                    {{ systemContracts.pointToken.symbol.value }}
+                    {{ contracts.pointToken.symbol }}
                   </span>
                 </span>
               </span>
@@ -187,7 +178,7 @@ init()
               </span>
               <address-copy
                 v-if="isProductLoaded"
-                :address="systemContracts.factory.address.value"
+                :address="contracts.factory.address"
                 class="app__link--accented"
               />
               <loader class="post-item-page-checkout__address-loader" v-else />
@@ -208,7 +199,7 @@ init()
               >
                 {{ formatAmount(product.currentPrice) }}
                 <span class="post-item-page-checkout__price-curr">
-                  {{ systemContracts.pointToken.symbol.value }}
+                  {{ contracts.pointToken.symbol }}
                 </span>
               </div>
               <loader class="post-item-page-checkout__deploy-loader" v-else />

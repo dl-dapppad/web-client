@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { storeToRefs } from 'pinia'
+import { ref, watch } from 'vue'
 
 import { Icon, ProductChecklist, AppButton, Loader, GasFee } from '@/common'
-import { useSystemContracts, Product } from '@/composables'
+import { Product } from '@/composables'
 import { Post } from '@/types'
 import { formatAmount, ErrorHandler } from '@/helpers'
-import { useWeb3ProvidersStore } from '@/store'
+import { useContractsStore } from '@/store'
 import { config } from '@/config'
 
 import postsData from '@/assets/posts.json'
@@ -24,30 +23,27 @@ const post = posts.find(el => el.id === props.data.id)
 
 const img = `/images/${props.data.id.split('-')[0]}.png`
 
-const systemContracts = useSystemContracts()
+const contracts = useContractsStore()
 
-const { provider } = storeToRefs(useWeb3ProvidersStore())
-const web3Store = useWeb3ProvidersStore()
-
-const product = ref<Product>(systemContracts.factory.getEmptyProduct())
+const product = ref<Product>(contracts.factory.getEmptyProduct())
 const alias = ref('')
 const isProductLoaded = ref(false)
 
 const init = async () => {
-  if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) return
+  if (!contracts.loaded) return
 
   try {
     alias.value = config.PRODUCT_ALIASES[props.data.id as string]
     if (!alias.value) return
 
-    await systemContracts.loadDetails()
-
-    product.value = await systemContracts.factory.products(alias.value)
+    product.value = await contracts.factory.products(alias.value)
     isProductLoaded.value = true
   } catch (error) {
     ErrorHandler.process(error)
   }
 }
+
+watch(() => contracts.loaded, init)
 
 init()
 </script>
@@ -80,7 +76,7 @@ init()
           <div v-if="isProductLoaded" class="product-card__price-value">
             {{ formatAmount(product.currentPrice) }}
             <span class="product-card__price-curr">
-              {{ systemContracts.pointToken.symbol.value }}
+              {{ contracts.pointToken.symbol }}
             </span>
           </div>
           <loader v-else class="product-card__price-loader" />

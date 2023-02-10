@@ -1,16 +1,17 @@
 <script lang="ts" setup>
 import { AppNavbar, AppFooter } from '@/common'
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useNotifications } from '@/composables'
 import { config } from '@config'
-import { useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore, useContractsStore } from '@/store'
 import { ErrorHandler } from '@/helpers'
 import { PROVIDERS } from '@/enums'
 
 const isAppInitialized = ref(false)
 
 const web3Store = useWeb3ProvidersStore()
+const contracts = useContractsStore()
 
 const init = async () => {
   try {
@@ -41,6 +42,11 @@ const init = async () => {
   }
   isAppInitialized.value = true
 }
+
+watch(
+  () => web3Store.provider.chainId,
+  () => contracts.load(),
+)
 
 init()
 </script>

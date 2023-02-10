@@ -2,15 +2,10 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useWindowSize } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 
-import { useWeb3ProvidersStore } from '@/store'
-import {
-  useApollo,
-  useSystemContracts,
-  ApolloDeployedProducts,
-} from '@/composables'
+import { useContractsStore } from '@/store'
+import { useApollo, ApolloDeployedProducts } from '@/composables'
 import { AppPagination, AddressCopy, Loader, AppButton } from '@/common'
 import { config } from '@/config'
 import { WINDOW_BREAKPOINTS } from '@/enums'
@@ -45,12 +40,11 @@ const { t } = useI18n({
   },
 })
 
-const { provider } = storeToRefs(useWeb3ProvidersStore())
+const contracts = useContractsStore()
 
 const { width: windowWidth } = useWindowSize()
 
 const route = useRoute()
-const systemContracts = useSystemContracts()
 const apollo = useApollo()
 
 const width = computed(() => {
@@ -72,14 +66,8 @@ const pagination = ref({
   totalPages: 0,
 })
 
-const init = async () => {
-  initApollo()
-
-  await systemContracts.loadDetails()
-}
-
-const initApollo = () => {
-  if (!alias.value || !provider.value.chainId) return
+const init = () => {
+  if (!alias.value || !contracts.loaded) return
 
   history.value.loaded = false
   emits(EMITS.updateHistoryState, history.value.loaded)
@@ -93,7 +81,7 @@ const initApollo = () => {
 
 const handlePaginationChange = (page: number) => {
   pagination.value.currentPage = page
-  initApollo()
+  init()
 }
 
 watch(apollo.deployedProducts, () => {
@@ -112,10 +100,7 @@ watch(apollo.deployedProducts, () => {
   emits(EMITS.updateHistoryState, history.value.loaded)
 })
 
-watch(
-  () => route.params.id,
-  () => init(),
-)
+watch(() => [route.params.id, contracts.loaded], init)
 
 init()
 </script>
@@ -171,22 +156,9 @@ init()
             </span>
             <span class="product-history__grid-row-value">
               {{
-                formatAmount(
-                  row.price ?? '0',
-                  18,
-                  systemContracts.pointToken.symbol.value,
-                )
+                formatAmount(row.price ?? '0', 18, contracts.pointToken.symbol)
               }}
             </span>
-            <!-- <span class="product-history__grid-row-value">
-              {{
-                formatAmount(
-                  row.cashback ?? '0',
-                  18,
-                  systemContracts.pointToken.symbol.value,
-                )
-              }}
-            </span> -->
             <span class="product-history__grid-row-value">
               {{ formatDMYTime(Number(row.timestamp)) }}
             </span>

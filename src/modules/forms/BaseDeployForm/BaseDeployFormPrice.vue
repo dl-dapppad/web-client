@@ -6,10 +6,14 @@ import { storeToRefs } from 'pinia'
 import { AppButton, Collapse, Icon, InfoTooltip, Loader } from '@/common'
 import { SelectField, InputField, CheckboxField, SwitchField } from '@/fields'
 import { BN } from '@/utils'
-import { useProduct, useSystemContracts } from '@/composables'
+import { useProduct } from '@/composables'
 import { config } from '@/config'
 import { formatAmount } from '@/helpers'
-import { useWeb3ProvidersStore, useAccountStore } from '@/store'
+import {
+  useWeb3ProvidersStore,
+  useAccountStore,
+  useContractsStore,
+} from '@/store'
 import { Post } from '@/types'
 
 import postsData from '@/assets/posts.json'
@@ -35,9 +39,9 @@ const emits = defineEmits<{
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
+const contracts = useContractsStore()
 
 const route = useRoute()
-const systemContracts = useSystemContracts()
 const product = useProduct()
 
 const paymentTokens = ref<Record<string, Array<string>>>({
@@ -76,6 +80,8 @@ const isPaymentLoaded = ref(false)
 const isBalanceInsuficient = ref(false)
 
 const updatePayment = async (selectedSymbol: string | number) => {
+  if (!contracts.loaded) return
+
   isPaymentLoaded.value = false
 
   // Start setup `selectedPaymentToken`
@@ -97,7 +103,7 @@ const updatePayment = async (selectedSymbol: string | number) => {
 
   // Recalculate product price with current payment `selectedAddress`
   // and without discount
-  productPrice.value = await systemContracts.payment.getPriceWithDiscount(
+  productPrice.value = await contracts.payment.getPriceWithDiscount(
     selectedAddress,
     productPriceInPointToken.value,
     '0',
@@ -131,13 +137,12 @@ const updateProductPriceWithDiscount = async () => {
     .toFraction()
     .toString()
 
-  productPriceWithDiscount.value =
-    await systemContracts.payment.getPriceWithDiscount(
-      selectedPaymentToken.value.address,
-      productPriceInPointToken.value,
-      '0',
-      totalDiscount,
-    )
+  productPriceWithDiscount.value = await contracts.payment.getPriceWithDiscount(
+    selectedPaymentToken.value.address,
+    productPriceInPointToken.value,
+    '0',
+    totalDiscount,
+  )
 
   emits(EVENTS.updateProductPriceWithDiscount, productPriceWithDiscount.value)
 }
@@ -221,11 +226,11 @@ const initDiscount = async () => {
 }
 
 const init = async () => {
-  const alias = config.PRODUCT_ALIASES[route.params.id as string]
-  const productInfo = await systemContracts.factory.products(alias)
-  productPriceInPointToken.value = productInfo.currentPrice
+  if (!contracts.loaded) return
 
-  await systemContracts.loadDetails()
+  const alias = config.PRODUCT_ALIASES[route.params.id as string]
+  const productInfo = await contracts.factory.products(alias)
+  productPriceInPointToken.value = productInfo.currentPrice
 
   const { symbols, addresses } = await product.getAvailablePaymentTokenList()
   paymentTokens.value.symbols = symbols
@@ -242,20 +247,19 @@ const init = async () => {
 }
 
 watch(
-  () => [provider.value.selectedAddress, provider.value.chainId],
+  () => [
+    provider.value.selectedAddress,
+    provider.value.chainId,
+    contracts.loaded,
+  ],
   () => {
     if (selectedPaymentToken.value.symbol) {
       updatePayment(selectedPaymentToken.value.symbol)
     }
   },
 )
-
-watch(
-  () => account.value.accountCashbackPools,
-  () => {
-    initDiscount()
-  },
-)
+watch(() => contracts.loaded, init)
+watch(() => account.value.accountCashbackPools, initDiscount)
 
 init()
 </script>
@@ -402,7 +406,7 @@ init()
                   </span>
                   <div class="app__balance">
                     {{ formatAmount(account.accountCashback) }}
-                    <span>{{ systemContracts.pointToken.symbol.value }}</span>
+                    <span>{{ contracts.pointToken.symbol }}</span>
                   </div>
                 </div>
                 <div class="app__row">
@@ -458,7 +462,7 @@ init()
                             formatAmount(
                               pool.discount,
                               0,
-                              systemContracts.pointToken.symbol.value,
+                              contracts.pointToken.symbol,
                             )
                           }} </span
                         >{{ `)` }}
@@ -472,7 +476,7 @@ init()
                         :max="pool.discount"
                         :label="
                           $t('product-deploy.default.discount-manual-inp-lbl', {
-                            symbol: systemContracts.pointToken.symbol.value,
+                            symbol: contracts.pointToken.symbol,
                           })
                         "
                         @update:model-value="onProductDiscountChange"

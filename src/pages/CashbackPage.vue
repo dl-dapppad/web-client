@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore, useAccountStore } from '@/store'
+import {
+  useWeb3ProvidersStore,
+  useAccountStore,
+  useContractsStore,
+} from '@/store'
 import {
   AppButton,
   AppPagination,
@@ -14,12 +18,7 @@ import {
 import { formatAmount, cropAddress } from '@/helpers'
 import { ICON_NAMES, PRODUCT_IDS } from '@/enums'
 import { i18n } from '@/localization'
-import {
-  useBreakpoints,
-  useApollo,
-  useSystemContracts,
-  useProduct,
-} from '@/composables'
+import { useBreakpoints, useApollo, useProduct } from '@/composables'
 import { BN } from '@/utils'
 import { Post } from '@/types'
 
@@ -30,6 +29,7 @@ const posts = postsData as unknown as Post[]
 const { t } = i18n.global
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 const { account } = storeToRefs(useAccountStore())
+const contracts = useContractsStore()
 
 const TABS_DATA = [
   {
@@ -46,7 +46,6 @@ const TABS_DATA = [
 
 const breakpoints = useBreakpoints()
 const apollo = useApollo()
-const systemContracts = useSystemContracts()
 const productComposable = useProduct()
 
 const cardsData = ref<
@@ -110,15 +109,14 @@ const handlePaginationChange = async (index: number, page: number) => {
 const init = async () => {
   if (
     !account.value.accountCashbackPools.length ||
-    !provider.value?.selectedAddress
+    !provider.value?.selectedAddress ||
+    !contracts.loaded
   ) {
     return
   }
 
   isLoaded.value = false
   cardsData.value = []
-
-  await systemContracts.loadDetails()
 
   for (let i = 0; i < account.value.accountCashbackPools.length; i++) {
     const accountPool = account.value.accountCashbackPools[i]
@@ -149,7 +147,7 @@ const init = async () => {
       pointsUsers,
       usersInPoolCount,
     ] = await Promise.all([
-      systemContracts.cashback.getProductCahsback(accountPool.alias),
+      contracts.cashback.getProductCahsback(accountPool.alias),
       apollo.getPoolAccount(accountPool.alias, provider.value.selectedAddress),
       apollo.getPoolAccounts(
         accountPool.alias,
@@ -400,7 +398,7 @@ init()
                   </div>
                   <!-- eslint-disable -->
                 <span class="cashbcak-page__card-value cashbcak-page__card-value--accented">
-                  {{ formatAmount(card.cashback, 18, systemContracts.pointToken.symbol.value) }}
+                  {{ formatAmount(card.cashback, 18, contracts.pointToken.symbol) }}
                 </span>
                 <!-- eslint-enable -->
                 </div>

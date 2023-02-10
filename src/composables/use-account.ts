@@ -1,8 +1,8 @@
 import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore, useContractsStore } from '@/store'
 import { ref, watch } from 'vue'
 import { BN } from '@/utils'
-import { useApollo, useSystemContracts } from '@/composables'
+import { useApollo } from '@/composables'
 
 export type AccountCashbackPool = {
   alias: string
@@ -11,11 +11,10 @@ export type AccountCashbackPool = {
 }
 
 export const useAccount = () => {
-  const web3Store = useWeb3ProvidersStore()
+  const contracts = useContractsStore()
   const { provider } = storeToRefs(useWeb3ProvidersStore())
 
   const apollo = useApollo()
-  const systemContracts = useSystemContracts()
 
   const nativeBalance = ref('0')
   const accountCashbackPools = ref<AccountCashbackPool[]>([])
@@ -27,7 +26,7 @@ export const useAccount = () => {
   }
 
   const updateCashbackInfo = async () => {
-    if (!provider.value.selectedAddress) return
+    if (!provider.value.selectedAddress || !contracts.loaded) return
 
     accountCashbackPools.value = []
     const apooloRes = await apollo.getAccountPools(
@@ -36,15 +35,10 @@ export const useAccount = () => {
 
     const account = provider.value.selectedAddress
 
-    await systemContracts.loadDetails()
-
     const requests: Promise<string>[] = []
     apooloRes.forEach(accountPool => {
       requests.push(
-        systemContracts.cashback.getAccountCashback(
-          accountPool.product,
-          account,
-        ),
+        contracts.cashback.getAccountCashback(accountPool.product, account),
       )
     })
 
@@ -81,14 +75,7 @@ export const useAccount = () => {
     nativeBalance.value = balance.toString()
   }
 
-  watch(
-    () => [provider.value.selectedAddress, provider.value.chainId],
-    () => {
-      if (web3Store.isCurrentChainAvailable) {
-        init()
-      }
-    },
-  )
+  watch(() => [provider.value.selectedAddress, contracts.loaded], init)
 
   init()
 
