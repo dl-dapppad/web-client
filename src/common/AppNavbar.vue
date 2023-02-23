@@ -66,6 +66,7 @@ const openMobileSearch = () => {
 
 const init = async () => {
   if (!provider.value.chainId || !web3Store.isCurrentChainAvailable) {
+    provider.value.disconnect()
     return
   }
 
@@ -73,6 +74,9 @@ const init = async () => {
   selectedProvider.value = selectedAddress
     ? PROVIDER_TYPE.browser
     : PROVIDER_TYPE.rpc
+
+  account.value.updateNativeBalance()
+  account.value.updateCashbackInfo()
 }
 
 const trySwitchChain = async (chainId: string | number) => {
@@ -97,6 +101,7 @@ const handleProviderBtnClick = async () => {
       isMobileModalMetamaskAppOpened.value = true
     } else {
       ErrorHandler.process(error)
+      provider.value.disconnect()
     }
   }
 }
@@ -107,7 +112,7 @@ const clickContractSearch = async () => {
 }
 
 watch(
-  () => provider.value.selectedAddress,
+  () => [provider.value.selectedAddress, provider.value.chainId],
   () => {
     init()
   },
@@ -134,10 +139,15 @@ init()
       }"
     >
       <app-logo class="app-navbar__logo" />
+      <!-- eslint-disable -->
       <div
-        v-if="selectedProvider === PROVIDER_TYPE.browser"
+        v-if="
+          selectedProvider === PROVIDER_TYPE.browser &&
+          web3Store.isCurrentChainAvailable
+        "
         class="app-navbar__farm-farm-balance"
       >
+        <!-- eslint-enable -->
         <span class="app-navbar__farm-farm-balance-amount">
           <icon
             class="app-navbar__farm-farm-balance-icon"

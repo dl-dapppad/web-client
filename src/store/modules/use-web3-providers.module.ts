@@ -59,15 +59,43 @@ export const useWeb3ProvidersStore = defineStore('web3-providers-store', {
 
         if (!this.isCurrentChainAvailable) {
           try {
-            await this.provider.switchChain(config.AVAILABLE_CHAINS[0])
-          } catch (error) {
-            throw new Error(t('errors.provider-chain-invalid'))
+            await this.addMumbaiTestnet()
+          } catch (err) {
+            throw err as Error
           }
         }
       }
     },
     addProvider(provider: DesignatedProvider) {
       this.providers.push(provider)
+    },
+    async addMumbaiTestnet() {
+      const { t } = i18n.global
+
+      if (window.ethereum?.request) {
+        await window.ethereum
+          ?.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: '0x13881',
+                rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+                chainName: 'Mumbai Testnet',
+                nativeCurrency: {
+                  name: 'MATIC',
+                  symbol: 'MATIC',
+                  decimals: 18,
+                },
+                blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+              },
+            ],
+          })
+          .catch(() => {
+            throw new Error(t('errors.provider-user-rejected-request'))
+          })
+      } else {
+        throw new Error(t('errors.provider-chain-invalid'))
+      }
     },
     async detectGasPrice() {
       if (!this.provider.chainId || this.gasPrice.requested) return
