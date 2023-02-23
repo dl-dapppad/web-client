@@ -323,6 +323,15 @@ $z-index: 1;
       .main-page__instruction-block-row:last-child {
         padding-left: toRem(20);
       }
+
+      @include respond-to(medium) {
+        display: flex;
+
+        .main-page__instruction-block-row:last-child {
+          padding: 0;
+          width: 100%;
+        }
+      }
     }
   }
 }

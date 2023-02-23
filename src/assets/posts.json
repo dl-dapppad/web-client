@@ -729,7 +729,7 @@
           ]
         ]
       ],
-      ["image", "../static/images/termsOfUse.png"]
+      ["image", "/images/termsOfUse.png"]
     ]
   }
 ]

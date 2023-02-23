@@ -6,3 +6,5 @@ export let api: AxiosInstance
 export function initApi(): void {
   api = axios.create({ baseURL: config.API_URL })
 }
+
+export * from './graphql'

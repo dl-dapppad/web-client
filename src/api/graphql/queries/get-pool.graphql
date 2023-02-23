@@ -1,0 +1,54 @@
+query getAccountPools($user: Bytes) {
+  userToProducts(
+    where: { user: $user }
+    orderBy: totalPoints
+    orderDirection: desc
+  ) {
+    product
+    totalPoints
+  }
+}
+
+query getPoolAccount($product: Bytes, $user: Bytes) {
+  userToProducts(where: { product: $product, user: $user }) {
+    address: user
+    points: totalPoints
+  }
+}
+
+query getPoolAccounts($product: Bytes, $first: Int, $skip: Int) {
+  userToProducts(
+    where: { product: $product }
+    first: $first
+    skip: $skip
+    orderBy: totalPoints
+    orderDirection: desc
+  ) {
+    address: user
+    points: totalPoints
+  }
+}
+
+query getPoolAccountsWithoutOneUser(
+  $product: Bytes
+  $first: Int
+  $skip: Int
+  $userNot: Bytes
+) {
+  userToProducts(
+    where: { product: $product, user_not: $userNot }
+    first: $first
+    skip: $skip
+    orderBy: totalPoints
+    orderDirection: desc
+  ) {
+    address: user
+    points: totalPoints
+  }
+}
+
+query getUsersInPoolCount($id: ID!) {
+  productCounter(id: $id) {
+    count: usersBought
+  }
+}

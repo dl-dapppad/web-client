@@ -5,11 +5,14 @@ import { useWindowSize } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 
 import { useContractsStore } from '@/store'
-import { useApollo, ApolloDeployedProducts } from '@/composables'
+import { ApolloDeployedProducts } from '@/types'
 import { AppPagination, AddressCopy, Loader, AppButton } from '@/common'
 import { config } from '@/config'
 import { WINDOW_BREAKPOINTS } from '@/enums'
 import { formatAmount, formatDMYTime } from '@/helpers'
+
+import { GetDeployedProducts, GetDeployedProductsQuery } from '@/types/graphql'
+import { coreApolloClient } from '@/api/graphql/core.graphql'
 
 enum EMITS {
   updateHistoryState = 'update-history-state',
@@ -45,7 +48,6 @@ const contracts = useContractsStore()
 const { width: windowWidth } = useWindowSize()
 
 const route = useRoute()
-const apollo = useApollo()
 
 const width = computed(() => {
   if (windowWidth.value < WINDOW_BREAKPOINTS.small)
@@ -65,18 +67,26 @@ const pagination = ref({
   showOnPage: 5,
   totalPages: 0,
 })
+const deployedProducts = ref<GetDeployedProductsQuery>()
 
-const init = () => {
+const init = async () => {
   if (!alias.value || !contracts.loaded) return
 
   history.value.loaded = false
   emits(EMITS.updateHistoryState, history.value.loaded)
 
-  apollo.getDeployedProducts(
-    alias.value,
-    pagination.value.showOnPage,
-    (pagination.value.currentPage - 1) * pagination.value.showOnPage,
-  )
+  deployedProducts.value = (
+    await coreApolloClient.query<GetDeployedProductsQuery>({
+      query: GetDeployedProducts,
+      fetchPolicy: 'network-only',
+      variables: {
+        id_contains: alias.value,
+        id: alias.value,
+        frist: pagination.value.showOnPage,
+        skip: (pagination.value.currentPage - 1) * pagination.value.showOnPage,
+      },
+    })
+  ).data
 }
 
 const handlePaginationChange = (page: number) => {
@@ -84,21 +94,27 @@ const handlePaginationChange = (page: number) => {
   init()
 }
 
-watch(apollo.deployedProducts, () => {
-  if (!apollo.deployedProducts.value.products?.length) {
-    history.value.showed = false
-  } else {
-    history.value.data = apollo.deployedProducts.value
-    history.value.showed = true
+watch(
+  () => deployedProducts.value,
+  () => {
+    if (!deployedProducts.value?.productSales?.length) {
+      history.value.showed = false
+    } else {
+      history.value.data = {
+        products: deployedProducts.value.productSales.slice(0, 5),
+        totalCount: Number(deployedProducts.value.productCounter?.count) ?? 0,
+      }
+      history.value.showed = true
 
-    pagination.value.totalPages = Math.ceil(
-      history.value.data.totalCount / pagination.value.showOnPage,
-    )
-  }
+      pagination.value.totalPages = Math.ceil(
+        history.value.data.totalCount / pagination.value.showOnPage,
+      )
+    }
 
-  history.value.loaded = true
-  emits(EMITS.updateHistoryState, history.value.loaded)
-})
+    history.value.loaded = true
+    emits(EMITS.updateHistoryState, history.value.loaded)
+  },
+)
 
 watch(() => [route.params.id, contracts.loaded], init)
 

@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 import VueToastificationPlugin from 'vue-toastification'
 import { MotionPlugin } from '@vueuse/motion'
 import { ICON_NAMES, ROUTE_NAMES } from '@/enums'
-import { initApi } from '@/api'
+import { initApi, initGraphQlClients } from '@/api'
 import { i18n } from '@/localization'
 import { config } from '@config'
 import { router } from '@/router'
@@ -20,6 +20,7 @@ const app = createApp({
     const app = getCurrentInstance()
     const { t, locale } = useI18n({ useScope: 'global' })
     if (app) {
+      initGraphQlClients()
       app.appContext.config.globalProperties.$t = t
       app.appContext.config.globalProperties.$locale = locale
     }

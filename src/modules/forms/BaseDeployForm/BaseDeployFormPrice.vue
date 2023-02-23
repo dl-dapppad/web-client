@@ -634,7 +634,7 @@ init()
 .base-deploy-form-price__manual-row {
   display: flex;
   gap: toRem(12);
-  padding-right: toRem(24);
+  padding-right: toRem(28);
 
   @include respond-to(xmedium) {
     flex-direction: column;

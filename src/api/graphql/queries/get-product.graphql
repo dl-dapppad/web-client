@@ -1,0 +1,31 @@
+query getProduct($productProxyAddress: Bytes) {
+  productSales(where: { productProxyAddress: $productProxyAddress }) {
+    alias: id
+  }
+}
+
+query getDeployedProducts(
+  $id_contains: Bytes
+  $first: Int
+  $skip: Int
+  $id: ID!
+) {
+  productSales(
+    where: { id_contains: $id_contains }
+    first: $first
+    skip: $skip
+    orderBy: timestamp
+    orderDirection: desc
+  ) {
+    id
+    user: userToProduct {
+      address: user
+    }
+    proxy: productProxyAddress
+    timestamp
+    price: initialPrice
+  }
+  productCounter(id: $id) {
+    count: productSalesCount
+  }
+}

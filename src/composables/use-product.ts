@@ -1,4 +1,4 @@
-import { watch } from 'vue'
+import { watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import {
@@ -12,7 +12,7 @@ import { ROUTE_NAMES, PRODUCT_IDS } from '@/enums'
 import { config } from '@/config'
 import { getMaxUint256, txWrapper } from '@/helpers'
 import { BN } from '@/utils'
-import { useErc20, Erc20Contract, useApollo } from '@/composables'
+import { useErc20, Erc20Contract } from '@/composables'
 
 import { useProductErc20Base } from '@/modules/erc20/erc20-base/composables/use-product-erc20-base'
 import { useProductErc20Mint } from '@/modules/erc20/erc20-mint/composables/use-product-erc20-mint'
@@ -25,40 +25,57 @@ import { useProductErc721Enum } from '@/modules/erc721/erc721-enum/composables/u
 import { useProductErc721Burn } from '@/modules/erc721/erc721-burn/composables/use-product-erc721-burn'
 import { useProductErc721BurnEnum } from '@/modules/erc721/erc721-burn-enum/composables/use-product-erc721-burn-enum'
 
+import {
+  GetProduct,
+  GetProductQuery,
+  GetPaymentTokens,
+  GetPaymentTokensQuery,
+} from '@/types/graphql'
+import { coreApolloClient } from '@/api/graphql/core.graphql'
+
 export const useProduct = () => {
   const { provider } = storeToRefs(useWeb3ProvidersStore())
   const contracts = useContractsStore()
 
   const router = useRouter()
-  const apollo = useApollo()
+  const alias = ref('')
 
   const handleContractSearch = async (address: string) => {
-    const apollo = useApollo()
-    apollo.getProduct(address)
+    watch(
+      () => alias.value,
+      () => {
+        const { t } = i18n.global
 
-    watch(apollo.deployedProduct, () => {
-      const { t } = i18n.global
+        if (!alias.value) {
+          Bus.warning(t('errors.address-not-found'))
+          return
+        }
 
-      if (!apollo.deployedProduct.value) {
-        Bus.warning(t('errors.address-not-found'))
-        return
-      }
+        const filtered = Object.entries(config.PRODUCT_ALIASES).filter(
+          ([, value]) => value === (alias.value.slice(0, -8) as string),
+        )
 
-      const alias = apollo.deployedProduct.value?.alias?.slice(0, -8)
-      const filtered = Object.entries(config.PRODUCT_ALIASES).filter(
-        ([, value]) => value === alias,
-      )
+        if (!filtered || !filtered.length) {
+          Bus.warning(t('errors.address-not-found'))
+          return
+        }
 
-      if (!filtered || !filtered.length) {
-        Bus.warning(t('errors.address-not-found'))
-        return
-      }
+        router.push({
+          name: ROUTE_NAMES.productEdit,
+          params: { id: filtered[0][0], contractAddress: address },
+        })
+      },
+    )
 
-      router.push({
-        name: ROUTE_NAMES.productEdit,
-        params: { id: filtered[0][0], contractAddress: address },
+    alias.value = (
+      await coreApolloClient.query<GetProductQuery>({
+        query: GetProduct,
+        fetchPolicy: 'network-only',
+        variables: {
+          productProxyAddress: address,
+        },
       })
-    })
+    ).data.productSales[0].alias
   }
 
   const deploy = async (
@@ -114,9 +131,12 @@ export const useProduct = () => {
   const getAvailablePaymentTokenList = async (): Promise<
     Record<string, Array<string>>
   > => {
-    const paymentTokensAddresses = (await apollo.getPaymentTokens()).map(
-      apolloPaymentToken => apolloPaymentToken.token,
-    )
+    const paymentTokensAddresses = (
+      await coreApolloClient.query<GetPaymentTokensQuery>({
+        query: GetPaymentTokens,
+        fetchPolicy: 'network-only',
+      })
+    ).data.paymentTokens.map(apolloPaymentToken => apolloPaymentToken.token)
 
     const requests: Promise<void>[] = []
     const paymentTokens = paymentTokensAddresses.map(address =>

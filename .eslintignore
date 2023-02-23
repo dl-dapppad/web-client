@@ -6,3 +6,5 @@ playground
 index.html
 *.md
 static/env.js
+src/types/contracts
+src/types/graphql

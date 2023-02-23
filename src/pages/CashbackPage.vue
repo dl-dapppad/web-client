@@ -18,12 +18,24 @@ import {
 import { formatAmount, cropAddress } from '@/helpers'
 import { ICON_NAMES, PRODUCT_IDS } from '@/enums'
 import { i18n } from '@/localization'
-import { useBreakpoints, useApollo, useProduct } from '@/composables'
+import { useBreakpoints, useProduct, ProductsCahsback } from '@/composables'
 import { BN } from '@/utils'
-import { Post } from '@/types'
+import { Post, ApolloPoolAccounts } from '@/types'
 
 import postsData from '@/assets/posts.json'
 import Highcharts from 'highcharts'
+
+import {
+  GetPoolAccount,
+  GetPoolAccountQuery,
+  GetPoolAccounts,
+  GetPoolAccountsQuery,
+  GetPoolAccountsWithoutOneUser,
+  GetPoolAccountsWithoutOneUserQuery,
+  GetUsersInPoolCount,
+  GetUsersInPoolCountQuery,
+} from '@/types/graphql'
+import { coreApolloClient } from '@/api/graphql/core.graphql'
 
 const posts = postsData as unknown as Post[]
 const { t } = i18n.global
@@ -45,7 +57,6 @@ const TABS_DATA = [
 ]
 
 const breakpoints = useBreakpoints()
-const apollo = useApollo()
 const productComposable = useProduct()
 
 const cardsData = ref<
@@ -85,11 +96,17 @@ const handlePaginationChange = async (index: number, page: number) => {
   cardsData.value[index].pagination.currentPage = page
 
   const skip = (page - 1) * cardsData.value[index].pagination.showOnPage
-  const pointsUsers = await apollo.getPoolAccounts(
-    cardsData.value[index].alias,
-    cardsData.value[index].pagination.showOnPage,
-    skip,
-  )
+  const pointsUsers = (
+    await coreApolloClient.query<GetPoolAccountsQuery>({
+      query: GetPoolAccounts,
+      fetchPolicy: 'network-only',
+      variables: {
+        product: cardsData.value[index].alias,
+        first: cardsData.value[index].pagination.showOnPage,
+        skip,
+      },
+    })
+  ).data.userToProducts
 
   cardsData.value[index].pointsUsers = []
   pointsUsers.forEach(pointsUser => {
@@ -106,6 +123,97 @@ const handlePaginationChange = async (index: number, page: number) => {
   })
 }
 
+/* eslint-disable promise/prefer-await-to-then */
+const getApolloData = async () => {
+  const promisesArr: Promise<
+    ProductsCahsback | ApolloPoolAccounts[] | number
+  >[] = []
+
+  for (let i = 0; i < account.value.accountCashbackPools.length; i++) {
+    const accountPool = account.value.accountCashbackPools[i]
+
+    promisesArr.push(contracts.cashback.getProductCahsback(accountPool.alias))
+    promisesArr.push(
+      coreApolloClient
+        .query<GetPoolAccountQuery>({
+          query: GetPoolAccount,
+          fetchPolicy: 'network-only',
+          variables: {
+            product: accountPool.alias,
+            user: provider.value.selectedAddress,
+          },
+        })
+        .then(response => response.data.userToProducts),
+    )
+    promisesArr.push(
+      coreApolloClient
+        .query<GetPoolAccountsWithoutOneUserQuery>({
+          query: GetPoolAccountsWithoutOneUser,
+          fetchPolicy: 'network-only',
+          variables: {
+            product: accountPool.alias,
+            first: chartShowUserCount - 1,
+            skip: 0,
+            userNot: provider.value.selectedAddress,
+          },
+        })
+        .then(response => response.data.userToProducts),
+    )
+    promisesArr.push(
+      coreApolloClient
+        .query<GetPoolAccountsQuery>({
+          query: GetPoolAccounts,
+          fetchPolicy: 'network-only',
+          variables: {
+            product: accountPool.alias,
+            first: 4,
+            skip: 0,
+          },
+        })
+        .then(response => response.data.userToProducts),
+    )
+    promisesArr.push(
+      coreApolloClient
+        .query<GetUsersInPoolCountQuery>({
+          query: GetUsersInPoolCount,
+          fetchPolicy: 'network-only',
+          variables: {
+            id: accountPool.alias,
+          },
+        })
+        .then(response => response.data.productCounter?.count),
+    )
+  }
+
+  let resultArr: (ProductsCahsback | ApolloPoolAccounts[] | number)[] = []
+  const apolloDataResult: [
+    ProductsCahsback,
+    ApolloPoolAccounts[],
+    ApolloPoolAccounts[],
+    ApolloPoolAccounts[],
+    number,
+  ][] = []
+
+  await Promise.all(promisesArr)
+    .then(results => (resultArr = results))
+    .catch(err => console.error(err))
+
+  for (let i = 0; i < resultArr.length; i++) {
+    if (i % 5 === 0)
+      apolloDataResult.push([
+        { cumulativeSum: '', totalPoints: '' },
+        [],
+        [],
+        [],
+        0,
+      ])
+
+    apolloDataResult[Math.floor(i / 5)][i % 5] = resultArr[i]
+  }
+
+  return apolloDataResult
+}
+
 const init = async () => {
   cardsData.value = []
 
@@ -120,6 +228,8 @@ const init = async () => {
 
   isLoaded.value = false
   cardsData.value = []
+
+  const apolloData = await getApolloData()
 
   for (let i = 0; i < account.value.accountCashbackPools.length; i++) {
     const accountPool = account.value.accountCashbackPools[i]
@@ -149,22 +259,7 @@ const init = async () => {
       pointsUsersWithoutSelectedAddress,
       pointsUsers,
       usersInPoolCount,
-    ] = await Promise.all([
-      contracts.cashback.getProductCahsback(accountPool.alias),
-      apollo.getPoolAccount(accountPool.alias, provider.value.selectedAddress),
-      apollo.getPoolAccounts(
-        accountPool.alias,
-        chartShowUserCount - 1,
-        0,
-        provider.value.selectedAddress,
-      ),
-      apollo.getPoolAccounts(
-        accountPool.alias,
-        cardsData.value[i].pagination.showOnPage,
-        0,
-      ),
-      apollo.getUsersInPoolCount(accountPool.alias),
-    ])
+    ] = apolloData[i]
 
     cardsData.value[i].pagination.totalPages = Math.ceil(
       Number(usersInPoolCount) / cardsData.value[i].pagination.showOnPage,
@@ -400,10 +495,18 @@ init()
                     {{ $t('cashback-page.card-cashback') }}
                   </div>
                   <!-- eslint-disable -->
-                <span class="cashbcak-page__card-value cashbcak-page__card-value--accented">
-                  {{ formatAmount(card.cashback, 18, contracts.pointToken.symbol) }}
-                </span>
-                <!-- eslint-enable -->
+                  <span
+                    class="cashbcak-page__card-value cashbcak-page__card-value--accented"
+                  >
+                    {{
+                      formatAmount(
+                        card.cashback,
+                        18,
+                        contracts.pointToken.symbol,
+                      )
+                    }}
+                  </span>
+                  <!-- eslint-enable -->
                 </div>
               </app-block>
               <tabs
