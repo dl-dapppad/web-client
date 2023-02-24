@@ -84,7 +84,14 @@ export const useAccount = () => {
     nativeBalance.value = balance.toString()
   }
 
-  watch(() => [provider.value.selectedAddress, contracts.loaded], init)
+  watch(
+    () => [
+      provider.value.selectedAddress,
+      provider.value.chainId,
+      contracts.loaded,
+    ],
+    init,
+  )
 
   init()
 

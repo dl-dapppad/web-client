@@ -82,6 +82,7 @@ const init = async () => {
 const trySwitchChain = async (chainId: string | number) => {
   try {
     await provider.value.switchChain(chainId)
+    window.location.reload()
   } catch (error) {
     ErrorHandler.process(error)
   }

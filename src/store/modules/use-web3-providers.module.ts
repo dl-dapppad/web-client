@@ -27,6 +27,9 @@ export const useWeb3ProvidersStore = defineStore('web3-providers-store', {
     isCurrentChainAvailable: state => {
       return config.AVAILABLE_CHAINS.includes(String(state.provider.chainId))
     },
+    defaultChain: () => {
+      return config.AVAILABLE_CHAINS[0]
+    },
   },
   actions: {
     async detectProviders() {
@@ -97,13 +100,16 @@ export const useWeb3ProvidersStore = defineStore('web3-providers-store', {
         throw new Error(t('errors.provider-chain-invalid'))
       }
     },
-    async detectGasPrice() {
-      if (!this.provider.chainId || this.gasPrice.requested) return
+    async detectGasPrice(isHardDetect = false) {
+      if (!this.provider.chainId) return
+      if (!isHardDetect) {
+        if (this.gasPrice.requested) return
+      }
 
       this.gasPrice.requested = true
 
       const url = config.GAS_PRICE_URL[this.provider.chainId]
-      this.gasPrice.value = (await api.get(url)).data.estimatedBaseFee
+      this.gasPrice.value = (await api.get(url)).data.standard.maxFee
     },
   },
 })

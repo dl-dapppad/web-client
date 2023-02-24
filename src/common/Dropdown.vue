@@ -83,7 +83,7 @@ const setHeightCSSVar = (element: HTMLElement) => {
 </template>
 
 <style lang="scss" scoped>
-$local-z-index: 1;
+$local-z-index: 2;
 
 .dropdown {
   position: relative;

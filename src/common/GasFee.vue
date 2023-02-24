@@ -13,8 +13,8 @@ const isFeeLoaded = ref(false)
 
 const web3Store = useWeb3ProvidersStore()
 
-const init = async () => {
-  await web3Store.detectGasPrice()
+const init = async (isHardDetect: boolean) => {
+  await web3Store.detectGasPrice(isHardDetect)
 
   calculateGas()
 }
@@ -23,15 +23,19 @@ const calculateGas = () => {
   if (web3Store.gasPrice.value === '0') return
 
   fee.value = getTxGasPrice(props.id, web3Store.gasPrice.value)
-    .round(3, 2)
+    .fromFraction(9)
+    .round(4, 2)
     .toString()
 
   isFeeLoaded.value = true
 }
 
-watch(() => web3Store.gasPrice.value, calculateGas)
+watch(
+  () => [web3Store.gasPrice.value, web3Store.provider.chainId],
+  () => init(true),
+)
 
-init()
+init(false)
 </script>
 
 <template>

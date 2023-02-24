@@ -10,16 +10,23 @@ data:
                               document.ENV = {
                                 VITE_APP_API_URL: 'http://localhost:8000/_/api/',
                                 VITE_APP_APP_NAME: 'Dapppad On-Chain',
-                                VITE_APP_AVAILABLE_CHAINS: ['80001'],
-                                VITE_APP_URL_SUBGRAPH:
-                                  'https://api.thegraph.com/subgraphs/name/fedoken/dapppad-v2',
+                                VITE_APP_AVAILABLE_CHAINS: ['137', '80001'],
+                                VITE_APP_URL_SUBGRAPH: {
+                                  '137': 'https://api.thegraph.com/subgraphs/name/fedokdl/dapppad-polygon',
+                                  '80001': 'https://api.thegraph.com/subgraphs/name/fedoken/dapppad-v2',
+                                },
                                 VITE_APP_RPC_URL: {
-                                  '80001': 'https://polygon-mumbai.infura.io/v3/875e92049d46477ba5fd3a0d22f7b7c3',
+                                  '137': 'https://polygon-mainnet.infura.io/v3/',
+                                  '80001': 'https://polygon-mumbai.infura.io/v3/',
                                 },
                                 VITE_APP_GAS_PRICE_URL: {
+                                  '137': 'https://gasstation-mainnet.matic.network/v2',
                                   '80001': 'https://gasstation-mumbai.matic.today/v2',
                                 },
                                 VITE_APP_CONTRACTS: {
+                                  '137': {
+                                    'product-factory': '0x45A3CcbD69ED47aE26C62739a7d473f20D9F32C6',
+                                  },
                                   '80001': {
                                     'product-factory': '0xD633c1029ce7268f2c019Ba7a85cF5eB9071f814',
                                   },

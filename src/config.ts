@@ -8,16 +8,32 @@ export const config = {
   APP_NAME: import.meta.env.VITE_APP_NAME,
   LOG_LEVEL: 'trace' as LogLevelDesc,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
-  AVAILABLE_CHAINS: [ETHEREUM_CHAINS.mumbai] as string[],
-  URL_SUBGRAPH: import.meta.env.VITE_APP_URL_SUBGRAPH,
+  AVAILABLE_CHAINS: [
+    ETHEREUM_CHAINS.polygon,
+    ETHEREUM_CHAINS.mumbai,
+  ] as string[],
+  URL_SUBGRAPH: {
+    [ETHEREUM_CHAINS.polygon as string]: import.meta.env
+      .VITE_APP_URL_SUBGRAPH_POLYGON,
+    [ETHEREUM_CHAINS.mumbai as string]: import.meta.env
+      .VITE_APP_URL_SUBGRAPH_MUMBAI,
+  },
   RPC_URL: {
+    [ETHEREUM_CHAINS.polygon as string]: import.meta.env
+      .VITE_APP_RPC_URL_POLYGON,
     [ETHEREUM_CHAINS.mumbai as string]: import.meta.env.VITE_APP_RPC_URL_MUMBAI,
   },
   GAS_PRICE_URL: {
+    [ETHEREUM_CHAINS.polygon as string]: import.meta.env
+      .VITE_APP_POLYGON_GAS_PRICE_URL,
     [ETHEREUM_CHAINS.mumbai as string]: import.meta.env
       .VITE_APP_MUMBAI_GAS_PRICE_URL,
   },
   CONTRACTS: {
+    [ETHEREUM_CHAINS.polygon as string]: {
+      [CONTRACT_NAMES.PRODUCT_FACTORY]: import.meta.env
+        .VITE_APP_CONTRACT_POLYGON_PRODUCT_FACTORY,
+    },
     [ETHEREUM_CHAINS.mumbai as string]: {
       [CONTRACT_NAMES.PRODUCT_FACTORY]: import.meta.env
         .VITE_APP_CONTRACT_MUMBAI_PRODUCT_FACTORY,

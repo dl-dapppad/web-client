@@ -23,10 +23,13 @@ export const useContractsStore = defineStore('contracts-store', {
         !providerStore.provider.chainId ||
         !providerStore.isCurrentChainAvailable ||
         this.loading
-      )
+      ) {
         return
+      }
 
       this.loading = true
+
+      this.factory.init()
 
       const paymentAddress = await this.factory.payment()
       this.payment.init(paymentAddress)
@@ -41,6 +44,7 @@ export const useContractsStore = defineStore('contracts-store', {
       this.pointToken.init(pointTokenAddress)
       await this.pointToken.loadDetails()
 
+      this.loading = false
       this.loaded = true
     },
   },

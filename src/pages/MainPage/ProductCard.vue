@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 
+import { useWeb3ProvidersStore } from '@/store'
 import { Icon, ProductChecklist, AppButton, Loader, GasFee } from '@/common'
 import { Product } from '@/composables'
 import { Post } from '@/types'
@@ -17,6 +19,8 @@ const props = defineProps<{
   }
   isShownProductsInCard?: boolean
 }>()
+
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const posts = postsData as unknown as Post[]
 const post = posts.find(el => el.id === props.data.id)
@@ -43,7 +47,7 @@ const init = async () => {
   }
 }
 
-watch(() => contracts.loaded, init)
+watch(() => [provider.value.chainId, contracts.loaded], init)
 
 init()
 </script>
