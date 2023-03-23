@@ -5,10 +5,6 @@ on:
     - dev
     - cicd
 
-env:
-    REGISTRY: ghcr.io/$GITHUB_REPOSITORY
-    IMAGE_NAME: $REGISTRY:$GITHUB_SHA
-
 jobs:
   converge:
     name: Converge
@@ -38,11 +34,10 @@ jobs:
           echo $WERF_ADD_CUSTOM_TAG_1
           echo $GITHUB_REPOSITORY
           echo $GITHUB_SHA
-          echo $IMAGE_NAME
       - name: Run Build
         run: |
           . $(werf ci-env github --as-file) 
           werf build --save-build-report=true --build-report-path=images-report.json
           docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
-          docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME
-          docker push $IMAGE_NAME
+          docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) ghcr.io/$GITHUB_REPOSITORY:$GITHUB_SHA
+          docker push ghcr.io/$GITHUB_REPOSITORY:$GITHUB_SHA
