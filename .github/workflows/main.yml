@@ -28,13 +28,10 @@ jobs:
           echo $CI_REGISTRY_PASSWORD
           echo $WERF_IMAGES_REPO
           echo $WERF_ADD_CUSTOM_TAG_1
+          echo $IMAGE_NAME
         env:
-          DOMAIN: w3sign.app
-          GITHUB_REF: $CI_COMMIT_SHA
-          DH_IMAGE_NAME: $CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME
-          SERVICE: $CI_PROJECT_NAME
-          REGISTRY: registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
-          IMAGE_NAME: $REGISTRY:$CI_COMMIT_SHA
+          REGISTRY: ghcr.io/$GITHUB_REPOSITORY
+          IMAGE_NAME: $REGISTRY:$GITHUB_SHA
       - name: Run Build
         run: |
           . $(werf ci-env github --as-file) 
@@ -42,10 +39,3 @@ jobs:
           docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
           docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME
           docker push $IMAGE_NAME
-        env:
-          DOMAIN: w3sign.app
-          GITHUB_REF: $CI_COMMIT_SHA
-          DH_IMAGE_NAME: $CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME
-          SERVICE: $CI_PROJECT_NAME
-          REGISTRY: registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
-          IMAGE_NAME: $REGISTRY:$CI_COMMIT_SHA
