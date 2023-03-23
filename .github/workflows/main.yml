@@ -40,7 +40,7 @@ jobs:
       - name: Run Build
         run: |
           . $(werf ci-env github --as-file) 
-          werf build --dev=true --build-report-path=images-report.json
+          werf build --dev=true --save-build-report=true --build-report-path=images-report.json
           docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
           docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME
           docker push $IMAGE_NAME
