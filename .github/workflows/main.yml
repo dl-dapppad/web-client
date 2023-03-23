@@ -36,6 +36,8 @@ jobs:
           echo $CI_REGISTRY_PASSWORD
           echo $WERF_IMAGES_REPO
           echo $WERF_ADD_CUSTOM_TAG_1
+          echo $GITHUB_REPOSITORY
+          echo $GITHUB_SHA
           echo $IMAGE_NAME
       - name: Run Build
         run: |
