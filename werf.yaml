@@ -2,7 +2,7 @@ configVersion: 1
 project: "web-client2-onchain-dapppad"
 ---
 image: builder # Название собираемого образа.
-from: registry.gitlab.com/tokend/devops/docker-containers:front14-a7d73669fd1fa97a461226c292357bc33d478070 # Базовый образ.
+from: node:14-alpine3.11 # Базовый образ.
 git: # Секция с директивами для добавления исходных файлов из git-репозитория.
   - add: / # Исходный путь в репозитории.
     to: /app # Путь назначения в образе.
@@ -17,6 +17,7 @@ shell: # Shell сборочные инструкции.
     - cd /app
     #- yarn autoclean --init
     #- yarn autoclean --force
+    - apk --no-cache --update --virtual build-dependencies add python make g++
     - yarn install
   setup: # Для стадии Setup.
     - cd /app

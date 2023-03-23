@@ -18,7 +18,7 @@ jobs:
 
       - name: Install werf
         uses: werf/actions/install@v1.2
-        
+
       - name: Log in to registry
         # This is where you will update the personal access token to GITHUB_TOKEN
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
@@ -35,7 +35,7 @@ jobs:
           echo $IMAGE_NAME
         env:
           REGISTRY: ghcr.io/GITHUB_REPOSITORY
-          IMAGE_NAME: ${{ env.REGISTRY }}:${{ env.GITHUB_SHA }}
+          IMAGE_NAME: ${REGISTRY}:${GITHUB_SHA}
       - name: Run Build
         run: |
           . $(werf ci-env github --as-file) 
