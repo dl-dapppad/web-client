@@ -1,9 +1,7 @@
 on:
   push:
     branches:
-    - main
-    - dev
-    - cicd
+      - '*'
 
 jobs:
   converge:
@@ -27,11 +25,6 @@ jobs:
         run: |
           werf version
           docker version
-          echo $CI_REGISTRY
-          echo $CI_REGISTRY_USER
-          echo $CI_REGISTRY_PASSWORD
-          echo $WERF_IMAGES_REPO
-          echo $WERF_ADD_CUSTOM_TAG_1
           echo $GITHUB_REPOSITORY
           echo $GITHUB_SHA
       - name: Run Build
