@@ -1,0 +1,51 @@
+on:
+  push:
+    branches:
+    - main
+    - dev
+    - cicd
+
+jobs:
+  converge:
+    name: Converge
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install werf
+        uses: werf/actions/install@v1.2
+
+      - name: Run echo
+        run: |
+          werf version
+          docker version
+          echo $CI_REGISTRY
+          echo $CI_REGISTRY_USER
+          echo $CI_REGISTRY_PASSWORD
+          echo $WERF_IMAGES_REPO
+          echo $WERF_ADD_CUSTOM_TAG_1
+        env:
+          DOMAIN: w3sign.app
+          GITHUB_REF: $CI_COMMIT_SHA
+          DH_IMAGE_NAME: $CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME
+          SERVICE: $CI_PROJECT_NAME
+          REGISTRY: registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
+          IMAGE_NAME: $REGISTRY:$CI_COMMIT_SHA
+      - name: Run Build
+        run: |
+          . $(werf ci-env github --as-file) 
+          werf build --dev=true --report-path=images-report.json
+          docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
+          docker tag $(cat images-report.json | jq -r .Images.web.DockerImageName) $IMAGE_NAME
+          docker push $IMAGE_NAME
+        env:
+          DOMAIN: w3sign.app
+          GITHUB_REF: $CI_COMMIT_SHA
+          DH_IMAGE_NAME: $CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME
+          SERVICE: $CI_PROJECT_NAME
+          REGISTRY: registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
+          IMAGE_NAME: $REGISTRY:$CI_COMMIT_SHA
