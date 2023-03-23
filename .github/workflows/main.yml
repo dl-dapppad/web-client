@@ -30,10 +30,11 @@ jobs:
           echo $WERF_ADD_CUSTOM_TAG_1
           echo $IMAGE_NAME
         env:
-          REGISTRY: ghcr.io/$GITHUB_REPOSITORY
-          IMAGE_NAME: $REGISTRY:$GITHUB_SHA
+          REGISTRY: ghcr.io/GITHUB_REPOSITORY
+          IMAGE_NAME: REGISTRY:GITHUB_SHA
       - name: Run Build
         run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
           . $(werf ci-env github --as-file) 
           werf build --dev=true --report-path=images-report.json
           docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
