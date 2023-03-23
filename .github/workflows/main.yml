@@ -19,6 +19,13 @@ jobs:
       - name: Install werf
         uses: werf/actions/install@v1.2
 
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run echo
         run: |
           werf version
@@ -31,10 +38,9 @@ jobs:
           echo $IMAGE_NAME
         env:
           REGISTRY: ghcr.io/GITHUB_REPOSITORY
-          IMAGE_NAME: REGISTRY:GITHUB_SHA
+          IMAGE_NAME: ${{ env.REGISTRY }}:${{ env.GITHUB_SHA }}
       - name: Run Build
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
           . $(werf ci-env github --as-file) 
           werf build --dev=true --report-path=images-report.json
           docker pull $(cat images-report.json | jq -r .Images.web.DockerImageName)
