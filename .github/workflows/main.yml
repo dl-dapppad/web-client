@@ -6,8 +6,8 @@ on:
     - cicd
 
 env:
-    REGISTRY: ghcr.io/${{ vars.GITHUB_REPOSITORY }}
-    IMAGE_NAME: ${{ vars.REGISTRY }}:${{ vars.GITHUB_SHA }}
+    REGISTRY: ghcr.io/${{ GITHUB_REPOSITORY }}
+    IMAGE_NAME: ${{ REGISTRY }}:${{ GITHUB_SHA }}
 
 jobs:
   converge:
